@@ -42,3 +42,25 @@ export const signUp = async (req,res)=>{
         return res.sendStatus(500).json({message:"internal server error"})
     }
 }
+
+export const signIn = async (req,res) => {
+
+try {
+    // take input
+
+    //take harshed password from db to compare password input
+
+    //if ok , create accessToken with JWT
+
+    //create session and save refreshToken
+
+    //return refreshToken into Cookie, return accessToken into body
+
+
+} catch (error) {
+  
+
+
+   
+}
+}
