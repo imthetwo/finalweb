@@ -39,16 +39,15 @@ const userSchemas= new mongoose.Schema({
         maxlength:500, // tùy
     },
 
-    phone:{
+    phone:{ 
         type:String,
         sparse:true, // cho phép null,nhưng không được trùng
     },
-    createdAt:
-    { 
-    timestamps:true
-    },
-});
-
+    createdAt:{
+        timestamp: true,
+    },   
+}
+);
 const User = mongoose.model("User" , userSchemas);
 export default User;
 

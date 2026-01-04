@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5001;
 app.use(express.json());
 
 //public routes
-app.use('./api/auth',authRoute);
+app.use('/api/auth',authRoute);
 
 //private routes
 
