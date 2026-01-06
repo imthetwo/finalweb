@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt'
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import Session from '../models/Session.js';
 
 const ACCESS_TOKEN_TTL='30m';
 const REFRESH_TOKEN_TTL=14*24*60*60*1000 //14 days
@@ -84,9 +86,27 @@ try {
         maxAge:REFRESH_TOKEN_TTL,
     });
     //return accessToken in response body
-    return res.status(200).json({accessToken});
+    return res.status(200).json({message:`${user.displayName} đã đăng nhập thành công`, accessToken});
     } catch (error) {
     console.log('lỗi khi gọi signIn:',error);
     return res.sendStatus(500).json({message:"internal server error"})
+    }
+}
+
+export const logOut = async (req,res) => {
+    try {
+        //lấy refreshToken từ cookie
+        const token = req.cookies?.refreshToken;
+        if (token){
+             //xóa refreshToken trong session
+            await Session.findOneAndDelete({refreshToken:token});
+            //xóa cookie
+            res.clearCookie("refreshToken");
+        }
+        return res.sendStatus(204);
+
+    } catch (error) {
+      console.log('lỗi khi gọi logOut:',error);
+      return res.sendStatus(500).json({message:"internal server error"})
     }
 }
