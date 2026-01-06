@@ -43,10 +43,10 @@ const userSchemas= new mongoose.Schema({
         type:String,
         sparse:true, // cho phép null,nhưng không được trùng
     },
-    createdAt:{
-        timestamp: true,
-    },   
-}
+},
+    {
+        timestamps: true,
+    }
 );
 const User = mongoose.model("User" , userSchemas);
 export default User;
