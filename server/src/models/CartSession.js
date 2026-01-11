@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 
-// Local cartItemSchema (keeps structure consistent with Cart model)
 const cartItemSchema = new mongoose.Schema(
   {
     productId: {
@@ -22,11 +21,6 @@ const cartItemSchema = new mongoose.Schema(
   { _id: false }
 );
 
-// CartSession: store anonymous or short-lived carts (e.g. guest users)
-// - sessionId: public identifier stored in cookie/localStorage on client
-// - userId: optional link if guest becomes authenticated
-// - expiresAt: TTL index will remove stale sessions automatically
-
 const cartSessionSchema = new mongoose.Schema(
   {
     sessionId: {
@@ -45,13 +39,11 @@ const cartSessionSchema = new mongoose.Schema(
       type: [cartItemSchema],
       default: []
     },
-    // expiry for the guest cart. Set by server when creating the cart (e.g., now + 7 days)
     expiresAt: {
       type: Date,
       required: true,
       index: { expires: 0 }
     },
-    // optional metadata
     ip: {
       type: String
     },
@@ -59,10 +51,7 @@ const cartSessionSchema = new mongoose.Schema(
       type: String
     }
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 );
 
-// Export model
 export default mongoose.model('CartSession', cartSessionSchema);

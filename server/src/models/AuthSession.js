@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const AuthSessionSchema = new mongoose.Schema(
+const authSessionSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -11,18 +11,21 @@ const AuthSessionSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
       required: true,
-      unique: true
+      select: false
+    },
+    ip: {
+      type: String
+    },
+    userAgent: {
+      type: String
     },
     expiresAt: {
       type: Date,
-      required: true
+      required: true,
+      index: true
     }
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 );
 
-AuthSessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-
-export default mongoose.model('AuthSession', AuthSessionSchema);
+export default mongoose.model('AuthSession', authSessionSchema);

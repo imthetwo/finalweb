@@ -1,22 +1,25 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const productSchema = new mongoose.Schema(
   {
     title: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
+      index: true
     },
     slug: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
+      index: true
     },
     sku: {
       type: String,
       required: true,
-      unique: true
-    }, // Mã kho hàng
+      unique: true,
+      index: true
+    },
     price: {
       type: Number,
       required: true,
@@ -24,54 +27,54 @@ const productSchema = new mongoose.Schema(
     },
     discountPrice: {
       type: Number,
-      default: 0
+      default: 0,
+      min: 0
     },
     stock: {
       type: Number,
       required: true,
-      min: 0
+      min: 0,
+      index: true
     },
-    // Liên kết dữ liệu
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-      required: true
+      ref: 'Category',
+      required: true,
+      index: true
     },
     brandId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Brand",
-      required: true
+      ref: 'Brand',
+      required: true,
+      index: true
     },
-    // Thông số kỹ thuật động (Dùng cho Laptop, RAM, PC...)
     specifications: {
-      type: Object,
-      required: true
+      type: Object
     },
     images: [
       {
         url: {
-          type: String,
-          required: true
+          type: String
         },
         publicId: {
-          type: String,
-          required: true
+          type: String
         }
       }
     ],
-    // Audit Log: Ai là người sửa cuối?
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
+      ref: 'User'
     },
     isAvailable: {
       type: Boolean,
-      default: true
+      default: true,
+      index: true
     }
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 );
 
-export default mongoose.model("Product", productSchema);
+// simple text index for basic search
+productSchema.index({ title: 'text' });
+
+export default mongoose.model('Product', productSchema);

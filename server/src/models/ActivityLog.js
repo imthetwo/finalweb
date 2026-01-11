@@ -2,29 +2,38 @@ import mongoose from 'mongoose';
 
 const activityLogSchema = new mongoose.Schema(
   {
-    userId: {
+    actorId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
+      index: true
     },
     action: {
       type: String,
-      required: true
+      required: true,
+      index: true
     },
     targetModel: {
-      type: String
+      type: String,
+      index: true
     },
     targetId: {
-      type: mongoose.Schema.Types.ObjectId
+      type: mongoose.Schema.Types.ObjectId,
+      index: true
     },
-    details: {
+    metadata: {
       type: mongoose.Schema.Types.Mixed
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
+    correlationId: {
+      type: String,
       index: true
     }
+  },
+  {
+    timestamps: { createdAt: true, updatedAt: false }
   }
 );
+
+activityLogSchema.index({ targetModel: 1, targetId: 1, createdAt: -1 });
+activityLogSchema.index({ actorId: 1, createdAt: -1 });
 
 export default mongoose.model('ActivityLog', activityLogSchema);

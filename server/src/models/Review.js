@@ -14,7 +14,8 @@ const replySchema = new mongoose.Schema(
       type: Date,
       default: Date.now
     }
-  }
+  },
+  { _id: true }
 );
 
 const reviewSchema = new mongoose.Schema(
@@ -50,7 +51,10 @@ const reviewSchema = new mongoose.Schema(
         }
       }
     ],
-    replies: [replySchema],
+    replies: {
+      type: [replySchema],
+      default: []
+    },
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -58,9 +62,7 @@ const reviewSchema = new mongoose.Schema(
       }
     ]
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 );
 
 export default mongoose.model('Review', reviewSchema);

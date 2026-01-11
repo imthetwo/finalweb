@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const categorySchema = new mongoose.Schema(
   {
@@ -6,21 +6,23 @@ const categorySchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      trim: true
+      trim: true,
+      index: true
     },
     slug: {
       type: String,
       required: true,
       unique: true,
-      lowercase: true
+      lowercase: true,
+      index: true
     },
     description: {
       type: String
     }
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 );
 
-export default mongoose.model("Category", categorySchema);
+categorySchema.index({ name: 'text', description: 'text' });
+
+export default mongoose.model('Category', categorySchema);

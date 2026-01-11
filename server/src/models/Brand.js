@@ -1,11 +1,12 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const brandSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
+      index: true
     },
     logo: {
       url: {
@@ -19,9 +20,7 @@ const brandSchema = new mongoose.Schema(
       type: String
     }
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 );
 
-export default mongoose.model("Brand", brandSchema);
+export default mongoose.model('Brand', brandSchema);
