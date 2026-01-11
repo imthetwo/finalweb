@@ -1,26 +1,11 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const categorySchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true
-    },
-    slug: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true
-    },
-    description: {
-      type: String
-    }
-  },
-  {
-    timestamps: true
-  }
-);
+const categorySchema = new mongoose.Schema({
+  name: { type: String, required: true, unique: true, trim: true, index: true },
+  slug: { type: String, required: true, unique: true, lowercase: true, index: true },
+  description: { type: String }
+}, { timestamps: true });
 
-export default mongoose.model("Category", categorySchema);
+categorySchema.index({ name: 'text', description: 'text' });
+
+export default mongoose.model('Category', categorySchema);
