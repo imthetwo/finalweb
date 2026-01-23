@@ -1,10 +1,16 @@
 
+import React from 'react'
+import { Container, Typography, Box } from '@mui/material'
+import ModeToggle from './components/ModeToggles'
+
+
 function App() {
   return (
-    <div className="container">
-      
-    </div>
+  <Box sx={{ py: 4 }}>
+
+
+  </Box>
   )
 }
 
-export default App
+export default App;
