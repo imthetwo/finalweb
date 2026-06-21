@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { formatVnd } from "@/lib/format";
 
-import { BUILD_SLOTS, MOCK_PARTS } from "../constants";
+import { BUILD_SLOTS } from "../constants";
 import { useBuild } from "../hooks/useBuild";
 import { StatusBar } from "./StatusBar";
 import { PartPickerOverlay } from "./PartPickerOverlay";
@@ -179,7 +179,7 @@ export default function CustomLabBuilder() {
       {pickerSlot && pickerCfg && (
         <PartPickerOverlay
           slotCfg={pickerCfg}
-          parts={parts[pickerSlot] ?? MOCK_PARTS[pickerSlot] ?? []}
+          parts={parts[pickerSlot] ?? []}
           currentId={selected[pickerSlot]?.id}
           loading={loading[pickerSlot] ?? false}
           buildSummary={{ count: selectedCount, total: totalPrice, watts: estimatedWatts }}
