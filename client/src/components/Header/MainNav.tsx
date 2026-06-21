@@ -26,7 +26,7 @@ import {
   SheetTrigger,
   SheetXButton,
 } from "@/components/ui/sheet";
-import { LoginOverlay } from "@/components/login/LoginOverlay";
+import { LoginOverlay } from "@/features/auth/LoginOverlay";
 
 const MOBILE_LINKS = [
   { label: "Laptops", href: "/laptops" },

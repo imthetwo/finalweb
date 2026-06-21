@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { ShoppingCart } from "lucide-react";
 
 import { apiFetch } from "@/lib/api";
-import { LoginOverlay } from "@/components/login/LoginOverlay";
+import { LoginOverlay } from "@/features/auth/LoginOverlay";
 
 const DEFAULT_CLASS =
   "w-full bg-[#00ffff] px-8 py-3 text-sm font-black uppercase tracking-wider text-black transition hover:bg-white disabled:cursor-not-allowed";

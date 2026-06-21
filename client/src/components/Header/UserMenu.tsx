@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { User, Package, Wrench, LogOut, ChevronDown, Shield } from "lucide-react";
 
 import { useAuthState } from "@/hooks/useAuthState";
-import { LoginOverlay } from "@/components/login/LoginOverlay";
-import { RegisterOverlay } from "@/components/login/RegisterOverlay";
+import { LoginOverlay } from "@/features/auth/LoginOverlay";
+import { RegisterOverlay } from "@/features/auth/RegisterOverlay";
 
 function getInitials(name: string) {
   return name

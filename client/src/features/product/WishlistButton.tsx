@@ -5,7 +5,7 @@ import { Heart } from "lucide-react";
 import { toast } from "sonner";
 
 import { addToWishlist, removeFromWishlist, fetchWishlist } from "@/lib/api";
-import { LoginOverlay } from "@/components/login/LoginOverlay";
+import { LoginOverlay } from "@/features/auth/LoginOverlay";
 
 const BTN_BASE = "flex h-12 w-12 items-center justify-center border transition-all";
 
