@@ -1,0 +1,16 @@
+# Claude Code / AI assistant artifacts
+.claude/
+
+# Dev server logs
+*.log
+
+# Local image assets (served from Cloudinary instead)
+server/local_images/
+
+# Temp folder for md→docx conversion (delete manually if present)
+.docx-tmp/
+node_modules/
+.next/
+dist/
+.env
+.env.local

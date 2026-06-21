@@ -1,0 +1,248 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── CATEGORY ─────────────────────────────────────────────────────────────────
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  products  Product[]
+  createdAt DateTime  @default(now())
+}
+
+// ─── PRODUCT ──────────────────────────────────────────────────────────────────
+
+model Product {
+  id          String   @id @default(uuid())
+  categoryId  String
+  name        String
+  brand       String
+  description String?  @db.Text
+  imageUrl    String?
+  price       Float    @default(0)
+  salePrice   Float?
+  stock       Int      @default(0)
+  isPublished Boolean  @default(false)
+
+  cpuSpec         CpuSpec?
+  gpuSpec         GpuSpec?
+  ramSpec         RamSpec?
+  motherboardSpec MotherboardSpec?
+  psuSpec         PsuSpec?
+  caseSpec        CaseSpec?
+  coolerSpec      CoolerSpec?
+  monitorSpec     MonitorSpec?
+  storageSpec     StorageSpec?
+  laptopSpec      LaptopSpec?
+
+  category   Category   @relation(fields: [categoryId], references: [id])
+  orderItems OrderItem[]
+  cartItems  CartItem[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([categoryId, isPublished])
+}
+
+// ─── SPEC TABLES ──────────────────────────────────────────────────────────────
+
+model CpuSpec {
+  id            String  @id @default(uuid())
+  productId     String  @unique
+  product       Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  socket        String
+  cores         Int
+  threads       Int
+  baseClockGhz  Float
+  boostClockGhz Float
+  tdp           Int
+  cacheL3       String?
+  generation    String?
+}
+
+model GpuSpec {
+  id            String  @id @default(uuid())
+  productId     String  @unique
+  product       Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  vramGb        Int
+  tdp           Int
+  lengthMm      Int?
+  pcieGen       Int?
+  boostClockMhz Int?
+  memType       String?
+}
+
+model RamSpec {
+  id         String  @id @default(uuid())
+  productId  String  @unique
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  capacityGb Int
+  speedMhz   Int
+  generation String
+  latency    String?
+  kit        String?
+}
+
+model MotherboardSpec {
+  id         String  @id @default(uuid())
+  productId  String  @unique
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  socket     String
+  chipset    String?
+  formFactor String
+  ramGen     String
+  ramSlots   Int
+  maxRamGb   Int?
+}
+
+model PsuSpec {
+  id         String  @id @default(uuid())
+  productId  String  @unique
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  wattage    Int
+  efficiency String?
+  modular    String?
+}
+
+model CaseSpec {
+  id              String  @id @default(uuid())
+  productId       String  @unique
+  product         Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  formFactor      String
+  maxGpuLengthMm  Int?
+  radiatorSupport String?
+  driveBays       Int?
+}
+
+model CoolerSpec {
+  id             String  @id @default(uuid())
+  productId      String  @unique
+  product        Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  coolerType     String
+  tdpRating      Int?
+  radiatorSizeMm Int?
+  socketSupport  String?
+}
+
+model MonitorSpec {
+  id            String  @id @default(uuid())
+  productId     String  @unique
+  product       Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sizeIn        Float
+  resolution    String
+  refreshRateHz Int
+  panelType     String?
+  responseMs    Float?
+  hdr           Boolean @default(false)
+}
+
+model StorageSpec {
+  id            String  @id @default(uuid())
+  productId     String  @unique
+  product       Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  capacityGb    Int
+  storageType   String
+  interfaceType String?
+  readMbps      Int?
+  writeMbps     Int?
+}
+
+model LaptopSpec {
+  id                String  @id @default(uuid())
+  productId         String  @unique
+  product           Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cpu               String
+  gpu               String?
+  ramGb             Int
+  storageGb         Int
+  displaySizeIn     Float
+  displayResolution String?
+  os                String?
+}
+
+// ─── USER ─────────────────────────────────────────────────────────────────────
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  fullName  String
+  phone     String?
+  avatarUrl String?
+  role      Role     @default(USER)
+
+  orders    Order[]
+  cart      Cart?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── CART ─────────────────────────────────────────────────────────────────────
+
+model Cart {
+  id     String     @id @default(uuid())
+  userId String     @unique
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  CartItem[]
+}
+
+model CartItem {
+  id        String  @id @default(uuid())
+  cartId    String
+  productId String
+  quantity  Int     @default(1)
+
+  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([cartId])
+}
+
+// ─── ORDER ────────────────────────────────────────────────────────────────────
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model Order {
+  id            String      @id @default(uuid())
+  userId        String
+  totalAmount   Float
+  status        OrderStatus @default(PENDING)
+  paymentMethod String
+  isPaid        Boolean     @default(false)
+  shippingInfo  Json
+
+  user  User        @relation(fields: [userId], references: [id])
+  items OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id         String  @id @default(uuid())
+  orderId    String
+  productId  String
+  quantity   Int
+  priceAtBuy Float
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+}

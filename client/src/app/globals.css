@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* ── Brand ─────────────────────────────── */
+  --primary: #00ffff;          /* cyan accent — buttons, highlights */
+  --primary-hover: #00cccc;    /* darker cyan for hover state */
+  --primary-dim: rgba(0, 255, 255, 0.15); /* subtle cyan tint */
+  --primary-foreground: #000000;
+
+  /* ── Backgrounds ────────────────────────── */
+  --background: #0a0a0a;       /* root page background */
+  --surface: #0d0d0d;          /* sidebar, panels */
+  --surface-elevated: #111111; /* cards, product tiles */
+  --surface-overlay: #141414;  /* modals, dropdowns */
+  --surface-glass: rgba(10, 10, 10, 0.85);
+
+  /* ── Borders ────────────────────────────── */
+  --border: rgba(255, 255, 255, 0.08);        /* zinc-800 equivalent */
+  --border-muted: rgba(255, 255, 255, 0.04);  /* faint dividers */
+  --border-primary: rgba(0, 255, 255, 0.3);   /* cyan border */
+
+  /* ── Text ───────────────────────────────── */
+  --foreground: #ffffff;
+  --foreground-secondary: #a1a1aa;   /* zinc-400 */
+  --foreground-muted: #71717a;       /* zinc-500 */
+  --foreground-subtle: #52525b;      /* zinc-600 */
+
+  /* ── Shadcn compat (used by ui components) */
+  --card: var(--surface-elevated);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface-overlay);
+  --popover-foreground: var(--foreground);
+  --secondary: #27272a;
+  --secondary-foreground: var(--foreground);
+  --muted: var(--surface);
+  --muted-foreground: var(--foreground-muted);
+  --accent: var(--surface-elevated);
+  --accent-foreground: var(--foreground);
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: var(--primary);
+  --neon-50: #effefd;
+  --neon-100: #d4fffb;
+  --neon-200: #a8fffa;
+  --neon-300: #79f6f0;
+  --neon-400: #4be9de;
+  --neon-500: #27d6cd;
+  --neon-600: #1bb0aa;
+  --neon-700: #178d8a;
+  --neon-800: #136d6d;
+  --neon-900: #0f5358;
+  --spacing-shell: 2.5rem;
+  --spacing-gutter: 1rem;
+  --spacing-section: 5rem;
+  --radius-card: 0rem;
+  --radius-soft: 0rem;
+  --animate-marquee: marquee 20s linear infinite;
+  --animate-shimmer: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@theme {
+  /* Tailwind sinh ra: bg-brand, text-brand, border-brand, ... */
+  --color-brand: var(--primary);
+  --color-brand-hover: var(--primary-hover);
+  --color-brand-dim: var(--primary-dim);
+  --color-brand-fg: var(--primary-foreground);
+
+  /* bg-base, bg-surface, bg-elevated, bg-overlay */
+  --color-base: var(--background);
+  --color-surface: var(--surface);
+  --color-elevated: var(--surface-elevated);
+  --color-overlay: var(--surface-overlay);
+  --color-glass: var(--surface-glass);
+
+  /* border-edge, border-faint, border-brand */
+  --color-edge: var(--border);
+  --color-edge-faint: var(--border-muted);
+  --color-edge-brand: var(--border-primary);
+
+  /* text-fg, text-secondary, text-muted, text-subtle */
+  --color-fg: var(--foreground);
+  --color-secondary: var(--foreground-secondary);
+  --color-muted: var(--foreground-muted);
+  --color-subtle: var(--foreground-subtle);
+
+  /* Shadcn compat */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --animate-shimmer: shimmer 1.5s ease-in-out infinite;
+  --animate-marquee: var(--animate-marquee);
+  --spacing-shell: var(--spacing-shell);
+  --radius-card: var(--radius-card);
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@utility glass-card {
+  border: 1px solid var(--border);
+  background: var(--surface-glass);
+  backdrop-filter: blur(10px);
+}
+
+@utility neon-glow-text {
+  text-shadow: 0 0 16px rgba(103, 246, 240, 0.56), 0 0 36px rgba(103, 246, 240, 0.18);
+}
+
+@utility technical-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px, 32px 32px, 100% 100%;
+}
+
+@utility layout-shell {
+  max-width: 90rem;
+  margin-inline: auto;
+  padding-inline: var(--spacing-shell);
+}
+
+@utility section-stack {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@utility panel-border {
+  border: 1px solid color-mix(in srgb, var(--neon-200) 10%, transparent);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-geist-sans), sans-serif;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--primary) 30%, transparent);
+    color: #002020;
+  }
+}
+
+.animate-marquee {
+  animation: var(--animate-marquee);
+}
+
+.nav-underline-effect {
+  position: relative;
+}
+
+.nav-underline-effect::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary);
+  transition: width 0.3s ease;
+}
+
+.nav-underline-effect:hover::after,
+.nav-underline-effect[data-active="true"]::after {
+  width: 100%;
+}
