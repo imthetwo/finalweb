@@ -61,13 +61,13 @@ export class AuthService {
 
 		const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || user.email.split('@')[0];
 		const avatarUrl = user.picture || null;
-		const existingUser = await (this.prisma as any).user.findUnique({ where: { email: user.email } });
+		const existingUser = await this.prisma.user.findUnique({ where: { email: user.email } });
 
 		let account = existingUser;
 
 		if (!account) {
 			const dummyPassword = await bcrypt.hash(`google-${randomBytes(24).toString('hex')}`, 10);
-			account = await (this.prisma as any).user.create({
+			account = await this.prisma.user.create({
 				data: {
 					email: user.email,
 					password: dummyPassword,
@@ -76,7 +76,7 @@ export class AuthService {
 				},
 			});
 		} else {
-			account = await (this.prisma as any).user.update({
+			account = await this.prisma.user.update({
 				where: { email: user.email },
 				data: {
 					fullName: account.fullName || fullName,

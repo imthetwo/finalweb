@@ -51,7 +51,7 @@ export class PaymentsService {
     const serverUrl  = process.env.API_PUBLIC_URL || 'http://localhost:3001';
 
     // MoMo orderId must be unique + ≤ 50 chars
-    const momoOrderId = `PEC-${order.id.replace(/-/g, '').slice(0, 20)}-${Date.now()}`;
+    const momoOrderId = `PEC-${order.id.replace(/-/g, '').slice(0, 20)}-${crypto.randomBytes(4).toString('hex')}`;
     const requestId   = `${PARTNER_CODE}${Date.now()}`;
     const orderInfo   = `Pecify order ${order.id.slice(0, 8).toUpperCase()}`;
     const redirectUrl = `${clientUrl}/payment/momo?orderId=${order.id}`;
@@ -112,10 +112,10 @@ export class PaymentsService {
         throw new BadRequestException(`MoMo error: ${data.message}`);
       }
 
-      // Store momoOrderId so IPN can look up our internal orderId
+      // Store momoOrderId so IPN can map back to our internal orderId
       await this.prisma.order.update({
         where: { id: order.id },
-        data: { isPaid: false },
+        data: { momoOrderId },
       });
 
       return {
@@ -171,7 +171,7 @@ export class PaymentsService {
     }
 
     const order = await this.prisma.order.findFirst({
-      where: { id: body.orderId },
+      where: { momoOrderId: body.orderId },
       include: { items: true, user: { select: { email: true } } },
     });
 

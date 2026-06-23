@@ -230,6 +230,7 @@ model Order {
   paymentMethod String
   isPaid        Boolean     @default(false)
   shippingInfo  Json
+  momoOrderId   String?     @unique
 
   user  User        @relation(fields: [userId], references: [id])
   items OrderItem[]

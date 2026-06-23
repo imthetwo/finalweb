@@ -61,7 +61,7 @@ export function CartView() {
           <p className="text-brand">{formatVnd(item.lineTotal)}</p>
           {!item.customBuildId && (
             <div className="mt-2 flex items-center gap-2">
-              <button type="button" onClick={() => updateQty(item.id, item.quantity - 1)} className="border border-edge px-2">−</button>
+              <button type="button" onClick={() => updateQty(item.id, item.quantity - 1)} disabled={item.quantity <= 1} className="border border-edge px-2 disabled:opacity-30">−</button>
               <span className="text-fg">{item.quantity}</span>
               <button type="button" onClick={() => updateQty(item.id, item.quantity + 1)} className="border border-edge px-2">+</button>
             </div>

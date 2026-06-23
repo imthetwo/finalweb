@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AddCartItemDto } from './dto/add-cart-item.dto';
+import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import type { Request } from 'express';
 
 @Controller('cart')
@@ -20,18 +22,18 @@ export class CartController {
   @Post('items')
   add(
     @Req() req: Request & { user: { userId: string } },
-    @Body() body: { productId: string; quantity?: number },
+    @Body() dto: AddCartItemDto,
   ) {
-    return this.cartService.addItem(this.uid(req), body.productId, body.quantity ?? 1);
+    return this.cartService.addItem(this.uid(req), dto.productId, dto.quantity ?? 1);
   }
 
   @Patch('items/:id')
   update(
     @Req() req: Request & { user: { userId: string } },
     @Param('id') id: string,
-    @Body() body: { quantity: number },
+    @Body() dto: UpdateCartItemDto,
   ) {
-    return this.cartService.updateQuantity(this.uid(req), id, body.quantity);
+    return this.cartService.updateQuantity(this.uid(req), id, dto.quantity);
   }
 
   @Delete('items/:id')
