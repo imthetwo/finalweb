@@ -4,70 +4,70 @@ import { ArrowRight } from "lucide-react";
 import { cdn } from "@/lib/cloudinary";
 import { serverApiUrl } from "@/lib/api";
 
-// ─── 10 categories with images from local_images (symbolic) ────────
+// key phải khớp đúng với category name trong DB
 const CATEGORIES = [
   {
-    key: "pc-cases",
+    key: "PC Cases",
     label: "Cases",
-    href: "/components/chassis-modding/pc-cases",
+    href: "/components/pc-cases",
     // white H9 Flow case — clean product shot
     img: cdn("case", "Case_H9_Flow_RGB__WH_Carousel_Hero_EN_d5c60367-c559-4b2e-9fc1-2fefda287bed.png"),
   },
   {
-    key: "prebuilt-pcs",
+    key: "Prebuilt PCs",
     label: "Gaming PCs",
     href: "/pcs",
     img: cdn("PCs", "h7-flow-rgb-hero-white.png"),
   },
   {
-    key: "ram",
+    key: "RAM",
     label: "Memory",
-    href: "/components/memory-storage/ram",
+    href: "/components/ram",
     // Vengeance RGB DDR5 — colourful, looks great on dark bg
     img: cdn("memory", "Vengeance-RGB-DDR5-2UP-32GB-GRAY_01.webp"),
   },
   {
-    key: "mechanical-keyboards",
+    key: "Mechanical Keyboards",
     label: "Keyboards",
-    href: "/gaming-gear/input-devices/mechanical-keyboards",
+    href: "/gaming-gear/mechanical-keyboards",
     img: cdn("keyboard", "MAKR75_Hero_Shot_Front.png"),
   },
   {
-    key: "gaming-headsets",
+    key: "Gaming Headsets",
     label: "Headsets",
-    href: "/gaming-gear/audio/gaming-headsets",
+    href: "/gaming-gear/gaming-headsets",
     img: cdn("headphones", "g535-wireless-gallery-1.png"),
   },
   {
-    key: "power-supplies",
+    key: "Power Supplies",
     label: "Power Supplies",
-    href: "/components/power-cooling/psu",
+    href: "/components/power-supplies",
     img: cdn("power-supply", "100-GD-0600-V1_MD_1.png"),
   },
   {
-    key: "cpu-coolers",
+    key: "CPU Coolers",
     label: "Coolers",
-    href: "/components/power-cooling/aio-liquid-coolers",
+    href: "/components/cpu-coolers",
     // NZXT Kraken AIO — iconic product shot
     img: cdn("cpu-cooler", "01_Kraken_Plus_RGB_240_white_7cf2ef28-fe55-4788-ba1e-c7c8dfd187e4.png"),
   },
   {
-    key: "wireless-mice",
+    key: "Gaming Mice",
     label: "Gaming Mice",
-    href: "/gaming-gear/input-devices/wireless-mice",
+    href: "/gaming-gear/gaming-mice",
     // White wireless mouse — pops on dark bg
     img: cdn("mouse", "g309-lightspeed-wireless-mouse-white-gallery-1.png"),
   },
   {
-    key: "case-fans",
+    key: "Case Fans",
     label: "Fans",
-    href: "/components/power-cooling/case-fans",
+    href: "/components/case-fans",
     img: cdn("case-fan", "Etail_F120X_White_Carousel_Hero_EN.png"),
   },
   {
-    key: "gaming-furniture",
+    key: "Gaming Furniture",
     label: "Furniture",
-    href: "/gaming-furniture/seating/ergonomic-chairs",
+    href: "/gaming-furniture",
     // Cloudinary: TechStore/funiture/ — white Corsair gaming chair
     img: cdn("funiture", "CF-9010068-WW_01.webp"),
   },

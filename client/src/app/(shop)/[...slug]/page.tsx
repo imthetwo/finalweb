@@ -6,37 +6,24 @@ type Props = {
   searchParams: Promise<{ page?: string; search?: string }>;
 };
 
-// Map URL keywords → DB category name (chứa từ khóa)
+// Map URL segment → tên category chính xác trong DB
 const URL_TO_CATEGORY: Record<string, string> = {
   processors: "Processors (CPU)",
-  cpu: "Processors (CPU)",
-  "graphics-cards": "Graphics Cards (GPU)",
   gpu: "Graphics Cards (GPU)",
+  "graphics-cards": "Graphics Cards (GPU)",
   ram: "RAM",
-  memory: "RAM",
   motherboards: "Motherboards",
-  psu: "Power Supplies",
   "power-supplies": "Power Supplies",
   "pc-cases": "PC Cases",
-  cases: "PC Cases",
   "cpu-coolers": "CPU Coolers",
-  "aio-liquid-coolers": "CPU Coolers",
-  "air-coolers": "CPU Coolers",
-  "gaming-monitors": "Gaming Monitors",
-  monitors: "Gaming Monitors",
-  storage: "Storage (SSD/HDD)",
-  "nvme-ssds": "Storage (SSD/HDD)",
-  hdd: "Storage (SSD/HDD)",
-  "mechanical-keyboards": "Mechanical Keyboards",
-  keyboards: "Mechanical Keyboards",
-  "wireless-mice": "Gaming Mice",
-  mice: "Gaming Mice",
-  "gaming-headsets": "Gaming Headsets",
-  headsets: "Gaming Headsets",
   "case-fans": "Case Fans",
-  laptops: "Prebuilt PCs",
+  storage: "Storage (SSD/HDD)",
+  "gaming-monitors": "Gaming Monitors",
+  "mechanical-keyboards": "Mechanical Keyboards",
+  "gaming-mice": "Gaming Mice",
+  "gaming-headsets": "Gaming Headsets",
+  laptops: "Laptops",
   pcs: "Prebuilt PCs",
-  furniture: "Gaming Furniture",
   "gaming-furniture": "Gaming Furniture",
 };
 

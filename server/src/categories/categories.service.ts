@@ -37,17 +37,24 @@ export class CategoriesService {
     }
     const counts = await this.productsService.countByCategory();
     const cats = await this.prisma.category.findMany({ orderBy: { name: 'asc' } });
+
+    // categoryCounts keyed by category name — dùng bởi ShopByCategory frontend
+    const categoryCounts: Record<string, number> = {};
+    for (const c of cats) {
+      categoryCounts[c.name] = counts[c.id] ?? 0;
+    }
+
     const sections = cats
       .filter((c) => (counts[c.id] ?? 0) > 0)
       .map((c) => ({
-        key: c.id,
-        href: `/shop?categoryId=${c.id}`,
+        key: c.name,
+        href: `/components/${c.name.toLowerCase().replace(/\s+/g, '-')}`,
         categoryId: c.id,
         name: c.name,
         productCount: counts[c.id] ?? 0,
-        columns: [{ title: c.name, links: [{ label: c.name, href: `/shop?categoryId=${c.id}`, productCount: counts[c.id] ?? 0 }] }],
+        columns: [{ title: c.name, links: [{ label: c.name, href: `/components/${c.name.toLowerCase().replace(/\s+/g, '-')}`, productCount: counts[c.id] ?? 0 }] }],
       }));
-    const data = { sections };
+    const data = { sections, categoryCounts };
     this.menuCache = { data, ts: Date.now() };
     return data;
   }

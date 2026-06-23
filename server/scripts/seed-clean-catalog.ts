@@ -1,49 +1,28 @@
-// @ts-nocheck
 import { prisma } from './prisma-client';
-
-function slugify(s: string) {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80);
-}
 
 async function main() {
   console.log('🧹 Clearing old products and dependents…');
-  await prisma.review.deleteMany();
-  await prisma.wishlist.deleteMany();
-  await prisma.cartItem.deleteMany();
-  await prisma.buildItem.deleteMany();
-  await prisma.customBuild.deleteMany();
   await prisma.orderItem.deleteMany();
-  await prisma.couponUsage.deleteMany();
   await prisma.order.deleteMany();
+  await prisma.cartItem.deleteMany();
   await prisma.product.deleteMany();
 
   let count = 0;
 
-  // ─── HELPER ───────────────────────────────────────────────────────────────
-  async function createProduct(slug: string, p: any, specRelation?: object) {
-    const category = await prisma.category.findUnique({ where: { slug } });
-    if (!category) { console.warn(`⚠️  Missing category: ${slug}`); return; }
-    const BUILDER_SLOTS: Record<string, string> = {
-      processors: 'CPU', motherboards: 'MOTHERBOARD', ram: 'MEMORY',
-      'graphics-cards': 'GPU', storage: 'STORAGE', 'power-supplies': 'POWER_SUPPLY',
-      'pc-cases': 'CASE', 'cpu-coolers': 'CPU_COOLER', 'case-fans': 'CASE_FAN',
-    };
-    const sku = `PEC-${slugify(p.name)}`.slice(0, 60);
+  // Tra category theo name từ DB
+  async function createProduct(categoryName: string, p: any, specRelation?: object) {
+    const category = await prisma.category.findFirst({ where: { name: categoryName } });
+    if (!category) { console.warn(`⚠️  Missing category: ${categoryName}`); return; }
     await prisma.product.create({
       data: {
         categoryId: category.id,
-        sku,
-        slug: slugify(p.name),
         name: p.name,
         brand: p.brand,
-        localImagePath: `local_images/${p.folder}/${p.file}`,
-        images: [{ url: `/media/${p.folder}/${encodeURIComponent(p.file)}`, view: 'hero' }],
+        imageUrl: `/media/${p.folder}/${encodeURIComponent(p.file)}`,
         price: p.price,
         salePrice: p.sale ?? null,
         stock: p.stock ?? Math.floor(Math.random() * 30) + 8,
         isPublished: true,
-        isPrebuilt: slug === 'prebuilt-pcs',
-        isBuilderEligible: Boolean(BUILDER_SLOTS[slug]),
         ...specRelation,
       },
     });
@@ -62,7 +41,7 @@ async function main() {
     { folder: 'cpu', file: '14700kf-tray.jpg', name: 'AMD Ryzen 7 9800X3D', brand: 'AMD', price: 12990000, socket: 'AM5', cores: 8, threads: 16, baseClockGhz: 4.7, boostClockGhz: 5.2, tdp: 120, cacheL3: '96MB', generation: 'Ryzen 9000' },
   ];
   for (const p of cpus) {
-    await createProduct('processors', p, {
+    await createProduct('Processors (CPU)', p, {
       cpuSpec: { create: { socket: p.socket, cores: p.cores, threads: p.threads, baseClockGhz: p.baseClockGhz, boostClockGhz: p.boostClockGhz, tdp: p.tdp, cacheL3: p.cacheL3, generation: p.generation } },
     });
   }
@@ -78,7 +57,7 @@ async function main() {
     { folder: 'gpu', file: '3080_iCHILL_Black_set.png', name: 'NVIDIA GeForce RTX 3080 iCHILL Black', brand: 'NVIDIA', price: 12990000, sale: 10990000, vramGb: 10, tdp: 320, lengthMm: 305, pcieGen: 4, boostClockMhz: 1710, memType: 'GDDR6X' },
   ];
   for (const p of gpus) {
-    await createProduct('graphics-cards', p, {
+    await createProduct('Graphics Cards (GPU)', p, {
       gpuSpec: { create: { vramGb: p.vramGb, tdp: p.tdp, lengthMm: p.lengthMm, pcieGen: p.pcieGen, boostClockMhz: p.boostClockMhz, memType: p.memType } },
     });
   }
@@ -94,7 +73,7 @@ async function main() {
     { folder: 'motherboard', file: '48178.png', name: 'MSI PRO B760M-A WIFI DDR4', brand: 'MSI', price: 2990000, socket: 'LGA1700', chipset: 'B760', formFactor: 'mATX', ramGen: 'DDR4', ramSlots: 4, maxRamGb: 128 },
   ];
   for (const p of motherboards) {
-    await createProduct('motherboards', p, {
+    await createProduct('Motherboards', p, {
       motherboardSpec: { create: { socket: p.socket, chipset: p.chipset, formFactor: p.formFactor, ramGen: p.ramGen, ramSlots: p.ramSlots, maxRamGb: p.maxRamGb } },
     });
   }
@@ -110,7 +89,7 @@ async function main() {
     { folder: 'memory', file: '30680.png', name: 'Kingston Fury Beast DDR4 16GB 3600MHz', brand: 'Kingston', price: 1290000, capacityGb: 16, speedMhz: 3600, generation: 'DDR4', latency: 'CL16', kit: '1x16GB' },
   ];
   for (const p of rams) {
-    await createProduct('ram', p, {
+    await createProduct('RAM', p, {
       ramSpec: { create: { capacityGb: p.capacityGb, speedMhz: p.speedMhz, generation: p.generation, latency: p.latency, kit: p.kit } },
     });
   }
@@ -124,7 +103,7 @@ async function main() {
     { folder: 'storage', file: 'vn-portable-ssd-mu-pd4t0g-ww-thumb-549696538.png', name: 'Samsung T9 Portable SSD 4TB', brand: 'Samsung', price: 5890000, sale: 5290000, capacityGb: 4000, storageType: 'SSD', interfaceType: 'USB 3.2', readMbps: 2000, writeMbps: 1950 },
   ];
   for (const p of storages) {
-    await createProduct('storage', p, {
+    await createProduct('Storage (SSD/HDD)', p, {
       storageSpec: { create: { capacityGb: p.capacityGb, storageType: p.storageType, interfaceType: p.interfaceType, readMbps: p.readMbps, writeMbps: p.writeMbps } },
     });
   }
@@ -140,7 +119,7 @@ async function main() {
     { folder: 'power-supply', file: '100-GD-0600-V1_MD_1.png', name: 'Cooler Master MWE Gold 650W', brand: 'Cooler Master', price: 1890000, sale: 1690000, wattage: 650, efficiency: '80+ Gold', modular: 'Non' },
   ];
   for (const p of psus) {
-    await createProduct('power-supplies', p, {
+    await createProduct('Power Supplies', p, {
       psuSpec: { create: { wattage: p.wattage, efficiency: p.efficiency, modular: p.modular } },
     });
   }
@@ -156,7 +135,7 @@ async function main() {
     { folder: 'case', file: 'q300l-v2-black-white-380x380-1.png', name: 'Cooler Master Q300L V2', brand: 'Cooler Master', price: 1290000, sale: 1090000, formFactor: 'mATX', maxGpuLengthMm: 360, radiatorSupport: '240mm', driveBays: 2 },
   ];
   for (const p of cases) {
-    await createProduct('pc-cases', p, {
+    await createProduct('PC Cases', p, {
       caseSpec: { create: { formFactor: p.formFactor, maxGpuLengthMm: p.maxGpuLengthMm, radiatorSupport: p.radiatorSupport, driveBays: p.driveBays } },
     });
   }
@@ -170,7 +149,7 @@ async function main() {
     { folder: 'cpu-cooler', file: '01_KrakenPlus_nonRGB_280_black.png', name: 'NZXT Kraken 280 Black AIO', brand: 'NZXT', price: 2990000, coolerType: 'AIO', tdpRating: 325, radiatorSizeMm: 280, socketSupport: 'AM5,AM4,LGA1700,LGA1851' },
   ];
   for (const p of coolers) {
-    await createProduct('cpu-coolers', p, {
+    await createProduct('CPU Coolers', p, {
       coolerSpec: { create: { coolerType: p.coolerType, tdpRating: p.tdpRating, radiatorSizeMm: p.radiatorSizeMm, socketSupport: p.socketSupport } },
     });
   }
@@ -185,7 +164,7 @@ async function main() {
     { folder: 'monitor', file: '47425.png', name: 'LG 34" UltraWide QHD 144Hz', brand: 'LG', price: 11990000, sizeIn: 34, resolution: '3440x1440', refreshRateHz: 144, panelType: 'IPS', responseMs: 1.0, hdr: true },
   ];
   for (const p of monitors) {
-    await createProduct('gaming-monitors', p, {
+    await createProduct('Gaming Monitors', p, {
       monitorSpec: { create: { sizeIn: p.sizeIn, resolution: p.resolution, refreshRateHz: p.refreshRateHz, panelType: p.panelType, responseMs: p.responseMs, hdr: p.hdr } },
     });
   }
@@ -199,21 +178,21 @@ async function main() {
     { folder: 'laptops', file: 'product_1772422403c8210c439aa9be7ff42de8aab289f087.webp', name: 'MSI Stealth 16 AI Studio', brand: 'MSI', price: 52990000, cpu: 'Intel Core Ultra 7 155H', gpu: 'RTX 4070 Ti', ramGb: 32, storageGb: 2000, displaySizeIn: 16, displayResolution: '3840x2400', os: 'Windows 11' },
   ];
   for (const p of laptops) {
-    await createProduct('laptops', p, {
+    await createProduct('Laptops', p, {
       laptopSpec: { create: { cpu: p.cpu, gpu: p.gpu, ramGb: p.ramGb, storageGb: p.storageGb, displaySizeIn: p.displaySizeIn, displayResolution: p.displayResolution, os: p.os } },
     });
   }
   console.log(`✅ laptops: ${laptops.length}`);
 
   // ─── PERIPHERALS (no spec table) ──────────────────────────────────────────
-  const peripherals: { slug: string; items: any[] }[] = [
-    { slug: 'case-fans', items: [
+  const peripherals: { categoryName: string; items: any[] }[] = [
+    { categoryName: 'Case Fans', items: [
       { folder: 'case-fan', file: 'Etail_F120X_White_Carousel_Hero_EN.png', name: 'Corsair iCUE LINK RX120 RGB White 3-Pack', brand: 'Corsair', price: 1990000, sale: 1690000 },
       { folder: 'case-fan', file: 'Etail_F120X_Black_Carousel_Hero_EN.png', name: 'Corsair iCUE LINK RX120 RGB Black 3-Pack', brand: 'Corsair', price: 1990000 },
       { folder: 'case-fan', file: 'Etail_F360X_Black_Carousel_Hero_EN.png', name: 'Corsair iCUE LINK RX360 RGB Black', brand: 'Corsair', price: 990000, sale: 790000 },
       { folder: 'case-fan', file: 'f140p-hero-white.png', name: 'Corsair AF140 Elite White', brand: 'Corsair', price: 690000 },
     ]},
-    { slug: 'mechanical-keyboards', items: [
+    { categoryName: 'Mechanical Keyboards', items: [
       { folder: 'keyboard', file: 'g515-lightspeed-tkl-top-angle-gallery-1-en-fr.png', name: 'Logitech G515 Lightspeed TKL', brand: 'Logitech', price: 4290000, sale: 3790000 },
       { folder: 'keyboard', file: 'g915-x-tkl-wireless-keyboard-gallery-1-us.png', name: 'Logitech G915 X TKL Wireless', brand: 'Logitech', price: 5490000 },
       { folder: 'keyboard', file: 'g512-x-75-black-top-angle-gallery-1.png', name: 'Logitech G512 X RGB Mechanical', brand: 'Logitech', price: 2490000, sale: 1990000 },
@@ -221,14 +200,14 @@ async function main() {
       { folder: 'keyboard', file: 'g413-se-gallery-4-new.png', name: 'Logitech G413 SE Mechanical', brand: 'Logitech', price: 1490000 },
       { folder: 'keyboard', file: 'g213-gallery-1-nb.png', name: 'Logitech G213 Prodigy RGB', brand: 'Logitech', price: 990000, sale: 790000 },
     ]},
-    { slug: 'wireless-mice', items: [
+    { categoryName: 'Gaming Mice', items: [
       { folder: 'mouse', file: 'g309-lightspeed-wireless-mouse-white-gallery-1.png', name: 'Logitech G309 Lightspeed Wireless White', brand: 'Logitech', price: 1790000, sale: 1490000 },
       { folder: 'mouse', file: 'g502-hero-mouse-top-angle-gallery-1.png', name: 'Logitech G502 HERO', brand: 'Logitech', price: 1490000 },
       { folder: 'mouse', file: 'g305-lightspeed-mouse-top-angle-black-gallery-1.png', name: 'Logitech G305 Lightspeed', brand: 'Logitech', price: 990000, sale: 790000 },
       { folder: 'mouse', file: 'g403-hero-mouse-top-angle-black-gallery-1.png', name: 'Logitech G403 HERO', brand: 'Logitech', price: 1290000 },
       { folder: 'mouse', file: 'g203-mouse-top-angle-black-gallery-1.png', name: 'Logitech G203 Lightsync', brand: 'Logitech', price: 590000 },
     ]},
-    { slug: 'gaming-headsets', items: [
+    { categoryName: 'Gaming Headsets', items: [
       { folder: 'headphones', file: 'g733-white-gallery-1.png', name: 'Logitech G733 Lightspeed Wireless White', brand: 'Logitech', price: 3490000, sale: 2990000 },
       { folder: 'headphones', file: 'g535-wireless-gallery-1.png', name: 'Logitech G535 Lightspeed Wireless', brand: 'Logitech', price: 2490000 },
       { folder: 'headphones', file: 'g633-gallery-1.png', name: 'Logitech G635 RGB Gaming Headset', brand: 'Logitech', price: 2990000 },
@@ -236,7 +215,7 @@ async function main() {
       { folder: 'headphones', file: 'g435-3qtr-front-left-angle-black-gallery-1.png', name: 'Logitech G435 Lightspeed Wireless', brand: 'Logitech', price: 1490000 },
       { folder: 'headphones', file: 'g335-black-gallery-1.png', name: 'Logitech G335 Wired Gaming Headset', brand: 'Logitech', price: 1790000 },
     ]},
-    { slug: 'gaming-furniture', items: [
+    { categoryName: 'Gaming Furniture', items: [
       { folder: 'funiture', file: 'CF-9010068-WW_01.webp', name: 'Corsair TC500 LUXE Gaming Chair', brand: 'Corsair', price: 9900000, sale: 8490000 },
       { folder: 'funiture', file: 'ChairPro.webp', name: 'Pecify ChairPro Ergonomic', brand: 'Pecify', price: 7990000 },
       { folder: 'funiture', file: 'ErgoCore.webp', name: 'Pecify ErgoCore Mesh Chair', brand: 'Pecify', price: 6900000, sale: 5990000 },
@@ -244,7 +223,7 @@ async function main() {
       { folder: 'funiture', file: 'PLATFORM_4_ELEVATE_WOOD_R_07.png', name: 'Corsair Platform:4 Elevate Standing Desk', brand: 'Corsair', price: 8900000, sale: 7900000 },
       { folder: 'funiture', file: 'T3-RUSH-Fabric-Gaming-Chair-_2023_---Charcoal-0.webp', name: 'Thermaltake T3 RUSH Fabric Chair', brand: 'Thermaltake', price: 7490000, sale: 6490000 },
     ]},
-    { slug: 'prebuilt-pcs', items: [
+    { categoryName: 'Prebuilt PCs', items: [
       { folder: 'PCs', file: 'h7-flow-rgb-hero-white.png', name: 'Pecify Vortex — RTX 4090 / Ultra 9', brand: 'Pecify', price: 75990000, sale: 72990000 },
       { folder: 'PCs', file: 'h6-flow-rgb-hero-white.png', name: 'Pecify Stealth — RTX 4070 / i7-14700K', brand: 'Pecify', price: 42990000, sale: 39990000 },
       { folder: 'PCs', file: 'h7-flow-hero-white.png', name: 'Pecify Frost — RTX 4070 Ti / Ultra 7', brand: 'Pecify', price: 38990000 },
@@ -252,9 +231,9 @@ async function main() {
     ]},
   ];
 
-  for (const { slug, items } of peripherals) {
-    for (const p of items) await createProduct(slug, p);
-    console.log(`✅ ${slug}: ${items.length}`);
+  for (const { categoryName, items } of peripherals) {
+    for (const p of items) await createProduct(categoryName, p);
+    console.log(`✅ ${categoryName}: ${items.length}`);
   }
 
   console.log(`\n🎉 Curated catalog seeded: ${count} products`);
