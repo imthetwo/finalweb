@@ -35,7 +35,7 @@ export class AuthService {
 				fullName: dto.fullName,
 			},
 		});
-		const payload = { sub: user.id, email: user.email, role: user.role };
+		const payload = { sub: user.id, email: user.email, fullName: user.fullName, role: user.role };
 		const access_token = this.jwtService.sign(payload);
 		return {
 			access_token,
@@ -47,7 +47,7 @@ export class AuthService {
 		const user = await this.validateUser(dto.email, dto.password);
 		if (!user) throw new UnauthorizedException('Invalid credentials');
 
-		const payload = { sub: user.id, email: user.email, role: user.role };
+		const payload = { sub: user.id, email: user.email, fullName: user.fullName, role: user.role };
 		const access_token = this.jwtService.sign(payload);
 
 		const safeUser = { id: user.id, email: user.email, fullName: user.fullName, role: user.role };
@@ -85,7 +85,7 @@ export class AuthService {
 			});
 		}
 
-		const payload = { sub: account.id, email: account.email, role: account.role };
+		const payload = { sub: account.id, email: account.email, fullName: account.fullName, role: account.role };
 		const access_token = this.jwtService.sign(payload);
 		const safeUser = { id: account.id, email: account.email, fullName: account.fullName, role: account.role, avatarUrl: account.avatarUrl };
 

@@ -74,6 +74,17 @@ async function main() {
   }
 
   console.log(`✅ Sample orders: ${made}`);
+
+  // ── 4. Coupons ──
+  const coupons = [
+    { code: 'WELCOME10', discountPct: 10,    minOrderValue: 2000000, maxUse: 1000 },
+    { code: 'SAVE500K',  discountFixed: 500000, minOrderValue: 5000000, maxUse: 500 },
+  ];
+  for (const c of coupons) {
+    await prisma.coupon.upsert({ where: { code: c.code }, create: c, update: { isActive: true } });
+  }
+  console.log(`✅ Coupons: ${coupons.map((c) => c.code).join(', ')}`);
+
   console.log('\n🎉 Seed admin hoàn tất.');
 }
 

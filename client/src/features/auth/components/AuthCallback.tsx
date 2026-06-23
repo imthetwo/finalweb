@@ -21,6 +21,7 @@ export function AuthCallback() {
 
     try {
       localStorage.setItem("access_token", token);
+    window.dispatchEvent(new Event("auth:change"));
     } catch {
       document.cookie = `access_token=${token}; path=/`;
     }

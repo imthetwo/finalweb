@@ -23,26 +23,32 @@ function parseJwt(token: string): AuthUser | null {
   }
 }
 
+function readUser(): AuthUser | null {
+  const token = localStorage.getItem("access_token");
+  return token ? parseJwt(token) : null;
+}
+
 export function useAuthState() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    setUser(token ? parseJwt(token) : null);
+    setUser(readUser());
     setLoaded(true);
+
+    // Lắng nghe event auth:change để cập nhật ngay khi login/logout
+    const handleChange = () => setUser(readUser());
+    window.addEventListener("auth:change", handleChange);
+    return () => window.removeEventListener("auth:change", handleChange);
   }, []);
 
   const logout = () => {
     localStorage.removeItem("access_token");
-    setUser(null);
+    window.dispatchEvent(new Event("auth:change"));
     window.location.href = "/";
   };
 
-  const refresh = () => {
-    const token = localStorage.getItem("access_token");
-    setUser(token ? parseJwt(token) : null);
-  };
+  const refresh = () => setUser(readUser());
 
   return { user, loaded, logout, refresh };
 }

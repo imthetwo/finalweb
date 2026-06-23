@@ -118,6 +118,7 @@ export function LoginOverlay({ triggerButton, open: controlledOpen, onOpenChange
       }
 
       localStorage.setItem("access_token", data.access_token);
+      window.dispatchEvent(new Event("auth:change"));
       toast.success("Signed in successfully.");
       reset();
       setShowPassword(false);

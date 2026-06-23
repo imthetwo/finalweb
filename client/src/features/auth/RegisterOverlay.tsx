@@ -128,6 +128,7 @@ export function RegisterOverlay({ triggerButton, open: controlledOpen, onOpenCha
       }
 
       localStorage.setItem("access_token", data.access_token);
+      window.dispatchEvent(new Event("auth:change"));
       toast.success("Account created successfully.");
       reset();
       setShowPassword(false);
