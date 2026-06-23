@@ -28,7 +28,6 @@ export default function ReviewsSection({ productId }: { productId: string }) {
 
   // Write-review form state
   const [rating, setRating] = useState(5);
-  const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -48,9 +47,9 @@ export default function ReviewsSection({ productId }: { productId: string }) {
     }
     setSubmitting(true);
     try {
-      await createReview({ productId, rating, title: title || undefined, text: text || undefined });
+      await createReview({ productId, rating, text: text || undefined });
       toast.success("Review submitted");
-      setTitle(""); setText(""); setRating(5);
+      setText(""); setRating(5);
       load();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to submit review");
@@ -116,12 +115,6 @@ export default function ReviewsSection({ productId }: { productId: string }) {
             </div>
           </div>
 
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Title (optional)"
-            className="w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50 placeholder:text-subtle"
-          />
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
