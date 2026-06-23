@@ -13,7 +13,7 @@ function Stars({ value, size = 14 }: { value: number; size?: number }) {
         <Star
           key={i}
           size={size}
-          className={i <= Math.round(value) ? "fill-[#00ffff] text-brand" : "text-subtle"}
+          className={i <= Math.round(value) ? "fill-brand text-brand" : "text-subtle"}
         />
       ))}
     </div>
@@ -110,7 +110,7 @@ export default function ReviewsSection({ productId }: { productId: string }) {
             <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((i) => (
                 <button key={i} type="button" onClick={() => setRating(i)} aria-label={`${i} stars`}>
-                  <Star size={22} className={i <= rating ? "fill-[#00ffff] text-brand" : "text-subtle hover:text-muted"} />
+                  <Star size={22} className={i <= rating ? "fill-brand text-brand" : "text-subtle hover:text-muted"} />
                 </button>
               ))}
             </div>
@@ -132,7 +132,7 @@ export default function ReviewsSection({ productId }: { productId: string }) {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-brand py-2.5 text-[12px] font-black uppercase tracking-wider text-black hover:bg-brand/85 disabled:opacity-50"
+            className="w-full bg-brand py-2.5 text-[12px] font-black uppercase tracking-wider text-brand-fg hover:bg-brand/85 disabled:opacity-50"
           >
             {submitting ? "Submitting…" : "Submit Review"}
           </button>

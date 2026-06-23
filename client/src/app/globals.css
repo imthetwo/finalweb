@@ -52,6 +52,17 @@
   --neon-700: #178d8a;
   --neon-800: #136d6d;
   --neon-900: #0f5358;
+  /* ── Typography scale ───────────────────── */
+  --text-xs:        0.6875rem;  /* 11px — labels, badges */
+  --text-sm:        0.75rem;    /* 12px — captions, meta */
+  --text-body:      0.8125rem;  /* 13px — body copy */
+  --text-base:      0.9375rem;  /* 15px — menu links, UI text */
+  --text-md:        1rem;       /* 16px — subheadings */
+  --text-lg:        1.125rem;   /* 18px — section titles */
+  --text-xl:        1.25rem;    /* 20px — headings */
+  --text-2xl:       1.5rem;     /* 24px — page titles */
+  --text-3xl:       2rem;       /* 32px — hero */
+
   --spacing-shell: 2.5rem;
   --spacing-gutter: 1rem;
   --spacing-section: 5rem;
@@ -107,6 +118,17 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* Typography — Tailwind sinh ra: text-body, text-base, text-md... */
+  --text-xs--font-size: var(--text-xs);
+  --text-sm--font-size: var(--text-sm);
+  --text-body--font-size: var(--text-body);
+  --text-ui--font-size: var(--text-base);
+  --text-md--font-size: var(--text-md);
+  --text-lg--font-size: var(--text-lg);
+  --text-xl--font-size: var(--text-xl);
+  --text-2xl--font-size: var(--text-2xl);
+  --text-3xl--font-size: var(--text-3xl);
 
   --animate-shimmer: shimmer 1.5s ease-in-out infinite;
   --animate-marquee: var(--animate-marquee);

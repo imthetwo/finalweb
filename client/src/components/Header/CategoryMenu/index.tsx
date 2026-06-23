@@ -170,7 +170,7 @@ function MegaLink({ label, href }: { label: string; href: string }) {
     <NavigationMenuLink asChild>
       <Link
         href={href}
-        className="group/l flex items-center justify-between gap-3 py-1.5 text-[13px] text-secondary transition-colors hover:text-fg"
+        className="group/l flex items-center justify-between gap-3 py-1.5 text-ui text-secondary transition-colors hover:text-fg"
       >
         <span className="flex items-center gap-2">
           <span className="h-px w-3 shrink-0 bg-zinc-600 transition-all duration-200 group-hover/l:w-4 group-hover/l:bg-brand" />
