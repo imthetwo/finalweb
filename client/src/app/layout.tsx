@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import AIConsultantFab from "@/components/ai/AIConsultantFab";
+import AIConsultantFab from "@/features/ai/AIConsultantFab";
 import { Toaster } from "sonner";
 import NavigationProgress from "@/components/ui/NavigationProgress";
 
