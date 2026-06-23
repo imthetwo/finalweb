@@ -68,7 +68,7 @@ export default function AIConsultantFab() {
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="relative animate-in fade-in slide-in-from-right-2 duration-500 rounded-xl border border-white/10 bg-[#111] px-4 py-2.5 text-[13px] font-bold text-white shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-colors hover:border-[#00ffff]/40 hover:text-[#00ffff]"
+            className="relative animate-in fade-in slide-in-from-right-2 duration-500 rounded-xl border border-white/10 bg-[#111] px-4 py-2.5 text-[13px] font-bold text-white shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-colors hover:border-brand/40 hover:text-brand"
           >
             You need help?
             {/* tail pointing to the button */}
@@ -80,7 +80,7 @@ export default function AIConsultantFab() {
             type="button"
             onClick={() => setOpen(true)}
             aria-label="Open AI assistant"
-            className="group relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#00ffff] text-black shadow-[0_0_24px_rgba(0,255,255,0.45)] transition-all duration-300 hover:scale-110 hover:shadow-[0_0_36px_rgba(0,255,255,0.7)]"
+            className="group relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand text-black shadow-[0_0_24px_rgba(0,255,255,0.45)] transition-all duration-300 hover:scale-110 hover:shadow-[0_0_36px_rgba(0,255,255,0.7)]"
           >
             <Bot size={24} />
             {/* online pulse dot */}
@@ -94,17 +94,17 @@ export default function AIConsultantFab() {
 
       {/* ── Chat panel ── */}
       {open && (
-        <div className="fixed bottom-6 right-6 z-40 flex h-[min(600px,80vh)] w-[min(400px,calc(100vw-2rem))] flex-col overflow-hidden border border-zinc-800 bg-[#0d0d0d] shadow-[0_8px_48px_rgba(0,0,0,0.6)] animate-in slide-in-from-bottom-4 fade-in duration-200">
+        <div className="fixed bottom-6 right-6 z-40 flex h-[min(600px,80vh)] w-[min(400px,calc(100vw-2rem))] flex-col overflow-hidden border border-edge bg-surface shadow-[0_8px_48px_rgba(0,0,0,0.6)] animate-in slide-in-from-bottom-4 fade-in duration-200">
 
           {/* Header */}
-          <div className="flex shrink-0 items-center justify-between border-b border-zinc-800 bg-[linear-gradient(180deg,#1a2730_0%,#0d0d0d_100%)] px-4 py-3">
+          <div className="flex shrink-0 items-center justify-between border-b border-edge bg-[linear-gradient(180deg,#1a2730_0%,#0d0d0d_100%)] px-4 py-3">
             <div className="flex items-center gap-2.5">
-              <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-[#00ffff]/10">
+              <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-brand/10">
                 <Image src={logo} alt="Pecify" width={28} height={28} className="object-contain" />
               </div>
               <div>
                 <p className="text-[13px] font-black uppercase tracking-wider text-white">Pecify Assistant</p>
-                <p className="flex items-center gap-1.5 text-[10px] text-zinc-500">
+                <p className="flex items-center gap-1.5 text-[10px] text-muted">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                   PC Build Advisor
                 </p>
@@ -114,7 +114,7 @@ export default function AIConsultantFab() {
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close"
-              className="flex h-8 w-8 items-center justify-center text-zinc-500 transition-colors hover:text-white"
+              className="flex h-8 w-8 items-center justify-center text-muted transition-colors hover:text-white"
             >
               <X size={18} />
             </button>
@@ -128,8 +128,8 @@ export default function AIConsultantFab() {
                   className={[
                     "max-w-[85%] whitespace-pre-wrap px-3.5 py-2.5 text-[13px] leading-relaxed",
                     m.role === "user"
-                      ? "bg-[#00ffff] text-black"
-                      : "border border-zinc-800 bg-[#151515] text-zinc-200",
+                      ? "bg-brand text-black"
+                      : "border border-edge bg-[#151515] text-zinc-200",
                   ].join(" ")}
                 >
                   {m.text}
@@ -140,11 +140,11 @@ export default function AIConsultantFab() {
             {/* Typing indicator */}
             {loading && (
               <div className="flex justify-start">
-                <div className="flex items-center gap-1.5 border border-zinc-800 bg-[#151515] px-4 py-3">
+                <div className="flex items-center gap-1.5 border border-edge bg-[#151515] px-4 py-3">
                   {[0, 1, 2].map((d) => (
                     <span
                       key={d}
-                      className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#00ffff]"
+                      className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand"
                       style={{ animationDelay: `${d * 0.15}s` }}
                     />
                   ))}
@@ -155,13 +155,13 @@ export default function AIConsultantFab() {
             {/* Quick prompts (chỉ hiện ở đầu) */}
             {messages.length === 1 && !loading && (
               <div className="space-y-2 pt-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-600">Quick prompts</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-subtle">Quick prompts</p>
                 {QUICK_PROMPTS.map((p) => (
                   <button
                     key={p}
                     type="button"
                     onClick={() => send(p)}
-                    className="block w-full border border-zinc-800 bg-[#151515] px-3 py-2 text-left text-[12px] text-zinc-400 transition-colors hover:border-[#00ffff]/40 hover:text-[#00ffff]"
+                    className="block w-full border border-edge bg-[#151515] px-3 py-2 text-left text-[12px] text-secondary transition-colors hover:border-brand/40 hover:text-brand"
                   >
                     {p}
                   </button>
@@ -173,7 +173,7 @@ export default function AIConsultantFab() {
           {/* Input */}
           <form
             onSubmit={(e) => { e.preventDefault(); send(input); }}
-            className="flex shrink-0 items-center gap-2 border-t border-zinc-800 bg-[#0d0d0d] p-3"
+            className="flex shrink-0 items-center gap-2 border-t border-edge bg-surface p-3"
           >
             <input
               type="text"
@@ -181,13 +181,13 @@ export default function AIConsultantFab() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Enter your budget + needs…"
               disabled={loading}
-              className="flex-1 border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-[13px] text-white outline-none transition-colors placeholder:text-zinc-600 focus:border-[#00ffff]/50 disabled:opacity-60"
+              className="flex-1 border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-[13px] text-white outline-none transition-colors placeholder:text-subtle focus:border-brand/50 disabled:opacity-60"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
               aria-label="Send"
-              className="flex h-10 w-10 shrink-0 items-center justify-center bg-[#00ffff] text-black transition-all hover:bg-[#00ffff]/85 disabled:opacity-40"
+              className="flex h-10 w-10 shrink-0 items-center justify-center bg-brand text-black transition-all hover:bg-brand/85 disabled:opacity-40"
             >
               <Send size={16} />
             </button>

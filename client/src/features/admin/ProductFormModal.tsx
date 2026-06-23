@@ -182,8 +182,8 @@ export default function ProductFormModal({
   }
 
   const cls = {
-    input: "w-full border border-zinc-700 bg-zinc-900 px-3 py-2 text-[13px] text-white outline-none focus:border-[#00ffff]/50 placeholder:text-zinc-600",
-    label: "mb-1 block text-[10px] font-bold uppercase tracking-wider text-zinc-500",
+    input: "w-full border border-zinc-700 bg-zinc-900 px-3 py-2 text-[13px] text-white outline-none focus:border-brand/50 placeholder:text-subtle",
+    label: "mb-1 block text-[10px] font-bold uppercase tracking-wider text-muted",
     row: "grid grid-cols-2 gap-4",
     row3: "grid grid-cols-3 gap-4",
   };
@@ -319,8 +319,8 @@ export default function ProductFormModal({
       ),
     };
     return (
-      <div className="border border-zinc-800 p-4">
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-[#00ffff]/70">{SPEC_LABELS[specKey]}</p>
+      <div className="border border-edge p-4">
+        <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-brand/70">{SPEC_LABELS[specKey]}</p>
         {sections[specKey]}
       </div>
     );
@@ -328,12 +328,12 @@ export default function ProductFormModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto border border-zinc-800 bg-[#0d0d0d]">
-        <div className="sticky top-0 flex items-center justify-between border-b border-zinc-800 bg-[#0d0d0d] px-6 py-4">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto border border-edge bg-surface">
+        <div className="sticky top-0 flex items-center justify-between border-b border-edge bg-surface px-6 py-4">
           <h2 className="text-sm font-black uppercase tracking-wider text-white">
             {editing ? "Edit Product" : "Add Product"}
           </h2>
-          <button type="button" onClick={onClose} className="text-zinc-500 hover:text-white"><X size={18} /></button>
+          <button type="button" onClick={onClose} className="text-muted hover:text-white"><X size={18} /></button>
         </div>
 
         <form onSubmit={submit} className="space-y-4 p-6">
@@ -367,19 +367,19 @@ export default function ProductFormModal({
                 ) : editing?.thumbnailUrl ? (
                   <Image src={editing.thumbnailUrl} alt="current" width={80} height={80} className="h-full w-full object-contain p-1" />
                 ) : (
-                  <span className="text-[9px] text-zinc-600">No image</span>
+                  <span className="text-[9px] text-subtle">No image</span>
                 )}
               </div>
               <input ref={fileRef} type="file" accept="image/*" onChange={onUpload} className="hidden" />
               <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
-                className="inline-flex items-center gap-2 border border-zinc-700 px-4 py-2 text-[12px] font-bold uppercase tracking-wider text-zinc-300 hover:border-[#00ffff]/40 hover:text-[#00ffff] disabled:opacity-50">
+                className="inline-flex items-center gap-2 border border-zinc-700 px-4 py-2 text-[12px] font-bold uppercase tracking-wider text-zinc-300 hover:border-brand/40 hover:text-brand disabled:opacity-50">
                 <Upload size={13} /> {uploading ? "Uploading…" : "Upload"}
               </button>
             </div>
           </div>
 
           {/* Pricing */}
-          <div className={`${cls.row3} border-y border-zinc-800 py-4`}>
+          <div className={`${cls.row3} border-y border-edge py-4`}>
             <Field label="Price (VND) *">
               <input type="number" min={0} className={cls.input} value={form.price || ""} onChange={(e) => set("price", Number(e.target.value))} placeholder="15490000" />
             </Field>
@@ -401,7 +401,7 @@ export default function ProductFormModal({
 
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={onClose} className="border border-zinc-700 px-5 py-2.5 text-[12px] font-bold uppercase tracking-wider text-zinc-300 hover:border-white hover:text-white">Cancel</button>
-            <button type="submit" disabled={saving} className="bg-[#00ffff] px-6 py-2.5 text-[12px] font-black uppercase tracking-wider text-black hover:bg-[#00ffff]/85 disabled:opacity-50">
+            <button type="submit" disabled={saving} className="bg-brand px-6 py-2.5 text-[12px] font-black uppercase tracking-wider text-black hover:bg-brand/85 disabled:opacity-50">
               {saving ? "Saving…" : editing ? "Update" : "Create"}
             </button>
           </div>

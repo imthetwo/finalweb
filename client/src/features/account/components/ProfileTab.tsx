@@ -46,13 +46,13 @@ export default function ProfileTab({ profile, onUpdated }: { profile: UserProfil
   }
 
   const inputCls =
-    "w-full border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm text-white outline-none transition-colors focus:border-[#00ffff]/50 placeholder:text-zinc-600";
-  const labelCls = "mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-zinc-500";
+    "w-full border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm text-white outline-none transition-colors focus:border-brand/50 placeholder:text-subtle";
+  const labelCls = "mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-muted";
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       {/* Profile info */}
-      <form onSubmit={saveProfile} className="space-y-4 border border-zinc-800 bg-[#111] p-6">
+      <form onSubmit={saveProfile} className="space-y-4 border border-edge bg-[#111] p-6">
         <h3 className="text-sm font-black uppercase tracking-wider text-white">Personal Information</h3>
         <div>
           <label className={labelCls}>Full name</label>
@@ -69,14 +69,14 @@ export default function ProfileTab({ profile, onUpdated }: { profile: UserProfil
         <button
           type="submit"
           disabled={savingProfile}
-          className="inline-flex items-center gap-2 bg-[#00ffff] px-5 py-2.5 text-[12px] font-black uppercase tracking-wider text-black transition hover:bg-[#00ffff]/85 disabled:opacity-50"
+          className="inline-flex items-center gap-2 bg-brand px-5 py-2.5 text-[12px] font-black uppercase tracking-wider text-black transition hover:bg-brand/85 disabled:opacity-50"
         >
           <Save size={13} /> {savingProfile ? "Saving…" : "Save changes"}
         </button>
       </form>
 
       {/* Change password */}
-      <form onSubmit={savePassword} className="space-y-4 border border-zinc-800 bg-[#111] p-6">
+      <form onSubmit={savePassword} className="space-y-4 border border-edge bg-[#111] p-6">
         <h3 className="text-sm font-black uppercase tracking-wider text-white">Change Password</h3>
         <div>
           <label className={labelCls}>Current password</label>

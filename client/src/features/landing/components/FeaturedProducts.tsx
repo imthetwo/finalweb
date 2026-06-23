@@ -42,12 +42,12 @@ function ProductCard({ product }: { product: ProductItem }) {
     : 0;
 
   return (
-    <div className="group relative flex flex-col overflow-hidden border border-white/5 bg-[#111] transition-all duration-300 hover:border-[#00ffff]/20 hover:shadow-[0_0_24px_rgba(0,255,255,0.06)]">
+    <div className="group relative flex flex-col overflow-hidden border border-white/5 bg-[#111] transition-all duration-300 hover:border-brand/20 hover:shadow-[0_0_24px_rgba(0,255,255,0.06)]">
       {/* Card link overlay */}
       <Link href={`/product/${product.id}`} className="absolute inset-0 z-10" aria-label={product.name} />
 
       {/* Thumbnail */}
-      <div className="relative aspect-square overflow-hidden bg-[#0d0d0d]">
+      <div className="relative aspect-square overflow-hidden bg-surface">
         {product.thumbnailUrl ? (
           <Image
             src={product.thumbnailUrl}
@@ -63,24 +63,24 @@ function ProductCard({ product }: { product: ProductItem }) {
         )}
 
         {hasSale && (
-          <span className="absolute left-3 top-3 z-20 bg-[#00ffff] px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-black">
+          <span className="absolute left-3 top-3 z-20 bg-brand px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-black">
             -{discountPct}%
           </span>
         )}
 
         {product.stock === 0 && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60">
-            <span className="text-[11px] font-black uppercase tracking-widest text-zinc-500">Out of Stock</span>
+            <span className="text-[11px] font-black uppercase tracking-widest text-muted">Out of Stock</span>
           </div>
         )}
       </div>
 
       {/* Info */}
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#00ffff]/60">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand/60">
           {product.brand}
         </p>
-        <h3 className="line-clamp-2 text-[13px] font-semibold leading-snug text-white transition-colors duration-200 group-hover:text-[#00ffff]">
+        <h3 className="line-clamp-2 text-[13px] font-semibold leading-snug text-white transition-colors duration-200 group-hover:text-brand">
           {product.name}
         </h3>
 
@@ -89,10 +89,10 @@ function ProductCard({ product }: { product: ProductItem }) {
           <div className="flex flex-col">
             {hasSale ? (
               <>
-                <span className="text-[10px] text-zinc-600 line-through">
+                <span className="text-[10px] text-subtle line-through">
                   {formatVnd(product.price)}
                 </span>
-                <span className="text-base font-black text-[#00ffff]">
+                <span className="text-base font-black text-brand">
                   {formatVnd(product.salePrice!)}
                 </span>
               </>
@@ -107,7 +107,7 @@ function ProductCard({ product }: { product: ProductItem }) {
           <button
             type="button"
             data-product-id={product.id}
-            className="relative z-20 flex items-center justify-center border border-white/10 bg-white/4 p-2.5 text-zinc-500 transition-all duration-200 hover:border-[#00ffff]/40 hover:bg-[#00ffff]/10 hover:text-[#00ffff]"
+            className="relative z-20 flex items-center justify-center border border-white/10 bg-white/4 p-2.5 text-muted transition-all duration-200 hover:border-brand/40 hover:bg-brand/10 hover:text-brand"
             aria-label={`Add ${product.name} to cart`}
           >
             <ShoppingCart size={14} />
@@ -129,7 +129,7 @@ export default async function FeaturedProducts() {
         {/* Header */}
         <div className="mb-12 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.4em] text-[#00ffff]">
+            <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">
               Just Arrived
             </p>
             <h2 className="mt-3 text-3xl font-black uppercase leading-tight tracking-tight text-white md:text-5xl">
@@ -138,7 +138,7 @@ export default async function FeaturedProducts() {
           </div>
           <Link
             href="/components/processors"
-            className="group flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500 transition-colors hover:text-[#00ffff]"
+            className="group flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted transition-colors hover:text-brand"
           >
             View All
             <ArrowRight size={12} className="transition-transform duration-200 group-hover:translate-x-1" />

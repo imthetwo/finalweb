@@ -164,7 +164,7 @@ export function RegisterOverlay({ triggerButton, open: controlledOpen, onOpenCha
           )}
 
           <div className="space-y-1.5">
-            <Label htmlFor="register-fullname" className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+            <Label htmlFor="register-fullname" className="text-xs font-bold uppercase tracking-wider text-subtle">
               Full Name *
             </Label>
             <Input
@@ -172,7 +172,7 @@ export function RegisterOverlay({ triggerButton, open: controlledOpen, onOpenCha
               type="text"
               placeholder="Enter your full name"
               autoComplete="name"
-              className="rounded-none border-zinc-300 bg-white text-black placeholder:text-zinc-400 focus:border-black focus:ring-0"
+              className="rounded-none border-zinc-300 bg-white text-black placeholder:text-secondary focus:border-black focus:ring-0"
               {...register("fullName")}
             />
             {errors.fullName?.message && (
@@ -181,7 +181,7 @@ export function RegisterOverlay({ triggerButton, open: controlledOpen, onOpenCha
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="register-email" className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+            <Label htmlFor="register-email" className="text-xs font-bold uppercase tracking-wider text-subtle">
               Email Address *
             </Label>
             <Input
@@ -189,7 +189,7 @@ export function RegisterOverlay({ triggerButton, open: controlledOpen, onOpenCha
               type="email"
               placeholder="Enter your email"
               autoComplete="email"
-              className="rounded-none border-zinc-300 bg-white text-black placeholder:text-zinc-400 focus:border-black focus:ring-0"
+              className="rounded-none border-zinc-300 bg-white text-black placeholder:text-secondary focus:border-black focus:ring-0"
               {...register("email")}
             />
             {errors.email?.message && (
@@ -198,19 +198,19 @@ export function RegisterOverlay({ triggerButton, open: controlledOpen, onOpenCha
           </div>
 
           <div className="relative space-y-1.5">
-            <Label htmlFor="register-password" className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+            <Label htmlFor="register-password" className="text-xs font-bold uppercase tracking-wider text-subtle">
               Password *
             </Label>
             <Input
               id="register-password"
               type={showPassword ? "text" : "password"}
               autoComplete="new-password"
-              className="rounded-none border-zinc-300 bg-white pr-10 text-black placeholder:text-zinc-400 focus:border-black focus:ring-0"
+              className="rounded-none border-zinc-300 bg-white pr-10 text-black placeholder:text-secondary focus:border-black focus:ring-0"
               {...register("password")}
             />
             <button
               type="button"
-              className="absolute right-3 top-9 text-zinc-400 hover:text-zinc-700"
+              className="absolute right-3 top-9 text-secondary hover:text-zinc-700"
               onClick={() => setShowPassword((v) => !v)}
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -221,14 +221,14 @@ export function RegisterOverlay({ triggerButton, open: controlledOpen, onOpenCha
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="register-confirm" className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+            <Label htmlFor="register-confirm" className="text-xs font-bold uppercase tracking-wider text-subtle">
               Confirm Password *
             </Label>
             <Input
               id="register-confirm"
               type={showPassword ? "text" : "password"}
               autoComplete="new-password"
-              className="rounded-none border-zinc-300 bg-white text-black placeholder:text-zinc-400 focus:border-black focus:ring-0"
+              className="rounded-none border-zinc-300 bg-white text-black placeholder:text-secondary focus:border-black focus:ring-0"
               {...register("confirmPassword")}
             />
             {errors.confirmPassword?.message && (
@@ -252,7 +252,7 @@ export function RegisterOverlay({ triggerButton, open: controlledOpen, onOpenCha
                   handleOpenChange(false);
                   onSwitchToLogin();
                 }}
-                className="text-sm font-semibold text-black underline underline-offset-2 hover:text-zinc-600"
+                className="text-sm font-semibold text-black underline underline-offset-2 hover:text-subtle"
               >
                 Already have an account? Sign in
               </button>
@@ -260,7 +260,7 @@ export function RegisterOverlay({ triggerButton, open: controlledOpen, onOpenCha
               <button
                 type="button"
                 onClick={() => handleOpenChange(false)}
-                className="text-sm font-semibold text-black underline underline-offset-2 hover:text-zinc-600"
+                className="text-sm font-semibold text-black underline underline-offset-2 hover:text-subtle"
               >
                 Already have an account? Sign in
               </button>

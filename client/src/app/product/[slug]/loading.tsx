@@ -4,7 +4,7 @@ export default function ProductLoading() {
       <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-2">
 
         {/* Image skeleton */}
-        <div className="relative aspect-square overflow-hidden border border-zinc-800 bg-zinc-900">
+        <div className="relative aspect-square overflow-hidden border border-edge bg-zinc-900">
           <div className="absolute inset-0 animate-shimmer bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 bg-[length:200%_100%]" />
         </div>
 
@@ -41,7 +41,7 @@ export default function ProductLoading() {
           </div>
 
           {/* Description lines */}
-          <div className="mt-6 space-y-2 border-y border-zinc-800 py-4">
+          <div className="mt-6 space-y-2 border-y border-edge py-4">
             {[100, 90, 75].map((w, i) => (
               <div key={i} className="h-3 overflow-hidden rounded bg-zinc-800" style={{ width: `${w}%` }}>
                 <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800 bg-[length:200%_100%]" />

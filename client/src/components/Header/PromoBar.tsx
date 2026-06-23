@@ -62,7 +62,7 @@ export default function PromoBar() {
   }, [next]);
 
   return (
-    <div className="h-9 w-full select-none border-b border-zinc-800 bg-[#111]">
+    <div className="h-9 w-full select-none border-b border-edge bg-[#111]">
       <div
         className="mx-auto flex h-full w-full items-center justify-center px-4 md:px-6"
         style={{ maxWidth: "1920px" }}
@@ -75,7 +75,7 @@ export default function PromoBar() {
           <button
             type="button"
             onClick={prev}
-            className="p-1 text-zinc-600 transition-colors hover:text-white"
+            className="p-1 text-subtle transition-colors hover:text-white"
             aria-label="Previous promotion"
           >
             <ChevronLeft size={14} />
@@ -99,7 +99,7 @@ export default function PromoBar() {
                   </span>
                   <Link
                     href={p.href}
-                    className="shrink-0 text-[11px] font-black text-[#00ffff] hover:underline"
+                    className="shrink-0 text-[11px] font-black text-brand hover:underline"
                   >
                     {p.action} →
                   </Link>
@@ -111,7 +111,7 @@ export default function PromoBar() {
           <button
             type="button"
             onClick={next}
-            className="p-1 text-zinc-600 transition-colors hover:text-white"
+            className="p-1 text-subtle transition-colors hover:text-white"
             aria-label="Next promotion"
           >
             <ChevronRight size={14} />

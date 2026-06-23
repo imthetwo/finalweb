@@ -47,7 +47,7 @@ export default function HeroSection() {
           Build Your
           <br />
           <span
-            className="text-[#00ffff]"
+            className="text-brand"
             style={{ textShadow: "0 0 60px rgba(0,255,255,0.45), 0 0 120px rgba(0,255,255,0.20)" }}
           >
             World
@@ -58,7 +58,7 @@ export default function HeroSection() {
         <div className="mt-12 flex flex-col gap-4 sm:flex-row">
           <Link
             href="/components/processors"
-            className="inline-flex items-center justify-center bg-[#00ffff] px-9 py-4 text-sm font-black uppercase tracking-[0.25em] text-black transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(0,255,255,0.45)]"
+            className="inline-flex items-center justify-center bg-brand px-9 py-4 text-sm font-black uppercase tracking-[0.25em] text-black transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(0,255,255,0.45)]"
           >
             Shop Now
           </Link>
@@ -73,7 +73,7 @@ export default function HeroSection() {
         type="button"
         onClick={toggleVideo}
         aria-label={playing ? "Pause background video" : "Play background video"}
-        className="absolute bottom-6 right-6 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm transition-all duration-200 hover:border-[#00ffff]/50 hover:bg-black/60 hover:text-[#00ffff]"
+        className="absolute bottom-6 right-6 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm transition-all duration-200 hover:border-brand/50 hover:bg-black/60 hover:text-brand"
       >
         {playing ? <Pause size={16} /> : <Play size={16} className="translate-x-0.5" />}
       </button>

@@ -24,20 +24,20 @@ export default function OrderSuccessPage() {
   }, [orderId]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] px-4 py-16 text-center text-white">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-base px-4 py-16 text-center text-white">
       <CheckCircle2 size={56} className="text-emerald-400" />
       <h1 className="mt-6 text-3xl font-black uppercase tracking-tight text-white">Order placed successfully!</h1>
 
       {orderId && (
-        <p className="mt-3 font-mono text-sm text-zinc-400">
+        <p className="mt-3 font-mono text-sm text-secondary">
           Order #{orderId.slice(0, 8).toUpperCase()}
         </p>
       )}
 
       {qr && (
-        <div className="mt-8 border border-zinc-800 bg-[#111] p-5">
+        <div className="mt-8 border border-edge bg-[#111] p-5">
           <Image src={qr.dataUrl} alt="Order QR code" width={180} height={180} unoptimized />
-          <p className="mt-3 text-[11px] uppercase tracking-wider text-zinc-500">Scan to track your order</p>
+          <p className="mt-3 text-[11px] uppercase tracking-wider text-muted">Scan to track your order</p>
         </div>
       )}
 
@@ -45,7 +45,7 @@ export default function OrderSuccessPage() {
         <Link href="/account?tab=orders" className="border border-zinc-700 px-6 py-3 text-[12px] font-bold uppercase tracking-wider text-zinc-300 hover:border-white hover:text-white">
           View orders
         </Link>
-        <Link href="/" className="bg-[#00ffff] px-6 py-3 text-[12px] font-black uppercase tracking-wider text-black hover:bg-[#00ffff]/85">
+        <Link href="/" className="bg-brand px-6 py-3 text-[12px] font-black uppercase tracking-wider text-black hover:bg-brand/85">
           Continue shopping
         </Link>
       </div>

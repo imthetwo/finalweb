@@ -34,33 +34,33 @@ export default function AccountPage() {
   }, [router]);
 
   if (loading) {
-    return <div className="flex min-h-[60vh] items-center justify-center text-zinc-500">Loading account…</div>;
+    return <div className="flex min-h-[60vh] items-center justify-center text-muted">Loading account…</div>;
   }
   if (!profile) return null;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-base text-white">
       <div className="mx-auto w-full max-w-5xl px-4 py-10 md:px-8">
 
         {/* Header */}
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800 pb-6">
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-edge pb-6">
           <div className="flex items-center gap-4">
-            <span className="flex h-14 w-14 items-center justify-center border border-[#00ffff]/30 bg-[#00ffff]/10 text-lg font-black text-[#00ffff]">
+            <span className="flex h-14 w-14 items-center justify-center border border-brand/30 bg-brand/10 text-lg font-black text-brand">
               {initials(profile.fullName)}
             </span>
             <div>
               <h1 className="text-xl font-black uppercase tracking-wide text-white">{profile.fullName}</h1>
-              <p className="text-[13px] text-zinc-500">{profile.email}</p>
+              <p className="text-[13px] text-muted">{profile.email}</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             {profile.role === "ADMIN" && (
-              <Link href="/admin/dashboard" className="inline-flex items-center gap-1.5 border border-[#00ffff]/40 px-3 py-2 text-[11px] font-black uppercase tracking-wider text-[#00ffff] transition hover:bg-[#00ffff]/10">
+              <Link href="/admin/dashboard" className="inline-flex items-center gap-1.5 border border-brand/40 px-3 py-2 text-[11px] font-black uppercase tracking-wider text-brand transition hover:bg-brand/10">
                 <Shield size={12} /> Admin
               </Link>
             )}
-            <button type="button" onClick={logout} className="inline-flex items-center gap-1.5 border border-zinc-700 px-3 py-2 text-[11px] font-black uppercase tracking-wider text-zinc-400 transition hover:border-red-500 hover:text-red-400">
+            <button type="button" onClick={logout} className="inline-flex items-center gap-1.5 border border-zinc-700 px-3 py-2 text-[11px] font-black uppercase tracking-wider text-secondary transition hover:border-red-500 hover:text-red-400">
               <LogOut size={12} /> Sign out
             </button>
           </div>
@@ -72,9 +72,9 @@ export default function AccountPage() {
             { label: "Orders", value: profile._count?.orders ?? 0 },
             { label: "Wishlist", value: profile._count?.wishlists ?? 0 },
           ].map((s) => (
-            <div key={s.label} className="border border-zinc-800 bg-[#111] p-4 text-center">
+            <div key={s.label} className="border border-edge bg-[#111] p-4 text-center">
               <p className="text-2xl font-black text-white">{s.value}</p>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{s.label}</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-muted">{s.label}</p>
             </div>
           ))}
         </div>
@@ -82,9 +82,9 @@ export default function AccountPage() {
         {/* Tabs */}
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="mb-6 grid h-auto grid-cols-3 bg-zinc-900 p-1">
-            <TabsTrigger value="profile" className="text-[12px] font-bold uppercase tracking-wider data-[state=active]:bg-[#00ffff] data-[state=active]:text-black">Profile</TabsTrigger>
-            <TabsTrigger value="orders" className="text-[12px] font-bold uppercase tracking-wider data-[state=active]:bg-[#00ffff] data-[state=active]:text-black">Orders</TabsTrigger>
-            <TabsTrigger value="wishlist" className="text-[12px] font-bold uppercase tracking-wider data-[state=active]:bg-[#00ffff] data-[state=active]:text-black">Wishlist</TabsTrigger>
+            <TabsTrigger value="profile" className="text-[12px] font-bold uppercase tracking-wider data-[state=active]:bg-brand data-[state=active]:text-black">Profile</TabsTrigger>
+            <TabsTrigger value="orders" className="text-[12px] font-bold uppercase tracking-wider data-[state=active]:bg-brand data-[state=active]:text-black">Orders</TabsTrigger>
+            <TabsTrigger value="wishlist" className="text-[12px] font-bold uppercase tracking-wider data-[state=active]:bg-brand data-[state=active]:text-black">Wishlist</TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile"><ProfileTab profile={profile} onUpdated={setProfile} /></TabsContent>

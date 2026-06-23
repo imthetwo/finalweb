@@ -14,8 +14,8 @@ const STATUSES = ["PENDING", "PAYMENT_FAILED", "PROCESSING", "SHIPPED", "DELIVER
 
 const STATUS_COLOR: Record<string, string> = {
   PENDING: "text-yellow-400", PAYMENT_FAILED: "text-red-400",
-  PROCESSING: "text-blue-400", SHIPPED: "text-[#00ffff]",
-  DELIVERED: "text-emerald-400", CANCELLED: "text-zinc-500", RETURNED: "text-orange-400",
+  PROCESSING: "text-blue-400", SHIPPED: "text-brand",
+  DELIVERED: "text-emerald-400", CANCELLED: "text-muted", RETURNED: "text-orange-400",
 };
 
 export default function AdminOrdersPage() {
@@ -72,16 +72,16 @@ export default function AdminOrdersPage() {
 
       {/* Status filter */}
       <div className="mb-4 flex flex-wrap gap-2">
-        <button onClick={() => { setFilter(""); setPage(1); }} className={`border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider ${!filter ? "border-[#00ffff] text-[#00ffff]" : "border-zinc-700 text-zinc-400"}`}>All</button>
+        <button onClick={() => { setFilter(""); setPage(1); }} className={`border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider ${!filter ? "border-brand text-brand" : "border-zinc-700 text-secondary"}`}>All</button>
         {STATUSES.map((s) => (
-          <button key={s} onClick={() => { setFilter(s); setPage(1); }} className={`border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider ${filter === s ? "border-[#00ffff] text-[#00ffff]" : "border-zinc-700 text-zinc-400"}`}>{s}</button>
+          <button key={s} onClick={() => { setFilter(s); setPage(1); }} className={`border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider ${filter === s ? "border-brand text-brand" : "border-zinc-700 text-secondary"}`}>{s}</button>
         ))}
       </div>
 
       {/* Table */}
-      <div className="border border-zinc-800 bg-[#111]">
+      <div className="border border-edge bg-[#111]">
         <table className="w-full text-[13px]">
-          <thead className="border-b border-zinc-800 text-[10px] uppercase tracking-wider text-zinc-500">
+          <thead className="border-b border-edge text-[10px] uppercase tracking-wider text-muted">
             <tr>
               <th className="px-4 py-3 text-left">Order</th>
               <th className="px-4 py-3 text-left">Customer</th>
@@ -93,21 +93,21 @@ export default function AdminOrdersPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={6} className="px-4 py-10 text-center text-zinc-600">Loading…</td></tr>
+              <tr><td colSpan={6} className="px-4 py-10 text-center text-subtle">Loading…</td></tr>
             ) : !data?.items.length ? (
-              <tr><td colSpan={6} className="px-4 py-10 text-center text-zinc-600">No orders.</td></tr>
+              <tr><td colSpan={6} className="px-4 py-10 text-center text-subtle">No orders.</td></tr>
             ) : (
               data.items.map((o) => (
-                <tr key={o.id} className="border-b border-zinc-800/50">
-                  <td className="px-4 py-3 font-mono text-zinc-400">#{o.id.slice(0, 8).toUpperCase()}</td>
+                <tr key={o.id} className="border-b border-edge/50">
+                  <td className="px-4 py-3 font-mono text-secondary">#{o.id.slice(0, 8).toUpperCase()}</td>
                   <td className="px-4 py-3">
                     <p className="text-white">{o.user?.fullName ?? "—"}</p>
-                    <p className="text-[11px] text-zinc-600">{o.user?.email}</p>
+                    <p className="text-[11px] text-subtle">{o.user?.email}</p>
                   </td>
-                  <td className="px-4 py-3 text-zinc-400">{o.items.length} item(s)</td>
+                  <td className="px-4 py-3 text-secondary">{o.items.length} item(s)</td>
                   <td className="px-4 py-3 text-right font-bold text-white">{formatVnd(o.totalAmount)}</td>
                   <td className="px-4 py-3">
-                    <span className={o.isPaid ? "text-emerald-400" : "text-zinc-600"}>{o.isPaid ? "Paid" : "Unpaid"}</span>
+                    <span className={o.isPaid ? "text-emerald-400" : "text-subtle"}>{o.isPaid ? "Paid" : "Unpaid"}</span>
                   </td>
                   <td className="px-4 py-3">
                     <select
@@ -128,7 +128,7 @@ export default function AdminOrdersPage() {
       {data && data.totalPages > 1 && (
         <div className="mt-4 flex items-center justify-center gap-2">
           <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="border border-zinc-700 px-3 py-1.5 text-[12px] text-zinc-300 disabled:opacity-40">Prev</button>
-          <span className="text-[12px] text-zinc-500">Page {data.page} / {data.totalPages}</span>
+          <span className="text-[12px] text-muted">Page {data.page} / {data.totalPages}</span>
           <button disabled={page >= data.totalPages} onClick={() => setPage((p) => p + 1)} className="border border-zinc-700 px-3 py-1.5 text-[12px] text-zinc-300 disabled:opacity-40">Next</button>
         </div>
       )}

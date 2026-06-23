@@ -89,7 +89,7 @@ export default async function ShopByCategory() {
   const counts = await getCounts();
 
   return (
-    <section className="bg-[#0d0d0d] py-20">
+    <section className="bg-surface py-20">
       <div className="mx-auto max-w-350 px-4 md:px-8">
 
         {/* ── Title ── */}
@@ -106,7 +106,7 @@ export default async function ShopByCategory() {
               <Link
                 key={cat.key}
                 href={cat.href}
-                className="group relative flex flex-col overflow-hidden border border-white/6 bg-[#1c1c1c] transition-all duration-300 hover:border-[#00ffff]/25 hover:shadow-[0_0_16px_rgba(0,255,255,0.07)]"
+                className="group relative flex flex-col overflow-hidden border border-white/6 bg-[#1c1c1c] transition-all duration-300 hover:border-brand/25 hover:shadow-[0_0_16px_rgba(0,255,255,0.07)]"
               >
                 {/* ── Product image area ── */}
                 <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-[#181818] p-5">
@@ -129,7 +129,7 @@ export default async function ShopByCategory() {
                     <span className="mr-1 font-bold opacity-50">//</span>
                     {cat.label}
                     {count > 0 && (
-                      <span className="ml-1.5 text-[9px] font-semibold text-zinc-500">
+                      <span className="ml-1.5 text-[9px] font-semibold text-muted">
                         ({count})
                       </span>
                     )}
@@ -137,7 +137,7 @@ export default async function ShopByCategory() {
 
                   <ArrowRight
                     size={12}
-                    className="shrink-0 text-zinc-600 transition-all duration-200 group-hover:translate-x-1 group-hover:text-white"
+                    className="shrink-0 text-subtle transition-all duration-200 group-hover:translate-x-1 group-hover:text-white"
                   />
                 </div>
               </Link>

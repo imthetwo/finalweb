@@ -49,7 +49,7 @@ export default function WishlistButton({ productId }: { productId: string }) {
           <button
             type="button"
             aria-label="Add to wishlist"
-            className={`${BTN_BASE} border-zinc-700 text-zinc-400 hover:border-[#00ffff]/40 hover:text-[#00ffff]`}
+            className={`${BTN_BASE} border-zinc-700 text-secondary hover:border-brand/40 hover:text-brand`}
           >
             <Heart size={18} />
           </button>
@@ -67,7 +67,7 @@ export default function WishlistButton({ productId }: { productId: string }) {
       className={`${BTN_BASE} ${
         saved
           ? "border-red-500/50 bg-red-950/30 text-red-400"
-          : "border-zinc-700 text-zinc-400 hover:border-[#00ffff]/40 hover:text-[#00ffff]"
+          : "border-zinc-700 text-secondary hover:border-brand/40 hover:text-brand"
       } disabled:opacity-50`}
     >
       <Heart size={18} className={saved ? "fill-red-400" : ""} />

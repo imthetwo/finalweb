@@ -23,7 +23,7 @@ export default function PromoTicker() {
         .ticker-track:hover { animation-play-state: paused; }
       `}</style>
 
-      <div className="overflow-hidden border-y border-[#00ffff]/15 bg-[#00ffff] py-3 select-none">
+      <div className="overflow-hidden border-y border-brand/15 bg-brand py-3 select-none">
         <div className="ticker-track flex whitespace-nowrap" style={{ width: "max-content" }}>
           {doubled.map((item, i) => (
             <span

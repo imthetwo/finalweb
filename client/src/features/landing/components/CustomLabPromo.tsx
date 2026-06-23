@@ -21,15 +21,15 @@ export default function CustomLabPromo() {
       <div className="relative mx-auto grid max-w-[1400px] items-center gap-16 px-4 md:px-8 lg:grid-cols-2">
         {/* Left: Text */}
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.4em] text-[#00ffff]">
+          <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">
             Pecify PC Builder
           </p>
           <h2 className="mt-4 text-4xl font-black uppercase leading-tight tracking-tight text-white md:text-6xl">
             Configure Your
             <br />
-            <span className="text-[#00ffff]">Perfect Build</span>
+            <span className="text-brand">Perfect Build</span>
           </h2>
-          <p className="mt-6 max-w-lg text-base leading-relaxed text-zinc-400">
+          <p className="mt-6 max-w-lg text-base leading-relaxed text-secondary">
             Our intelligent PC builder validates compatibility in real-time — socket
             matching, RAM generation, PSU wattage and more. Zero guess work,
             maximum performance.
@@ -37,7 +37,7 @@ export default function CustomLabPromo() {
 
           <Link
             href="/custom-lab"
-            className="group mt-10 inline-flex items-center gap-3 border border-[#00ffff]/40 bg-[#00ffff]/6 px-8 py-4 text-sm font-black uppercase tracking-[0.25em] text-[#00ffff] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#00ffff] hover:text-black hover:shadow-[0_0_40px_rgba(0,255,255,0.35)]"
+            className="group mt-10 inline-flex items-center gap-3 border border-brand/40 bg-brand/6 px-8 py-4 text-sm font-black uppercase tracking-[0.25em] text-brand transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand hover:text-black hover:shadow-[0_0_40px_rgba(0,255,255,0.35)]"
           >
             Open PC Builder
             <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" />
@@ -49,16 +49,16 @@ export default function CustomLabPromo() {
           {BUILD_STEPS.map(({ step, label, desc }) => (
             <div
               key={step}
-              className="group flex items-start gap-5 border border-white/5 bg-[#111] p-5 transition-all duration-200 hover:border-[#00ffff]/15"
+              className="group flex items-start gap-5 border border-white/5 bg-[#111] p-5 transition-all duration-200 hover:border-brand/15"
             >
-              <span className="flex-none text-2xl font-black text-[#00ffff]/20 transition-colors duration-200 group-hover:text-[#00ffff]/50">
+              <span className="flex-none text-2xl font-black text-brand/20 transition-colors duration-200 group-hover:text-brand/50">
                 {step}
               </span>
               <div>
-                <p className="text-sm font-bold text-white transition-colors duration-200 group-hover:text-[#00ffff]">
+                <p className="text-sm font-bold text-white transition-colors duration-200 group-hover:text-brand">
                   {label}
                 </p>
-                <p className="mt-0.5 text-[12px] text-zinc-600">{desc}</p>
+                <p className="mt-0.5 text-[12px] text-subtle">{desc}</p>
               </div>
             </div>
           ))}

@@ -63,7 +63,7 @@ export default function CartPage() {
     return (
       <main className="min-h-screen bg-black px-4 py-16 text-center text-white">
         <p className="mb-4">Sign in to view your cart</p>
-        <Link href="/" className="text-[#00ffff]">
+        <Link href="/" className="text-brand">
           Back to home
         </Link>
       </main>
@@ -81,7 +81,7 @@ export default function CartPage() {
 
   function renderItem(item: CartResponse["items"][number]) {
     return (
-      <li key={item.id} className="flex gap-4 rounded-lg border border-zinc-800 p-4">
+      <li key={item.id} className="flex gap-4 rounded-lg border border-edge p-4">
         {item.product.thumbnailUrl && (
           <div className="relative h-20 w-20 shrink-0">
             <Image src={item.product.thumbnailUrl} alt="" fill className="object-contain" unoptimized />
@@ -89,7 +89,7 @@ export default function CartPage() {
         )}
         <div className="flex-1">
           <p className="font-semibold">{item.product.name}</p>
-          <p className="text-[#00ffff]">{formatVnd(item.lineTotal)}</p>
+          <p className="text-brand">{formatVnd(item.lineTotal)}</p>
           {!item.customBuildId && (
             <div className="mt-2 flex items-center gap-2">
               <button
@@ -119,21 +119,21 @@ export default function CartPage() {
       <div className="mx-auto max-w-4xl">
         <h1 className="mb-8 text-3xl font-bold">Cart</h1>
         {!cart?.items.length ? (
-          <p className="text-zinc-500">Your cart is empty.</p>
+          <p className="text-muted">Your cart is empty.</p>
         ) : (
           <>
             {[...buildGroups.entries()].map(([buildId, items]) => {
               const total = items.reduce((s, i) => s + i.lineTotal, 0);
               return (
-                <div key={buildId} className="mb-6 border border-[#00ffff]/30 bg-[#00ffff]/5 p-4">
+                <div key={buildId} className="mb-6 border border-brand/30 bg-brand/5 p-4">
                   <div className="mb-3 flex items-center justify-between">
-                    <span className="text-[11px] font-black uppercase tracking-wider text-[#00ffff]">
+                    <span className="text-[11px] font-black uppercase tracking-wider text-brand">
                       Custom PC Build — {formatVnd(total)}
                     </span>
                     <button
                       type="button"
                       onClick={() => removeBuild(buildId)}
-                      className="text-[11px] uppercase tracking-wider text-zinc-500 underline hover:text-red-400"
+                      className="text-[11px] uppercase tracking-wider text-muted underline hover:text-red-400"
                     >
                       Remove build
                     </button>
@@ -152,7 +152,7 @@ export default function CartPage() {
             </p>
             <Link
               href="/checkout"
-              className="mt-4 block rounded-full bg-[#00ffff] py-3 text-center font-bold text-black"
+              className="mt-4 block rounded-full bg-brand py-3 text-center font-bold text-black"
             >
               Checkout
             </Link>

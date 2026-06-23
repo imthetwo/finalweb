@@ -17,8 +17,8 @@ const FIELDS: { key: "recipient" | "phone" | "street" | "district" | "city"; lab
 ];
 
 const inputCls =
-  "w-full border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm text-white outline-none transition-colors focus:border-[#00ffff]/50 placeholder:text-zinc-600";
-const labelCls = "mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-zinc-500";
+  "w-full border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm text-white outline-none transition-colors focus:border-brand/50 placeholder:text-subtle";
+const labelCls = "mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-muted";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -90,14 +90,14 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] px-4 py-10 text-white md:px-8">
+    <main className="min-h-screen bg-base px-4 py-10 text-white md:px-8">
       <div className="mx-auto max-w-lg">
         <h1 className="mb-8 text-2xl font-black uppercase tracking-wide text-white">Checkout</h1>
 
         <form onSubmit={submit} className="space-y-6">
           {/* Shipping info */}
-          <div className="border border-zinc-800 bg-[#111] p-6">
-            <h2 className="mb-4 text-[11px] font-black uppercase tracking-wider text-zinc-400">
+          <div className="border border-edge bg-[#111] p-6">
+            <h2 className="mb-4 text-[11px] font-black uppercase tracking-wider text-secondary">
               Shipping information
             </h2>
             <div className="space-y-4">
@@ -117,8 +117,8 @@ export default function CheckoutPage() {
           </div>
 
           {/* Payment method */}
-          <div className="border border-zinc-800 bg-[#111] p-6">
-            <h2 className="mb-4 text-[11px] font-black uppercase tracking-wider text-zinc-400">
+          <div className="border border-edge bg-[#111] p-6">
+            <h2 className="mb-4 text-[11px] font-black uppercase tracking-wider text-secondary">
               Payment method
             </h2>
             <div className="grid grid-cols-2 gap-3">
@@ -127,8 +127,8 @@ export default function CheckoutPage() {
                   key={m}
                   className={`flex cursor-pointer items-center gap-3 border px-4 py-3 transition ${
                     paymentMethod === m
-                      ? "border-[#00ffff] bg-[#00ffff]/5 text-white"
-                      : "border-zinc-700 text-zinc-400 hover:border-zinc-500"
+                      ? "border-brand bg-brand/5 text-white"
+                      : "border-zinc-700 text-secondary hover:border-zinc-500"
                   }`}
                 >
                   <input
@@ -146,8 +146,8 @@ export default function CheckoutPage() {
           </div>
 
           {/* Coupon */}
-          <div className="border border-zinc-800 bg-[#111] p-6">
-            <h2 className="mb-4 text-[11px] font-black uppercase tracking-wider text-zinc-400">
+          <div className="border border-edge bg-[#111] p-6">
+            <h2 className="mb-4 text-[11px] font-black uppercase tracking-wider text-secondary">
               Coupon code
             </h2>
 
@@ -161,7 +161,7 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   onClick={removeCoupon}
-                  className="ml-2 text-zinc-500 transition hover:text-white"
+                  className="ml-2 text-muted transition hover:text-white"
                   aria-label="Remove coupon"
                 >
                   <X size={14} />
@@ -175,7 +175,7 @@ export default function CheckoutPage() {
                   onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), applyCoupon())}
                   placeholder="Enter coupon code"
-                  className="flex-1 border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm uppercase text-white outline-none transition-colors focus:border-[#00ffff]/50 placeholder:normal-case placeholder:text-zinc-600"
+                  className="flex-1 border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm uppercase text-white outline-none transition-colors focus:border-brand/50 placeholder:normal-case placeholder:text-subtle"
                 />
                 <button
                   type="button"
@@ -193,7 +193,7 @@ export default function CheckoutPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-[#00ffff] py-3.5 text-[13px] font-black uppercase tracking-wider text-black transition hover:bg-[#00ffff]/85 disabled:opacity-50"
+            className="w-full bg-brand py-3.5 text-[13px] font-black uppercase tracking-wider text-black transition hover:bg-brand/85 disabled:opacity-50"
           >
             {submitting ? "Processing…" : "Place order"}
           </button>

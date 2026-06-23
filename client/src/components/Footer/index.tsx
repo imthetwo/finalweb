@@ -43,7 +43,7 @@ export default function Footer() {
           {/* Brand column */}
           <div className="lg:col-span-1">
             <p className="text-xl font-black uppercase tracking-tight text-white">PECIFY</p>
-            <p className="mt-3 text-[12px] leading-relaxed text-zinc-500">
+            <p className="mt-3 text-[12px] leading-relaxed text-muted">
               Premium PC components & gaming gear. Engineered for those who demand
               the edge.
             </p>
@@ -52,7 +52,7 @@ export default function Footer() {
           {/* Link columns */}
           {Object.entries(LINKS).map(([title, links]) => (
             <div key={title} className="space-y-4">
-              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#00ffff]">
+              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-brand">
                 {title}
               </p>
               <ul className="space-y-2">
@@ -60,7 +60,7 @@ export default function Footer() {
                   <li key={label}>
                     <Link
                       href={href}
-                      className="text-[12px] text-zinc-500 transition-colors hover:text-white"
+                      className="text-[12px] text-muted transition-colors hover:text-white"
                     >
                       {label}
                     </Link>
@@ -79,8 +79,8 @@ export default function Footer() {
             © 2025 Pecify. All rights reserved.
           </p>
           <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#00ffff] animate-pulse" />
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#00ffff]/50">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
+            <p className="text-[10px] uppercase tracking-[0.2em] text-brand/50">
               All Systems Online
             </p>
           </div>

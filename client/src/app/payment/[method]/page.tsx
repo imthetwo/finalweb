@@ -108,10 +108,10 @@ export default function PaymentGatewayPage() {
   // ── Loading ───────────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <main className="flex min-h-[70vh] items-center justify-center bg-[#0a0a0a] text-white">
+      <main className="flex min-h-[70vh] items-center justify-center bg-base text-white">
         <div className="flex flex-col items-center gap-3">
-          <RefreshCw size={24} className="animate-spin text-[#00ffff]" />
-          <p className="text-sm text-zinc-400">Connecting to MoMo…</p>
+          <RefreshCw size={24} className="animate-spin text-brand" />
+          <p className="text-sm text-secondary">Connecting to MoMo…</p>
         </div>
       </main>
     );
@@ -119,7 +119,7 @@ export default function PaymentGatewayPage() {
 
   if (!orderId) {
     return (
-      <main className="flex min-h-[70vh] items-center justify-center bg-[#0a0a0a] text-white">
+      <main className="flex min-h-[70vh] items-center justify-center bg-base text-white">
         <p className="text-red-400">Missing order ID.</p>
       </main>
     );
@@ -129,11 +129,11 @@ export default function PaymentGatewayPage() {
   const methodLabel   = (method ?? "MOMO").toUpperCase();
 
   return (
-    <main className="flex min-h-[70vh] items-center justify-center bg-[#0a0a0a] px-4 py-10 text-white">
-      <div className="w-full max-w-sm border border-zinc-800 bg-[#111]">
+    <main className="flex min-h-[70vh] items-center justify-center bg-base px-4 py-10 text-white">
+      <div className="w-full max-w-sm border border-edge bg-[#111]">
 
         {/* Header */}
-        <div className="border-b border-zinc-800 bg-[linear-gradient(180deg,#2d1b3d_0%,#111_100%)] px-6 py-5 text-center">
+        <div className="border-b border-edge bg-[linear-gradient(180deg,#2d1b3d_0%,#111_100%)] px-6 py-5 text-center">
           <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-pink-400">
             Payment Gateway
           </p>
@@ -143,9 +143,9 @@ export default function PaymentGatewayPage() {
         <div className="space-y-5 p-6">
           {/* Amount */}
           <div className="text-center">
-            <p className="text-[11px] uppercase tracking-wider text-zinc-500">Amount</p>
-            <p className="mt-1 text-3xl font-black text-[#00ffff]">{formatVnd(displayAmount)}</p>
-            <p className="mt-1 font-mono text-[11px] text-zinc-600">
+            <p className="text-[11px] uppercase tracking-wider text-muted">Amount</p>
+            <p className="mt-1 text-3xl font-black text-brand">{formatVnd(displayAmount)}</p>
+            <p className="mt-1 font-mono text-[11px] text-subtle">
               Order #{orderId.slice(0, 8).toUpperCase()}
             </p>
           </div>
@@ -161,12 +161,12 @@ export default function PaymentGatewayPage() {
                   includeMargin={false}
                 />
               </div>
-              <p className="text-center text-[11px] leading-relaxed text-zinc-500">
+              <p className="text-center text-[11px] leading-relaxed text-muted">
                 Open <span className="font-bold text-pink-400">MoMo app</span> → scan QR to pay.
                 <br />Waiting for payment confirmation…
               </p>
               <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
-                <div className="h-full animate-[shrink_600s_linear_forwards] bg-[#00ffff]" />
+                <div className="h-full animate-[shrink_600s_linear_forwards] bg-brand" />
               </div>
             </div>
           )}
@@ -178,7 +178,7 @@ export default function PaymentGatewayPage() {
               <button
                 type="button"
                 onClick={() => { setExpired(false); window.location.reload(); }}
-                className="mt-2 text-[12px] text-zinc-400 underline hover:text-white"
+                className="mt-2 text-[12px] text-secondary underline hover:text-white"
               >
                 Generate new QR
               </button>
@@ -204,7 +204,7 @@ export default function PaymentGatewayPage() {
                 type="button"
                 onClick={() => pay(true)}
                 disabled={processing}
-                className="inline-flex w-full items-center justify-center gap-2 bg-[#00ffff] py-3 text-sm font-black uppercase tracking-wider text-black transition hover:bg-[#00ffff]/85 disabled:opacity-50"
+                className="inline-flex w-full items-center justify-center gap-2 bg-brand py-3 text-sm font-black uppercase tracking-wider text-black transition hover:bg-brand/85 disabled:opacity-50"
               >
                 <ShieldCheck size={15} />
                 {processing ? "Processing…" : "Simulate payment success"}
@@ -214,7 +214,7 @@ export default function PaymentGatewayPage() {
                 type="button"
                 onClick={() => pay(false)}
                 disabled={processing}
-                className="inline-flex w-full items-center justify-center gap-2 border border-zinc-700 py-2.5 text-[12px] font-bold uppercase tracking-wider text-zinc-400 transition hover:border-red-500 hover:text-red-400 disabled:opacity-50"
+                className="inline-flex w-full items-center justify-center gap-2 border border-zinc-700 py-2.5 text-[12px] font-bold uppercase tracking-wider text-secondary transition hover:border-red-500 hover:text-red-400 disabled:opacity-50"
               >
                 <XCircle size={14} /> Cancel payment
               </button>

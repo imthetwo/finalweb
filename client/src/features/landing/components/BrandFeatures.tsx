@@ -15,12 +15,12 @@ export default function BrandFeatures() {
           {FEATURES.map(({ icon: Icon, title }) => (
             <div
               key={title}
-              className="group flex h-48 flex-col justify-between border border-white/10 bg-[#0d0d0d] p-7 transition-all duration-300 hover:border-[#00ffff]/30 hover:bg-[#111]"
+              className="group flex h-48 flex-col justify-between border border-white/10 bg-surface p-7 transition-all duration-300 hover:border-brand/30 hover:bg-[#111]"
             >
               <Icon
                 size={34}
                 strokeWidth={1.5}
-                className="text-white transition-colors duration-300 group-hover:text-[#00ffff]"
+                className="text-white transition-colors duration-300 group-hover:text-brand"
               />
               <p className="whitespace-pre-line text-lg font-black uppercase leading-tight tracking-tight text-white">
                 {title}

@@ -130,7 +130,7 @@ export function LoginOverlay({ triggerButton, open: controlledOpen, onOpenChange
     <Dialog modal={false} open={open} onOpenChange={handleOpenChange}>
       {triggerButton && <DialogTrigger asChild>{triggerButton}</DialogTrigger>}
 
-      <DialogContent className="sm:max-w-100 border-none rounded-none p-0 shadow-2xl bg-white text-black">
+      <DialogContent className="w-190 border-none rounded-none p-0 shadow-2xl bg-white text-black">
         <div className="px-8 pt-8">
           <DialogHeader>
             <DialogTitle className="mb-6 text-2xl font-black uppercase tracking-widest text-black">
@@ -147,7 +147,7 @@ export function LoginOverlay({ triggerButton, open: controlledOpen, onOpenChange
           )}
 
           <div className="space-y-1.5">
-            <Label htmlFor="login-email" className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+            <Label htmlFor="login-email" className="text-xs font-bold uppercase tracking-wider text-subtle">
               Email Address *
             </Label>
             <Input
@@ -155,7 +155,7 @@ export function LoginOverlay({ triggerButton, open: controlledOpen, onOpenChange
               type="email"
               placeholder="Enter your email"
               autoComplete="email"
-              className="rounded-none border-zinc-300 bg-white text-black placeholder:text-zinc-400 focus:border-black focus:ring-0"
+              className="rounded-none border-zinc-300 bg-white text-black placeholder:text-secondary focus:border-black focus:ring-0"
               {...register("email")}
             />
             {errors.email?.message && (
@@ -164,19 +164,19 @@ export function LoginOverlay({ triggerButton, open: controlledOpen, onOpenChange
           </div>
 
           <div className="relative space-y-1.5">
-            <Label htmlFor="login-password" className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+            <Label htmlFor="login-password" className="text-xs font-bold uppercase tracking-wider text-subtle">
               Password *
             </Label>
             <Input
               id="login-password"
               type={showPassword ? "text" : "password"}
               autoComplete="current-password"
-              className="rounded-none border-zinc-300 bg-white pr-10 text-black placeholder:text-zinc-400 focus:border-black focus:ring-0"
+              className="rounded-none border-zinc-300 bg-white pr-10 text-black placeholder:text-secondary focus:border-black focus:ring-0"
               {...register("password")}
             />
             <button
               type="button"
-              className="absolute right-3 top-9 text-zinc-400 hover:text-zinc-700"
+              className="absolute right-3 top-9 text-secondary hover:text-zinc-700"
               onClick={() => setShowPassword((v) => !v)}
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -189,7 +189,7 @@ export function LoginOverlay({ triggerButton, open: controlledOpen, onOpenChange
           <div className="text-right">
             <Link
               href="/forgot-password"
-              className="text-xs font-semibold text-zinc-500 underline underline-offset-2 hover:text-black"
+              className="text-xs font-semibold text-muted underline underline-offset-2 hover:text-black"
             >
               Forgot Password?
             </Link>
@@ -205,7 +205,7 @@ export function LoginOverlay({ triggerButton, open: controlledOpen, onOpenChange
 
           <div className="relative my-2 flex items-center gap-3">
             <div className="h-px flex-1 bg-zinc-200" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">or</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">or</span>
             <div className="h-px flex-1 bg-zinc-200" />
           </div>
 
@@ -231,14 +231,14 @@ export function LoginOverlay({ triggerButton, open: controlledOpen, onOpenChange
                   handleOpenChange(false);
                   onSwitchToRegister();
                 }}
-                className="text-sm font-semibold text-black underline underline-offset-2 hover:text-zinc-600"
+                className="text-sm font-semibold text-black underline underline-offset-2 hover:text-subtle"
               >
                 Don&apos;t have an account yet?
               </button>
             ) : (
               <Link
                 href="/login"
-                className="text-sm font-semibold text-black underline underline-offset-2 hover:text-zinc-600"
+                className="text-sm font-semibold text-black underline underline-offset-2 hover:text-subtle"
               >
                 Don&apos;t have an account yet?
               </Link>

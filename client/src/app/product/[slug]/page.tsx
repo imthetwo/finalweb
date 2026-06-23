@@ -42,7 +42,7 @@ export default async function ProductPage({ params }: Props) {
     <main className="min-h-screen bg-black px-4 py-10 text-white md:px-8">
       <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-2">
         {/* Image */}
-        <div className="relative aspect-square border border-zinc-800 bg-[#0d0d0d]">
+        <div className="relative aspect-square border border-edge bg-surface">
           {(product.thumbnailUrl ?? product.imageUrl) && (
             <Image
               src={(product.thumbnailUrl ?? product.imageUrl)!}
@@ -53,7 +53,7 @@ export default async function ProductPage({ params }: Props) {
             />
           )}
           {hasSale && (
-            <span className="absolute left-4 top-4 bg-[#00ffff] px-2.5 py-1 text-[11px] font-black uppercase tracking-wider text-black">
+            <span className="absolute left-4 top-4 bg-brand px-2.5 py-1 text-[11px] font-black uppercase tracking-wider text-black">
               -{Math.round((1 - product.salePrice! / product.price) * 100)}%
             </span>
           )}
@@ -61,20 +61,20 @@ export default async function ProductPage({ params }: Props) {
 
         {/* Info */}
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-[#00ffff]/70">{product.brand}</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-brand/70">{product.brand}</p>
           <h1 className="mt-2 text-3xl font-black">{product.name}</h1>
           {product.category && (
-            <p className="mt-2 text-sm text-zinc-500">{product.category.name}</p>
+            <p className="mt-2 text-sm text-muted">{product.category.name}</p>
           )}
 
           <div className="mt-6 flex items-end gap-3">
             {hasSale ? (
               <>
-                <span className="text-3xl font-black text-[#00ffff]">{formatVnd(product.salePrice!)}</span>
-                <span className="mb-1 text-lg text-zinc-600 line-through">{formatVnd(product.price)}</span>
+                <span className="text-3xl font-black text-brand">{formatVnd(product.salePrice!)}</span>
+                <span className="mb-1 text-lg text-subtle line-through">{formatVnd(product.price)}</span>
               </>
             ) : (
-              <span className="text-3xl font-black text-[#00ffff]">{formatVnd(product.price)}</span>
+              <span className="text-3xl font-black text-brand">{formatVnd(product.price)}</span>
             )}
           </div>
 
@@ -83,14 +83,14 @@ export default async function ProductPage({ params }: Props) {
           </p>
 
           {product.description && (
-            <p className="mt-6 text-sm leading-relaxed text-zinc-400">{product.description}</p>
+            <p className="mt-6 text-sm leading-relaxed text-secondary">{product.description}</p>
           )}
 
           {specEntries.length > 0 && (
-            <div className="mt-6 grid grid-cols-2 gap-2 border-y border-zinc-800 py-4">
+            <div className="mt-6 grid grid-cols-2 gap-2 border-y border-edge py-4">
               {specEntries.map(([key, val]) => (
                 <div key={key} className="flex justify-between gap-2 text-[13px]">
-                  <span className="capitalize text-zinc-500">{key.replace(/([A-Z])/g, " $1").trim()}</span>
+                  <span className="capitalize text-muted">{key.replace(/([A-Z])/g, " $1").trim()}</span>
                   <span className="font-semibold text-white">{String(val)}</span>
                 </div>
               ))}

@@ -41,12 +41,12 @@ function CartIcon({ count }: { count: number }) {
   return (
     <Link
       href="/cart"
-      className="relative flex items-center justify-center text-white transition-colors hover:text-[#00ffff]"
+      className="relative flex items-center justify-center text-white transition-colors hover:text-brand"
       aria-label={`View cart – ${count} items`}
     >
       <ShoppingCart size={22} />
       {count > 0 && (
-        <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#00ffff] text-[10px] font-black text-black">
+        <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-brand text-[10px] font-black text-black">
           {count > 9 ? "9+" : count}
         </span>
       )}
@@ -103,38 +103,38 @@ function SearchBar({ onClose }: { onClose: () => void }) {
         onSubmit={(e) => { e.preventDefault(); goToResults(); }}
         className="flex h-14 w-full items-center bg-zinc-900 px-4"
       >
-        <Search size={20} className="flex-none text-zinc-500" />
+        <Search size={20} className="flex-none text-muted" />
         <input
           ref={inputRef}
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search products, brands, categories…"
-          className="flex-1 border-none bg-transparent px-4 text-base text-white outline-none placeholder:text-zinc-600"
+          className="flex-1 border-none bg-transparent px-4 text-base text-white outline-none placeholder:text-subtle"
         />
         {query && (
-          <button type="button" onClick={() => setQuery("")} className="mr-2 text-zinc-500 hover:text-white">
+          <button type="button" onClick={() => setQuery("")} className="mr-2 text-muted hover:text-white">
             <X size={16} />
           </button>
         )}
         <button
           type="submit"
-          className="flex-none border border-[#00ffff]/30 px-4 py-1.5 text-[11px] font-black uppercase tracking-wider text-[#00ffff] transition-colors hover:bg-[#00ffff] hover:text-black"
+          className="flex-none border border-brand/30 px-4 py-1.5 text-[11px] font-black uppercase tracking-wider text-brand transition-colors hover:bg-brand hover:text-black"
         >
           Search
         </button>
-        <button type="button" onClick={onClose} className="ml-4 text-zinc-500 transition-colors hover:text-white" aria-label="Close search">
+        <button type="button" onClick={onClose} className="ml-4 text-muted transition-colors hover:text-white" aria-label="Close search">
           <X size={22} />
         </button>
       </form>
 
       {/* ── Live results dropdown ── */}
       {open && (
-        <div className="absolute left-0 right-0 top-full z-50 max-h-[70vh] overflow-y-auto border border-zinc-800 bg-[#0d0d0d] shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
+        <div className="absolute left-0 right-0 top-full z-50 max-h-[70vh] overflow-y-auto border border-edge bg-surface shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
           {loading ? (
-            <div className="px-4 py-6 text-center text-[13px] text-zinc-500">Searching…</div>
+            <div className="px-4 py-6 text-center text-[13px] text-muted">Searching…</div>
           ) : results.length === 0 ? (
-            <div className="px-4 py-6 text-center text-[13px] text-zinc-500">
+            <div className="px-4 py-6 text-center text-[13px] text-muted">
               No results for &ldquo;{query}&rdquo;
             </div>
           ) : (
@@ -147,20 +147,20 @@ function SearchBar({ onClose }: { onClose: () => void }) {
                     type="button"
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => goToProduct(p.id)}
-                    className="flex w-full items-center gap-3 border-b border-zinc-800/60 px-4 py-3 text-left transition-colors hover:bg-white/4"
+                    className="flex w-full items-center gap-3 border-b border-edge/60 px-4 py-3 text-left transition-colors hover:bg-white/4"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="line-clamp-2 text-[13px] font-semibold text-white">{p.name}</p>
                       <div className="mt-1 flex items-center gap-2">
-                        <span className="text-[13px] font-black text-[#00ffff]">
+                        <span className="text-[13px] font-black text-brand">
                           {formatVnd(hasSale ? p.salePrice! : p.price)}
                         </span>
                         {hasSale && (
-                          <span className="text-[11px] text-zinc-600 line-through">{formatVnd(p.price)}</span>
+                          <span className="text-[11px] text-subtle line-through">{formatVnd(p.price)}</span>
                         )}
                       </div>
                     </div>
-                    <div className="h-12 w-12 shrink-0 border border-zinc-800 bg-[#161616]">
+                    <div className="h-12 w-12 shrink-0 border border-edge bg-elevated">
                       {p.thumbnailUrl && (
                         <Image src={p.thumbnailUrl} alt={p.name} width={48} height={48} className="h-full w-full object-contain p-1" unoptimized />
                       )}
@@ -172,7 +172,7 @@ function SearchBar({ onClose }: { onClose: () => void }) {
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={goToResults}
-                className="block w-full px-4 py-3 text-center text-[12px] font-bold uppercase tracking-wider text-[#00ffff] hover:bg-[#00ffff]/10"
+                className="block w-full px-4 py-3 text-center text-[12px] font-bold uppercase tracking-wider text-brand hover:bg-brand/10"
               >
                 View all results for &ldquo;{query}&rdquo; →
               </button>
@@ -199,7 +199,7 @@ export default function MainNav() {
   }, []);
 
   return (
-    <nav className="w-full select-none border-b border-zinc-800 bg-black">
+    <nav className="w-full select-none border-b border-edge bg-black">
 
       {/* ── MOBILE (< lg) ─────────────────────────────── */}
       <div className="relative flex h-20 items-center justify-between px-4 lg:hidden">
@@ -231,7 +231,7 @@ export default function MainNav() {
                   <SheetClose key={href}>
                     <Link
                       href={href}
-                      className="block border-b border-zinc-800/60 py-4 text-base font-bold uppercase text-white transition-colors hover:text-[#00ffff]"
+                      className="block border-b border-edge/60 py-4 text-base font-bold uppercase text-white transition-colors hover:text-brand"
                     >
                       {label}
                     </Link>
@@ -243,9 +243,9 @@ export default function MainNav() {
             <SheetFooter>
               {loaded && user ? (
                 /* Logged-in quick links */
-                <div className="border border-[#00ffff]/20 bg-[#00ffff]/5 p-3">
+                <div className="border border-brand/20 bg-brand/5 p-3">
                   <p className="truncate text-sm font-bold text-white">{user.fullName}</p>
-                  <p className="truncate text-[11px] text-zinc-500">{user.email}</p>
+                  <p className="truncate text-[11px] text-muted">{user.email}</p>
                   <div className="mt-3 grid grid-cols-2 gap-2">
                     <SheetClose>
                       <Link
@@ -281,7 +281,7 @@ export default function MainNav() {
                   <SheetClose>
                     <Link
                       href="/login"
-                      className="block border border-[#00ffff]/40 px-4 py-3 text-center text-sm font-bold uppercase tracking-wider text-[#00ffff] transition-colors hover:bg-[#00ffff] hover:text-black"
+                      className="block border border-brand/40 px-4 py-3 text-center text-sm font-bold uppercase tracking-wider text-brand transition-colors hover:bg-brand hover:text-black"
                     >
                       Register
                     </Link>
@@ -333,7 +333,7 @@ export default function MainNav() {
                 <button
                   type="button"
                   onClick={() => setSearchOpen(true)}
-                  className="text-zinc-400 transition-colors hover:text-white"
+                  className="text-secondary transition-colors hover:text-white"
                   aria-label="Search"
                 >
                   <Search size={22} />

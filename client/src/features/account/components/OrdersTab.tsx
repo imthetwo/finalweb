@@ -10,9 +10,9 @@ const STATUS_STYLE: Record<string, string> = {
   PENDING:        "border-yellow-700/50 bg-yellow-950/30 text-yellow-400",
   PAYMENT_FAILED: "border-red-700/50 bg-red-950/30 text-red-400",
   PROCESSING:     "border-blue-700/50 bg-blue-950/30 text-blue-400",
-  SHIPPED:        "border-cyan-700/50 bg-cyan-950/30 text-[#00ffff]",
+  SHIPPED:        "border-cyan-700/50 bg-cyan-950/30 text-brand",
   DELIVERED:      "border-emerald-700/50 bg-emerald-950/30 text-emerald-400",
-  CANCELLED:      "border-zinc-700 bg-zinc-900 text-zinc-500",
+  CANCELLED:      "border-zinc-700 bg-zinc-900 text-muted",
   RETURNED:       "border-orange-700/50 bg-orange-950/30 text-orange-400",
 };
 
@@ -30,11 +30,11 @@ export default function OrdersTab() {
     fetchOrders().then(setOrders).catch(() => setOrders([])).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p className="py-12 text-center text-sm text-zinc-500">Loading orders…</p>;
+  if (loading) return <p className="py-12 text-center text-sm text-muted">Loading orders…</p>;
 
   if (!orders.length) {
     return (
-      <div className="flex flex-col items-center gap-3 border border-dashed border-zinc-800 py-16 text-zinc-500">
+      <div className="flex flex-col items-center gap-3 border border-dashed border-edge py-16 text-muted">
         <Package size={32} className="opacity-30" />
         <p className="text-sm">You have no orders yet.</p>
       </div>
@@ -44,10 +44,10 @@ export default function OrdersTab() {
   return (
     <div className="space-y-4">
       {orders.map((o) => (
-        <div key={o.id} className="border border-zinc-800 bg-[#111] p-5">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 pb-3">
+        <div key={o.id} className="border border-edge bg-[#111] p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-edge pb-3">
             <div>
-              <p className="text-[11px] uppercase tracking-wider text-zinc-500">Order</p>
+              <p className="text-[11px] uppercase tracking-wider text-muted">Order</p>
               <p className="font-mono text-sm font-bold text-white">#{o.id.slice(0, 8).toUpperCase()}</p>
             </div>
             <span className={`border px-3 py-1 text-[10px] font-black uppercase tracking-wider ${STATUS_STYLE[o.status] ?? STATUS_STYLE.PENDING}`}>
@@ -58,17 +58,17 @@ export default function OrdersTab() {
           <div className="space-y-1.5 py-3">
             {o.items.map((it) => (
               <div key={it.id} className="flex justify-between text-[13px]">
-                <span className="text-zinc-300">{it.product.name} <span className="text-zinc-600">×{it.quantity}</span></span>
-                <span className="text-zinc-400">{formatVnd(it.priceAtBuy * it.quantity)}</span>
+                <span className="text-zinc-300">{it.product.name} <span className="text-subtle">×{it.quantity}</span></span>
+                <span className="text-secondary">{formatVnd(it.priceAtBuy * it.quantity)}</span>
               </div>
             ))}
           </div>
 
-          <div className="flex items-center justify-between border-t border-zinc-800 pt-3">
-            <span className="text-[11px] text-zinc-500">
+          <div className="flex items-center justify-between border-t border-edge pt-3">
+            <span className="text-[11px] text-muted">
               {new Date(o.createdAt).toLocaleDateString("en-GB")} · {o.paymentMethod} · {o.isPaid ? "Paid" : "Unpaid"}
             </span>
-            <span className="text-base font-black text-[#00ffff]">{formatVnd(o.totalAmount)}</span>
+            <span className="text-base font-black text-brand">{formatVnd(o.totalAmount)}</span>
           </div>
         </div>
       ))}

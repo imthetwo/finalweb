@@ -8,7 +8,7 @@ function Bone({ w = "100%", h = "1rem" }: { w?: string; h?: string }) {
 
 export default function ShopLoading() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-white md:px-8">
+    <div className="min-h-screen bg-base px-4 py-8 text-white md:px-8">
       <div className="mx-auto max-w-screen-xl">
         {/* Title */}
         <div className="mb-6 flex items-center justify-between">
@@ -31,7 +31,7 @@ export default function ShopLoading() {
           <div className="flex-1">
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
               {Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} className="border border-zinc-800 bg-[#111]">
+                <div key={i} className="border border-edge bg-[#111]">
                   <div className="aspect-square overflow-hidden bg-zinc-800">
                     <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800 bg-[length:200%_100%]" />
                   </div>

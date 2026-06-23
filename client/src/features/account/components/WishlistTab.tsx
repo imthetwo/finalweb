@@ -27,14 +27,14 @@ export default function WishlistTab() {
     }
   }
 
-  if (loading) return <p className="py-12 text-center text-sm text-zinc-500">Loading…</p>;
+  if (loading) return <p className="py-12 text-center text-sm text-muted">Loading…</p>;
 
   if (!items.length) {
     return (
-      <div className="flex flex-col items-center gap-3 border border-dashed border-zinc-800 py-16 text-zinc-500">
+      <div className="flex flex-col items-center gap-3 border border-dashed border-edge py-16 text-muted">
         <Heart size={32} className="opacity-30" />
         <p className="text-sm">Your wishlist is empty.</p>
-        <Link href="/components/processors" className="text-[12px] text-[#00ffff] underline">Explore products →</Link>
+        <Link href="/components/processors" className="text-[12px] text-brand underline">Explore products →</Link>
       </div>
     );
   }
@@ -42,8 +42,8 @@ export default function WishlistTab() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {items.map(({ product }) => (
-        <div key={product.id} className="group relative flex flex-col border border-zinc-800 bg-[#111]">
-          <Link href={`/product/${product.id}`} className="relative aspect-square overflow-hidden bg-[#0d0d0d]">
+        <div key={product.id} className="group relative flex flex-col border border-edge bg-[#111]">
+          <Link href={`/product/${product.id}`} className="relative aspect-square overflow-hidden bg-surface">
             {product.thumbnailUrl ? (
               <Image src={product.thumbnailUrl} alt={product.name} fill className="object-contain p-4" sizes="300px" />
             ) : (
@@ -51,8 +51,8 @@ export default function WishlistTab() {
             )}
           </Link>
           <div className="flex flex-1 flex-col gap-2 p-4">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[#00ffff]/60">{product.brand}</p>
-            <Link href={`/product/${product.id}`} className="line-clamp-2 text-[13px] font-semibold text-white hover:text-[#00ffff]">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-brand/60">{product.brand}</p>
+            <Link href={`/product/${product.id}`} className="line-clamp-2 text-[13px] font-semibold text-white hover:text-brand">
               {product.name}
             </Link>
             <div className="mt-auto flex items-center justify-between pt-2">

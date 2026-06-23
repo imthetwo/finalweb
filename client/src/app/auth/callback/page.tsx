@@ -31,12 +31,12 @@ export default function AuthCallbackPage() {
 
   if (error) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#0a0a0a] px-4 text-white">
+      <main className="flex min-h-screen items-center justify-center bg-base px-4 text-white">
         <div className="w-full max-w-sm border border-red-800/40 bg-red-950/20 p-6 text-center">
           <p className="text-sm font-bold text-red-400">{error}</p>
           <a
             href="/login"
-            className="mt-4 inline-block text-[12px] text-zinc-400 underline hover:text-white"
+            className="mt-4 inline-block text-[12px] text-secondary underline hover:text-white"
           >
             Back to login
           </a>
@@ -46,10 +46,10 @@ export default function AuthCallbackPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#0a0a0a] text-white">
+    <main className="flex min-h-screen items-center justify-center bg-base text-white">
       <div className="flex flex-col items-center gap-4">
         <svg
-          className="h-8 w-8 animate-spin text-[#00ffff]"
+          className="h-8 w-8 animate-spin text-brand"
           viewBox="0 0 24 24"
           fill="none"
         >
@@ -67,7 +67,7 @@ export default function AuthCallbackPage() {
             d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
           />
         </svg>
-        <p className="text-sm text-zinc-400">Completing Google sign-in…</p>
+        <p className="text-sm text-secondary">Completing Google sign-in…</p>
       </div>
     </main>
   );
