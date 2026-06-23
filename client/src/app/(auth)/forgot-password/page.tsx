@@ -40,7 +40,7 @@ export default function ForgotPasswordPage() {
 
         {step === "sent" ? (
           /* ── Success state ── */
-          <div className="border border-edge bg-[#111] p-8 text-center">
+          <div className="border border-edge bg-elevated p-8 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-950/40 text-emerald-400">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <polyline points="20 6 9 17 4 12" />
@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
           </div>
         ) : (
           /* ── Form state ── */
-          <div className="border border-edge bg-[#111]">
+          <div className="border border-edge bg-elevated">
             <div className="border-b border-edge px-6 py-5">
               <h1 className="text-lg font-black uppercase tracking-wide text-white">Forgot password</h1>
               <p className="mt-1 text-[12px] text-muted">

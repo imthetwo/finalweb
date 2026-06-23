@@ -119,7 +119,7 @@ export default function AdminPromotionsPage() {
         </button>
       </div>
 
-      <div className="border border-edge bg-[#111]">
+      <div className="border border-edge bg-elevated">
         <table className="w-full text-[13px]">
           <thead className="border-b border-edge text-[10px] uppercase tracking-wider text-muted">
             <tr>
@@ -166,7 +166,7 @@ export default function AdminPromotionsPage() {
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="w-full max-w-md border border-edge bg-[#111] p-6">
+          <div className="w-full max-w-md border border-edge bg-elevated p-6">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-black uppercase tracking-wide text-white">
                 {editing ? "Edit Banner" : "Add Banner"}

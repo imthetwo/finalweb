@@ -130,7 +130,7 @@ export default function PaymentGatewayPage() {
 
   return (
     <main className="flex min-h-[70vh] items-center justify-center bg-base px-4 py-10 text-white">
-      <div className="w-full max-w-sm border border-edge bg-[#111]">
+      <div className="w-full max-w-sm border border-edge bg-elevated">
 
         {/* Header */}
         <div className="border-b border-edge bg-[linear-gradient(180deg,#2d1b3d_0%,#111_100%)] px-6 py-5 text-center">

@@ -52,7 +52,7 @@ export default function ProfileTab({ profile, onUpdated }: { profile: UserProfil
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       {/* Profile info */}
-      <form onSubmit={saveProfile} className="space-y-4 border border-edge bg-[#111] p-6">
+      <form onSubmit={saveProfile} className="space-y-4 border border-edge bg-elevated p-6">
         <h3 className="text-sm font-black uppercase tracking-wider text-white">Personal Information</h3>
         <div>
           <label className={labelCls}>Full name</label>
@@ -76,7 +76,7 @@ export default function ProfileTab({ profile, onUpdated }: { profile: UserProfil
       </form>
 
       {/* Change password */}
-      <form onSubmit={savePassword} className="space-y-4 border border-edge bg-[#111] p-6">
+      <form onSubmit={savePassword} className="space-y-4 border border-edge bg-elevated p-6">
         <h3 className="text-sm font-black uppercase tracking-wider text-white">Change Password</h3>
         <div>
           <label className={labelCls}>Current password</label>

@@ -106,10 +106,10 @@ export default async function ShopByCategory() {
               <Link
                 key={cat.key}
                 href={cat.href}
-                className="group relative flex flex-col overflow-hidden border border-white/6 bg-[#1c1c1c] transition-all duration-300 hover:border-brand/25 hover:shadow-[0_0_16px_rgba(0,255,255,0.07)]"
+                className="group relative flex flex-col overflow-hidden border border-white/6 bg-elevated transition-all duration-300 hover:border-brand/25 hover:shadow-[0_0_16px_rgba(0,255,255,0.07)]"
               >
                 {/* ── Product image area ── */}
-                <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-[#181818] p-5">
+                <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-elevated p-5">
                   {/* Soft radial glow behind product */}
                   <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_60%,rgba(255,255,255,0.05),transparent_68%)]" />
 
@@ -124,7 +124,7 @@ export default async function ShopByCategory() {
                 </div>
 
                 {/* ── Label bar ── */}
-                <div className="flex items-center justify-between gap-2 border-t border-white/5 bg-[#151515] px-4 py-3">
+                <div className="flex items-center justify-between gap-2 border-t border-white/5 bg-elevated px-4 py-3">
                   <span className="text-[11px] font-black uppercase tracking-[0.12em] text-white">
                     <span className="mr-1 font-bold opacity-50">//</span>
                     {cat.label}

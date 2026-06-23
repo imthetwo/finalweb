@@ -35,7 +35,7 @@ export default function OrderSuccessPage() {
       )}
 
       {qr && (
-        <div className="mt-8 border border-edge bg-[#111] p-5">
+        <div className="mt-8 border border-edge bg-elevated p-5">
           <Image src={qr.dataUrl} alt="Order QR code" width={180} height={180} unoptimized />
           <p className="mt-3 text-[11px] uppercase tracking-wider text-muted">Scan to track your order</p>
         </div>

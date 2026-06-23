@@ -25,7 +25,7 @@ export default function AdminLoading() {
         {/* Stats cards */}
         <div className="mb-8 grid grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="border border-edge bg-[#111] p-5">
+            <div key={i} className="border border-edge bg-elevated p-5">
               <div className="h-3 w-20 animate-pulse rounded bg-zinc-800" />
               <div className="mt-3 h-8 w-32 animate-pulse rounded bg-zinc-800" />
             </div>
@@ -33,7 +33,7 @@ export default function AdminLoading() {
         </div>
 
         {/* Table skeleton */}
-        <div className="border border-edge bg-[#111]">
+        <div className="border border-edge bg-elevated">
           <div className="border-b border-edge px-4 py-3">
             <div className="h-3 w-full animate-pulse rounded bg-zinc-800" />
           </div>

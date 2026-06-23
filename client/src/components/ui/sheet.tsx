@@ -119,7 +119,7 @@ export function SheetContent({ children, side = "right", className }: SheetConte
 
       <div
         className={cn(
-          "absolute top-0 h-full w-[min(88vw,22rem)] bg-[#09090b] border-zinc-800 shadow-2xl",
+          "absolute top-0 h-full w-[min(88vw,22rem)] bg-base border-zinc-800 shadow-2xl",
           side === "left" ? "left-0 border-r" : "right-0 border-l",
           className,
         )}

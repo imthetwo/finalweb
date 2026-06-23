@@ -96,7 +96,7 @@ export default function CheckoutPage() {
 
         <form onSubmit={submit} className="space-y-6">
           {/* Shipping info */}
-          <div className="border border-edge bg-[#111] p-6">
+          <div className="border border-edge bg-elevated p-6">
             <h2 className="mb-4 text-[11px] font-black uppercase tracking-wider text-secondary">
               Shipping information
             </h2>
@@ -117,7 +117,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* Payment method */}
-          <div className="border border-edge bg-[#111] p-6">
+          <div className="border border-edge bg-elevated p-6">
             <h2 className="mb-4 text-[11px] font-black uppercase tracking-wider text-secondary">
               Payment method
             </h2>
@@ -146,7 +146,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* Coupon */}
-          <div className="border border-edge bg-[#111] p-6">
+          <div className="border border-edge bg-elevated p-6">
             <h2 className="mb-4 text-[11px] font-black uppercase tracking-wider text-secondary">
               Coupon code
             </h2>

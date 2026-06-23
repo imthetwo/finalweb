@@ -72,7 +72,7 @@ export default function AccountPage() {
             { label: "Orders", value: profile._count?.orders ?? 0 },
             { label: "Wishlist", value: profile._count?.wishlists ?? 0 },
           ].map((s) => (
-            <div key={s.label} className="border border-edge bg-[#111] p-4 text-center">
+            <div key={s.label} className="border border-edge bg-elevated p-4 text-center">
               <p className="text-2xl font-black text-white">{s.value}</p>
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted">{s.label}</p>
             </div>

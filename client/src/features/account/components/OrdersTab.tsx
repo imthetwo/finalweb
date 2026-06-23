@@ -44,7 +44,7 @@ export default function OrdersTab() {
   return (
     <div className="space-y-4">
       {orders.map((o) => (
-        <div key={o.id} className="border border-edge bg-[#111] p-5">
+        <div key={o.id} className="border border-edge bg-elevated p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-edge pb-3">
             <div>
               <p className="text-[11px] uppercase tracking-wider text-muted">Order</p>

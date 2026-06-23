@@ -16,7 +16,7 @@ export default function HeroSection() {
   }
 
   return (
-    <section className="relative flex min-h-[92vh] w-full items-center justify-center overflow-hidden bg-[#050505]">
+    <section className="relative flex min-h-[92vh] w-full items-center justify-center overflow-hidden bg-base">
       {/* ── Background VIDEO ──────────────────────────────────────────
           Drop your video at: client/public/hero.mp4
           (optional poster: client/public/hero-poster.jpg)

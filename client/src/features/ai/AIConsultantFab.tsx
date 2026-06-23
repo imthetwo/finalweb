@@ -68,11 +68,11 @@ export default function AIConsultantFab() {
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="relative animate-in fade-in slide-in-from-right-2 duration-500 rounded-xl border border-white/10 bg-[#111] px-4 py-2.5 text-[13px] font-bold text-white shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-colors hover:border-brand/40 hover:text-brand"
+            className="relative animate-in fade-in slide-in-from-right-2 duration-500 rounded-xl border border-white/10 bg-elevated px-4 py-2.5 text-[13px] font-bold text-white shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-colors hover:border-brand/40 hover:text-brand"
           >
             You need help?
             {/* tail pointing to the button */}
-            <span className="absolute -right-1.5 top-1/2 h-3 w-3 -translate-y-1/2 rotate-45 border-r border-t border-white/10 bg-[#111]" />
+            <span className="absolute -right-1.5 top-1/2 h-3 w-3 -translate-y-1/2 rotate-45 border-r border-t border-white/10 bg-elevated" />
           </button>
 
           {/* Round AI button */}
@@ -86,7 +86,7 @@ export default function AIConsultantFab() {
             {/* online pulse dot */}
             <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-3.5 w-3.5 rounded-full border-2 border-[#0a0a0a] bg-emerald-400" />
+              <span className="relative inline-flex h-3.5 w-3.5 rounded-full border-2 border-edge bg-emerald-400" />
             </span>
           </button>
         </div>
@@ -129,7 +129,7 @@ export default function AIConsultantFab() {
                     "max-w-[85%] whitespace-pre-wrap px-3.5 py-2.5 text-[13px] leading-relaxed",
                     m.role === "user"
                       ? "bg-brand text-black"
-                      : "border border-edge bg-[#151515] text-zinc-200",
+                      : "border border-edge bg-elevated text-zinc-200",
                   ].join(" ")}
                 >
                   {m.text}
@@ -140,7 +140,7 @@ export default function AIConsultantFab() {
             {/* Typing indicator */}
             {loading && (
               <div className="flex justify-start">
-                <div className="flex items-center gap-1.5 border border-edge bg-[#151515] px-4 py-3">
+                <div className="flex items-center gap-1.5 border border-edge bg-elevated px-4 py-3">
                   {[0, 1, 2].map((d) => (
                     <span
                       key={d}
@@ -161,7 +161,7 @@ export default function AIConsultantFab() {
                     key={p}
                     type="button"
                     onClick={() => send(p)}
-                    className="block w-full border border-edge bg-[#151515] px-3 py-2 text-left text-[12px] text-secondary transition-colors hover:border-brand/40 hover:text-brand"
+                    className="block w-full border border-edge bg-elevated px-3 py-2 text-left text-[12px] text-secondary transition-colors hover:border-brand/40 hover:text-brand"
                   >
                     {p}
                   </button>

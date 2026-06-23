@@ -37,7 +37,7 @@ export default function AdminDashboardPage() {
       {/* Stat cards */}
       <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {cards.map(({ label, value, icon: Icon, accent }) => (
-          <div key={label} className="border border-edge bg-[#111] p-5">
+          <div key={label} className="border border-edge bg-elevated p-5">
             <Icon size={18} className={accent} />
             <p className="mt-3 text-2xl font-black text-white">{value}</p>
             <p className="text-[11px] font-bold uppercase tracking-wider text-muted">{label}</p>
@@ -52,7 +52,7 @@ export default function AdminDashboardPage() {
       )}
 
       {/* Recent orders */}
-      <div className="border border-edge bg-[#111]">
+      <div className="border border-edge bg-elevated">
         <div className="border-b border-edge px-5 py-3">
           <h2 className="text-sm font-black uppercase tracking-wider text-white">Recent Orders</h2>
         </div>

@@ -42,7 +42,7 @@ function ProductCard({ product }: { product: ProductItem }) {
     : 0;
 
   return (
-    <div className="group relative flex flex-col overflow-hidden border border-white/5 bg-[#111] transition-all duration-300 hover:border-brand/20 hover:shadow-[0_0_24px_rgba(0,255,255,0.06)]">
+    <div className="group relative flex flex-col overflow-hidden border border-white/5 bg-elevated transition-all duration-300 hover:border-brand/20 hover:shadow-[0_0_24px_rgba(0,255,255,0.06)]">
       {/* Card link overlay */}
       <Link href={`/product/${product.id}`} className="absolute inset-0 z-10" aria-label={product.name} />
 
@@ -124,7 +124,7 @@ export default async function FeaturedProducts() {
   if (products.length === 0) return null;
 
   return (
-    <section className="bg-[#050505] py-20">
+    <section className="bg-base py-20">
       <div className="mx-auto max-w-[1400px] px-4 md:px-8">
         {/* Header */}
         <div className="mb-12 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">

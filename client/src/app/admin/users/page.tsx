@@ -25,7 +25,7 @@ export default function AdminUsersPage() {
     <div className="p-8">
       <h1 className="mb-6 text-2xl font-black uppercase tracking-wide text-white">Users</h1>
 
-      <div className="border border-edge bg-[#111]">
+      <div className="border border-edge bg-elevated">
         <table className="w-full text-[13px]">
           <thead className="border-b border-edge text-[10px] uppercase tracking-wider text-muted">
             <tr>

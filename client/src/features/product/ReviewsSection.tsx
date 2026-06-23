@@ -80,7 +80,7 @@ export default function ReviewsSection({ productId }: { productId: string }) {
             <p className="text-sm text-muted">No reviews yet. Be the first to review this product!</p>
           ) : (
             reviews.map((r) => (
-              <div key={r.id} className="border border-edge bg-[#111] p-5">
+              <div key={r.id} className="border border-edge bg-elevated p-5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand/10 text-[11px] font-black text-brand">
@@ -102,7 +102,7 @@ export default function ReviewsSection({ productId }: { productId: string }) {
         </div>
 
         {/* Write review */}
-        <form onSubmit={submit} className="h-fit space-y-4 border border-edge bg-[#111] p-6">
+        <form onSubmit={submit} className="h-fit space-y-4 border border-edge bg-elevated p-6">
           <h3 className="text-sm font-black uppercase tracking-wider text-white">Write a Review</h3>
 
           <div>

@@ -11,7 +11,7 @@ const BUILD_STEPS = [
 
 export default function CustomLabPromo() {
   return (
-    <section className="relative overflow-hidden border-y border-white/5 bg-[#080808] py-24">
+    <section className="relative overflow-hidden border-y border-white/5 bg-base py-24">
       {/* Background accent */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute right-0 top-0 h-full w-1/2 bg-[radial-gradient(ellipse_60%_80%_at_80%_50%,rgba(0,255,255,0.05),transparent_70%)]" />
@@ -49,7 +49,7 @@ export default function CustomLabPromo() {
           {BUILD_STEPS.map(({ step, label, desc }) => (
             <div
               key={step}
-              className="group flex items-start gap-5 border border-white/5 bg-[#111] p-5 transition-all duration-200 hover:border-brand/15"
+              className="group flex items-start gap-5 border border-white/5 bg-elevated p-5 transition-all duration-200 hover:border-brand/15"
             >
               <span className="flex-none text-2xl font-black text-brand/20 transition-colors duration-200 group-hover:text-brand/50">
                 {step}

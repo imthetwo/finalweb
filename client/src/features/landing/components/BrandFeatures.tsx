@@ -15,7 +15,7 @@ export default function BrandFeatures() {
           {FEATURES.map(({ icon: Icon, title }) => (
             <div
               key={title}
-              className="group flex h-48 flex-col justify-between border border-white/10 bg-surface p-7 transition-all duration-300 hover:border-brand/30 hover:bg-[#111]"
+              className="group flex h-48 flex-col justify-between border border-white/10 bg-surface p-7 transition-all duration-300 hover:border-brand/30 hover:bg-elevated"
             >
               <Icon
                 size={34}

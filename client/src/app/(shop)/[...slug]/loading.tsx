@@ -31,7 +31,7 @@ export default function ShopLoading() {
           <div className="flex-1">
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
               {Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} className="border border-edge bg-[#111]">
+                <div key={i} className="border border-edge bg-elevated">
                   <div className="aspect-square overflow-hidden bg-zinc-800">
                     <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800 bg-[length:200%_100%]" />
                   </div>

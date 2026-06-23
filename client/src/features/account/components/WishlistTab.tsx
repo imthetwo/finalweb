@@ -42,7 +42,7 @@ export default function WishlistTab() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {items.map(({ product }) => (
-        <div key={product.id} className="group relative flex flex-col border border-edge bg-[#111]">
+        <div key={product.id} className="group relative flex flex-col border border-edge bg-elevated">
           <Link href={`/product/${product.id}`} className="relative aspect-square overflow-hidden bg-surface">
             {product.thumbnailUrl ? (
               <Image src={product.thumbnailUrl} alt={product.name} fill className="object-contain p-4" sizes="300px" />
