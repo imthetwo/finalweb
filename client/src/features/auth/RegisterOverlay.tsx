@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getApiUrl } from "@/lib/api/client";
+import { saveToken } from "@/lib/auth";
 
 const registerSchema = z.object({
   fullName: z.string().min(2, "Please enter your full name."),
@@ -127,8 +128,7 @@ export function RegisterOverlay({ triggerButton, open: controlledOpen, onOpenCha
         return;
       }
 
-      localStorage.setItem("access_token", data.access_token);
-      window.dispatchEvent(new Event("auth:change"));
+      saveToken(data.access_token);
       toast.success("Account created successfully.");
       reset();
       setShowPassword(false);

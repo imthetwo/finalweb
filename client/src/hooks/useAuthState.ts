@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { clearToken, getToken } from "@/lib/auth";
 
 export type AuthUser = {
   id: string;
@@ -24,7 +25,7 @@ function parseJwt(token: string): AuthUser | null {
 }
 
 function readUser(): AuthUser | null {
-  const token = localStorage.getItem("access_token");
+  const token = getToken();
   return token ? parseJwt(token) : null;
 }
 
@@ -43,8 +44,7 @@ export function useAuthState() {
   }, []);
 
   const logout = () => {
-    localStorage.removeItem("access_token");
-    window.dispatchEvent(new Event("auth:change"));
+    clearToken();
     window.location.href = "/";
   };
 

@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { saveToken } from "@/lib/auth";
 
 export function AuthCallback() {
   const router = useRouter();
@@ -19,12 +20,7 @@ export function AuthCallback() {
       return;
     }
 
-    try {
-      localStorage.setItem("access_token", token);
-    window.dispatchEvent(new Event("auth:change"));
-    } catch {
-      document.cookie = `access_token=${token}; path=/`;
-    }
+    saveToken(token);
 
     // Clean the fragment from the URL, then redirect home
     window.history.replaceState(null, "", window.location.pathname);

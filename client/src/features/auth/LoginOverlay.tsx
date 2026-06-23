@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getApiUrl } from "@/lib/api/client";
+import { saveToken } from "@/lib/auth";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -117,8 +118,7 @@ export function LoginOverlay({ triggerButton, open: controlledOpen, onOpenChange
         return;
       }
 
-      localStorage.setItem("access_token", data.access_token);
-      window.dispatchEvent(new Event("auth:change"));
+      saveToken(data.access_token);
       toast.success("Signed in successfully.");
       reset();
       setShowPassword(false);
