@@ -1,5 +1,12 @@
 import { prisma } from './prisma-client';
 
+// Ảnh đã upload lên Cloudinary dưới TechStore/{folder}/{name}
+const CLOUD = 'dxbvnueoq';
+function cdnUrl(folder: string, file: string): string {
+  const name = file.replace(/\.[^.]+$/, ''); // bỏ extension
+  return `https://res.cloudinary.com/${CLOUD}/image/upload/f_auto,q_auto,w_600/TechStore/${folder}/${name}`;
+}
+
 async function main() {
   console.log('🧹 Clearing old products and dependents…');
   await prisma.orderItem.deleteMany();
@@ -18,7 +25,7 @@ async function main() {
         categoryId: category.id,
         name: p.name,
         brand: p.brand,
-        imageUrl: `/media/${p.folder}/${encodeURIComponent(p.file)}`,
+        imageUrl: cdnUrl(p.folder, p.file),
         price: p.price,
         salePrice: p.sale ?? null,
         stock: p.stock ?? Math.floor(Math.random() * 30) + 8,

@@ -12,13 +12,18 @@ export class EmailService {
   private readonly mailFrom = process.env.MAIL_FROM || `"Pecify Store" <${this.mailUser}>`;
 
   constructor() {
+    const port = Number(process.env.SMTP_PORT || process.env.MAIL_PORT) || 587;
     this.transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || process.env.MAIL_HOST || 'smtp.gmail.com',
-      port: Number(process.env.SMTP_PORT || process.env.MAIL_PORT) || 587,
-      secure: false,
+      port,
+      secure: port === 465, // true cho SSL trực tiếp, false cho STARTTLS (587)
+      requireTLS: port !== 465, // bắt buộc STARTTLS trên port 587
       auth: {
         user: this.mailUser,
         pass: this.mailPass,
+      },
+      tls: {
+        rejectUnauthorized: false, // bỏ check cert trong dev
       },
     });
   }
