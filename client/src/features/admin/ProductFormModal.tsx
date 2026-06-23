@@ -395,7 +395,7 @@ export default function ProductFormModal({
           {renderSpec()}
 
           <label className="flex items-center gap-2 text-[12px] text-secondary">
-            <input type="checkbox" className="accent-[#00ffff]" checked={form.isPublished ?? true} onChange={(e) => set("isPublished", e.target.checked)} />
+            <input type="checkbox" className="accent-brand" checked={form.isPublished ?? true} onChange={(e) => set("isPublished", e.target.checked)} />
             Published
           </label>
 

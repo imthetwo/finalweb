@@ -4,7 +4,7 @@ export default function AdminLoading() {
       {/* Sidebar skeleton */}
       <aside className="flex w-56 shrink-0 flex-col border-r border-edge bg-surface">
         <div className="border-b border-edge px-5 py-5">
-          <div className="h-2 w-16 animate-shimmer rounded bg-brand/20 bg-[length:200%_100%]" style={{ backgroundImage: 'linear-gradient(90deg, transparent, #00ffff33, transparent)' }} />
+          <div className="h-2 w-16 animate-shimmer rounded bg-brand/20 bg-[length:200%_100%]" style={{ backgroundImage: 'var(--gradient-shimmer-brand)' }} />
           <div className="mt-2 h-4 w-28 animate-pulse rounded bg-elevated" />
         </div>
         <div className="flex-1 space-y-1.5 p-3">

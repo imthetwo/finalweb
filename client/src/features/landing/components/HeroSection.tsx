@@ -35,7 +35,7 @@ export default function HeroSection() {
       {/* Dark overlay + grid (above video so text stays readable) */}
       <div className="absolute inset-0 z-1">
         <div className="absolute inset-0 bg-base/55" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_20%_60%,rgba(0,255,255,0.10)_0%,transparent_55%)]" />
+        <div className="absolute inset-0 brand-radial-left" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,#050505_0%,transparent_25%,transparent_70%,#050505_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] [background-size:60px_60px]" />
       </div>
@@ -48,7 +48,7 @@ export default function HeroSection() {
           <br />
           <span
             className="text-brand"
-            style={{ textShadow: "0 0 60px rgba(0,255,255,0.45), 0 0 120px rgba(0,255,255,0.20)" }}
+            style={{ textShadow: "var(--text-shadow-brand)" }}
           >
             World
           </span>
@@ -58,7 +58,7 @@ export default function HeroSection() {
         <div className="mt-12 flex flex-col gap-4 sm:flex-row">
           <Link
             href="/components/processors"
-            className="inline-flex items-center justify-center bg-brand px-9 py-4 text-sm font-black uppercase tracking-[0.25em] text-black transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(0,255,255,0.45)]"
+            className="inline-flex items-center justify-center bg-brand px-9 py-4 text-sm font-black uppercase tracking-[0.25em] text-black transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow-btn"
           >
             Shop Now
           </Link>

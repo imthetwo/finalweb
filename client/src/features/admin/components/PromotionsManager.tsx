@@ -243,7 +243,7 @@ export function PromotionsManager() {
                       type="checkbox"
                       checked={form.isActive}
                       onChange={(e) => setForm((f) => ({ ...f, isActive: e.target.checked }))}
-                      className="h-4 w-4 accent-[#00ffff]"
+                      className="h-4 w-4 accent-brand"
                     />
                     Active
                   </label>

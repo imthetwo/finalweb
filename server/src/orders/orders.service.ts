@@ -2,27 +2,39 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { OrderStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CartService } from '../cart/cart.service';
+import { CouponsService } from '../coupons/coupons.service';
+
+const SHIPPING_FEE = 30000;
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cartService: CartService,
+    private readonly coupons: CouponsService,
   ) {}
 
   async createFromCart(
     userId: string,
-    body: {
-      shippingInfo: Record<string, string>;
-      paymentMethod: string;
-    },
+    body: { shippingInfo: Record<string, string>; paymentMethod: string; couponCode?: string },
   ) {
     const cart = await this.cartService.getCart(userId);
-    if (!cart.items.length) {
-      throw new BadRequestException('Cart is empty');
+    if (!cart.items.length) throw new BadRequestException('Cart is empty');
+
+    const subTotal = cart.subTotal;
+
+    // Validate coupon nếu có
+    let discount = 0;
+    let appliedCoupon: string | null = null;
+    if (body.couponCode) {
+      const result = await this.coupons.validate(body.couponCode, subTotal);
+      if (result.valid) {
+        discount = result.discount;
+        appliedCoupon = result.code ?? body.couponCode;
+      }
     }
 
-    const totalAmount = cart.subTotal + 30000; // 30k shipping fee
+    const totalAmount = subTotal - discount + SHIPPING_FEE;
 
     const order = await this.prisma.$transaction(async (tx) => {
       for (const item of cart.items) {
@@ -30,15 +42,18 @@ export class OrdersService {
           where: { id: item.product.id, stock: { gte: item.quantity } },
           data: { stock: { decrement: item.quantity } },
         });
-        if (updated.count === 0) {
+        if (updated.count === 0)
           throw new BadRequestException(`Out of stock: ${item.product.name}`);
-        }
       }
 
       const created = await tx.order.create({
         data: {
           userId,
+          subTotal,
+          discount,
+          shippingFee: SHIPPING_FEE,
           totalAmount,
+          couponCode: appliedCoupon,
           paymentMethod: body.paymentMethod,
           shippingInfo: body.shippingInfo,
           status: body.paymentMethod === 'COD' ? OrderStatus.PROCESSING : OrderStatus.PENDING,
@@ -47,7 +62,7 @@ export class OrdersService {
             create: cart.items.map((item) => ({
               productId: item.product.id,
               quantity: item.quantity,
-              priceAtBuy: item.product.salePrice ?? item.product.price,
+              priceAtBuy: item.product.displayPrice,
             })),
           },
         },
@@ -55,12 +70,13 @@ export class OrdersService {
       });
 
       const userCart = await tx.cart.findUnique({ where: { userId } });
-      if (userCart) {
-        await tx.cartItem.deleteMany({ where: { cartId: userCart.id } });
-      }
+      if (userCart) await tx.cartItem.deleteMany({ where: { cartId: userCart.id } });
 
       return created;
     });
+
+    // Đánh dấu coupon đã dùng
+    if (appliedCoupon) await this.coupons.markUsed(appliedCoupon);
 
     return order;
   }
@@ -70,7 +86,7 @@ export class OrdersService {
       where: { userId },
       orderBy: { createdAt: 'desc' },
       include: {
-        items: { include: { product: { select: { id: true, name: true } } } },
+        items: { include: { product: { select: { id: true, name: true, imageUrl: true } } } },
       },
     });
   }
@@ -90,9 +106,8 @@ export class OrdersService {
       include: { items: true },
     });
     if (!order) throw new NotFoundException('Order not found');
-    if (!['PENDING', 'PROCESSING'].includes(order.status)) {
+    if (!['PENDING', 'PROCESSING'].includes(order.status))
       throw new BadRequestException('Cannot cancel this order');
-    }
 
     return this.prisma.$transaction(async (tx) => {
       for (const item of order.items) {

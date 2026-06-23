@@ -80,7 +80,7 @@ export default function AIConsultantFab() {
             type="button"
             onClick={() => setOpen(true)}
             aria-label="Open AI assistant"
-            className="group relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand text-black shadow-[0_0_24px_rgba(0,255,255,0.45)] transition-all duration-300 hover:scale-110 hover:shadow-[0_0_36px_rgba(0,255,255,0.7)]"
+            className="group relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand text-black shadow-glow-md transition-all duration-300 hover:scale-110 hover:shadow-glow-lg"
           >
             <Bot size={24} />
             {/* online pulse dot */}

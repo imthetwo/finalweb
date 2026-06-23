@@ -106,7 +106,7 @@ export default async function ShopByCategory() {
               <Link
                 key={cat.key}
                 href={cat.href}
-                className="group relative flex flex-col overflow-hidden border border-white/6 bg-elevated transition-all duration-300 hover:border-brand/25 hover:shadow-[0_0_16px_rgba(0,255,255,0.07)]"
+                className="group relative flex flex-col overflow-hidden border border-white/6 bg-elevated transition-all duration-300 hover:border-brand/25 hover:shadow-glow-sm"
               >
                 {/* ── Product image area ── */}
                 <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-elevated p-5">

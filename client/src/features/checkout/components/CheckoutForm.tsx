@@ -138,7 +138,7 @@ export function CheckoutForm() {
                     value={m}
                     checked={paymentMethod === m}
                     onChange={() => setPaymentMethod(m)}
-                    className="accent-[#00ffff]"
+                    className="accent-brand"
                   />
                   <span className="text-[13px] font-bold">{m === "COD" ? "Cash on Delivery" : "MoMo"}</span>
                 </label>

@@ -32,7 +32,7 @@ export default function ProductLoading() {
 
           {/* Price */}
           <div className="mt-6 h-10 w-48 overflow-hidden rounded bg-elevated">
-            <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-[#00ffff]/10 to-zinc-800 bg-[length:200%_100%]" />
+            <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-brand/10 to-zinc-800 bg-[length:200%_100%]" />
           </div>
 
           {/* Stock */}
@@ -52,7 +52,7 @@ export default function ProductLoading() {
           {/* Buttons */}
           <div className="mt-6 flex items-stretch gap-3">
             <div className="h-12 flex-1 overflow-hidden bg-elevated">
-              <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-[#00ffff]/10 to-zinc-800 bg-[length:200%_100%]" />
+              <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-brand/10 to-zinc-800 bg-[length:200%_100%]" />
             </div>
             <div className="h-12 w-12 overflow-hidden border border-edge bg-surface">
               <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 bg-[length:200%_100%]" />

@@ -14,7 +14,7 @@ export default function CustomLabPromo() {
     <section className="relative overflow-x-hidden border-y border-white/5 bg-base py-16 md:py-24">
       {/* Background accent */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute right-0 top-0 h-full w-1/2 bg-[radial-gradient(ellipse_60%_80%_at_80%_50%,rgba(0,255,255,0.05),transparent_70%)]" />
+        <div className="absolute right-0 top-0 h-full w-1/2 brand-radial-right" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] [background-size:40px_40px]" />
       </div>
 
@@ -37,7 +37,7 @@ export default function CustomLabPromo() {
 
           <Link
             href="/custom-lab"
-            className="group mt-10 inline-flex items-center gap-3 border border-brand/40 bg-brand/6 px-8 py-4 text-sm font-black uppercase tracking-[0.25em] text-brand transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand hover:text-black hover:shadow-[0_0_40px_rgba(0,255,255,0.35)]"
+            className="group mt-10 inline-flex items-center gap-3 border border-brand/40 bg-brand/6 px-8 py-4 text-sm font-black uppercase tracking-[0.25em] text-brand transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand hover:text-black hover:shadow-glow-btn"
           >
             Open PC Builder
             <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" />

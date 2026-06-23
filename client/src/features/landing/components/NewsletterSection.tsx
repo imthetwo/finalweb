@@ -67,7 +67,7 @@ export default function NewsletterSection() {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center justify-center gap-2 bg-brand px-7 py-3.5 text-sm font-black uppercase tracking-[0.2em] text-black transition-all duration-200 hover:shadow-[0_0_30px_rgba(0,255,255,0.35)] disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-2 bg-brand px-7 py-3.5 text-sm font-black uppercase tracking-[0.2em] text-black transition-all duration-200 hover:shadow-glow-btn disabled:opacity-60"
           >
             <Send size={14} />
             {loading ? "Subscribing…" : "Subscribe"}

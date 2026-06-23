@@ -68,7 +68,7 @@ function ProgressBar() {
         opacity: visible ? 1 : 0,
         transition: "width 0.18s ease-out, opacity 0.3s ease",
         background: "linear-gradient(90deg, var(--primary), var(--primary-hover))",
-        boxShadow: "0 0 10px rgba(0,255,255,0.6), 0 0 4px var(--primary)",
+        boxShadow: "var(--glow-xs), 0 0 4px var(--primary)",
         pointerEvents: "none",
       }}
     />
