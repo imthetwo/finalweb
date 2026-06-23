@@ -29,7 +29,11 @@ async function main() {
   await prisma.category.deleteMany();
 
   for (const name of CATEGORIES) {
-    await prisma.category.create({ data: { name } });
+    await prisma.category.upsert({
+      where: { name },
+      create: { name },
+      update: {},
+    });
     console.log(`✅ ${name}`);
   }
 
