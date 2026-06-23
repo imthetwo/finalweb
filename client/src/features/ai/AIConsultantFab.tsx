@@ -68,7 +68,7 @@ export default function AIConsultantFab() {
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="relative animate-in fade-in slide-in-from-right-2 duration-500 rounded-xl border border-white/10 bg-elevated px-4 py-2.5 text-[13px] font-bold text-white shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-colors hover:border-brand/40 hover:text-brand"
+            className="relative animate-in fade-in slide-in-from-right-2 duration-500 rounded-xl border border-white/10 bg-elevated px-4 py-2.5 text-[13px] font-bold text-fg shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-colors hover:border-brand/40 hover:text-brand"
           >
             You need help?
             {/* tail pointing to the button */}
@@ -103,7 +103,7 @@ export default function AIConsultantFab() {
                 <Image src={logo} alt="Pecify" width={28} height={28} className="object-contain" />
               </div>
               <div>
-                <p className="text-[13px] font-black uppercase tracking-wider text-white">Pecify Assistant</p>
+                <p className="text-[13px] font-black uppercase tracking-wider text-fg">Pecify Assistant</p>
                 <p className="flex items-center gap-1.5 text-[10px] text-muted">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                   PC Build Advisor
@@ -114,7 +114,7 @@ export default function AIConsultantFab() {
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close"
-              className="flex h-8 w-8 items-center justify-center text-muted transition-colors hover:text-white"
+              className="flex h-8 w-8 items-center justify-center text-muted transition-colors hover:text-fg"
             >
               <X size={18} />
             </button>
@@ -129,7 +129,7 @@ export default function AIConsultantFab() {
                     "max-w-[85%] whitespace-pre-wrap px-3.5 py-2.5 text-[13px] leading-relaxed",
                     m.role === "user"
                       ? "bg-brand text-black"
-                      : "border border-edge bg-elevated text-zinc-200",
+                      : "border border-edge bg-elevated text-secondary",
                   ].join(" ")}
                 >
                   {m.text}
@@ -181,7 +181,7 @@ export default function AIConsultantFab() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Enter your budget + needs…"
               disabled={loading}
-              className="flex-1 border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-[13px] text-white outline-none transition-colors placeholder:text-subtle focus:border-brand/50 disabled:opacity-60"
+              className="flex-1 border border-edge bg-surface px-3 py-2.5 text-[13px] text-fg outline-none transition-colors placeholder:text-subtle focus:border-brand/50 disabled:opacity-60"
             />
             <button
               type="submit"

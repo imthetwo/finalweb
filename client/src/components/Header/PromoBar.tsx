@@ -75,7 +75,7 @@ export default function PromoBar() {
           <button
             type="button"
             onClick={prev}
-            className="p-1 text-subtle transition-colors hover:text-white"
+            className="p-1 text-subtle transition-colors hover:text-fg"
             aria-label="Previous promotion"
           >
             <ChevronLeft size={14} />
@@ -94,7 +94,7 @@ export default function PromoBar() {
                   key={i}
                   className="flex h-full w-full shrink-0 items-center justify-center gap-2 px-2"
                 >
-                  <span className="truncate text-[11px] font-medium uppercase tracking-wide text-white">
+                  <span className="truncate text-[11px] font-medium uppercase tracking-wide text-fg">
                     {p.text}
                   </span>
                   <Link
@@ -111,7 +111,7 @@ export default function PromoBar() {
           <button
             type="button"
             onClick={next}
-            className="p-1 text-subtle transition-colors hover:text-white"
+            className="p-1 text-subtle transition-colors hover:text-fg"
             aria-label="Next promotion"
           >
             <ChevronRight size={14} />

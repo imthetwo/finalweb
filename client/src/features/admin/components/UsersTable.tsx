@@ -24,7 +24,7 @@ export function UsersTable() {
 
   return (
     <div className="p-8">
-      <h1 className="mb-6 text-2xl font-black uppercase tracking-wide text-white">Users</h1>
+      <h1 className="mb-6 text-2xl font-black uppercase tracking-wide text-fg">Users</h1>
 
       <div className="border border-edge bg-elevated">
         <table className="w-full text-[13px]">
@@ -45,12 +45,12 @@ export function UsersTable() {
             ) : (
               users.map((u) => (
                 <tr key={u.id} className="border-b border-edge/50">
-                  <td className="px-4 py-3 font-semibold text-white">{u.fullName}</td>
+                  <td className="px-4 py-3 font-semibold text-fg">{u.fullName}</td>
                   <td className="px-4 py-3 text-secondary">{u.email}</td>
                   <td className="px-4 py-3 text-center">
                     <span className={`text-[10px] font-bold uppercase ${u.role === "ADMIN" ? "text-brand" : "text-muted"}`}>{u.role}</span>
                   </td>
-                  <td className="px-4 py-3 text-center text-zinc-300">{u._count.orders}</td>
+                  <td className="px-4 py-3 text-center text-secondary">{u._count.orders}</td>
                   <td className="px-4 py-3 text-muted">{new Date(u.createdAt).toLocaleDateString("en-GB")}</td>
                 </tr>
               ))

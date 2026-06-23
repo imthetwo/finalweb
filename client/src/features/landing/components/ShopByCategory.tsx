@@ -93,7 +93,7 @@ export default async function ShopByCategory() {
       <div className="mx-auto max-w-350 px-4 md:px-8">
 
         {/* ── Title ── */}
-        <h2 className="mb-10 text-center text-3xl font-black uppercase tracking-[0.18em] text-white md:text-4xl">
+        <h2 className="mb-10 text-center text-3xl font-black uppercase tracking-[0.18em] text-fg md:text-4xl">
           Shop by Category
         </h2>
 
@@ -125,7 +125,7 @@ export default async function ShopByCategory() {
 
                 {/* ── Label bar ── */}
                 <div className="flex items-center justify-between gap-2 border-t border-white/5 bg-elevated px-4 py-3">
-                  <span className="text-[11px] font-black uppercase tracking-[0.12em] text-white">
+                  <span className="text-[11px] font-black uppercase tracking-[0.12em] text-fg">
                     <span className="mr-1 font-bold opacity-50">//</span>
                     {cat.label}
                     {count > 0 && (
@@ -137,7 +137,7 @@ export default async function ShopByCategory() {
 
                   <ArrowRight
                     size={12}
-                    className="shrink-0 text-subtle transition-all duration-200 group-hover:translate-x-1 group-hover:text-white"
+                    className="shrink-0 text-subtle transition-all duration-200 group-hover:translate-x-1 group-hover:text-fg"
                   />
                 </div>
               </Link>

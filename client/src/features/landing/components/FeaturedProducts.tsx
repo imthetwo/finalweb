@@ -58,7 +58,7 @@ function ProductCard({ product }: { product: ProductItem }) {
           />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <span className="text-[10px] uppercase tracking-widest text-zinc-700">No Image</span>
+            <span className="text-[10px] uppercase tracking-widest text-subtle">No Image</span>
           </div>
         )}
 
@@ -69,7 +69,7 @@ function ProductCard({ product }: { product: ProductItem }) {
         )}
 
         {product.stock === 0 && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60">
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-base/60">
             <span className="text-[11px] font-black uppercase tracking-widest text-muted">Out of Stock</span>
           </div>
         )}
@@ -80,7 +80,7 @@ function ProductCard({ product }: { product: ProductItem }) {
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand/60">
           {product.brand}
         </p>
-        <h3 className="line-clamp-2 text-[13px] font-semibold leading-snug text-white transition-colors duration-200 group-hover:text-brand">
+        <h3 className="line-clamp-2 text-[13px] font-semibold leading-snug text-fg transition-colors duration-200 group-hover:text-brand">
           {product.name}
         </h3>
 
@@ -97,7 +97,7 @@ function ProductCard({ product }: { product: ProductItem }) {
                 </span>
               </>
             ) : (
-              <span className="text-base font-black text-white">
+              <span className="text-base font-black text-fg">
                 {formatVnd(product.price)}
               </span>
             )}
@@ -132,7 +132,7 @@ export default async function FeaturedProducts() {
             <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">
               Just Arrived
             </p>
-            <h2 className="mt-3 text-3xl font-black uppercase leading-tight tracking-tight text-white md:text-5xl">
+            <h2 className="mt-3 text-3xl font-black uppercase leading-tight tracking-tight text-fg md:text-5xl">
               Featured Products
             </h2>
           </div>

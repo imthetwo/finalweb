@@ -13,7 +13,7 @@ function Stars({ value, size = 14 }: { value: number; size?: number }) {
         <Star
           key={i}
           size={size}
-          className={i <= Math.round(value) ? "fill-[#00ffff] text-brand" : "text-zinc-700"}
+          className={i <= Math.round(value) ? "fill-[#00ffff] text-brand" : "text-subtle"}
         />
       ))}
     </div>
@@ -62,7 +62,7 @@ export default function ReviewsSection({ productId }: { productId: string }) {
   return (
     <section className="mx-auto mt-16 max-w-6xl border-t border-edge pt-10">
       <div className="mb-8 flex items-center gap-4">
-        <h2 className="text-xl font-black uppercase tracking-wide text-white">Reviews</h2>
+        <h2 className="text-xl font-black uppercase tracking-wide text-fg">Reviews</h2>
         {count > 0 && (
           <div className="flex items-center gap-2">
             <Stars value={average} size={16} />
@@ -87,13 +87,13 @@ export default function ReviewsSection({ productId }: { productId: string }) {
                       {r.user.fullName.slice(0, 2).toUpperCase()}
                     </span>
                     <div>
-                      <p className="text-[13px] font-semibold text-white">{r.user.fullName}</p>
+                      <p className="text-[13px] font-semibold text-fg">{r.user.fullName}</p>
                       {r.isVerifiedBuy && <p className="text-[10px] font-bold uppercase text-emerald-400">Verified buyer</p>}
                     </div>
                   </div>
                   <Stars value={r.rating} />
                 </div>
-                {r.title && <p className="mt-3 text-[14px] font-bold text-white">{r.title}</p>}
+                {r.title && <p className="mt-3 text-[14px] font-bold text-fg">{r.title}</p>}
                 {r.text && <p className="mt-1 text-[13px] leading-relaxed text-secondary">{r.text}</p>}
                 <p className="mt-2 text-[11px] text-subtle">{new Date(r.createdAt).toLocaleDateString("en-GB")}</p>
               </div>
@@ -103,14 +103,14 @@ export default function ReviewsSection({ productId }: { productId: string }) {
 
         {/* Write review */}
         <form onSubmit={submit} className="h-fit space-y-4 border border-edge bg-elevated p-6">
-          <h3 className="text-sm font-black uppercase tracking-wider text-white">Write a Review</h3>
+          <h3 className="text-sm font-black uppercase tracking-wider text-fg">Write a Review</h3>
 
           <div>
             <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-muted">Rating</p>
             <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((i) => (
                 <button key={i} type="button" onClick={() => setRating(i)} aria-label={`${i} stars`}>
-                  <Star size={22} className={i <= rating ? "fill-[#00ffff] text-brand" : "text-zinc-700 hover:text-muted"} />
+                  <Star size={22} className={i <= rating ? "fill-[#00ffff] text-brand" : "text-subtle hover:text-muted"} />
                 </button>
               ))}
             </div>
@@ -120,14 +120,14 @@ export default function ReviewsSection({ productId }: { productId: string }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Title (optional)"
-            className="w-full border border-zinc-700 bg-zinc-900 px-3 py-2 text-[13px] text-white outline-none focus:border-brand/50 placeholder:text-subtle"
+            className="w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50 placeholder:text-subtle"
           />
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Share your experience…"
             rows={4}
-            className="w-full resize-none border border-zinc-700 bg-zinc-900 px-3 py-2 text-[13px] text-white outline-none focus:border-brand/50 placeholder:text-subtle"
+            className="w-full resize-none border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50 placeholder:text-subtle"
           />
           <button
             type="submit"

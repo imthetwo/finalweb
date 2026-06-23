@@ -12,7 +12,7 @@ const STATUS_STYLE: Record<string, string> = {
   PROCESSING:     "border-blue-700/50 bg-blue-950/30 text-blue-400",
   SHIPPED:        "border-cyan-700/50 bg-cyan-950/30 text-brand",
   DELIVERED:      "border-emerald-700/50 bg-emerald-950/30 text-emerald-400",
-  CANCELLED:      "border-zinc-700 bg-zinc-900 text-muted",
+  CANCELLED:      "border-edge bg-surface text-muted",
   RETURNED:       "border-orange-700/50 bg-orange-950/30 text-orange-400",
 };
 
@@ -48,7 +48,7 @@ export default function OrdersTab() {
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-edge pb-3">
             <div>
               <p className="text-[11px] uppercase tracking-wider text-muted">Order</p>
-              <p className="font-mono text-sm font-bold text-white">#{o.id.slice(0, 8).toUpperCase()}</p>
+              <p className="font-mono text-sm font-bold text-fg">#{o.id.slice(0, 8).toUpperCase()}</p>
             </div>
             <span className={`border px-3 py-1 text-[10px] font-black uppercase tracking-wider ${STATUS_STYLE[o.status] ?? STATUS_STYLE.PENDING}`}>
               {STATUS_LABEL[o.status] ?? o.status}
@@ -58,7 +58,7 @@ export default function OrdersTab() {
           <div className="space-y-1.5 py-3">
             {o.items.map((it) => (
               <div key={it.id} className="flex justify-between text-[13px]">
-                <span className="text-zinc-300">{it.product.name} <span className="text-subtle">×{it.quantity}</span></span>
+                <span className="text-secondary">{it.product.name} <span className="text-subtle">×{it.quantity}</span></span>
                 <span className="text-secondary">{formatVnd(it.priceAtBuy * it.quantity)}</span>
               </div>
             ))}

@@ -46,14 +46,14 @@ export default function ProfileTab({ profile, onUpdated }: { profile: UserProfil
   }
 
   const inputCls =
-    "w-full border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm text-white outline-none transition-colors focus:border-brand/50 placeholder:text-subtle";
+    "w-full border border-edge bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors focus:border-brand/50 placeholder:text-subtle";
   const labelCls = "mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-muted";
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       {/* Profile info */}
       <form onSubmit={saveProfile} className="space-y-4 border border-edge bg-elevated p-6">
-        <h3 className="text-sm font-black uppercase tracking-wider text-white">Personal Information</h3>
+        <h3 className="text-sm font-black uppercase tracking-wider text-fg">Personal Information</h3>
         <div>
           <label className={labelCls}>Full name</label>
           <input className={inputCls} value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} />
@@ -77,7 +77,7 @@ export default function ProfileTab({ profile, onUpdated }: { profile: UserProfil
 
       {/* Change password */}
       <form onSubmit={savePassword} className="space-y-4 border border-edge bg-elevated p-6">
-        <h3 className="text-sm font-black uppercase tracking-wider text-white">Change Password</h3>
+        <h3 className="text-sm font-black uppercase tracking-wider text-fg">Change Password</h3>
         <div>
           <label className={labelCls}>Current password</label>
           <input type="password" className={inputCls} value={pwd.current} onChange={(e) => setPwd({ ...pwd, current: e.target.value })} />
@@ -89,7 +89,7 @@ export default function ProfileTab({ profile, onUpdated }: { profile: UserProfil
         <button
           type="submit"
           disabled={savingPwd}
-          className="inline-flex items-center gap-2 border border-zinc-700 px-5 py-2.5 text-[12px] font-black uppercase tracking-wider text-zinc-200 transition hover:border-white hover:text-white disabled:opacity-50"
+          className="inline-flex items-center gap-2 border border-edge px-5 py-2.5 text-[12px] font-black uppercase tracking-wider text-secondary transition hover:border-white hover:text-fg disabled:opacity-50"
         >
           <KeyRound size={13} /> {savingPwd ? "Changing…" : "Change password"}
         </button>

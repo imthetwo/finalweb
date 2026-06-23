@@ -47,16 +47,16 @@ export default function WishlistTab() {
             {product.thumbnailUrl ? (
               <Image src={product.thumbnailUrl} alt={product.name} fill className="object-contain p-4" sizes="300px" />
             ) : (
-              <div className="flex h-full items-center justify-center text-[10px] text-zinc-700">No image</div>
+              <div className="flex h-full items-center justify-center text-[10px] text-subtle">No image</div>
             )}
           </Link>
           <div className="flex flex-1 flex-col gap-2 p-4">
             <p className="text-[10px] font-bold uppercase tracking-wider text-brand/60">{product.brand}</p>
-            <Link href={`/product/${product.id}`} className="line-clamp-2 text-[13px] font-semibold text-white hover:text-brand">
+            <Link href={`/product/${product.id}`} className="line-clamp-2 text-[13px] font-semibold text-fg hover:text-brand">
               {product.name}
             </Link>
             <div className="mt-auto flex items-center justify-between pt-2">
-              <span className="text-sm font-black text-white">{formatVnd(product.displayPrice)}</span>
+              <span className="text-sm font-black text-fg">{formatVnd(product.displayPrice)}</span>
               <button
                 type="button"
                 onClick={() => remove(product.id)}

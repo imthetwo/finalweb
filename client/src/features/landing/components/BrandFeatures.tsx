@@ -9,7 +9,7 @@ const FEATURES = [
 
 export default function BrandFeatures() {
   return (
-    <section className="bg-black py-12">
+    <section className="bg-base py-12">
       <div className="mx-auto max-w-375 px-4 md:px-8">
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {FEATURES.map(({ icon: Icon, title }) => (
@@ -20,9 +20,9 @@ export default function BrandFeatures() {
               <Icon
                 size={34}
                 strokeWidth={1.5}
-                className="text-white transition-colors duration-300 group-hover:text-brand"
+                className="text-fg transition-colors duration-300 group-hover:text-brand"
               />
-              <p className="whitespace-pre-line text-lg font-black uppercase leading-tight tracking-tight text-white">
+              <p className="whitespace-pre-line text-lg font-black uppercase leading-tight tracking-tight text-fg">
                 {title}
               </p>
             </div>

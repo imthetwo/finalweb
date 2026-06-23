@@ -42,7 +42,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-5">
           {/* Brand column */}
           <div className="lg:col-span-1">
-            <p className="text-xl font-black uppercase tracking-tight text-white">PECIFY</p>
+            <p className="text-xl font-black uppercase tracking-tight text-fg">PECIFY</p>
             <p className="mt-3 text-[12px] leading-relaxed text-muted">
               Premium PC components & gaming gear. Engineered for those who demand
               the edge.
@@ -60,7 +60,7 @@ export default function Footer() {
                   <li key={label}>
                     <Link
                       href={href}
-                      className="text-[12px] text-muted transition-colors hover:text-white"
+                      className="text-[12px] text-muted transition-colors hover:text-fg"
                     >
                       {label}
                     </Link>
@@ -75,7 +75,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-white/5">
         <div className="mx-auto flex max-w-350 flex-col items-center justify-between gap-3 px-4 py-5 md:flex-row md:px-8">
-          <p className="text-[10px] uppercase tracking-widest text-zinc-700">
+          <p className="text-[10px] uppercase tracking-widest text-subtle">
             © 2025 Pecify. All rights reserved.
           </p>
           <div className="flex items-center gap-2">

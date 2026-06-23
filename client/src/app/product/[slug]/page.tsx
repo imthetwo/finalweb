@@ -39,7 +39,7 @@ export default async function ProductPage({ params }: Props) {
   const specEntries = product.specs ? Object.entries(product.specs) : [];
 
   return (
-    <main className="min-h-screen bg-black px-4 py-10 text-white md:px-8">
+    <main className="min-h-screen bg-base px-4 py-10 text-fg md:px-8">
       <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-2">
         {/* Image */}
         <div className="relative aspect-square border border-edge bg-surface">
@@ -91,7 +91,7 @@ export default async function ProductPage({ params }: Props) {
               {specEntries.map(([key, val]) => (
                 <div key={key} className="flex justify-between gap-2 text-[13px]">
                   <span className="capitalize text-muted">{key.replace(/([A-Z])/g, " $1").trim()}</span>
-                  <span className="font-semibold text-white">{String(val)}</span>
+                  <span className="font-semibold text-fg">{String(val)}</span>
                 </div>
               ))}
             </div>

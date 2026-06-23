@@ -20,7 +20,7 @@ export default function Logo() {
         />
       </span>
       <span
-        className="text-white font-bold text-[24px] sm:text-[28px] uppercase tracking-wide"
+        className="text-fg font-bold text-[24px] sm:text-[28px] uppercase tracking-wide"
         style={{
           fontFamily: '"Saira", sans-serif',
           textRendering: "optimizeLegibility",

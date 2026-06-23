@@ -57,7 +57,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
       {/* Header */}
       <div className="relative shrink-0 border-b border-edge bg-[linear-gradient(180deg,#2d2b48_0%,#22203a_100%)]">
         <button type="button" onClick={onClose}
-          className="absolute left-4 top-1/2 flex -translate-y-1/2 items-center gap-1.5 border border-white/20 bg-black/30 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-zinc-200 hover:border-white/40 hover:text-white md:left-6">
+          className="absolute left-4 top-1/2 flex -translate-y-1/2 items-center gap-1.5 border border-white/20 bg-base/30 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-secondary hover:border-white/40 hover:text-fg md:left-6">
           <X size={12} /> Cancel
         </button>
         <div className="flex items-center justify-center py-5">
@@ -188,7 +188,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
                       )}>
                         <td className="w-9 px-2 py-2"><input type="checkbox" readOnly checked={isSelected} className="h-3.5 w-3.5 accent-brand" /></td>
                         <td className="w-14 px-3 py-2">
-                          <div className="flex h-11 w-11 items-center justify-center border border-edge bg-zinc-900">
+                          <div className="flex h-11 w-11 items-center justify-center border border-edge bg-surface">
                             {part.thumbnailUrl
                               ? <Image src={part.thumbnailUrl} alt={part.name} width={44} height={44} className="h-full w-full object-contain p-1" />
                               : <slotCfg.Icon size={16} className="text-subtle" />}

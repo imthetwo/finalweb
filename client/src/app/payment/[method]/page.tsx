@@ -108,7 +108,7 @@ export default function PaymentGatewayPage() {
   // ── Loading ───────────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <main className="flex min-h-[70vh] items-center justify-center bg-base text-white">
+      <main className="flex min-h-[70vh] items-center justify-center bg-base text-fg">
         <div className="flex flex-col items-center gap-3">
           <RefreshCw size={24} className="animate-spin text-brand" />
           <p className="text-sm text-secondary">Connecting to MoMo…</p>
@@ -119,7 +119,7 @@ export default function PaymentGatewayPage() {
 
   if (!orderId) {
     return (
-      <main className="flex min-h-[70vh] items-center justify-center bg-base text-white">
+      <main className="flex min-h-[70vh] items-center justify-center bg-base text-fg">
         <p className="text-red-400">Missing order ID.</p>
       </main>
     );
@@ -129,7 +129,7 @@ export default function PaymentGatewayPage() {
   const methodLabel   = (method ?? "MOMO").toUpperCase();
 
   return (
-    <main className="flex min-h-[70vh] items-center justify-center bg-base px-4 py-10 text-white">
+    <main className="flex min-h-[70vh] items-center justify-center bg-base px-4 py-10 text-fg">
       <div className="w-full max-w-sm border border-edge bg-elevated">
 
         {/* Header */}
@@ -153,7 +153,7 @@ export default function PaymentGatewayPage() {
           {/* ── Real MoMo QR from API ── */}
           {isMomo && payment?.qrCodeUrl && !expired && (
             <div className="flex flex-col items-center gap-3">
-              <div className="border border-zinc-700 bg-white p-4">
+              <div className="border border-edge bg-white p-4">
                 <QRCodeSVG
                   value={payment.qrCodeUrl}
                   size={200}
@@ -165,7 +165,7 @@ export default function PaymentGatewayPage() {
                 Open <span className="font-bold text-pink-400">MoMo app</span> → scan QR to pay.
                 <br />Waiting for payment confirmation…
               </p>
-              <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
+              <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-elevated">
                 <div className="h-full animate-[shrink_600s_linear_forwards] bg-brand" />
               </div>
             </div>
@@ -178,7 +178,7 @@ export default function PaymentGatewayPage() {
               <button
                 type="button"
                 onClick={() => { setExpired(false); window.location.reload(); }}
-                className="mt-2 text-[12px] text-secondary underline hover:text-white"
+                className="mt-2 text-[12px] text-secondary underline hover:text-fg"
               >
                 Generate new QR
               </button>
@@ -214,12 +214,12 @@ export default function PaymentGatewayPage() {
                 type="button"
                 onClick={() => pay(false)}
                 disabled={processing}
-                className="inline-flex w-full items-center justify-center gap-2 border border-zinc-700 py-2.5 text-[12px] font-bold uppercase tracking-wider text-secondary transition hover:border-red-500 hover:text-red-400 disabled:opacity-50"
+                className="inline-flex w-full items-center justify-center gap-2 border border-edge py-2.5 text-[12px] font-bold uppercase tracking-wider text-secondary transition hover:border-red-500 hover:text-red-400 disabled:opacity-50"
               >
                 <XCircle size={14} /> Cancel payment
               </button>
 
-              <p className="text-center text-[10px] text-zinc-700">
+              <p className="text-center text-[10px] text-subtle">
                 {payment?.source === "simulated"
                   ? "MoMo sandbox unreachable — using simulated flow."
                   : "Demo gateway for non-MoMo payments."}

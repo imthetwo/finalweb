@@ -46,15 +46,15 @@ export default function ForgotPasswordPage() {
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <h1 className="text-lg font-black uppercase tracking-wide text-white">Check your email</h1>
+            <h1 className="text-lg font-black uppercase tracking-wide text-fg">Check your email</h1>
             <p className="mt-3 text-[13px] leading-relaxed text-secondary">
-              If <span className="text-white">{email}</span> is registered, we sent a password reset link.
+              If <span className="text-fg">{email}</span> is registered, we sent a password reset link.
               Check your inbox (and spam folder).
             </p>
             <p className="mt-6 text-[11px] text-subtle">Link expires in 1 hour.</p>
             <Link
               href="/login"
-              className="mt-6 block border border-zinc-700 py-2.5 text-center text-[12px] font-bold uppercase tracking-wider text-zinc-300 transition hover:border-white hover:text-white"
+              className="mt-6 block border border-edge py-2.5 text-center text-[12px] font-bold uppercase tracking-wider text-secondary transition hover:border-white hover:text-fg"
             >
               Back to sign in
             </Link>
@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
           /* ── Form state ── */
           <div className="border border-edge bg-elevated">
             <div className="border-b border-edge px-6 py-5">
-              <h1 className="text-lg font-black uppercase tracking-wide text-white">Forgot password</h1>
+              <h1 className="text-lg font-black uppercase tracking-wide text-fg">Forgot password</h1>
               <p className="mt-1 text-[12px] text-muted">
                 Enter your email and we'll send you a reset link.
               </p>
@@ -80,7 +80,7 @@ export default function ForgotPasswordPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm text-white outline-none transition-colors focus:border-brand/50 placeholder:text-subtle"
+                  className="w-full border border-edge bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors focus:border-brand/50 placeholder:text-subtle"
                 />
               </div>
 
@@ -96,7 +96,7 @@ export default function ForgotPasswordPage() {
             <div className="border-t border-edge px-6 py-4 text-center">
               <Link
                 href="/login"
-                className="text-[12px] font-bold text-muted transition hover:text-white"
+                className="text-[12px] font-bold text-muted transition hover:text-fg"
               >
                 ← Back to sign in
               </Link>

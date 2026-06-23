@@ -75,13 +75,13 @@ export default function ResetPasswordPage() {
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <h1 className="text-lg font-black uppercase tracking-wide text-white">Password updated!</h1>
+            <h1 className="text-lg font-black uppercase tracking-wide text-fg">Password updated!</h1>
             <p className="mt-3 text-[13px] text-secondary">
               Your password has been reset successfully. Redirecting to sign in…
             </p>
             <Link
               href="/login"
-              className="mt-6 block border border-zinc-700 py-2.5 text-center text-[12px] font-bold uppercase tracking-wider text-zinc-300 transition hover:border-white hover:text-white"
+              className="mt-6 block border border-edge py-2.5 text-center text-[12px] font-bold uppercase tracking-wider text-secondary transition hover:border-white hover:text-fg"
             >
               Sign in now
             </Link>
@@ -89,7 +89,7 @@ export default function ResetPasswordPage() {
         ) : (
           <div className="border border-edge bg-elevated">
             <div className="border-b border-edge px-6 py-5">
-              <h1 className="text-lg font-black uppercase tracking-wide text-white">Set new password</h1>
+              <h1 className="text-lg font-black uppercase tracking-wide text-fg">Set new password</h1>
               <p className="mt-1 text-[12px] text-muted">Must be at least 6 characters.</p>
             </div>
 
@@ -104,7 +104,7 @@ export default function ResetPasswordPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm text-white outline-none transition-colors focus:border-brand/50 placeholder:text-subtle"
+                  className="w-full border border-edge bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors focus:border-brand/50 placeholder:text-subtle"
                 />
               </div>
               <div>
@@ -117,7 +117,7 @@ export default function ResetPasswordPage() {
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm text-white outline-none transition-colors focus:border-brand/50 placeholder:text-subtle"
+                  className="w-full border border-edge bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors focus:border-brand/50 placeholder:text-subtle"
                 />
               </div>
 

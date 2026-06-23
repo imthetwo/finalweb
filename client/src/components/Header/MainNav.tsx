@@ -41,7 +41,7 @@ function CartIcon({ count }: { count: number }) {
   return (
     <Link
       href="/cart"
-      className="relative flex items-center justify-center text-white transition-colors hover:text-brand"
+      className="relative flex items-center justify-center text-fg transition-colors hover:text-brand"
       aria-label={`View cart – ${count} items`}
     >
       <ShoppingCart size={22} />
@@ -101,7 +101,7 @@ function SearchBar({ onClose }: { onClose: () => void }) {
     <div className="relative mx-auto w-full" style={{ maxWidth: "1400px" }}>
       <form
         onSubmit={(e) => { e.preventDefault(); goToResults(); }}
-        className="flex h-14 w-full items-center bg-zinc-900 px-4"
+        className="flex h-14 w-full items-center bg-surface px-4"
       >
         <Search size={20} className="flex-none text-muted" />
         <input
@@ -110,10 +110,10 @@ function SearchBar({ onClose }: { onClose: () => void }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search products, brands, categories…"
-          className="flex-1 border-none bg-transparent px-4 text-base text-white outline-none placeholder:text-subtle"
+          className="flex-1 border-none bg-transparent px-4 text-base text-fg outline-none placeholder:text-subtle"
         />
         {query && (
-          <button type="button" onClick={() => setQuery("")} className="mr-2 text-muted hover:text-white">
+          <button type="button" onClick={() => setQuery("")} className="mr-2 text-muted hover:text-fg">
             <X size={16} />
           </button>
         )}
@@ -123,7 +123,7 @@ function SearchBar({ onClose }: { onClose: () => void }) {
         >
           Search
         </button>
-        <button type="button" onClick={onClose} className="ml-4 text-muted transition-colors hover:text-white" aria-label="Close search">
+        <button type="button" onClick={onClose} className="ml-4 text-muted transition-colors hover:text-fg" aria-label="Close search">
           <X size={22} />
         </button>
       </form>
@@ -150,7 +150,7 @@ function SearchBar({ onClose }: { onClose: () => void }) {
                     className="flex w-full items-center gap-3 border-b border-edge/60 px-4 py-3 text-left transition-colors hover:bg-white/4"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="line-clamp-2 text-[13px] font-semibold text-white">{p.name}</p>
+                      <p className="line-clamp-2 text-[13px] font-semibold text-fg">{p.name}</p>
                       <div className="mt-1 flex items-center gap-2">
                         <span className="text-[13px] font-black text-brand">
                           {formatVnd(hasSale ? p.salePrice! : p.price)}
@@ -199,7 +199,7 @@ export default function MainNav() {
   }, []);
 
   return (
-    <nav className="w-full select-none border-b border-edge bg-black">
+    <nav className="w-full select-none border-b border-edge bg-base">
 
       {/* ── MOBILE (< lg) ─────────────────────────────── */}
       <div className="relative flex h-20 items-center justify-between px-4 lg:hidden">
@@ -211,7 +211,7 @@ export default function MainNav() {
               type="button"
               variant="ghost"
               size="icon"
-              className="h-10 w-10 rounded-full text-zinc-300 hover:bg-zinc-900 hover:text-white"
+              className="h-10 w-10 rounded-full text-secondary hover:bg-zinc-900 hover:text-fg"
               aria-label="Open menu"
             >
               <Menu className="h-6 w-6" />
@@ -231,7 +231,7 @@ export default function MainNav() {
                   <SheetClose key={href}>
                     <Link
                       href={href}
-                      className="block border-b border-edge/60 py-4 text-base font-bold uppercase text-white transition-colors hover:text-brand"
+                      className="block border-b border-edge/60 py-4 text-base font-bold uppercase text-fg transition-colors hover:text-brand"
                     >
                       {label}
                     </Link>
@@ -244,13 +244,13 @@ export default function MainNav() {
               {loaded && user ? (
                 /* Logged-in quick links */
                 <div className="border border-brand/20 bg-brand/5 p-3">
-                  <p className="truncate text-sm font-bold text-white">{user.fullName}</p>
+                  <p className="truncate text-sm font-bold text-fg">{user.fullName}</p>
                   <p className="truncate text-[11px] text-muted">{user.email}</p>
                   <div className="mt-3 grid grid-cols-2 gap-2">
                     <SheetClose>
                       <Link
                         href="/account"
-                        className="block border border-zinc-700 py-2 text-center text-xs font-bold uppercase tracking-wider text-zinc-300 hover:border-white hover:text-white"
+                        className="block border border-edge py-2 text-center text-xs font-bold uppercase tracking-wider text-secondary hover:border-white hover:text-fg"
                       >
                         Account
                       </Link>
@@ -258,7 +258,7 @@ export default function MainNav() {
                     <SheetClose>
                       <Link
                         href="/account?tab=orders"
-                        className="block border border-zinc-700 py-2 text-center text-xs font-bold uppercase tracking-wider text-zinc-300 hover:border-white hover:text-white"
+                        className="block border border-edge py-2 text-center text-xs font-bold uppercase tracking-wider text-secondary hover:border-white hover:text-fg"
                       >
                         Orders
                       </Link>
@@ -272,7 +272,7 @@ export default function MainNav() {
                     triggerButton={
                       <button
                         type="button"
-                        className="border border-zinc-700 px-4 py-3 text-center text-sm font-bold uppercase tracking-wider text-zinc-200 transition-colors hover:border-white hover:text-white"
+                        className="border border-edge px-4 py-3 text-center text-sm font-bold uppercase tracking-wider text-secondary transition-colors hover:border-white hover:text-fg"
                       >
                         Sign In
                       </button>
@@ -302,7 +302,7 @@ export default function MainNav() {
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            className="text-zinc-300 transition-colors hover:text-white"
+            className="text-secondary transition-colors hover:text-fg"
             aria-label="Search"
           >
             <Search size={22} />
@@ -333,7 +333,7 @@ export default function MainNav() {
                 <button
                   type="button"
                   onClick={() => setSearchOpen(true)}
-                  className="text-secondary transition-colors hover:text-white"
+                  className="text-secondary transition-colors hover:text-fg"
                   aria-label="Search"
                 >
                   <Search size={22} />

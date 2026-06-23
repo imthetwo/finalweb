@@ -24,7 +24,7 @@ export default function CustomLabPromo() {
           <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">
             Pecify PC Builder
           </p>
-          <h2 className="mt-4 text-4xl font-black uppercase leading-tight tracking-tight text-white md:text-6xl">
+          <h2 className="mt-4 text-4xl font-black uppercase leading-tight tracking-tight text-fg md:text-6xl">
             Configure Your
             <br />
             <span className="text-brand">Perfect Build</span>
@@ -55,7 +55,7 @@ export default function CustomLabPromo() {
                 {step}
               </span>
               <div>
-                <p className="text-sm font-bold text-white transition-colors duration-200 group-hover:text-brand">
+                <p className="text-sm font-bold text-fg transition-colors duration-200 group-hover:text-brand">
                   {label}
                 </p>
                 <p className="mt-0.5 text-[12px] text-subtle">{desc}</p>

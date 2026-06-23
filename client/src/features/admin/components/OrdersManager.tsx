@@ -55,7 +55,7 @@ export function OrdersManager() {
   return (
     <div className="p-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-black uppercase tracking-wide text-white">Orders</h1>
+        <h1 className="text-2xl font-black uppercase tracking-wide text-fg">Orders</h1>
         <button onClick={exportExcel} disabled={exporting}
           className="inline-flex items-center gap-2 border border-emerald-700/50 bg-emerald-950/30 px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-emerald-400 hover:bg-emerald-950/50 disabled:opacity-50">
           <FileSpreadsheet size={14} /> {exporting ? "Exporting…" : "Export Excel"}
@@ -65,7 +65,7 @@ export function OrdersManager() {
       <div className="mb-4 flex flex-wrap gap-2">
         {["", ...STATUSES].map((s) => (
           <button key={s || "all"} onClick={() => { setFilter(s); setPage(1); }}
-            className={`border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider ${filter === s ? "border-brand text-brand" : "border-zinc-700 text-secondary"}`}>
+            className={`border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider ${filter === s ? "border-brand text-brand" : "border-edge text-secondary"}`}>
             {s || "All"}
           </button>
         ))}
@@ -92,18 +92,18 @@ export function OrdersManager() {
               <tr key={o.id} className="border-b border-edge/50">
                 <td className="px-4 py-3 font-mono text-secondary">#{o.id.slice(0, 8).toUpperCase()}</td>
                 <td className="px-4 py-3">
-                  <p className="text-white">{o.user?.fullName ?? "—"}</p>
+                  <p className="text-fg">{o.user?.fullName ?? "—"}</p>
                   <p className="text-[11px] text-subtle">{o.user?.email}</p>
                 </td>
                 <td className="px-4 py-3 text-secondary">{o.items.length} item(s)</td>
-                <td className="px-4 py-3 text-right font-bold text-white">{formatVnd(o.totalAmount)}</td>
+                <td className="px-4 py-3 text-right font-bold text-fg">{formatVnd(o.totalAmount)}</td>
                 <td className="px-4 py-3">
                   <span className={o.isPaid ? "text-emerald-400" : "text-subtle"}>{o.isPaid ? "Paid" : "Unpaid"}</span>
                 </td>
                 <td className="px-4 py-3">
                   <select value={o.status} onChange={(e) => changeStatus(o.id, e.target.value)}
-                    className={`border border-zinc-700 bg-zinc-900 px-2 py-1 text-[12px] font-bold outline-none ${STATUS_COLOR[o.status] ?? "text-zinc-300"}`}>
-                    {STATUSES.map((s) => <option key={s} value={s} className="text-white">{s}</option>)}
+                    className={`border border-edge bg-surface px-2 py-1 text-[12px] font-bold outline-none ${STATUS_COLOR[o.status] ?? "text-secondary"}`}>
+                    {STATUSES.map((s) => <option key={s} value={s} className="text-fg">{s}</option>)}
                   </select>
                 </td>
               </tr>
@@ -114,9 +114,9 @@ export function OrdersManager() {
 
       {data && data.totalPages > 1 && (
         <div className="mt-4 flex items-center justify-center gap-2">
-          <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="border border-zinc-700 px-3 py-1.5 text-[12px] text-zinc-300 disabled:opacity-40">Prev</button>
+          <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="border border-edge px-3 py-1.5 text-[12px] text-secondary disabled:opacity-40">Prev</button>
           <span className="text-[12px] text-muted">Page {data.page} / {data.totalPages}</span>
-          <button disabled={page >= data.totalPages} onClick={() => setPage((p) => p + 1)} className="border border-zinc-700 px-3 py-1.5 text-[12px] text-zinc-300 disabled:opacity-40">Next</button>
+          <button disabled={page >= data.totalPages} onClick={() => setPage((p) => p + 1)} className="border border-edge px-3 py-1.5 text-[12px] text-secondary disabled:opacity-40">Next</button>
         </div>
       )}
     </div>

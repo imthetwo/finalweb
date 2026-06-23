@@ -24,9 +24,9 @@ export default function OrderSuccessPage() {
   }, [orderId]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-base px-4 py-16 text-center text-white">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-base px-4 py-16 text-center text-fg">
       <CheckCircle2 size={56} className="text-emerald-400" />
-      <h1 className="mt-6 text-3xl font-black uppercase tracking-tight text-white">Order placed successfully!</h1>
+      <h1 className="mt-6 text-3xl font-black uppercase tracking-tight text-fg">Order placed successfully!</h1>
 
       {orderId && (
         <p className="mt-3 font-mono text-sm text-secondary">
@@ -42,7 +42,7 @@ export default function OrderSuccessPage() {
       )}
 
       <div className="mt-10 flex gap-3">
-        <Link href="/account?tab=orders" className="border border-zinc-700 px-6 py-3 text-[12px] font-bold uppercase tracking-wider text-zinc-300 hover:border-white hover:text-white">
+        <Link href="/account?tab=orders" className="border border-edge px-6 py-3 text-[12px] font-bold uppercase tracking-wider text-secondary hover:border-white hover:text-fg">
           View orders
         </Link>
         <Link href="/" className="bg-brand px-6 py-3 text-[12px] font-black uppercase tracking-wider text-black hover:bg-brand/85">

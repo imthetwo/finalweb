@@ -114,7 +114,7 @@ export function PromotionsManager() {
   return (
     <div className="p-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-black uppercase tracking-wide text-white">Banners / Promotions</h1>
+        <h1 className="text-2xl font-black uppercase tracking-wide text-fg">Banners / Promotions</h1>
         <button onClick={openCreate} className="inline-flex items-center gap-2 bg-brand px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-black hover:bg-brand/85">
           <Plus size={14} /> Add Banner
         </button>
@@ -140,10 +140,10 @@ export function PromotionsManager() {
             ) : (
               items.map((p) => (
                 <tr key={p.id} className="border-b border-edge/50">
-                  <td className="px-4 py-2.5 font-semibold text-white">{p.title}</td>
+                  <td className="px-4 py-2.5 font-semibold text-fg">{p.title}</td>
                   <td className="px-4 py-2.5 text-secondary">{p.actionLabel ?? "—"}</td>
                   <td className="px-4 py-2.5 text-secondary">{p.href ?? "—"}</td>
-                  <td className="px-4 py-2.5 text-center text-zinc-300">{p.sortOrder}</td>
+                  <td className="px-4 py-2.5 text-center text-secondary">{p.sortOrder}</td>
                   <td className="px-4 py-2.5 text-center">
                     <button
                       onClick={() => toggleActive(p)}
@@ -154,7 +154,7 @@ export function PromotionsManager() {
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="flex items-center justify-end gap-1.5">
-                      <button onClick={() => openEdit(p)} className="flex h-7 w-7 items-center justify-center border border-zinc-700 text-secondary hover:border-brand/50 hover:text-brand" aria-label="Edit"><Pencil size={12} /></button>
+                      <button onClick={() => openEdit(p)} className="flex h-7 w-7 items-center justify-center border border-edge text-secondary hover:border-brand/50 hover:text-brand" aria-label="Edit"><Pencil size={12} /></button>
                       <button onClick={() => remove(p)} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-red-500 hover:border-red-500" aria-label="Delete"><Trash2 size={12} /></button>
                     </div>
                   </td>
@@ -166,13 +166,13 @@ export function PromotionsManager() {
       </div>
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-base/70 p-4">
           <div className="w-full max-w-md border border-edge bg-elevated p-6">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-black uppercase tracking-wide text-white">
+              <h2 className="text-lg font-black uppercase tracking-wide text-fg">
                 {editing ? "Edit Banner" : "Add Banner"}
               </h2>
-              <button onClick={() => setModalOpen(false)} className="text-muted hover:text-white"><X size={18} /></button>
+              <button onClick={() => setModalOpen(false)} className="text-muted hover:text-fg"><X size={18} /></button>
             </div>
 
             <div className="space-y-3">
@@ -181,7 +181,7 @@ export function PromotionsManager() {
                 <input
                   value={form.title}
                   onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                  className="w-full border border-zinc-700 bg-zinc-900 px-3 py-2 text-[13px] text-white outline-none focus:border-brand/50"
+                  className="w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50"
                 />
               </div>
 
@@ -192,7 +192,7 @@ export function PromotionsManager() {
                     value={form.actionLabel}
                     onChange={(e) => setForm((f) => ({ ...f, actionLabel: e.target.value }))}
                     placeholder="SHOP NOW"
-                    className="w-full border border-zinc-700 bg-zinc-900 px-3 py-2 text-[13px] text-white outline-none focus:border-brand/50"
+                    className="w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50"
                   />
                 </div>
                 <div>
@@ -201,7 +201,7 @@ export function PromotionsManager() {
                     value={form.href}
                     onChange={(e) => setForm((f) => ({ ...f, href: e.target.value }))}
                     placeholder="/components/processors"
-                    className="w-full border border-zinc-700 bg-zinc-900 px-3 py-2 text-[13px] text-white outline-none focus:border-brand/50"
+                    className="w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50"
                   />
                 </div>
               </div>
@@ -213,7 +213,7 @@ export function PromotionsManager() {
                     type="datetime-local"
                     value={form.startsAt}
                     onChange={(e) => setForm((f) => ({ ...f, startsAt: e.target.value }))}
-                    className="w-full border border-zinc-700 bg-zinc-900 px-3 py-2 text-[13px] text-white outline-none focus:border-brand/50"
+                    className="w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50"
                   />
                 </div>
                 <div>
@@ -222,7 +222,7 @@ export function PromotionsManager() {
                     type="datetime-local"
                     value={form.endsAt}
                     onChange={(e) => setForm((f) => ({ ...f, endsAt: e.target.value }))}
-                    className="w-full border border-zinc-700 bg-zinc-900 px-3 py-2 text-[13px] text-white outline-none focus:border-brand/50"
+                    className="w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50"
                   />
                 </div>
               </div>
@@ -234,7 +234,7 @@ export function PromotionsManager() {
                     type="number"
                     value={form.sortOrder}
                     onChange={(e) => setForm((f) => ({ ...f, sortOrder: Number(e.target.value) }))}
-                    className="w-full border border-zinc-700 bg-zinc-900 px-3 py-2 text-[13px] text-white outline-none focus:border-brand/50"
+                    className="w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50"
                   />
                 </div>
                 <div className="flex items-end pb-2">
@@ -252,7 +252,7 @@ export function PromotionsManager() {
             </div>
 
             <div className="mt-6 flex justify-end gap-2">
-              <button onClick={() => setModalOpen(false)} className="border border-zinc-700 px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-zinc-300 hover:bg-zinc-900">
+              <button onClick={() => setModalOpen(false)} className="border border-edge px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-secondary hover:bg-zinc-900">
                 Cancel
               </button>
               <button onClick={save} disabled={saving} className="bg-brand px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-black hover:bg-brand/85 disabled:opacity-50">

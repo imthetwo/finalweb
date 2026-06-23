@@ -31,7 +31,7 @@ export default function PromoTicker() {
               className="mx-8 inline-flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.3em] text-black"
             >
               {item}
-              <span className="h-1 w-1 rounded-full bg-black/30" />
+              <span className="h-1 w-1 rounded-full bg-base/30" />
             </span>
           ))}
         </div>

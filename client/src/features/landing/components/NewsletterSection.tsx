@@ -47,7 +47,7 @@ export default function NewsletterSection() {
         <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">
           Stay in the Loop
         </p>
-        <h2 className="mt-4 text-3xl font-black uppercase leading-tight tracking-tight text-white md:text-4xl">
+        <h2 className="mt-4 text-3xl font-black uppercase leading-tight tracking-tight text-fg md:text-4xl">
           Get Exclusive Deals
         </h2>
         <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted">
@@ -62,7 +62,7 @@ export default function NewsletterSection() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
             required
-            className="flex-1 border border-white/10 bg-white/4 px-5 py-3.5 text-sm text-white placeholder:text-subtle outline-none transition-colors focus:border-brand/40 focus:bg-brand/4"
+            className="flex-1 border border-white/10 bg-white/4 px-5 py-3.5 text-sm text-fg placeholder:text-subtle outline-none transition-colors focus:border-brand/40 focus:bg-brand/4"
           />
           <button
             type="submit"
@@ -74,7 +74,7 @@ export default function NewsletterSection() {
           </button>
         </form>
 
-        <p className="mt-4 text-[10px] uppercase tracking-[0.15em] text-zinc-700">
+        <p className="mt-4 text-[10px] uppercase tracking-[0.15em] text-subtle">
           By subscribing you agree to our Privacy Policy.
         </p>
       </div>

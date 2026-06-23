@@ -54,11 +54,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="flex min-h-screen bg-base text-white">
+    <div className="flex min-h-screen bg-base text-fg">
       <aside className="flex w-56 shrink-0 flex-col border-r border-edge bg-surface">
         <div className="border-b border-edge px-5 py-5">
           <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-brand">Pecify</p>
-          <p className="text-sm font-black uppercase tracking-wider text-white">Admin Panel</p>
+          <p className="text-sm font-black uppercase tracking-wider text-fg">Admin Panel</p>
         </div>
 
         <nav className="flex-1 overflow-y-auto space-y-0.5 p-3">
@@ -70,7 +70,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href={href}
                 className={[
                   "flex items-center gap-3 px-3 py-2.5 text-[13px] font-bold uppercase tracking-wide transition-colors",
-                  active ? "bg-brand/10 text-brand" : "text-secondary hover:bg-white/4 hover:text-white",
+                  active ? "bg-brand/10 text-brand" : "text-secondary hover:bg-white/4 hover:text-fg",
                 ].join(" ")}
               >
                 <Icon size={15} /> {label}
@@ -84,7 +84,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               onClick={() => setProductsOpen((o) => !o)}
               className={[
                 "flex w-full items-center gap-3 px-3 py-2.5 text-[13px] font-bold uppercase tracking-wide transition-colors",
-                isProducts ? "text-brand" : "text-secondary hover:text-white",
+                isProducts ? "text-brand" : "text-secondary hover:text-fg",
               ].join(" ")}
             >
               <Package size={15} />
@@ -131,7 +131,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href={href}
                 className={[
                   "flex items-center gap-3 px-3 py-2.5 text-[13px] font-bold uppercase tracking-wide transition-colors",
-                  active ? "bg-brand/10 text-brand" : "text-secondary hover:bg-white/4 hover:text-white",
+                  active ? "bg-brand/10 text-brand" : "text-secondary hover:bg-white/4 hover:text-fg",
                 ].join(" ")}
               >
                 <Icon size={15} /> {label}
@@ -142,7 +142,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <Link
           href="/"
-          className="flex items-center gap-2 border-t border-edge px-5 py-4 text-[11px] font-bold uppercase tracking-wider text-muted hover:text-white"
+          className="flex items-center gap-2 border-t border-edge px-5 py-4 text-[11px] font-bold uppercase tracking-wider text-muted hover:text-fg"
         >
           <ArrowLeft size={13} /> Back to store
         </Link>

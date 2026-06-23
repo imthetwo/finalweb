@@ -34,7 +34,7 @@ export default function HeroSection() {
 
       {/* Dark overlay + grid (above video so text stays readable) */}
       <div className="absolute inset-0 z-1">
-        <div className="absolute inset-0 bg-black/55" />
+        <div className="absolute inset-0 bg-base/55" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_20%_60%,rgba(0,255,255,0.10)_0%,transparent_55%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,#050505_0%,transparent_25%,transparent_70%,#050505_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] [background-size:60px_60px]" />
@@ -43,7 +43,7 @@ export default function HeroSection() {
       {/* Main content */}
       <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-4 text-center">
         {/* Main headline */}
-        <h1 className="max-w-5xl text-5xl font-black uppercase leading-[0.92] tracking-[-0.03em] text-white sm:text-7xl md:text-8xl xl:text-[9rem]">
+        <h1 className="max-w-5xl text-5xl font-black uppercase leading-[0.92] tracking-[-0.03em] text-fg sm:text-7xl md:text-8xl xl:text-[9rem]">
           Build Your
           <br />
           <span
@@ -73,7 +73,7 @@ export default function HeroSection() {
         type="button"
         onClick={toggleVideo}
         aria-label={playing ? "Pause background video" : "Play background video"}
-        className="absolute bottom-6 right-6 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm transition-all duration-200 hover:border-brand/50 hover:bg-black/60 hover:text-brand"
+        className="absolute bottom-6 right-6 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-base/40 text-fg backdrop-blur-sm transition-all duration-200 hover:border-brand/50 hover:bg-base/60 hover:text-brand"
       >
         {playing ? <Pause size={16} /> : <Play size={16} className="translate-x-0.5" />}
       </button>

@@ -24,12 +24,12 @@ export default function LoginPage() {
         onSwitchToLogin={() => setDialog("login")}
       />
 
-      <div className="min-h-screen bg-base px-4 py-10 text-white sm:px-6 lg:px-10">
+      <div className="min-h-screen bg-base px-4 py-10 text-fg sm:px-6 lg:px-10">
         <div className="mx-auto max-w-7xl space-y-10">
           <section className="grid min-h-[56vh] gap-6 border border-edge bg-[linear-gradient(135deg,#090909_0%,#111111_50%,#0a0a0a_100%)] p-6 md:grid-cols-[1.2fr_0.8fr] lg:p-10">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.35em] text-muted">Pecify Store</p>
-              <h1 className="mt-4 max-w-2xl text-4xl font-black uppercase tracking-tight text-white sm:text-5xl lg:text-6xl">
+              <h1 className="mt-4 max-w-2xl text-4xl font-black uppercase tracking-tight text-fg sm:text-5xl lg:text-6xl">
                 Sign in to your account.
               </h1>
               <p className="mt-4 max-w-xl text-sm leading-6 text-secondary sm:text-base">
@@ -46,7 +46,7 @@ export default function LoginPage() {
                 <Button
                   onClick={() => setDialog("register")}
                   variant="outline"
-                  className="rounded-none border-zinc-600 px-6 py-6 font-black uppercase tracking-[0.22em] text-white hover:border-white hover:bg-transparent"
+                  className="rounded-none border-edge px-6 py-6 font-black uppercase tracking-[0.22em] text-fg hover:border-white hover:bg-transparent"
                 >
                   Create Account
                 </Button>
@@ -60,7 +60,7 @@ export default function LoginPage() {
                 "Gaming peripherals",
                 "Build consultation",
               ].map((item) => (
-                <div key={item} className="border border-edge bg-black/30 px-4 py-4 text-sm text-zinc-300">
+                <div key={item} className="border border-edge bg-base/30 px-4 py-4 text-sm text-secondary">
                   {item}
                 </div>
               ))}
@@ -77,7 +77,7 @@ export default function LoginPage() {
             ))}
           </section>
 
-          <section className="min-h-[48vh] border border-edge bg-black/40 p-6 lg:p-10">
+          <section className="min-h-[48vh] border border-edge bg-base/40 p-6 lg:p-10">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {Array.from({ length: 12 }).map((_, index) => (
                 <div key={index} className="border border-edge bg-white/5 px-4 py-5 text-sm text-secondary">

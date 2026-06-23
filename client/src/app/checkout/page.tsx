@@ -17,7 +17,7 @@ const FIELDS: { key: "recipient" | "phone" | "street" | "district" | "city"; lab
 ];
 
 const inputCls =
-  "w-full border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm text-white outline-none transition-colors focus:border-brand/50 placeholder:text-subtle";
+  "w-full border border-edge bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors focus:border-brand/50 placeholder:text-subtle";
 const labelCls = "mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-muted";
 
 export default function CheckoutPage() {
@@ -90,9 +90,9 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-base px-4 py-10 text-white md:px-8">
+    <main className="min-h-screen bg-base px-4 py-10 text-fg md:px-8">
       <div className="mx-auto max-w-lg">
-        <h1 className="mb-8 text-2xl font-black uppercase tracking-wide text-white">Checkout</h1>
+        <h1 className="mb-8 text-2xl font-black uppercase tracking-wide text-fg">Checkout</h1>
 
         <form onSubmit={submit} className="space-y-6">
           {/* Shipping info */}
@@ -127,8 +127,8 @@ export default function CheckoutPage() {
                   key={m}
                   className={`flex cursor-pointer items-center gap-3 border px-4 py-3 transition ${
                     paymentMethod === m
-                      ? "border-brand bg-brand/5 text-white"
-                      : "border-zinc-700 text-secondary hover:border-zinc-500"
+                      ? "border-brand bg-brand/5 text-fg"
+                      : "border-edge text-secondary hover:border-zinc-500"
                   }`}
                 >
                   <input
@@ -161,7 +161,7 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   onClick={removeCoupon}
-                  className="ml-2 text-muted transition hover:text-white"
+                  className="ml-2 text-muted transition hover:text-fg"
                   aria-label="Remove coupon"
                 >
                   <X size={14} />
@@ -175,13 +175,13 @@ export default function CheckoutPage() {
                   onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), applyCoupon())}
                   placeholder="Enter coupon code"
-                  className="flex-1 border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm uppercase text-white outline-none transition-colors focus:border-brand/50 placeholder:normal-case placeholder:text-subtle"
+                  className="flex-1 border border-edge bg-surface px-4 py-2.5 text-sm uppercase text-fg outline-none transition-colors focus:border-brand/50 placeholder:normal-case placeholder:text-subtle"
                 />
                 <button
                   type="button"
                   onClick={applyCoupon}
                   disabled={couponLoading || !couponInput.trim()}
-                  className="border border-zinc-600 px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider text-zinc-300 transition hover:border-white hover:text-white disabled:opacity-40"
+                  className="border border-edge px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider text-secondary transition hover:border-white hover:text-fg disabled:opacity-40"
                 >
                   {couponLoading ? "…" : "Apply"}
                 </button>

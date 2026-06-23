@@ -68,7 +68,7 @@ export function ProductsManager() {
     <div className="p-8">
       {/* Header */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-black uppercase tracking-wide text-white">Products</h1>
+        <h1 className="text-2xl font-black uppercase tracking-wide text-fg">Products</h1>
         <div className="flex items-center gap-2">
           <input ref={importRef} type="file" accept=".xlsx,.xls" onChange={onImport} className="hidden" />
           <button onClick={() => importRef.current?.click()} className="inline-flex items-center gap-2 border border-emerald-700/50 bg-emerald-950/30 px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-emerald-400 hover:bg-emerald-950/50">
@@ -81,13 +81,13 @@ export function ProductsManager() {
       </div>
 
       {/* Search */}
-      <div className="mb-4 flex items-center gap-2 border border-zinc-700 bg-zinc-900 px-3 py-2 lg:w-80">
+      <div className="mb-4 flex items-center gap-2 border border-edge bg-surface px-3 py-2 lg:w-80">
         <Search size={14} className="text-muted" />
         <input
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           placeholder="Search by name, SKU, brand…"
-          className="flex-1 bg-transparent text-[13px] text-white outline-none placeholder:text-subtle"
+          className="flex-1 bg-transparent text-[13px] text-fg outline-none placeholder:text-subtle"
         />
       </div>
 
@@ -114,13 +114,13 @@ export function ProductsManager() {
                 <tr key={p.id} className="border-b border-edge/50">
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 shrink-0 border border-edge bg-zinc-900">
+                      <div className="h-10 w-10 shrink-0 border border-edge bg-surface">
                         {p.thumbnailUrl && (
                           <Image src={p.thumbnailUrl} alt={p.name} width={40} height={40} className="h-full w-full object-contain p-1" />
                         )}
                       </div>
                       <div className="min-w-0">
-                        <p className="truncate font-semibold text-white">{p.name}</p>
+                        <p className="truncate font-semibold text-fg">{p.name}</p>
                         <p className="text-[11px] text-muted">{p.brand}</p>
                       </div>
                     </div>
@@ -133,11 +133,11 @@ export function ProductsManager() {
                         <p className="font-bold text-brand">{formatVnd(p.salePrice)}</p>
                       </div>
                     ) : (
-                      <span className="font-bold text-white">{formatVnd(p.price)}</span>
+                      <span className="font-bold text-fg">{formatVnd(p.price)}</span>
                     )}
                   </td>
                   <td className="px-4 py-2.5 text-center">
-                    <span className={p.stock <= 5 ? "text-yellow-400" : "text-zinc-300"}>{p.stock}</span>
+                    <span className={p.stock <= 5 ? "text-yellow-400" : "text-secondary"}>{p.stock}</span>
                   </td>
                   <td className="px-4 py-2.5 text-center">
                     <span className={`text-[10px] font-bold uppercase ${p.isPublished ? "text-emerald-400" : "text-subtle"}`}>
@@ -146,7 +146,7 @@ export function ProductsManager() {
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="flex items-center justify-end gap-1.5">
-                      <button onClick={() => openEdit(p)} className="flex h-7 w-7 items-center justify-center border border-zinc-700 text-secondary hover:border-brand/50 hover:text-brand" aria-label="Edit"><Pencil size={12} /></button>
+                      <button onClick={() => openEdit(p)} className="flex h-7 w-7 items-center justify-center border border-edge text-secondary hover:border-brand/50 hover:text-brand" aria-label="Edit"><Pencil size={12} /></button>
                       <button onClick={() => remove(p)} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-red-500 hover:border-red-500" aria-label="Delete"><Trash2 size={12} /></button>
                     </div>
                   </td>
@@ -160,9 +160,9 @@ export function ProductsManager() {
       {/* Pagination */}
       {data && data.totalPages > 1 && (
         <div className="mt-4 flex items-center justify-center gap-2">
-          <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="border border-zinc-700 px-3 py-1.5 text-[12px] text-zinc-300 disabled:opacity-40">Prev</button>
+          <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="border border-edge px-3 py-1.5 text-[12px] text-secondary disabled:opacity-40">Prev</button>
           <span className="text-[12px] text-muted">Page {data.page} / {data.totalPages}</span>
-          <button disabled={page >= data.totalPages} onClick={() => setPage((p) => p + 1)} className="border border-zinc-700 px-3 py-1.5 text-[12px] text-zinc-300 disabled:opacity-40">Next</button>
+          <button disabled={page >= data.totalPages} onClick={() => setPage((p) => p + 1)} className="border border-edge px-3 py-1.5 text-[12px] text-secondary disabled:opacity-40">Next</button>
         </div>
       )}
 

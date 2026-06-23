@@ -77,7 +77,7 @@ export default function CustomLabBuilder() {
                     return (
                       <TableRow key={cfg.slot} className="border-edge/50">
                         <TableCell className="py-5 pl-6 pr-2">
-                          <div className="flex h-11 w-11 items-center justify-center border border-edge bg-zinc-900/60">
+                          <div className="flex h-11 w-11 items-center justify-center border border-edge bg-surface/60">
                             <cfg.Icon size={18} className={part ? "text-brand" : "text-subtle"} />
                           </div>
                         </TableCell>
@@ -87,7 +87,7 @@ export default function CustomLabBuilder() {
                         <TableCell className="py-5">
                           {part ? (
                             <div className="flex items-center gap-4">
-                              <div className="h-14 w-14 shrink-0 border border-edge bg-zinc-900">
+                              <div className="h-14 w-14 shrink-0 border border-edge bg-surface">
                                 {part.thumbnailUrl
                                   ? <Image src={part.thumbnailUrl} alt={part.name} width={56} height={56} className="h-full w-full object-contain p-1" />
                                   : <div className="flex h-full items-center justify-center"><cfg.Icon size={18} className="text-subtle" /></div>}
@@ -123,7 +123,7 @@ export default function CustomLabBuilder() {
                   })}
                 </TableBody>
                 <TableFooter>
-                  <TableRow className="border-t border-zinc-700 bg-elevated hover:bg-elevated">
+                  <TableRow className="border-t border-edge bg-elevated hover:bg-elevated">
                     <TableCell colSpan={3} className="py-5 pl-6">
                       <div className="flex items-center gap-3">
                         <span className="text-[14px] font-black uppercase tracking-wider text-fg">Total ({selectedCount} parts)</span>

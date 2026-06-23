@@ -19,13 +19,13 @@ const CARDS = (s: AdminStats) => [
 export function DashboardView({ stats }: { stats: AdminStats }) {
   return (
     <div className="p-8">
-      <h1 className="mb-6 text-2xl font-black uppercase tracking-wide text-white">Dashboard</h1>
+      <h1 className="mb-6 text-2xl font-black uppercase tracking-wide text-fg">Dashboard</h1>
 
       <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {CARDS(stats).map(({ label, value, Icon, accent }) => (
           <div key={label} className="border border-edge bg-elevated p-5">
             <Icon size={18} className={accent} />
-            <p className="mt-3 text-2xl font-black text-white">{value}</p>
+            <p className="mt-3 text-2xl font-black text-fg">{value}</p>
             <p className="text-[11px] font-bold uppercase tracking-wider text-muted">{label}</p>
           </div>
         ))}
@@ -39,7 +39,7 @@ export function DashboardView({ stats }: { stats: AdminStats }) {
 
       <div className="border border-edge bg-elevated">
         <div className="border-b border-edge px-5 py-3">
-          <h2 className="text-sm font-black uppercase tracking-wider text-white">Recent Orders</h2>
+          <h2 className="text-sm font-black uppercase tracking-wider text-fg">Recent Orders</h2>
         </div>
         <table className="w-full text-[13px]">
           <thead className="border-b border-edge text-[10px] uppercase tracking-wider text-muted">
@@ -54,8 +54,8 @@ export function DashboardView({ stats }: { stats: AdminStats }) {
             {stats.recentOrders.map((o) => (
               <tr key={o.id} className="border-b border-edge/50">
                 <td className="px-5 py-3 font-mono text-secondary">#{o.id.slice(0, 8).toUpperCase()}</td>
-                <td className="px-5 py-3 text-white">{o.user?.fullName ?? "—"}</td>
-                <td className="px-5 py-3 text-right font-bold text-white">{formatVnd(o.totalAmount)}</td>
+                <td className="px-5 py-3 text-fg">{o.user?.fullName ?? "—"}</td>
+                <td className="px-5 py-3 text-right font-bold text-fg">{formatVnd(o.totalAmount)}</td>
                 <td className={`px-5 py-3 font-bold ${STATUS_COLOR[o.status] ?? "text-secondary"}`}>{o.status}</td>
               </tr>
             ))}
