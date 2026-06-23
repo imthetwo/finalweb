@@ -1,5 +1,8 @@
 # Claude Code / AI assistant artifacts
 .claude/
+CLAUDE.md
+*.claude
+.cursorrules
 
 # Dev server logs
 *.log
