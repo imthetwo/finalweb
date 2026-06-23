@@ -23,6 +23,12 @@ export const metadata: Metadata = {
   description: "Technical instrumentation for high-performance gaming ecosystems.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5, // cho phép zoom tới 5x mà không bị cắt layout
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

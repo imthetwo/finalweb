@@ -186,17 +186,8 @@ function SearchBar({ onClose }: { onClose: () => void }) {
 
 export default function MainNav() {
   const [searchOpen, setSearchOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
   const cartCount = useCartCount();
   const { user, loaded } = useAuthState();
-
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
-    const update = () => setIsDesktop(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
 
   return (
     <nav className="w-full select-none border-b border-edge bg-base">
@@ -312,8 +303,7 @@ export default function MainNav() {
       </div>
 
       {/* ── DESKTOP (≥ lg) ────────────────────────────── */}
-      {isDesktop && (
-        <div className="flex h-24 items-center px-6 transition-all duration-300">
+      <div className="hidden h-24 items-center px-6 transition-all duration-300 lg:flex">
           {searchOpen ? (
             <SearchBar onClose={() => setSearchOpen(false)} />
           ) : (
@@ -346,7 +336,6 @@ export default function MainNav() {
             </div>
           )}
         </div>
-      )}
     </nav>
   );
 }

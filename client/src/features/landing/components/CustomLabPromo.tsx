@@ -11,20 +11,20 @@ const BUILD_STEPS = [
 
 export default function CustomLabPromo() {
   return (
-    <section className="relative overflow-hidden border-y border-white/5 bg-base py-24">
+    <section className="relative overflow-x-hidden border-y border-white/5 bg-base py-16 md:py-24">
       {/* Background accent */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute right-0 top-0 h-full w-1/2 bg-[radial-gradient(ellipse_60%_80%_at_80%_50%,rgba(0,255,255,0.05),transparent_70%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] [background-size:40px_40px]" />
       </div>
 
-      <div className="relative mx-auto grid max-w-[1400px] items-center gap-16 px-4 md:px-8 lg:grid-cols-2">
+      <div className="relative mx-auto grid max-w-[1400px] items-center gap-10 px-4 md:gap-16 md:px-8 lg:grid-cols-2">
         {/* Left: Text */}
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">
             Pecify PC Builder
           </p>
-          <h2 className="mt-4 text-4xl font-black uppercase leading-tight tracking-tight text-fg md:text-6xl">
+          <h2 className="mt-4 text-3xl font-black uppercase leading-tight tracking-tight text-fg sm:text-4xl md:text-5xl lg:text-6xl">
             Configure Your
             <br />
             <span className="text-brand">Perfect Build</span>
