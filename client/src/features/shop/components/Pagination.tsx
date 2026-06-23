@@ -3,13 +3,20 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export function Pagination({ page, totalPages }: { page: number; totalPages: number }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   if (totalPages <= 1) return null;
 
-  const hrefForPage = (p: number) => (p <= 1 ? pathname : `${pathname}?page=${p}`);
+  const hrefForPage = (p: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (p <= 1) params.delete("page");
+    else params.set("page", String(p));
+    const q = params.toString();
+    return q ? `${pathname}?${q}` : pathname;
+  };
 
   const pages = useMemo(() => {
     const set = new Set<number>([1, totalPages, page, page - 1, page + 1]);

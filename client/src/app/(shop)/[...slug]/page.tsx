@@ -33,6 +33,9 @@ export default async function ShopCategoryPage({ params, searchParams }: Props) 
   const page = Math.max(1, Number(pageParam) || 1);
   const search = searchParam?.trim() || undefined;
 
+  // /shop → All Products (no category filter)
+  const isAllProducts = slug.length === 1 && slug[0] === "shop";
+
   // Try each segment from most specific to least
   const segments = [...slug].reverse();
   let targetCategoryName: string | undefined;
@@ -44,19 +47,19 @@ export default async function ShopCategoryPage({ params, searchParams }: Props) 
   }
 
   let categoryId: string | undefined;
-  let categoryName = targetCategoryName ?? slug[slug.length - 1] ?? "Products";
+  let categoryName = isAllProducts ? "All Products" : (targetCategoryName ?? slug[slug.length - 1] ?? "Products");
 
-  try {
-    const categories = await fetchCategories();
-    const matched = categories.find(
-      (c) => c.name === targetCategoryName,
-    );
-    if (matched) {
-      categoryId = matched.id;
-      categoryName = matched.name;
+  if (!isAllProducts) {
+    try {
+      const categories = await fetchCategories();
+      const matched = categories.find((c) => c.name === targetCategoryName);
+      if (matched) {
+        categoryId = matched.id;
+        categoryName = matched.name;
+      }
+    } catch {
+      /* fallback */
     }
-  } catch {
-    /* fallback */
   }
 
   const data = await fetchProducts(

@@ -8,22 +8,23 @@ import { usePathname } from "next/navigation";
 import { formatVnd } from "@/lib/format";
 
 const CATEGORY_NAV = [
-  { label: "Gaming PCs", href: "/pcs" },
-  { label: "Laptops", href: "/laptops" },
+  { label: "All Products",   href: "/shop" },
+  { label: "Gaming PCs",     href: "/pcs" },
+  { label: "Laptops",        href: "/laptops/laptops" },
   { label: "Processors (CPU)", href: "/components/processors" },
-  { label: "Graphics Cards", href: "/components/graphics-cards" },
-  { label: "Motherboards", href: "/components/motherboards" },
-  { label: "Memory (RAM)", href: "/components/memory-storage/ram" },
-  { label: "Storage", href: "/components/memory-storage/nvme-ssds" },
-  { label: "Power Supplies", href: "/components/power-cooling/psu" },
-  { label: "CPU Coolers", href: "/components/power-cooling/aio-liquid-coolers" },
-  { label: "Case Fans", href: "/components/power-cooling/case-fans" },
-  { label: "PC Cases", href: "/components/chassis-modding/pc-cases" },
-  { label: "Keyboards", href: "/gaming-gear/input-devices/mechanical-keyboards" },
-  { label: "Gaming Mice", href: "/gaming-gear/input-devices/wireless-mice" },
-  { label: "Headsets", href: "/gaming-gear/audio/gaming-headsets" },
-  { label: "Monitors", href: "/gaming-gear/audio/gaming-headsets" },
-  { label: "Furniture", href: "/gaming-furniture/seating/ergonomic-chairs" },
+  { label: "Graphics Cards", href: "/components/gpu" },
+  { label: "Motherboards",   href: "/components/motherboards" },
+  { label: "Memory (RAM)",   href: "/components/ram" },
+  { label: "Storage",        href: "/components/storage" },
+  { label: "Power Supplies", href: "/components/power-supplies" },
+  { label: "CPU Coolers",    href: "/components/cpu-coolers" },
+  { label: "Case Fans",      href: "/components/case-fans" },
+  { label: "PC Cases",       href: "/components/pc-cases" },
+  { label: "Keyboards",      href: "/gaming-gear/mechanical-keyboards" },
+  { label: "Gaming Mice",    href: "/gaming-gear/gaming-mice" },
+  { label: "Headsets",       href: "/gaming-gear/gaming-headsets" },
+  { label: "Monitors",       href: "/gaming-gear/gaming-monitors" },
+  { label: "Furniture",      href: "/gaming-furniture" },
 ];
 
 function CollapsibleFilter({
@@ -80,17 +81,22 @@ export function FilterSidebar({
       <div className="pb-3">
         <p className="mb-3 text-[12px] font-bold uppercase tracking-wider text-muted">Categories</p>
         <nav className="flex flex-col gap-1.5">
-          {CATEGORY_NAV.map((c) => (
-            <Link
-              key={c.href}
-              href={c.href}
-              className={`text-[13px] transition-colors ${
-                pathname === c.href ? "font-bold text-brand" : "text-secondary hover:text-fg"
-              }`}
-            >
-              {pathname === c.href ? "▸ " : ""}{c.label}
-            </Link>
-          ))}
+          {CATEGORY_NAV.map((c) => {
+            const active = c.href === "/shop"
+              ? pathname === "/shop"
+              : pathname.startsWith(c.href);
+            return (
+              <Link
+                key={c.href}
+                href={c.href}
+                className={`text-[13px] transition-colors ${
+                  active ? "font-bold text-brand" : "text-secondary hover:text-fg"
+                }`}
+              >
+                {active ? "▸ " : ""}{c.label}
+              </Link>
+            );
+          })}
         </nav>
       </div>
 
