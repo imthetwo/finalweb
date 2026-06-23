@@ -8,7 +8,6 @@ import {
   Package,
   ShoppingBag,
   Users,
-  Megaphone,
   ArrowLeft,
   ChevronDown,
 } from "lucide-react";
@@ -20,7 +19,6 @@ const TOP_NAV = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
   { href: "/admin/users", label: "Users", icon: Users },
-  { href: "/admin/promotions", label: "Banners", icon: Megaphone },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
