@@ -43,6 +43,8 @@ export class ProductsService {
 
     const where: Record<string, unknown> = { isPublished: true };
     if (params.categoryId) where.categoryId = params.categoryId;
+    const search = params.search?.slice(0, 100); // prevent ReDoS via overly long input
+    if (search) { params.search = search; }
     if (params.search) {
       where.OR = [
         { name:  { contains: params.search, mode: 'insensitive' } },

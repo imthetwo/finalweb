@@ -8,9 +8,6 @@ import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
-	// In-memory store: token → { email, expiry }
-	private readonly resetTokens = new Map<string, { email: string; expiry: Date }>();
-
 	constructor(
 		private readonly prisma: PrismaService,
 		private readonly jwtService: JwtService,
@@ -101,23 +98,29 @@ export class AuthService {
 		if (!user) return { ok: true };
 
 		const token = randomBytes(32).toString('hex');
-		this.resetTokens.set(token, { email: emailAddr, expiry: new Date(Date.now() + 60 * 60 * 1000) });
+		const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+		// Persist token in DB so it survives server restarts
+		await this.prisma.user.update({
+			where: { email: emailAddr },
+			data: { resetToken: token, resetTokenExpiry: expiry },
+		});
 
 		await this.email.sendPasswordReset(emailAddr, token);
 		return { ok: true };
 	}
 
 	async resetPassword(token: string, newPassword: string) {
-		const entry = this.resetTokens.get(token);
-		if (!entry || entry.expiry < new Date()) {
-			throw new BadRequestException('Invalid or expired reset link');
-		}
-		const user = await this.prisma.user.findUnique({ where: { email: entry.email } });
-		if (!user) throw new BadRequestException('User not found');
+		const user = await this.prisma.user.findFirst({
+			where: { resetToken: token, resetTokenExpiry: { gt: new Date() } },
+		});
+		if (!user) throw new BadRequestException('Invalid or expired reset link');
 
 		const password = await bcrypt.hash(newPassword, 10);
-		await this.prisma.user.update({ where: { id: user.id }, data: { password } });
-		this.resetTokens.delete(token);
+		await this.prisma.user.update({
+			where: { id: user.id },
+			data: { password, resetToken: null, resetTokenExpiry: null },
+		});
 		return { ok: true };
 	}
 }

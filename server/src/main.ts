@@ -6,7 +6,10 @@ import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 if (!process.env.DATABASE_URL) {
-  console.warn('DATABASE_URL is not set');
+  console.warn('WARNING: DATABASE_URL is not set');
+}
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
 }
 
 async function bootstrap() {
@@ -16,7 +19,7 @@ async function bootstrap() {
     credentials: true,
   });
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: false }),
+    new ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true }),
   );
   app.useGlobalFilters(new GlobalExceptionFilter());
 

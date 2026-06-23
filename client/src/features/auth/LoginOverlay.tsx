@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getApiUrl } from "@/lib/api/client";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -95,7 +96,7 @@ export function LoginOverlay({ triggerButton, open: controlledOpen, onOpenChange
     setSubmitError(null);
 
     try {
-      const response = await fetch("http://localhost:3001/auth/login", {
+      const response = await fetch(getApiUrl("/auth/login"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -211,7 +212,7 @@ export function LoginOverlay({ triggerButton, open: controlledOpen, onOpenChange
 
           <button
             type="button"
-            onClick={() => { window.location.href = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/auth/google`; }}
+            onClick={() => { window.location.href = getApiUrl("/auth/google"); }}
             className="flex w-full items-center justify-center gap-3 rounded-none border border-zinc-300 bg-white py-3 text-sm font-semibold text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-50 hover:shadow-sm"
           >
             <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">

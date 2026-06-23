@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getApiUrl } from "@/lib/api/client";
 
 const registerSchema = z.object({
   fullName: z.string().min(2, "Please enter your full name."),
@@ -101,7 +102,7 @@ export function RegisterOverlay({ triggerButton, open: controlledOpen, onOpenCha
     setSubmitError(null);
 
     try {
-      const response = await fetch("http://localhost:3001/auth/register", {
+      const response = await fetch(getApiUrl("/auth/register"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

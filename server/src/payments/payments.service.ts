@@ -4,12 +4,11 @@ import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 
-// ── MoMo sandbox credentials (override via .env) ────────────────────────────
-const MOMO_ENDPOINT =
-  process.env.MOMO_ENDPOINT || 'https://test-payment.momo.vn/v2/gateway/api/create';
-const PARTNER_CODE = process.env.MOMO_PARTNER_CODE || 'MOMO';
-const ACCESS_KEY   = process.env.MOMO_ACCESS_KEY   || 'F8BBA842ECF85';
-const SECRET_KEY   = process.env.MOMO_SECRET_KEY   || 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
+// ── MoMo sandbox credentials — must be set via .env ─────────────────────────
+const MOMO_ENDPOINT  = process.env.MOMO_ENDPOINT  || 'https://test-payment.momo.vn/v2/gateway/api/create';
+const PARTNER_CODE   = process.env.MOMO_PARTNER_CODE || 'MOMO';
+const ACCESS_KEY     = process.env.MOMO_ACCESS_KEY || '';
+const SECRET_KEY     = process.env.MOMO_SECRET_KEY || '';
 
 // ── MoMo IPN response body shape ────────────────────────────────────────────
 export interface MomoIpnBody {
