@@ -82,6 +82,18 @@ export class AdminController {
     return this.admin.uploadImage(file.buffer);
   }
 
+  // ── Video upload → Cloudinary — ADMIN ONLY ───────────────────────────────
+  @Post('upload-video')
+  @Roles(Role.ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadVideo(@UploadedFile() file: UploadedFileType) {
+    if (!file) throw new BadRequestException('No file uploaded');
+    if (!file.mimetype.startsWith('video/')) throw new BadRequestException('File must be a video');
+    if (file.size > 200 * 1024 * 1024) throw new BadRequestException('Video must be under 200MB');
+    const url = await this.admin.uploadVideo(file.buffer);
+    return { url };
+  }
+
   // ── Excel template — STAFF + ADMIN ───────────────────────────────────────
   @Get('products/template')
   @Roles(Role.ADMIN, Role.STAFF)

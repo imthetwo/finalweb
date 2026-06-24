@@ -3,6 +3,7 @@ import { CreateProductDto, UpdateProductDto } from './dto/admin-product.dto';
 import { AdminStatsService } from './services/admin-stats.service';
 import { AdminProductsService } from './services/admin-products.service';
 import { AdminOrdersService } from './services/admin-orders.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class AdminService {
@@ -10,6 +11,7 @@ export class AdminService {
     private readonly statsService: AdminStatsService,
     private readonly productsService: AdminProductsService,
     private readonly ordersService: AdminOrdersService,
+    private readonly cloudinary: CloudinaryService,
   ) {}
 
   // ── Stats ─────────────────────────────────────────────────
@@ -17,6 +19,7 @@ export class AdminService {
 
   // ── Products ──────────────────────────────────────────────
   uploadImage(buffer: Buffer) { return this.productsService.uploadImage(buffer); }
+  uploadVideo(buffer: Buffer) { return this.cloudinary.uploadVideo(buffer); }
   importProductsExcel(buffer: Buffer, asDraft = false) { return this.productsService.importExcel(buffer, asDraft); }
   exportProductTemplate() { return this.productsService.exportProductTemplate(); }
   listProducts(p: { search?: string; page?: number; limit?: number; categoryId?: string }) { return this.productsService.list(p); }

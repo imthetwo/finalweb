@@ -17,14 +17,11 @@ export class CloudinaryService {
     }
   }
 
-  /** Upload an image buffer to Cloudinary, return the secure URL. */
-  uploadImage(buffer: Buffer, folder = 'TechStore/uploads'): Promise<string> {
-    if (!this.configured) {
-      return Promise.reject(new Error('Cloudinary is not configured'));
-    }
+  private upload(buffer: Buffer, folder: string, resourceType: 'image' | 'video'): Promise<string> {
+    if (!this.configured) return Promise.reject(new Error('Cloudinary is not configured'));
     return new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
-        { folder, resource_type: 'image' },
+        { folder, resource_type: resourceType },
         (err, result) => {
           if (err || !result) {
             this.logger.error(`Cloudinary upload failed: ${err?.message}`);
@@ -35,5 +32,18 @@ export class CloudinaryService {
       );
       stream.end(buffer);
     });
+  }
+
+  /** Upload an image buffer to Cloudinary, return the secure URL. */
+  uploadImage(buffer: Buffer, folder = 'TechStore/uploads'): Promise<string> {
+    if (!this.configured) {
+      return Promise.reject(new Error('Cloudinary is not configured'));
+    }
+    return this.upload(buffer, folder, 'image');
+  }
+
+  /** Upload a video buffer to Cloudinary, return the secure URL. */
+  uploadVideo(buffer: Buffer, folder = 'TechStore/videos'): Promise<string> {
+    return this.upload(buffer, folder, 'video');
   }
 }
