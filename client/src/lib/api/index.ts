@@ -4,6 +4,7 @@ export * from "./products";
 export * from "./user";
 export * from "./orders";
 export * from "./admin";
+export * from "./settings";
 
 // Re-export types từ @/types/api
 export type {

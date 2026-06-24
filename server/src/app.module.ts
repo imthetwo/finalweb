@@ -17,6 +17,7 @@ import { AdminModule } from './admin/admin.module';
 import { QrModule } from './qr/qr.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { PromotionsModule } from './promotions/promotions.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { PromotionsModule } from './promotions/promotions.module';
     AdminModule,
     QrModule,
     PromotionsModule,
+    SettingsModule,
   ],
 })
 export class AppModule {}

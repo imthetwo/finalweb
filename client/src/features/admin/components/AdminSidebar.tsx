@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, Package, ShoppingBag, Users, ArrowLeft, ChevronDown } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingBag, Users, ArrowLeft, ChevronDown, Video } from "lucide-react";
 
 import { useAuthState } from "@/hooks/useAuthState";
 import { fetchCategories, type Category } from "@/lib/api";
@@ -12,6 +12,7 @@ const TOP_NAV = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/orders",    label: "Orders",    icon: ShoppingBag },
   { href: "/admin/users",     label: "Users",     icon: Users },
+  { href: "/admin/settings",  label: "Hero Video", icon: Video },
 ];
 
 export function AdminSidebar({ children }: { children: React.ReactNode }) {

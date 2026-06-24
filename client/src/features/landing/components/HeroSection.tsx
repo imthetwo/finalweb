@@ -4,7 +4,13 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
 
-export default function HeroSection() {
+export default function HeroSection({
+  videoUrl = "/hero.mp4",
+  posterUrl = "/hero-poster.jpg",
+}: {
+  videoUrl?: string;
+  posterUrl?: string;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(true);
 
@@ -24,8 +30,8 @@ export default function HeroSection() {
       <video
         ref={videoRef}
         className="absolute inset-0 z-0 h-full w-full object-cover"
-        src="/hero.mp4"
-        poster="/hero-poster.jpg"
+        src={videoUrl}
+        poster={posterUrl}
         autoPlay
         loop
         muted
