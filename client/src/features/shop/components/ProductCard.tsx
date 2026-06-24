@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
@@ -38,7 +36,7 @@ export function ProductCard({ p }: { p: ProductListItem }) {
         <p className="text-[10px] font-bold uppercase tracking-wider text-brand/60">{p.brand}</p>
         <Link
           href={`/product/${p.id}`}
-          className="mt-1 line-clamp-2 text-[13px] font-semibold leading-snug text-fg hover:text-brand"
+          className="mt-1 line-clamp-2 text-body font-semibold leading-snug text-fg hover:text-brand"
         >
           {p.name}
         </Link>
@@ -49,20 +47,20 @@ export function ProductCard({ p }: { p: ProductListItem }) {
           </span>
           {hasSale && (
             <>
-              <span className="text-[12px] text-subtle line-through">{formatVnd(p.price)}</span>
-              <span className="text-[11px] font-bold text-brand">SAVE {formatVnd(save)}</span>
+              <span className="text-sm text-subtle line-through">{formatVnd(p.price)}</span>
+              <span className="text-xs font-bold text-brand">SAVE {formatVnd(save)}</span>
             </>
           )}
         </div>
 
-        <p className={`mt-1 text-[11px] ${p.stock > 0 ? "text-muted" : "text-red-400"}`}>
+        <p className={`mt-1 text-xs ${p.stock > 0 ? "text-muted" : "text-destructive"}`}>
           {p.stock > 0 ? "In stock" : "Out of stock"}
         </p>
 
         <div className="mt-3">
           <AddToCartButton
             productId={p.id}
-            className="flex w-full items-center justify-center gap-2 border border-brand/40 bg-transparent py-2 text-[11px] font-black uppercase tracking-wider text-brand transition hover:bg-brand hover:text-brand-fg"
+            className="flex w-full items-center justify-center gap-2 border border-brand/40 bg-transparent py-2 text-xs font-black uppercase tracking-wider text-brand transition hover:bg-brand hover:text-brand-fg"
             label={<><ShoppingCart size={13} /> Add to Cart</>}
           />
         </div>
