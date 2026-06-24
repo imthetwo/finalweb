@@ -160,6 +160,7 @@ export type AdminProduct = {
   name: string;
   brand: string;
   price: number;
+  costPrice: number | null;
   salePrice: number | null;
   stock: number;
   isPublished: boolean;
@@ -176,6 +177,7 @@ export type ProductInput = {
   description?: string;
   imageUrl?: string;
   price: number;
+  costPrice?: number;
   salePrice?: number;
   stock?: number;
   isPublished?: boolean;

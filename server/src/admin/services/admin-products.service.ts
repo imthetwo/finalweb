@@ -159,8 +159,9 @@ export class AdminProductsService {
 
     const base = (p: (typeof all)[0]) => ({
       name: p.name, brand: p.brand, category: p.category?.name ?? '',
-      price: p.price, salePrice: p.salePrice ?? '', stock: p.stock,
-      published: p.isPublished ? 'Yes' : 'No',
+      costPrice: p.costPrice ?? '', price: p.price, salePrice: p.salePrice ?? '',
+      margin: p.costPrice ? `${Math.round((1 - p.costPrice / p.price) * 100)}%` : '',
+      stock: p.stock, published: p.isPublished ? 'Yes' : 'No',
     });
 
     const sheet = (name: string, cols: Partial<ExcelJS.Column>[], rows: Record<string, unknown>[]) => {
@@ -172,8 +173,11 @@ export class AdminProductsService {
 
     const baseCols = (extra: Partial<ExcelJS.Column>[]) => [
       { header: 'Name', key: 'name', width: 32 }, { header: 'Brand', key: 'brand', width: 16 },
-      { header: 'Category', key: 'category', width: 20 }, { header: 'Price', key: 'price', width: 14 },
-      { header: 'Sale', key: 'salePrice', width: 14 }, { header: 'Stock', key: 'stock', width: 8 },
+      { header: 'Category', key: 'category', width: 20 },
+      { header: 'Cost Price', key: 'costPrice', width: 14 },
+      { header: 'Price', key: 'price', width: 14 }, { header: 'Sale', key: 'salePrice', width: 14 },
+      { header: 'Margin', key: 'margin', width: 10 },
+      { header: 'Stock', key: 'stock', width: 8 },
       { header: 'Published', key: 'published', width: 10 }, ...extra,
     ] as ExcelJS.Column[];
 

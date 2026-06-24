@@ -380,13 +380,23 @@ export default function ProductFormModal({
 
           {/* Pricing */}
           <div className={`${cls.row3} border-y border-edge py-4`}>
-            <Field label="Price (VND) *">
-              <input type="number" min={0} className={cls.input} value={form.price || ""} onChange={(e) => set("price", Number(e.target.value))} placeholder="15490000" />
+            <Field label="Giá nhập vốn (VND)">
+              <input type="number" min={0} className={cls.input} value={form.costPrice ?? ""} onChange={(e) => set("costPrice", e.target.value ? Number(e.target.value) : undefined)} placeholder="12000000" />
+              {form.costPrice && form.price > 0 && (
+                <p className="mt-1 text-[11px] text-brand">
+                  Margin: {Math.round((1 - form.costPrice / form.price) * 100)}%
+                </p>
+              )}
             </Field>
-            <Field label="Sale price (VND)">
-              <input type="number" min={0} className={cls.input} value={form.salePrice ?? ""} onChange={(e) => set("salePrice", e.target.value ? Number(e.target.value) : undefined)} placeholder="Optional" />
+            <Field label="Giá bán (VND) *">
+              <input type="number" min={0} className={cls.input} value={form.price || ""} onChange={(e) => set("price", Number(e.target.value))} placeholder="15990000" />
             </Field>
-            <Field label="Stock">
+            <Field label="Giá khuyến mãi (VND)">
+              <input type="number" min={0} className={cls.input} value={form.salePrice ?? ""} onChange={(e) => set("salePrice", e.target.value ? Number(e.target.value) : undefined)} placeholder="Để trống nếu không có" />
+            </Field>
+          </div>
+          <div className="border-b border-edge pb-4">
+            <Field label="Tồn kho">
               <input type="number" min={0} className={cls.input} value={form.stock ?? 0} onChange={(e) => set("stock", Number(e.target.value))} />
             </Field>
           </div>

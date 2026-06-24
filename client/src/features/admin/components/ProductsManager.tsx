@@ -98,7 +98,8 @@ export function ProductsManager() {
             <tr>
               <th className="px-4 py-3 text-left">Product</th>
               <th className="px-4 py-3 text-left">Category</th>
-              <th className="px-4 py-3 text-right">Price</th>
+              <th className="px-4 py-3 text-right">Giá bán</th>
+              <th className="px-4 py-3 text-right">Margin</th>
               <th className="px-4 py-3 text-center">Stock</th>
               <th className="px-4 py-3 text-center">Status</th>
               <th className="px-4 py-3" />
@@ -134,6 +135,21 @@ export function ProductsManager() {
                       </div>
                     ) : (
                       <span className="font-bold text-fg">{formatVnd(p.price)}</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-2.5 text-right">
+                    {p.costPrice && p.price > 0 ? (
+                      <span className={`text-[12px] font-bold ${
+                        (1 - p.costPrice / p.price) >= 0.25
+                          ? "text-emerald-400"
+                          : (1 - p.costPrice / p.price) >= 0.15
+                          ? "text-yellow-400"
+                          : "text-red-400"
+                      }`}>
+                        {Math.round((1 - p.costPrice / p.price) * 100)}%
+                      </span>
+                    ) : (
+                      <span className="text-subtle">—</span>
                     )}
                   </td>
                   <td className="px-4 py-2.5 text-center">

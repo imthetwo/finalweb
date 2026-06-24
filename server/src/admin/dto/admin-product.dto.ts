@@ -105,6 +105,7 @@ export class CreateProductDto {
   @IsOptional() @IsString() description?: string;
   @IsOptional() @IsString() imageUrl?: string;
   @IsNumber() @Min(0) price!: number;
+  @IsOptional() @IsNumber() @Min(0) costPrice?: number;
   @IsOptional() @IsNumber() @Min(0) salePrice?: number;
   @IsOptional() @IsInt() @Min(0) stock?: number;
   @IsOptional() @IsBoolean() isPublished?: boolean;
@@ -128,6 +129,7 @@ export class UpdateProductDto {
   @IsOptional() @IsString() description?: string;
   @IsOptional() @IsString() imageUrl?: string;
   @IsOptional() @IsNumber() @Min(0) price?: number;
+  @IsOptional() @IsNumber() @Min(0) costPrice?: number;
   @IsOptional() @IsNumber() @Min(0) salePrice?: number;
   @IsOptional() @IsInt() @Min(0) stock?: number;
   @IsOptional() @IsBoolean() isPublished?: boolean;

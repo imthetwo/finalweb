@@ -8,9 +8,11 @@ type ProductEntry = {
   brand: string;
   imageUrl: string;
   price: number;
+  costPrice?: number | null;
   salePrice: number | null;
   stock: number;
   isPublished: boolean;
+  description?: string | null;
   spec: Record<string, unknown> | null;
 };
 
@@ -47,9 +49,11 @@ async function main() {
         brand: p.brand,
         imageUrl: p.imageUrl,
         price: p.price,
+        costPrice: p.costPrice ?? null,
         salePrice: p.salePrice,
         stock: p.stock,
         isPublished: p.isPublished,
+        description: p.description ?? null,
         ...specRelation,
       },
     });
