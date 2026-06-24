@@ -3,11 +3,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Plus, Pencil, Trash2, Search, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Upload, Download } from "lucide-react";
 import { toast } from "sonner";
 
 import {
-  fetchAdminProducts, deleteAdminProduct, importProductsExcel,
+  fetchAdminProducts, deleteAdminProduct, importProductsExcel, downloadProductTemplate,
   type AdminProduct, type Paginated,
 } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
@@ -71,6 +71,12 @@ export function ProductsManager() {
         <h1 className="text-2xl font-black uppercase tracking-wide text-fg">Products</h1>
         <div className="flex items-center gap-2">
           <input ref={importRef} type="file" accept=".xlsx,.xls" onChange={onImport} className="hidden" />
+          <button
+            onClick={() => downloadProductTemplate().catch(() => toast.error("Download failed"))}
+            className="inline-flex items-center gap-2 border border-edge px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-secondary hover:border-brand/50 hover:text-brand"
+          >
+            <Download size={14} /> Template
+          </button>
           <button onClick={() => importRef.current?.click()} className="inline-flex items-center gap-2 border border-emerald-700/50 bg-emerald-950/30 px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-emerald-400 hover:bg-emerald-950/50">
             <Upload size={14} /> Import Excel
           </button>

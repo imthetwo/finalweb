@@ -59,9 +59,12 @@ export class AdminProductsService {
         categoryId, name,
         brand: get('brand')?.toString().trim() || 'Pecify',
         price,
+        costPrice: get('costprice') ? Number(get('costprice')) : null,
         salePrice: get('saleprice') ? Number(get('saleprice')) : null,
         stock: get('stock') ? Number(get('stock')) : 10,
-        isPublished: true,
+        description: get('description')?.toString().trim() || null,
+        imageUrl: get('imageurl')?.toString().trim() || null,
+        isPublished: get('published')?.toString().toLowerCase() !== 'no',
       };
 
       try {
@@ -147,6 +150,46 @@ export class AdminProductsService {
   private async assertExists(id: string) {
     const p = await this.prisma.product.findUnique({ where: { id } });
     if (!p) throw new NotFoundException('Product not found');
+  }
+
+  // ── Template Excel cho nhân viên nhập liệu ───────────────
+  async exportProductTemplate(): Promise<ExcelJS.Buffer> {
+    const categories = await this.prisma.category.findMany({ orderBy: { name: 'asc' } });
+    const wb = new ExcelJS.Workbook();
+
+    // Sheet 1: Template nhập liệu
+    const ws = wb.addWorksheet('Import Template');
+    ws.columns = [
+      { header: 'Name *',         key: 'name',         width: 35 },
+      { header: 'Brand *',        key: 'brand',        width: 15 },
+      { header: 'CategoryName *', key: 'categoryname', width: 22 },
+      { header: 'CostPrice',      key: 'costprice',    width: 14 },
+      { header: 'Price *',        key: 'price',        width: 14 },
+      { header: 'SalePrice',      key: 'saleprice',    width: 14 },
+      { header: 'Stock',          key: 'stock',        width: 8  },
+      { header: 'Description',    key: 'description',  width: 50 },
+      { header: 'ImageUrl',       key: 'imageurl',     width: 40 },
+      { header: 'Published',      key: 'published',    width: 10 },
+    ] as ExcelJS.Column[];
+
+    const hRow = ws.getRow(1);
+    hRow.font = { bold: true };
+    hRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1A1A2E' } };
+    hRow.getCell(1).font = { bold: true, color: { argb: 'FF00FFFF' } };
+
+    // 2 dòng ví dụ
+    ws.addRow({ name: 'Intel Core i9-14900K', brand: 'Intel', categoryname: 'Processors (CPU)', costprice: 12000000, price: 15990000, saleprice: 14990000, stock: 10, description: 'CPU Intel thế hệ 14, 24 nhân...', imageurl: '', published: 'Yes' });
+    ws.addRow({ name: 'ASUS ROG RTX 4080', brand: 'ASUS', categoryname: 'Graphics Cards (GPU)', costprice: 24000000, price: 28990000, saleprice: '', stock: 5, description: 'GPU RTX 4080 SUPER 16GB...', imageurl: '', published: 'Yes' });
+    ws.getRow(2).font = { italic: true, color: { argb: 'FF888888' } };
+    ws.getRow(3).font = { italic: true, color: { argb: 'FF888888' } };
+
+    // Sheet 2: Danh sách category hợp lệ
+    const catSheet = wb.addWorksheet('Valid Categories');
+    catSheet.columns = [{ header: 'Category Name (dùng chính xác)', key: 'name', width: 35 }] as ExcelJS.Column[];
+    catSheet.getRow(1).font = { bold: true };
+    categories.forEach((c) => catSheet.addRow({ name: c.name }));
+
+    return wb.xlsx.writeBuffer() as Promise<ExcelJS.Buffer>;
   }
 
   // ── Excel export ──────────────────────────────────────────

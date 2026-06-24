@@ -38,6 +38,21 @@ export async function uploadProductImage(file: File): Promise<{ url: string }> {
   return res.json();
 }
 
+export async function downloadProductTemplate() {
+  const token = getToken();
+  const res = await fetch(getApiUrl("/admin/products/template"), {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+  if (!res.ok) throw new Error("Download failed");
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "product-import-template.xlsx";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export async function importProductsExcel(file: File) {
   const token = getToken();
   const fd = new FormData();

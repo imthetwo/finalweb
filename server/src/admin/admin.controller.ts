@@ -68,6 +68,15 @@ export class AdminController {
     return this.admin.uploadImage(file.buffer);
   }
 
+  // ── Download Excel template cho nhân viên nhập liệu ──
+  @Get('products/template')
+  async downloadTemplate(@Res() res: Response) {
+    const buffer = await this.admin.exportProductTemplate();
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="product-import-template.xlsx"');
+    res.end(buffer);
+  }
+
   // ── Bulk import products from Excel ──
   @Post('products/import')
   @UseInterceptors(FileInterceptor('file'))
