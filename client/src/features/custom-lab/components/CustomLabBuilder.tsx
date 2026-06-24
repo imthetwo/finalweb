@@ -39,10 +39,10 @@ export default function CustomLabBuilder() {
             <div className="h-4 w-px bg-edge" />
             <div>
               <p className="text-[9px] uppercase tracking-[0.3em] text-brand">Pecify</p>
-              <h1 className="text-[13px] font-black uppercase tracking-wider text-fg">PC Builder</h1>
+              <h1 className="text-body font-black uppercase tracking-wider text-fg">PC Builder</h1>
             </div>
           </div>
-          <Badge variant="outline" className="border-edge text-[11px] text-muted">
+          <Badge variant="outline" className="border-edge text-xs text-muted">
             {selectedCount}/{BUILD_SLOTS.length} components
           </Badge>
         </header>
@@ -64,9 +64,9 @@ export default function CustomLabBuilder() {
                 <TableHeader>
                   <TableRow className="border-edge hover:bg-transparent">
                     <TableHead className="w-12 pl-6 pr-0" />
-                    <TableHead className="w-44 text-[13px]">Component</TableHead>
-                    <TableHead className="text-[13px]">Selection</TableHead>
-                    <TableHead className="text-right text-[13px]">Price</TableHead>
+                    <TableHead className="w-44 text-body">Component</TableHead>
+                    <TableHead className="text-body">Selection</TableHead>
+                    <TableHead className="text-right text-body">Price</TableHead>
                     <TableHead className="w-12" />
                   </TableRow>
                 </TableHeader>
@@ -82,7 +82,7 @@ export default function CustomLabBuilder() {
                           </div>
                         </TableCell>
                         <TableCell className="py-5">
-                          <p className="text-[13px] font-bold uppercase tracking-wider text-secondary">{cfg.shortLabel}</p>
+                          <p className="text-body font-bold uppercase tracking-wider text-secondary">{cfg.shortLabel}</p>
                         </TableCell>
                         <TableCell className="py-5">
                           {part ? (
@@ -94,12 +94,12 @@ export default function CustomLabBuilder() {
                               </div>
                               <div className="min-w-0">
                                 <p className="truncate text-[15px] font-semibold text-fg">{part.name}</p>
-                                <p className="text-[11px] text-muted">{part.brand}</p>
+                                <p className="text-xs text-muted">{part.brand}</p>
                               </div>
                             </div>
                           ) : (
                             <Button variant="ghost" onClick={() => openPicker(cfg.slot)} disabled={isLoading}
-                              className="h-12 gap-2 border border-dashed border-edge bg-transparent px-6 text-[13px] font-bold uppercase tracking-wider text-muted hover:border-brand/40 hover:bg-brand/5 hover:text-brand">
+                              className="h-12 gap-2 border border-dashed border-edge bg-transparent px-6 text-body font-bold uppercase tracking-wider text-muted hover:border-brand/40 hover:bg-brand/5 hover:text-brand">
                               <Plus size={15} />
                               {isLoading ? "Loading…" : `Choose A ${cfg.shortLabel}`}
                             </Button>
@@ -113,7 +113,7 @@ export default function CustomLabBuilder() {
                         <TableCell className="py-5 pr-6">
                           {part && (
                             <button type="button" onClick={() => removePart(cfg.slot)}
-                              className="flex h-9 w-9 items-center justify-center border border-red-800/40 bg-red-950/20 text-red-500 hover:border-red-500 hover:bg-red-950/50">
+                              className="flex h-9 w-9 items-center justify-center border border-red-800/40 bg-red-950/20 text-destructive hover:border-destructive hover:bg-red-950/50">
                               <Trash2 size={15} />
                             </button>
                           )}
@@ -128,7 +128,7 @@ export default function CustomLabBuilder() {
                       <div className="flex items-center gap-3">
                         <span className="text-[14px] font-black uppercase tracking-wider text-fg">Total ({selectedCount} parts)</span>
                         {estimatedWatts > 0 && (
-                          <Badge variant="outline" className="border-edge text-[11px] text-muted">
+                          <Badge variant="outline" className="border-edge text-xs text-muted">
                             <Zap size={11} className="mr-1" />~{estimatedWatts}W
                           </Badge>
                         )}
@@ -148,14 +148,14 @@ export default function CustomLabBuilder() {
               <div className="mt-4 space-y-2">
                 {compat.errors.map((e, i) => (
                   <div key={i} className="flex gap-2.5 border border-red-800/40 bg-red-950/20 px-4 py-2.5">
-                    <AlertCircle size={13} className="mt-0.5 shrink-0 text-red-400" />
-                    <p className="text-[13px] text-red-300">{e}</p>
+                    <AlertCircle size={13} className="mt-0.5 shrink-0 text-destructive" />
+                    <p className="text-body text-red-300">{e}</p>
                   </div>
                 ))}
                 {compat.warnings.map((w, i) => (
                   <div key={i} className="flex gap-2.5 border border-yellow-800/40 bg-yellow-950/20 px-4 py-2.5">
-                    <AlertTriangle size={13} className="mt-0.5 shrink-0 text-yellow-400" />
-                    <p className="text-[13px] text-yellow-300">{w}</p>
+                    <AlertTriangle size={13} className="mt-0.5 shrink-0 text-warning" />
+                    <p className="text-body text-yellow-300">{w}</p>
                   </div>
                 ))}
               </div>
@@ -164,11 +164,11 @@ export default function CustomLabBuilder() {
             {/* Actions */}
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
               <Button variant="outline" onClick={saveBuild} disabled={saving || selectedCount === 0}
-                className="h-12 gap-2 border-edge bg-transparent px-6 text-[13px] font-bold uppercase tracking-wider text-secondary hover:border-zinc-500 hover:text-fg">
+                className="h-12 gap-2 border-edge bg-transparent px-6 text-body font-bold uppercase tracking-wider text-secondary hover:border-zinc-500 hover:text-fg">
                 <Save size={15} />{saving ? "Saving…" : "Save Build"}
               </Button>
               <Button onClick={addAllToCart} disabled={addingCart || selectedCount === 0}
-                className="h-12 gap-2 bg-brand px-6 text-[13px] font-black uppercase tracking-wider text-brand-fg hover:bg-brand-hover disabled:opacity-50">
+                className="h-12 gap-2 bg-brand px-6 text-body font-black uppercase tracking-wider text-brand-fg hover:bg-brand-hover disabled:opacity-50">
                 <ShoppingCart size={15} />{addingCart ? "Adding…" : `Add ${selectedCount} Items to Cart`}
               </Button>
             </div>

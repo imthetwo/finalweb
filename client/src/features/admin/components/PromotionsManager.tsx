@@ -115,13 +115,13 @@ export function PromotionsManager() {
     <div className="p-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-black uppercase tracking-wide text-fg">Banners / Promotions</h1>
-        <button onClick={openCreate} className="inline-flex items-center gap-2 bg-brand px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-black hover:bg-brand/85">
+        <button onClick={openCreate} className="inline-flex items-center gap-2 bg-brand px-4 py-2.5 text-sm font-black uppercase tracking-wider text-black hover:bg-brand/85">
           <Plus size={14} /> Add Banner
         </button>
       </div>
 
       <div className="border border-edge bg-elevated">
-        <table className="w-full text-[13px]">
+        <table className="w-full text-body">
           <thead className="border-b border-edge text-[10px] uppercase tracking-wider text-muted">
             <tr>
               <th className="px-4 py-3 text-left">Title</th>
@@ -147,7 +147,7 @@ export function PromotionsManager() {
                   <td className="px-4 py-2.5 text-center">
                     <button
                       onClick={() => toggleActive(p)}
-                      className={`text-[10px] font-bold uppercase ${p.isActive ? "text-emerald-400" : "text-subtle"}`}
+                      className={`text-[10px] font-bold uppercase ${p.isActive ? "text-success" : "text-subtle"}`}
                     >
                       {p.isActive ? "Active" : "Inactive"}
                     </button>
@@ -155,7 +155,7 @@ export function PromotionsManager() {
                   <td className="px-4 py-2.5">
                     <div className="flex items-center justify-end gap-1.5">
                       <button onClick={() => openEdit(p)} className="flex h-7 w-7 items-center justify-center border border-edge text-secondary hover:border-brand/50 hover:text-brand" aria-label="Edit"><Pencil size={12} /></button>
-                      <button onClick={() => remove(p)} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-red-500 hover:border-red-500" aria-label="Delete"><Trash2 size={12} /></button>
+                      <button onClick={() => remove(p)} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-destructive hover:border-destructive" aria-label="Delete"><Trash2 size={12} /></button>
                     </div>
                   </td>
                 </tr>
@@ -177,68 +177,68 @@ export function PromotionsManager() {
 
             <div className="space-y-3">
               <div>
-                <label className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-muted">Title</label>
+                <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">Title</label>
                 <input
                   value={form.title}
                   onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                  className="w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50"
+                  className="w-full border border-edge bg-surface px-3 py-2 text-body text-fg outline-none focus:border-brand/50"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-muted">Action label</label>
+                  <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">Action label</label>
                   <input
                     value={form.actionLabel}
                     onChange={(e) => setForm((f) => ({ ...f, actionLabel: e.target.value }))}
                     placeholder="SHOP NOW"
-                    className="w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50"
+                    className="w-full border border-edge bg-surface px-3 py-2 text-body text-fg outline-none focus:border-brand/50"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-muted">Link (href)</label>
+                  <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">Link (href)</label>
                   <input
                     value={form.href}
                     onChange={(e) => setForm((f) => ({ ...f, href: e.target.value }))}
                     placeholder="/components/processors"
-                    className="w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50"
+                    className="w-full border border-edge bg-surface px-3 py-2 text-body text-fg outline-none focus:border-brand/50"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-muted">Starts at</label>
+                  <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">Starts at</label>
                   <input
                     type="datetime-local"
                     value={form.startsAt}
                     onChange={(e) => setForm((f) => ({ ...f, startsAt: e.target.value }))}
-                    className="w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50"
+                    className="w-full border border-edge bg-surface px-3 py-2 text-body text-fg outline-none focus:border-brand/50"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-muted">Ends at</label>
+                  <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">Ends at</label>
                   <input
                     type="datetime-local"
                     value={form.endsAt}
                     onChange={(e) => setForm((f) => ({ ...f, endsAt: e.target.value }))}
-                    className="w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50"
+                    className="w-full border border-edge bg-surface px-3 py-2 text-body text-fg outline-none focus:border-brand/50"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-muted">Sort order</label>
+                  <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">Sort order</label>
                   <input
                     type="number"
                     value={form.sortOrder}
                     onChange={(e) => setForm((f) => ({ ...f, sortOrder: Number(e.target.value) }))}
-                    className="w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50"
+                    className="w-full border border-edge bg-surface px-3 py-2 text-body text-fg outline-none focus:border-brand/50"
                   />
                 </div>
                 <div className="flex items-end pb-2">
-                  <label className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-wider text-secondary">
+                  <label className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-secondary">
                     <input
                       type="checkbox"
                       checked={form.isActive}
@@ -252,10 +252,10 @@ export function PromotionsManager() {
             </div>
 
             <div className="mt-6 flex justify-end gap-2">
-              <button onClick={() => setModalOpen(false)} className="border border-edge px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-secondary hover:bg-zinc-900">
+              <button onClick={() => setModalOpen(false)} className="border border-edge px-4 py-2.5 text-sm font-black uppercase tracking-wider text-secondary hover:bg-zinc-900">
                 Cancel
               </button>
-              <button onClick={save} disabled={saving} className="bg-brand px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-black hover:bg-brand/85 disabled:opacity-50">
+              <button onClick={save} disabled={saving} className="bg-brand px-4 py-2.5 text-sm font-black uppercase tracking-wider text-black hover:bg-brand/85 disabled:opacity-50">
                 {saving ? "Saving…" : "Save"}
               </button>
             </div>

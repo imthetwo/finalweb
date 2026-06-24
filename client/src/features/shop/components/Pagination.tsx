@@ -31,7 +31,7 @@ export function Pagination({ page, totalPages }: { page: number; totalPages: num
     }`;
 
   return (
-    <nav className="mt-8 flex items-center justify-center gap-1.5 text-[12px]">
+    <nav className="mt-8 flex items-center justify-center gap-1.5 text-sm">
       <Link
         href={hrefForPage(Math.max(1, page - 1))}
         aria-disabled={page <= 1}

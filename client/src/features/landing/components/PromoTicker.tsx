@@ -28,7 +28,7 @@ export default function PromoTicker() {
           {doubled.map((item, i) => (
             <span
               key={i}
-              className="mx-8 inline-flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.3em] text-black"
+              className="mx-8 inline-flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-black"
             >
               {item}
               <span className="h-1 w-1 rounded-full bg-base/30" />

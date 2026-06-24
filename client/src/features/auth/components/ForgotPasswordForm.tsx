@@ -35,7 +35,7 @@ export function ForgotPasswordForm() {
     <main className="flex min-h-screen items-center justify-center bg-base px-4 py-16">
       <div className="w-full max-w-sm">
         {/* Logo */}
-        <p className="mb-8 text-center text-[11px] font-black uppercase tracking-[0.3em] text-brand">
+        <p className="mb-8 text-center text-xs font-black uppercase tracking-[0.3em] text-brand">
           Pecify
         </p>
 
@@ -48,14 +48,14 @@ export function ForgotPasswordForm() {
               </svg>
             </div>
             <h1 className="text-lg font-black uppercase tracking-wide text-fg">Check your email</h1>
-            <p className="mt-3 text-[13px] leading-relaxed text-secondary">
+            <p className="mt-3 text-body leading-relaxed text-secondary">
               If <span className="text-fg">{email}</span> is registered, we sent a password reset link.
               Check your inbox (and spam folder).
             </p>
-            <p className="mt-6 text-[11px] text-subtle">Link expires in 1 hour.</p>
+            <p className="mt-6 text-xs text-subtle">Link expires in 1 hour.</p>
             <Link
               href="/login"
-              className="mt-6 block border border-edge py-2.5 text-center text-[12px] font-bold uppercase tracking-wider text-secondary transition hover:border-white hover:text-fg"
+              className="mt-6 block border border-edge py-2.5 text-center text-sm font-bold uppercase tracking-wider text-secondary transition hover:border-fg hover:text-fg"
             >
               Back to sign in
             </Link>
@@ -65,14 +65,14 @@ export function ForgotPasswordForm() {
           <div className="border border-edge bg-elevated">
             <div className="border-b border-edge px-6 py-5">
               <h1 className="text-lg font-black uppercase tracking-wide text-fg">Forgot password</h1>
-              <p className="mt-1 text-[12px] text-muted">
+              <p className="mt-1 text-sm text-muted">
                 Enter your email and we'll send you a reset link.
               </p>
             </div>
 
             <form onSubmit={submit} className="space-y-4 p-6">
               <div>
-                <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-muted">
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">
                   Email address
                 </label>
                 <input
@@ -88,7 +88,7 @@ export function ForgotPasswordForm() {
               <button
                 type="submit"
                 disabled={loading || !email.trim()}
-                className="w-full bg-brand py-3 text-[12px] font-black uppercase tracking-wider text-black transition hover:bg-brand/85 disabled:opacity-50"
+                className="w-full bg-brand py-3 text-sm font-black uppercase tracking-wider text-black transition hover:bg-brand/85 disabled:opacity-50"
               >
                 {loading ? "Sending…" : "Send reset link"}
               </button>
@@ -97,7 +97,7 @@ export function ForgotPasswordForm() {
             <div className="border-t border-edge px-6 py-4 text-center">
               <Link
                 href="/login"
-                className="text-[12px] font-bold text-muted transition hover:text-fg"
+                className="text-sm font-bold text-muted transition hover:text-fg"
               >
                 ← Back to sign in
               </Link>

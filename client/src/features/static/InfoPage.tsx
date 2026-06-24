@@ -29,7 +29,7 @@ export default function InfoPage({
           ))}
         </div>
 
-        <Link href="/" className="mt-12 inline-block text-[12px] font-bold uppercase tracking-wider text-brand hover:underline">
+        <Link href="/" className="mt-12 inline-block text-sm font-bold uppercase tracking-wider text-brand hover:underline">
           ← Back to store
         </Link>
       </div>

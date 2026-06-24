@@ -6,6 +6,7 @@ import Link from "next/link";
 import { LogOut, Shield } from "lucide-react";
 
 import { fetchProfile, type UserProfile } from "@/lib/api";
+import { getToken } from "@/lib/auth";
 import { useAuthState } from "@/hooks/useAuthState";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProfileTab } from "./components/ProfileTab";
@@ -23,7 +24,7 @@ export default function AccountPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!localStorage.getItem("access_token")) {
+    if (!getToken()) {
       router.replace("/login");
       return;
     }

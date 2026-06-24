@@ -182,7 +182,7 @@ export default function ProductFormModal({
   }
 
   const cls = {
-    input: "w-full border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50 placeholder:text-subtle",
+    input: "w-full border border-edge bg-surface px-3 py-2 text-body text-fg outline-none focus:border-brand/50 placeholder:text-subtle",
     label: "mb-1 block text-[10px] font-bold uppercase tracking-wider text-muted",
     row: "grid grid-cols-2 gap-4",
     row3: "grid grid-cols-3 gap-4",
@@ -372,7 +372,7 @@ export default function ProductFormModal({
               </div>
               <input ref={fileRef} type="file" accept="image/*" onChange={onUpload} className="hidden" />
               <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
-                className="inline-flex items-center gap-2 border border-edge px-4 py-2 text-[12px] font-bold uppercase tracking-wider text-secondary hover:border-brand/40 hover:text-brand disabled:opacity-50">
+                className="inline-flex items-center gap-2 border border-edge px-4 py-2 text-sm font-bold uppercase tracking-wider text-secondary hover:border-brand/40 hover:text-brand disabled:opacity-50">
                 <Upload size={13} /> {uploading ? "Uploading…" : "Upload"}
               </button>
             </div>
@@ -383,7 +383,7 @@ export default function ProductFormModal({
             <Field label="Giá nhập vốn (VND)">
               <input type="number" min={0} className={cls.input} value={form.costPrice ?? ""} onChange={(e) => set("costPrice", e.target.value ? Number(e.target.value) : undefined)} placeholder="12000000" />
               {form.costPrice && form.price > 0 && (
-                <p className="mt-1 text-[11px] text-brand">
+                <p className="mt-1 text-xs text-brand">
                   Margin: {Math.round((1 - form.costPrice / form.price) * 100)}%
                 </p>
               )}
@@ -404,14 +404,14 @@ export default function ProductFormModal({
           {/* Spec section */}
           {renderSpec()}
 
-          <label className="flex items-center gap-2 text-[12px] text-secondary">
+          <label className="flex items-center gap-2 text-sm text-secondary">
             <input type="checkbox" className="accent-brand" checked={form.isPublished ?? true} onChange={(e) => set("isPublished", e.target.checked)} />
             Published
           </label>
 
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={onClose} className="border border-edge px-5 py-2.5 text-[12px] font-bold uppercase tracking-wider text-secondary hover:border-white hover:text-fg">Cancel</button>
-            <button type="submit" disabled={saving} className="bg-brand px-6 py-2.5 text-[12px] font-black uppercase tracking-wider text-black hover:bg-brand/85 disabled:opacity-50">
+            <button type="button" onClick={onClose} className="border border-edge px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-secondary hover:border-fg hover:text-fg">Cancel</button>
+            <button type="submit" disabled={saving} className="bg-brand px-6 py-2.5 text-sm font-black uppercase tracking-wider text-black hover:bg-brand/85 disabled:opacity-50">
               {saving ? "Saving…" : editing ? "Update" : "Create"}
             </button>
           </div>

@@ -31,10 +31,10 @@ export function AuthCallback() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-base px-4 text-fg">
         <div className="w-full max-w-sm border border-red-800/40 bg-red-950/20 p-6 text-center">
-          <p className="text-sm font-bold text-red-400">{error}</p>
+          <p className="text-sm font-bold text-destructive">{error}</p>
           <a
             href="/login"
-            className="mt-4 inline-block text-[12px] text-secondary underline hover:text-fg"
+            className="mt-4 inline-block text-sm text-secondary underline hover:text-fg"
           >
             Back to login
           </a>

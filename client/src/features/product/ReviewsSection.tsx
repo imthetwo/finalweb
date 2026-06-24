@@ -5,6 +5,7 @@ import { Star } from "lucide-react";
 import { toast } from "sonner";
 
 import { fetchProductReviews, createReview, type Review } from "@/lib/api";
+import { getToken } from "@/lib/auth";
 
 function Stars({ value, size = 14 }: { value: number; size?: number }) {
   return (
@@ -41,7 +42,7 @@ export default function ReviewsSection({ productId }: { productId: string }) {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!localStorage.getItem("access_token")) {
+    if (!getToken()) {
       toast.error("Please sign in to write a review");
       return;
     }

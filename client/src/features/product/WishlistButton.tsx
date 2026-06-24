@@ -5,22 +5,22 @@ import { Heart } from "lucide-react";
 import { toast } from "sonner";
 
 import { addToWishlist, removeFromWishlist, fetchWishlist } from "@/lib/api";
+import { useAuthStore } from "@/store/authStore";
 import { LoginOverlay } from "@/features/auth/LoginOverlay";
 
 const BTN_BASE = "flex h-12 w-12 items-center justify-center border transition-all";
 
-export default function WishlistButton({ productId }: { productId: string }) {
-  const [authed, setAuthed] = useState(false);
+export function WishlistButton({ productId }: { productId: string }) {
+  const user = useAuthStore((s) => s.user);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem("access_token")) return;
-    setAuthed(true);
+    if (!user) return;
     fetchWishlist()
       .then((items) => setSaved(items.some((w) => w.product.id === productId)))
       .catch(() => {});
-  }, [productId]);
+  }, [user, productId]);
 
   async function toggle() {
     setLoading(true);
@@ -41,8 +41,7 @@ export default function WishlistButton({ productId }: { productId: string }) {
     }
   }
 
-  // Not signed in → open login dialog instead of an error toast
-  if (!authed) {
+  if (!user) {
     return (
       <LoginOverlay
         triggerButton={
@@ -66,11 +65,11 @@ export default function WishlistButton({ productId }: { productId: string }) {
       aria-label={saved ? "Remove from wishlist" : "Add to wishlist"}
       className={`${BTN_BASE} ${
         saved
-          ? "border-red-500/50 bg-red-950/30 text-red-400"
+          ? "border-destructive/50 bg-destructive/10 text-destructive"
           : "border-edge text-secondary hover:border-brand/40 hover:text-brand"
       } disabled:opacity-50`}
     >
-      <Heart size={18} className={saved ? "fill-red-400" : ""} />
+      <Heart size={18} className={saved ? "fill-destructive" : ""} />
     </button>
   );
 }

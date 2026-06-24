@@ -46,7 +46,7 @@ export default function LoginPage() {
                 <Button
                   onClick={() => setDialog("register")}
                   variant="outline"
-                  className="rounded-none border-edge px-6 py-6 font-black uppercase tracking-[0.22em] text-fg hover:border-white hover:bg-transparent"
+                  className="rounded-none border-edge px-6 py-6 font-black uppercase tracking-[0.22em] text-fg hover:border-fg hover:bg-transparent"
                 >
                   Create Account
                 </Button>

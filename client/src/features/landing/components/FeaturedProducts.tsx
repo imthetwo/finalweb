@@ -70,7 +70,7 @@ function ProductCard({ product }: { product: ProductItem }) {
 
         {product.stock === 0 && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-base/60">
-            <span className="text-[11px] font-black uppercase tracking-widest text-muted">Out of Stock</span>
+            <span className="text-xs font-black uppercase tracking-widest text-muted">Out of Stock</span>
           </div>
         )}
       </div>
@@ -80,7 +80,7 @@ function ProductCard({ product }: { product: ProductItem }) {
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand/60">
           {product.brand}
         </p>
-        <h3 className="line-clamp-2 text-[13px] font-semibold leading-snug text-fg transition-colors duration-200 group-hover:text-brand">
+        <h3 className="line-clamp-2 text-body font-semibold leading-snug text-fg transition-colors duration-200 group-hover:text-brand">
           {product.name}
         </h3>
 
@@ -138,7 +138,7 @@ export default async function FeaturedProducts() {
           </div>
           <Link
             href="/components/processors"
-            className="group flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted transition-colors hover:text-brand"
+            className="group flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-muted transition-colors hover:text-brand"
           >
             View All
             <ArrowRight size={12} className="transition-transform duration-200 group-hover:translate-x-1" />

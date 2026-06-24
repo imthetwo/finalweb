@@ -121,7 +121,7 @@ export function PaymentGateway() {
   if (!orderId) {
     return (
       <main className="flex min-h-[70vh] items-center justify-center bg-base text-fg">
-        <p className="text-red-400">Missing order ID.</p>
+        <p className="text-destructive">Missing order ID.</p>
       </main>
     );
   }
@@ -144,9 +144,9 @@ export function PaymentGateway() {
         <div className="space-y-5 p-6">
           {/* Amount */}
           <div className="text-center">
-            <p className="text-[11px] uppercase tracking-wider text-muted">Amount</p>
+            <p className="text-xs uppercase tracking-wider text-muted">Amount</p>
             <p className="mt-1 text-3xl font-black text-brand">{formatVnd(displayAmount)}</p>
-            <p className="mt-1 font-mono text-[11px] text-subtle">
+            <p className="mt-1 font-mono text-xs text-subtle">
               Order #{orderId.slice(0, 8).toUpperCase()}
             </p>
           </div>
@@ -162,7 +162,7 @@ export function PaymentGateway() {
                   includeMargin={false}
                 />
               </div>
-              <p className="text-center text-[11px] leading-relaxed text-muted">
+              <p className="text-center text-xs leading-relaxed text-muted">
                 Open <span className="font-bold text-pink-400">MoMo app</span> → scan QR to pay.
                 <br />Waiting for payment confirmation…
               </p>
@@ -175,11 +175,11 @@ export function PaymentGateway() {
           {/* Expired QR */}
           {isMomo && expired && (
             <div className="rounded border border-red-800/40 bg-red-950/20 px-4 py-3 text-center">
-              <p className="text-sm font-bold text-red-400">QR code expired</p>
+              <p className="text-sm font-bold text-destructive">QR code expired</p>
               <button
                 type="button"
                 onClick={() => { setExpired(false); window.location.reload(); }}
-                className="mt-2 text-[12px] text-secondary underline hover:text-fg"
+                className="mt-2 text-sm text-secondary underline hover:text-fg"
               >
                 Generate new QR
               </button>
@@ -192,7 +192,7 @@ export function PaymentGateway() {
               href={payment.payUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center gap-2 border border-pink-700/50 bg-pink-950/20 py-2.5 text-[12px] font-bold uppercase tracking-wider text-pink-400 transition hover:bg-pink-950/40"
+              className="inline-flex w-full items-center justify-center gap-2 border border-pink-700/50 bg-pink-950/20 py-2.5 text-sm font-bold uppercase tracking-wider text-pink-400 transition hover:bg-pink-950/40"
             >
               <ExternalLink size={13} /> Open MoMo wallet
             </a>
@@ -215,7 +215,7 @@ export function PaymentGateway() {
                 type="button"
                 onClick={() => pay(false)}
                 disabled={processing}
-                className="inline-flex w-full items-center justify-center gap-2 border border-edge py-2.5 text-[12px] font-bold uppercase tracking-wider text-secondary transition hover:border-red-500 hover:text-red-400 disabled:opacity-50"
+                className="inline-flex w-full items-center justify-center gap-2 border border-edge py-2.5 text-sm font-bold uppercase tracking-wider text-secondary transition hover:border-destructive hover:text-destructive disabled:opacity-50"
               >
                 <XCircle size={14} /> Cancel payment
               </button>

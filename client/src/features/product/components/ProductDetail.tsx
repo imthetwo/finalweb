@@ -2,7 +2,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import AddToCartButton from "@/components/shop/AddToCartButton";
-import WishlistButton from "@/features/product/WishlistButton";
+import { WishlistButton } from "@/features/product/WishlistButton";
 import ReviewsSection from "@/features/product/ReviewsSection";
 import { apiFetch } from "@/lib/api";
 import { formatVnd } from "@/lib/format";

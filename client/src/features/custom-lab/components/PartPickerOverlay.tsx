@@ -57,7 +57,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
       {/* Header */}
       <div className="relative shrink-0 border-b border-edge bg-[linear-gradient(180deg,#2d2b48_0%,#22203a_100%)]">
         <button type="button" onClick={onClose}
-          className="absolute left-4 top-1/2 flex -translate-y-1/2 items-center gap-1.5 border border-white/20 bg-base/30 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-secondary hover:border-white/40 hover:text-fg md:left-6">
+          className="absolute left-4 top-1/2 flex -translate-y-1/2 items-center gap-1.5 border border-white/20 bg-base/30 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-secondary hover:border-white/40 hover:text-fg md:left-6">
           <X size={12} /> Cancel
         </button>
         <div className="flex items-center justify-center py-5">
@@ -73,7 +73,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
         <aside className="hidden w-60 shrink-0 flex-col overflow-y-auto border-r border-edge bg-surface p-4 md:flex">
           {/* Build summary */}
           <div className="mb-5 border border-edge bg-overlay p-4">
-            <p className="mb-3 text-center text-[12px] font-black uppercase tracking-wider text-fg">
+            <p className="mb-3 text-center text-sm font-black uppercase tracking-wider text-fg">
               <Box size={12} className="mr-1 inline text-brand" /> Part List
             </p>
             <div className="grid grid-cols-3 gap-2 text-center">
@@ -84,7 +84,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
               ].map(({ label, value, cyan }) => (
                 <div key={label}>
                   <p className="text-[9px] font-bold uppercase tracking-wider text-muted">{label}</p>
-                  <p className={`text-[12px] font-black ${cyan ? "text-brand" : "text-fg"}`}>{value}</p>
+                  <p className={`text-sm font-black ${cyan ? "text-brand" : "text-fg"}`}>{value}</p>
                 </div>
               ))}
             </div>
@@ -92,14 +92,14 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
 
           <label className="mb-5 flex cursor-pointer items-center gap-2 border border-edge bg-overlay px-3 py-2.5">
             <input type="checkbox" checked={compatOnly} onChange={(e) => setCompatOnly(e.target.checked)} className="h-3.5 w-3.5 accent-brand" />
-            <span className="text-[12px] font-semibold text-secondary">Compatibility Filter</span>
+            <span className="text-sm font-semibold text-secondary">Compatibility Filter</span>
           </label>
 
           <div className="mb-6">
             <p className="mb-3 text-[10px] font-black uppercase tracking-[0.25em] text-muted">Price</p>
             <input type="range" min={priceBounds.min} max={priceBounds.max} step={100000}
               value={effectiveMax} onChange={(e) => setMaxPrice(Number(e.target.value))} className="w-full accent-brand" />
-            <div className="mt-2 flex justify-between text-[11px] text-muted">
+            <div className="mt-2 flex justify-between text-xs text-muted">
               <span>{formatVnd(priceBounds.min)}</span>
               <span className="font-bold text-secondary">≤ {formatVnd(effectiveMax)}</span>
             </div>
@@ -111,14 +111,14 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
               {allBrands.map((brand) => (
                 <label key={brand} className="group flex cursor-pointer items-center gap-2 py-0.5">
                   <input type="checkbox" checked={brands.has(brand)} onChange={() => toggleBrand(brand)} className="h-3.5 w-3.5 accent-brand" />
-                  <span className={cn("text-[12px] transition-colors group-hover:text-fg", brands.has(brand) ? "font-bold text-brand" : "text-secondary")}>
+                  <span className={cn("text-sm transition-colors group-hover:text-fg", brands.has(brand) ? "font-bold text-brand" : "text-secondary")}>
                     {brand}
                   </span>
                 </label>
               ))}
             </div>
             {brands.size > 0 && (
-              <button type="button" onClick={() => setBrands(new Set())} className="mt-3 text-[11px] text-subtle underline hover:text-secondary">Clear</button>
+              <button type="button" onClick={() => setBrands(new Set())} className="mt-3 text-xs text-subtle underline hover:text-secondary">Clear</button>
             )}
           </div>
         </aside>
@@ -131,7 +131,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
             </h3>
             <div className="flex items-center gap-3">
               <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)}
-                className="border border-edge bg-surface px-2 py-1.5 text-[12px] text-secondary outline-none lg:hidden">
+                className="border border-edge bg-surface px-2 py-1.5 text-sm text-secondary outline-none lg:hidden">
                 <option value="price-asc">Price ↑</option>
                 <option value="price-desc">Price ↓</option>
                 <option value="name-asc">Name A–Z</option>
@@ -140,7 +140,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
                 <Search size={13} className="shrink-0 text-muted" />
                 <input type="text" placeholder={`Search ${slotCfg.shortLabel}…`} value={query}
                   onChange={(e) => setQuery(e.target.value)} autoFocus
-                  className="flex-1 bg-transparent text-[13px] text-fg outline-none placeholder:text-subtle" />
+                  className="flex-1 bg-transparent text-body text-fg outline-none placeholder:text-subtle" />
                 {query && <button type="button" onClick={() => setQuery("")} className="text-muted hover:text-fg"><X size={12} /></button>}
               </div>
             </div>
@@ -152,12 +152,12 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
             ) : filtered.length === 0 ? (
               <div className="flex flex-col items-center justify-center gap-3 py-24 text-muted">
                 <Search size={28} className="opacity-30" />
-                <p className="text-[13px]">No matching products</p>
+                <p className="text-body">No matching products</p>
                 <button type="button" onClick={() => { setQuery(""); setBrands(new Set()); setMaxPrice(priceBounds.max); }}
-                  className="text-[12px] text-brand underline">Clear filters</button>
+                  className="text-sm text-brand underline">Clear filters</button>
               </div>
             ) : (
-              <table className="w-full border-collapse text-[13px]">
+              <table className="w-full border-collapse text-body">
                 <thead className="sticky top-0 z-10 border-b border-edge bg-elevated">
                   <tr>
                     <th className="w-9 px-2 py-2.5" />
@@ -196,7 +196,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
                         </td>
                         <td className="px-3 py-2">
                           <p className="font-semibold leading-snug text-fg">{part.name}</p>
-                          <p className="mt-0.5 text-[11px] text-muted">{part.brand}</p>
+                          <p className="mt-0.5 text-xs text-muted">{part.brand}</p>
                         </td>
                         {slotCfg.specs.map((s) => {
                           const raw = part[s.key as keyof ApiPart];
@@ -206,7 +206,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
                         <td className="px-4 py-2 text-right"><span className="font-black text-fg">{formatVnd(part.displayPrice)}</span></td>
                         <td className="px-3 py-2">
                           <button type="button" onClick={() => { onAdd(part); onClose(); }}
-                            className={cn("w-full px-4 py-2 text-[11px] font-black uppercase tracking-wider transition-all duration-150",
+                            className={cn("w-full px-4 py-2 text-xs font-black uppercase tracking-wider transition-all duration-150",
                               isSelected ? "border border-brand/50 bg-brand/15 text-brand" : "bg-brand text-brand-fg hover:bg-brand-hover active:scale-95")}>
                             {isSelected ? "✓ Added" : "Add"}
                           </button>

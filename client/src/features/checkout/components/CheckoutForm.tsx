@@ -8,6 +8,7 @@ import { Tag, X } from "lucide-react";
 
 import { apiFetch, initiatePayment, validateCoupon } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
+import { getToken } from "@/lib/auth";
 
 const FIELDS: { key: "recipient" | "phone" | "street" | "district" | "city"; label: string; placeholder: string }[] = [
   { key: "recipient", label: "Full name", placeholder: "Nguyen Van A" },
@@ -62,7 +63,7 @@ export function CheckoutForm() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!localStorage.getItem("access_token")) {
+    if (!getToken()) {
       toast.error("Please sign in first");
       return;
     }

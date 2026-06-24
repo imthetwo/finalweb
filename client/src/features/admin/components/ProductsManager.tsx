@@ -76,16 +76,16 @@ export function ProductsManager() {
           <input ref={importRef} type="file" accept=".xlsx,.xls" onChange={onImport} className="hidden" />
           <button
             onClick={() => downloadProductTemplate().catch(() => toast.error("Download failed"))}
-            className="inline-flex items-center gap-2 border border-edge px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-secondary hover:border-brand/50 hover:text-brand"
+            className="inline-flex items-center gap-2 border border-edge px-4 py-2.5 text-sm font-black uppercase tracking-wider text-secondary hover:border-brand/50 hover:text-brand"
           >
             <Download size={14} /> Template
           </button>
-          <button onClick={() => importRef.current?.click()} className="inline-flex items-center gap-2 border border-emerald-700/50 bg-emerald-950/30 px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-emerald-400 hover:bg-emerald-950/50">
+          <button onClick={() => importRef.current?.click()} className="inline-flex items-center gap-2 border border-emerald-700/50 bg-emerald-950/30 px-4 py-2.5 text-sm font-black uppercase tracking-wider text-success hover:bg-emerald-950/50">
             <Upload size={14} />
             {isAdmin ? "Import Excel" : "Import Excel (Draft)"}
           </button>
           {isAdmin && (
-            <button onClick={openCreate} className="inline-flex items-center gap-2 bg-brand px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-black hover:bg-brand/85">
+            <button onClick={openCreate} className="inline-flex items-center gap-2 bg-brand px-4 py-2.5 text-sm font-black uppercase tracking-wider text-black hover:bg-brand/85">
               <Plus size={14} /> Add Product
             </button>
           )}
@@ -99,13 +99,13 @@ export function ProductsManager() {
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           placeholder="Search by name, SKU, brand…"
-          className="flex-1 bg-transparent text-[13px] text-fg outline-none placeholder:text-subtle"
+          className="flex-1 bg-transparent text-body text-fg outline-none placeholder:text-subtle"
         />
       </div>
 
       {/* Table */}
       <div className="border border-edge bg-elevated">
-        <table className="w-full text-[13px]">
+        <table className="w-full text-body">
           <thead className="border-b border-edge text-[10px] uppercase tracking-wider text-muted">
             <tr>
               <th className="px-4 py-3 text-left">Product</th>
@@ -134,7 +134,7 @@ export function ProductsManager() {
                       </div>
                       <div className="min-w-0">
                         <p className="truncate font-semibold text-fg">{p.name}</p>
-                        <p className="text-[11px] text-muted">{p.brand}</p>
+                        <p className="text-xs text-muted">{p.brand}</p>
                       </div>
                     </div>
                   </td>
@@ -142,7 +142,7 @@ export function ProductsManager() {
                   <td className="px-4 py-2.5 text-right">
                     {p.salePrice ? (
                       <div>
-                        <span className="text-[11px] text-subtle line-through">{formatVnd(p.price)}</span>
+                        <span className="text-xs text-subtle line-through">{formatVnd(p.price)}</span>
                         <p className="font-bold text-brand">{formatVnd(p.salePrice)}</p>
                       </div>
                     ) : (
@@ -151,12 +151,12 @@ export function ProductsManager() {
                   </td>
                   <td className="px-4 py-2.5 text-right">
                     {p.costPrice && p.price > 0 ? (
-                      <span className={`text-[12px] font-bold ${
+                      <span className={`text-sm font-bold ${
                         (1 - p.costPrice / p.price) >= 0.25
-                          ? "text-emerald-400"
+                          ? "text-success"
                           : (1 - p.costPrice / p.price) >= 0.15
-                          ? "text-yellow-400"
-                          : "text-red-400"
+                          ? "text-warning"
+                          : "text-destructive"
                       }`}>
                         {Math.round((1 - p.costPrice / p.price) * 100)}%
                       </span>
@@ -165,13 +165,13 @@ export function ProductsManager() {
                     )}
                   </td>
                   <td className="px-4 py-2.5 text-center">
-                    <span className={p.stock <= 5 ? "text-yellow-400" : "text-secondary"}>{p.stock}</span>
+                    <span className={p.stock <= 5 ? "text-warning" : "text-secondary"}>{p.stock}</span>
                   </td>
                   <td className="px-4 py-2.5 text-center">
                     {p.isPublished ? (
-                      <span className="text-[10px] font-bold uppercase text-emerald-400">Live</span>
+                      <span className="text-[10px] font-bold uppercase text-success">Live</span>
                     ) : (
-                      <span className="inline-block rounded bg-yellow-900/30 px-2 py-0.5 text-[10px] font-bold uppercase text-yellow-400">
+                      <span className="inline-block rounded bg-yellow-900/30 px-2 py-0.5 text-[10px] font-bold uppercase text-warning">
                         Draft · Chờ duyệt
                       </span>
                     )}
@@ -180,7 +180,7 @@ export function ProductsManager() {
                     {isAdmin ? (
                       <div className="flex items-center justify-end gap-1.5">
                         <button onClick={() => openEdit(p)} className="flex h-7 w-7 items-center justify-center border border-edge text-secondary hover:border-brand/50 hover:text-brand" aria-label="Edit"><Pencil size={12} /></button>
-                        <button onClick={() => remove(p)} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-red-500 hover:border-red-500" aria-label="Delete"><Trash2 size={12} /></button>
+                        <button onClick={() => remove(p)} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-destructive hover:border-destructive" aria-label="Delete"><Trash2 size={12} /></button>
                       </div>
                     ) : (
                       <span className="text-[10px] text-subtle">View only</span>
@@ -196,9 +196,9 @@ export function ProductsManager() {
       {/* Pagination */}
       {data && data.totalPages > 1 && (
         <div className="mt-4 flex items-center justify-center gap-2">
-          <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="border border-edge px-3 py-1.5 text-[12px] text-secondary disabled:opacity-40">Prev</button>
-          <span className="text-[12px] text-muted">Page {data.page} / {data.totalPages}</span>
-          <button disabled={page >= data.totalPages} onClick={() => setPage((p) => p + 1)} className="border border-edge px-3 py-1.5 text-[12px] text-secondary disabled:opacity-40">Next</button>
+          <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="border border-edge px-3 py-1.5 text-sm text-secondary disabled:opacity-40">Prev</button>
+          <span className="text-sm text-muted">Page {data.page} / {data.totalPages}</span>
+          <button disabled={page >= data.totalPages} onClick={() => setPage((p) => p + 1)} className="border border-edge px-3 py-1.5 text-sm text-secondary disabled:opacity-40">Next</button>
         </div>
       )}
 

@@ -38,15 +38,15 @@ export function OrderSuccess() {
       {qr && (
         <div className="mt-8 border border-edge bg-elevated p-5">
           <Image src={qr.dataUrl} alt="Order QR code" width={180} height={180} unoptimized />
-          <p className="mt-3 text-[11px] uppercase tracking-wider text-muted">Scan to track your order</p>
+          <p className="mt-3 text-xs uppercase tracking-wider text-muted">Scan to track your order</p>
         </div>
       )}
 
       <div className="mt-10 flex gap-3">
-        <Link href="/account?tab=orders" className="border border-edge px-6 py-3 text-[12px] font-bold uppercase tracking-wider text-secondary hover:border-white hover:text-fg">
+        <Link href="/account?tab=orders" className="border border-edge px-6 py-3 text-sm font-bold uppercase tracking-wider text-secondary hover:border-fg hover:text-fg">
           View orders
         </Link>
-        <Link href="/" className="bg-brand px-6 py-3 text-[12px] font-black uppercase tracking-wider text-black hover:bg-brand/85">
+        <Link href="/" className="bg-brand px-6 py-3 text-sm font-black uppercase tracking-wider text-black hover:bg-brand/85">
           Continue shopping
         </Link>
       </div>

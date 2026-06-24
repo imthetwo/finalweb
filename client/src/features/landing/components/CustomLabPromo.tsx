@@ -58,7 +58,7 @@ export default function CustomLabPromo() {
                 <p className="text-sm font-bold text-fg transition-colors duration-200 group-hover:text-brand">
                   {label}
                 </p>
-                <p className="mt-0.5 text-[12px] text-subtle">{desc}</p>
+                <p className="mt-0.5 text-sm text-subtle">{desc}</p>
               </div>
             </div>
           ))}

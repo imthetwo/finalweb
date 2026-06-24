@@ -53,8 +53,8 @@ export function ResetPasswordForm() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-base px-4 py-16">
         <div className="w-full max-w-sm border border-edge bg-elevated p-8 text-center">
-          <p className="text-sm text-red-400">Invalid or missing reset token.</p>
-          <Link href="/forgot-password" className="mt-4 block text-[12px] text-brand hover:underline">
+          <p className="text-sm text-destructive">Invalid or missing reset token.</p>
+          <Link href="/forgot-password" className="mt-4 block text-sm text-brand hover:underline">
             Request a new link →
           </Link>
         </div>
@@ -65,7 +65,7 @@ export function ResetPasswordForm() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-base px-4 py-16">
       <div className="w-full max-w-sm">
-        <p className="mb-8 text-center text-[11px] font-black uppercase tracking-[0.3em] text-brand">
+        <p className="mb-8 text-center text-xs font-black uppercase tracking-[0.3em] text-brand">
           Pecify
         </p>
 
@@ -77,12 +77,12 @@ export function ResetPasswordForm() {
               </svg>
             </div>
             <h1 className="text-lg font-black uppercase tracking-wide text-fg">Password updated!</h1>
-            <p className="mt-3 text-[13px] text-secondary">
+            <p className="mt-3 text-body text-secondary">
               Your password has been reset successfully. Redirecting to sign in…
             </p>
             <Link
               href="/login"
-              className="mt-6 block border border-edge py-2.5 text-center text-[12px] font-bold uppercase tracking-wider text-secondary transition hover:border-white hover:text-fg"
+              className="mt-6 block border border-edge py-2.5 text-center text-sm font-bold uppercase tracking-wider text-secondary transition hover:border-fg hover:text-fg"
             >
               Sign in now
             </Link>
@@ -91,12 +91,12 @@ export function ResetPasswordForm() {
           <div className="border border-edge bg-elevated">
             <div className="border-b border-edge px-6 py-5">
               <h1 className="text-lg font-black uppercase tracking-wide text-fg">Set new password</h1>
-              <p className="mt-1 text-[12px] text-muted">Must be at least 6 characters.</p>
+              <p className="mt-1 text-sm text-muted">Must be at least 6 characters.</p>
             </div>
 
             <form onSubmit={submit} className="space-y-4 p-6">
               <div>
-                <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-muted">
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">
                   New password
                 </label>
                 <input
@@ -109,7 +109,7 @@ export function ResetPasswordForm() {
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-muted">
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted">
                   Confirm password
                 </label>
                 <input
@@ -125,7 +125,7 @@ export function ResetPasswordForm() {
               <button
                 type="submit"
                 disabled={loading || !password || !confirm}
-                className="w-full bg-brand py-3 text-[12px] font-black uppercase tracking-wider text-black transition hover:bg-brand/85 disabled:opacity-50"
+                className="w-full bg-brand py-3 text-sm font-black uppercase tracking-wider text-black transition hover:bg-brand/85 disabled:opacity-50"
               >
                 {loading ? "Saving…" : "Set new password"}
               </button>

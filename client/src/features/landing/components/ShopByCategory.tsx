@@ -125,7 +125,7 @@ export default async function ShopByCategory() {
 
                 {/* ── Label bar ── */}
                 <div className="flex items-center justify-between gap-2 border-t border-white/5 bg-elevated px-4 py-3">
-                  <span className="text-[11px] font-black uppercase tracking-[0.12em] text-fg">
+                  <span className="text-xs font-black uppercase tracking-[0.12em] text-fg">
                     <span className="mr-1 font-bold opacity-50">//</span>
                     {cat.label}
                     {count > 0 && (

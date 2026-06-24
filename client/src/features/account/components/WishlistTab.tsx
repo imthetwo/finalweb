@@ -34,7 +34,7 @@ export default function WishlistTab() {
       <div className="flex flex-col items-center gap-3 border border-dashed border-edge py-16 text-muted">
         <Heart size={32} className="opacity-30" />
         <p className="text-sm">Your wishlist is empty.</p>
-        <Link href="/components/processors" className="text-[12px] text-brand underline">Explore products →</Link>
+        <Link href="/components/processors" className="text-sm text-brand underline">Explore products →</Link>
       </div>
     );
   }
@@ -52,7 +52,7 @@ export default function WishlistTab() {
           </Link>
           <div className="flex flex-1 flex-col gap-2 p-4">
             <p className="text-[10px] font-bold uppercase tracking-wider text-brand/60">{product.brand}</p>
-            <Link href={`/product/${product.id}`} className="line-clamp-2 text-[13px] font-semibold text-fg hover:text-brand">
+            <Link href={`/product/${product.id}`} className="line-clamp-2 text-body font-semibold text-fg hover:text-brand">
               {product.name}
             </Link>
             <div className="mt-auto flex items-center justify-between pt-2">
@@ -60,7 +60,7 @@ export default function WishlistTab() {
               <button
                 type="button"
                 onClick={() => remove(product.id)}
-                className="flex h-8 w-8 items-center justify-center border border-red-800/40 bg-red-950/20 text-red-500 transition hover:border-red-500"
+                className="flex h-8 w-8 items-center justify-center border border-red-800/40 bg-red-950/20 text-destructive transition hover:border-destructive"
                 aria-label="Remove"
               >
                 <Trash2 size={13} />

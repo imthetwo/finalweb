@@ -27,7 +27,7 @@ export function UsersTable() {
       <h1 className="mb-6 text-2xl font-black uppercase tracking-wide text-fg">Users</h1>
 
       <div className="border border-edge bg-elevated">
-        <table className="w-full text-[13px]">
+        <table className="w-full text-body">
           <thead className="border-b border-edge text-[10px] uppercase tracking-wider text-muted">
             <tr>
               <th className="px-4 py-3 text-left">Name</th>

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { apiFetch } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
+import { getToken } from "@/lib/auth";
 
 type CartItem = {
   id: string; quantity: number; lineTotal: number; customBuildId: string | null;
@@ -18,7 +19,7 @@ export function CartView() {
   const [cart, setCart] = useState<Cart | null>(null);
 
   function load() {
-    if (!localStorage.getItem("access_token")) { setCart({ items: [], subTotal: 0 }); return; }
+    if (!getToken()) { setCart({ items: [], subTotal: 0 }); return; }
     apiFetch<Cart>("/cart").then(setCart).catch(() => setCart(null));
   }
 
@@ -32,7 +33,7 @@ export function CartView() {
 
   if (!cart) return <p className="p-16 text-center text-muted">Loading cart…</p>;
 
-  if (!localStorage.getItem("access_token")) {
+  if (!getToken()) {
     return (
       <main className="min-h-screen bg-base px-4 py-16 text-center text-fg">
         <p className="mb-4">Sign in to view your cart</p>

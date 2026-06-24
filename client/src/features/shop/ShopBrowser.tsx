@@ -57,10 +57,10 @@ export default function ShopBrowser({
     <main className="min-h-screen bg-base text-fg">
       <div className="mx-auto max-w-[1400px] px-4 py-8 md:px-8">
         {/* Header */}
-        <p className="text-[11px] uppercase tracking-wider text-muted">Home / Shop / {title}</p>
+        <p className="text-xs uppercase tracking-wider text-muted">Home / Shop / {title}</p>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-4 border-b border-edge pb-5">
           <h1 className="text-3xl font-black uppercase tracking-tight">{title}</h1>
-          <div className="flex items-center gap-2 text-[12px]">
+          <div className="flex items-center gap-2 text-sm">
             <span className="text-muted">Sort by:</span>
             <select
               value={sort}
@@ -93,11 +93,11 @@ export default function ShopBrowser({
 
           {/* Product grid */}
           <div className="flex-1">
-            <p className="mb-4 text-[12px] text-muted">{filtered.length} products</p>
+            <p className="mb-4 text-sm text-muted">{filtered.length} products</p>
             {filtered.length === 0 ? (
               <div className="flex flex-col items-center gap-3 border border-dashed border-edge py-20 text-muted">
                 <p className="text-sm">No products match your filters.</p>
-                <button type="button" onClick={clearFilters} className="text-[12px] text-brand underline">
+                <button type="button" onClick={clearFilters} className="text-sm text-brand underline">
                   Clear filters
                 </button>
               </div>
