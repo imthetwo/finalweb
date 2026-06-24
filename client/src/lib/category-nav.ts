@@ -1,0 +1,20 @@
+// Single source of truth cho navigation category — dùng ở FilterSidebar, ShopByCategory, URL routing
+export const CATEGORY_NAV = [
+  { label: "All Products",      href: "/shop" },
+  { label: "Gaming PCs",        href: "/pcs" },
+  { label: "Laptops",           href: "/laptops/laptops" },
+  { label: "Processors (CPU)",  href: "/components/processors" },
+  { label: "Graphics Cards",    href: "/components/gpu" },
+  { label: "Motherboards",      href: "/components/motherboards" },
+  { label: "Memory (RAM)",      href: "/components/ram" },
+  { label: "Storage",           href: "/components/storage" },
+  { label: "Power Supplies",    href: "/components/power-supplies" },
+  { label: "CPU Coolers",       href: "/components/cpu-coolers" },
+  { label: "Case Fans",         href: "/components/case-fans" },
+  { label: "PC Cases",          href: "/components/pc-cases" },
+  { label: "Keyboards",         href: "/gaming-gear/mechanical-keyboards" },
+  { label: "Gaming Mice",       href: "/gaming-gear/gaming-mice" },
+  { label: "Headsets",          href: "/gaming-gear/gaming-headsets" },
+  { label: "Monitors",          href: "/gaming-gear/gaming-monitors" },
+  { label: "Furniture",         href: "/gaming-furniture" },
+] as const;

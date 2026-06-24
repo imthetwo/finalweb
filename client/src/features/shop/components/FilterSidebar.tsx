@@ -6,26 +6,7 @@ import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import { formatVnd } from "@/lib/format";
-
-const CATEGORY_NAV = [
-  { label: "All Products",   href: "/shop" },
-  { label: "Gaming PCs",     href: "/pcs" },
-  { label: "Laptops",        href: "/laptops/laptops" },
-  { label: "Processors (CPU)", href: "/components/processors" },
-  { label: "Graphics Cards", href: "/components/gpu" },
-  { label: "Motherboards",   href: "/components/motherboards" },
-  { label: "Memory (RAM)",   href: "/components/ram" },
-  { label: "Storage",        href: "/components/storage" },
-  { label: "Power Supplies", href: "/components/power-supplies" },
-  { label: "CPU Coolers",    href: "/components/cpu-coolers" },
-  { label: "Case Fans",      href: "/components/case-fans" },
-  { label: "PC Cases",       href: "/components/pc-cases" },
-  { label: "Keyboards",      href: "/gaming-gear/mechanical-keyboards" },
-  { label: "Gaming Mice",    href: "/gaming-gear/gaming-mice" },
-  { label: "Headsets",       href: "/gaming-gear/gaming-headsets" },
-  { label: "Monitors",       href: "/gaming-gear/gaming-monitors" },
-  { label: "Furniture",      href: "/gaming-furniture" },
-];
+import { CATEGORY_NAV } from "@/lib/category-nav";
 
 function CollapsibleFilter({
   title,
@@ -42,7 +23,7 @@ function CollapsibleFilter({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between text-[12px] font-bold uppercase tracking-wider text-fg"
+        className="flex w-full items-center justify-between text-sm font-bold uppercase tracking-wider text-fg"
       >
         {title}
         <ChevronDown size={14} className={`text-muted transition-transform ${open ? "rotate-180" : ""}`} />
@@ -79,7 +60,7 @@ export function FilterSidebar({
     <aside className="w-full shrink-0 lg:w-64">
       {/* Categories */}
       <div className="pb-3">
-        <p className="mb-3 text-[12px] font-bold uppercase tracking-wider text-muted">Categories</p>
+        <p className="mb-3 text-sm font-bold uppercase tracking-wider text-muted">Categories</p>
         <nav className="flex flex-col gap-1.5">
           {CATEGORY_NAV.map((c) => {
             const active = c.href === "/shop"
@@ -89,7 +70,7 @@ export function FilterSidebar({
               <Link
                 key={c.href}
                 href={c.href}
-                className={`text-[13px] transition-colors ${
+                className={`text-body transition-colors ${
                   active ? "font-bold text-brand" : "text-secondary hover:text-fg"
                 }`}
               >
@@ -102,11 +83,11 @@ export function FilterSidebar({
 
       {/* Availability */}
       <CollapsibleFilter title="Features & Availability" defaultOpen>
-        <label className="mb-2 flex cursor-pointer items-center gap-2 text-[13px] text-secondary">
+        <label className="mb-2 flex cursor-pointer items-center gap-2 text-body text-secondary">
           <input type="checkbox" className={checkbox} checked={inStockOnly} onChange={(e) => onInStockChange(e.target.checked)} />
           Show In Stock Only <span className="text-subtle">({inStockCount})</span>
         </label>
-        <label className="flex cursor-pointer items-center gap-2 text-[13px] text-secondary">
+        <label className="flex cursor-pointer items-center gap-2 text-body text-secondary">
           <input type="checkbox" className={checkbox} checked={specialOnly} onChange={(e) => onSpecialChange(e.target.checked)} />
           Special Price <span className="text-subtle">({specialCount})</span>
         </label>
@@ -117,7 +98,7 @@ export function FilterSidebar({
         <CollapsibleFilter title="Brand" defaultOpen>
           <div className="flex flex-col gap-2">
             {allBrands.map((b) => (
-              <label key={b} className="flex cursor-pointer items-center gap-2 text-[13px] text-secondary">
+              <label key={b} className="flex cursor-pointer items-center gap-2 text-body text-secondary">
                 <input type="checkbox" className={checkbox} checked={brands.has(b)} onChange={() => onBrandToggle(b)} />
                 {b}
               </label>
@@ -138,7 +119,7 @@ export function FilterSidebar({
             onChange={(e) => onMaxPriceChange(Number(e.target.value))}
             className="w-full accent-brand"
           />
-          <div className="mt-2 flex justify-between text-[11px] text-muted">
+          <div className="mt-2 flex justify-between text-xs text-muted">
             <span>0₫</span>
             <span className="font-bold text-secondary">≤ {formatVnd(maxPrice ?? priceMax)}</span>
           </div>
@@ -146,7 +127,7 @@ export function FilterSidebar({
             <button
               type="button"
               onClick={() => onMaxPriceChange(null)}
-              className="mt-2 text-[11px] text-subtle underline hover:text-secondary"
+              className="mt-2 text-xs text-subtle underline hover:text-secondary"
             >
               Reset
             </button>
