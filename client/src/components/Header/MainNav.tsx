@@ -1,188 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { Menu, Search, ShoppingCart, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-
-import { fetchProducts, type ProductListItem } from "@/lib/api";
-import { formatVnd } from "@/lib/format";
+import { Menu } from "lucide-react";
+import { useState } from "react";
 
 import CategoryMenu from "@/components/Header/CategoryMenu";
 import Logo from "@/components/Header/Logo";
+import { CartIcon } from "@/components/Header/CartIcon";
+import { SearchBar } from "@/components/Header/SearchBar";
 import { UserMenu } from "@/components/Header/UserMenu";
 import { useCartCount } from "@/hooks/useCartCount";
 import { useAuthState } from "@/hooks/useAuthState";
 import { Button } from "@/components/ui/button";
 import {
-  Sheet,
-  SheetBody,
-  SheetClose,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetXButton,
+  Sheet, SheetBody, SheetClose, SheetContent,
+  SheetFooter, SheetHeader, SheetTitle, SheetTrigger, SheetXButton,
 } from "@/components/ui/sheet";
 import { LoginOverlay } from "@/features/auth/LoginOverlay";
+import { Search } from "lucide-react";
 
 const MOBILE_LINKS = [
-  { label: "Laptops", href: "/laptops" },
-  { label: "Prebuilt PCs", href: "/pcs" },
-  { label: "Components", href: "/components/processors" },
-  { label: "Gaming Gear", href: "/gaming-gear/input-devices/mechanical-keyboards" },
+  { label: "Laptops",          href: "/laptops" },
+  { label: "Prebuilt PCs",     href: "/pcs" },
+  { label: "Components",       href: "/components/processors" },
+  { label: "Gaming Gear",      href: "/gaming-gear/input-devices/mechanical-keyboards" },
   { label: "Gaming Furniture", href: "/gaming-furniture/seating/ergonomic-chairs" },
-  { label: "PC Builder", href: "/custom-lab" },
+  { label: "PC Builder",       href: "/custom-lab" },
 ];
-
-function CartIcon({ count }: { count: number }) {
-  return (
-    <Link
-      href="/cart"
-      className="relative flex items-center justify-center text-fg transition-colors hover:text-brand"
-      aria-label={`View cart – ${count} items`}
-    >
-      <ShoppingCart size={22} />
-      {count > 0 && (
-        <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-brand text-[10px] font-black text-black">
-          {count > 9 ? "9+" : count}
-        </span>
-      )}
-    </Link>
-  );
-}
-
-function SearchBar({ onClose }: { onClose: () => void }) {
-  const router = useRouter();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<ProductListItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
-  // Live search — debounce 250ms, fetch top 6 matches
-  useEffect(() => {
-    const q = query.trim();
-    if (q.length < 2) {
-      setResults([]);
-      setOpen(false);
-      return;
-    }
-    setLoading(true);
-    setOpen(true);
-    const t = setTimeout(() => {
-      fetchProducts({ search: q, limit: 6 })
-        .then((d) => setResults(d.items))
-        .catch(() => setResults([]))
-        .finally(() => setLoading(false));
-    }, 250);
-    return () => clearTimeout(t);
-  }, [query]);
-
-  function goToResults() {
-    const q = query.trim();
-    if (!q) return;
-    router.push(`/components/processors?search=${encodeURIComponent(q)}`);
-    onClose();
-  }
-
-  function goToProduct(id: string) {
-    router.push(`/product/${id}`);
-    onClose();
-  }
-
-  return (
-    <div className="relative mx-auto w-full" style={{ maxWidth: "1400px" }}>
-      <form
-        onSubmit={(e) => { e.preventDefault(); goToResults(); }}
-        className="flex h-14 w-full items-center bg-surface px-4"
-      >
-        <Search size={20} className="flex-none text-muted" />
-        <input
-          ref={inputRef}
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search products, brands, categories…"
-          className="flex-1 border-none bg-transparent px-4 text-base text-fg outline-none placeholder:text-subtle"
-        />
-        {query && (
-          <button type="button" onClick={() => setQuery("")} className="mr-2 text-muted hover:text-fg">
-            <X size={16} />
-          </button>
-        )}
-        <button
-          type="submit"
-          className="flex-none border border-brand/30 px-4 py-1.5 text-[11px] font-black uppercase tracking-wider text-brand transition-colors hover:bg-brand hover:text-black"
-        >
-          Search
-        </button>
-        <button type="button" onClick={onClose} className="ml-4 text-muted transition-colors hover:text-fg" aria-label="Close search">
-          <X size={22} />
-        </button>
-      </form>
-
-      {/* ── Live results dropdown ── */}
-      {open && (
-        <div className="absolute left-0 right-0 top-full z-50 max-h-[70vh] overflow-y-auto border border-edge bg-surface shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
-          {loading ? (
-            <div className="px-4 py-6 text-center text-[13px] text-muted">Searching…</div>
-          ) : results.length === 0 ? (
-            <div className="px-4 py-6 text-center text-[13px] text-muted">
-              No results for &ldquo;{query}&rdquo;
-            </div>
-          ) : (
-            <>
-              {results.map((p) => {
-                const hasSale = p.salePrice !== null && p.salePrice < p.price;
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => goToProduct(p.id)}
-                    className="flex w-full items-center gap-3 border-b border-edge/60 px-4 py-3 text-left transition-colors hover:bg-white/4"
-                  >
-                    <div className="min-w-0 flex-1">
-                      <p className="line-clamp-2 text-[13px] font-semibold text-fg">{p.name}</p>
-                      <div className="mt-1 flex items-center gap-2">
-                        <span className="text-[13px] font-black text-brand">
-                          {formatVnd(hasSale ? p.salePrice! : p.price)}
-                        </span>
-                        {hasSale && (
-                          <span className="text-[11px] text-subtle line-through">{formatVnd(p.price)}</span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="h-12 w-12 shrink-0 border border-edge bg-elevated">
-                      {p.thumbnailUrl && (
-                        <Image src={p.thumbnailUrl} alt={p.name} width={48} height={48} className="h-full w-full object-contain p-1" unoptimized />
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-              <button
-                type="button"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={goToResults}
-                className="block w-full px-4 py-3 text-center text-[12px] font-bold uppercase tracking-wider text-brand hover:bg-brand/10"
-              >
-                View all results for &ldquo;{query}&rdquo; →
-              </button>
-            </>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function MainNav() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -192,17 +36,17 @@ export default function MainNav() {
   return (
     <nav className="w-full select-none border-b border-edge bg-base">
 
-      {/* ── MOBILE (< lg) ─────────────────────────────── */}
+      {/* ── MOBILE (< lg) ─────────────────────────────────────────────────── */}
       <div className="relative flex h-20 items-center justify-between px-4 lg:hidden">
 
-        {/* Hamburger — SheetTrigger cloneElements the Button, no asChild needed */}
+        {/* Left: Hamburger */}
         <Sheet>
           <SheetTrigger>
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className="h-10 w-10 rounded-full text-secondary hover:bg-zinc-900 hover:text-fg"
+              className="h-10 w-10 rounded-full text-secondary hover:bg-elevated hover:text-fg"
               aria-label="Open menu"
             >
               <Menu className="h-6 w-6" />
@@ -218,7 +62,6 @@ export default function MainNav() {
             <SheetBody>
               <nav className="flex flex-col">
                 {MOBILE_LINKS.map(({ label, href }) => (
-                  /* SheetClose cloneElements Link, injecting onClick → close */
                   <SheetClose key={href}>
                     <Link
                       href={href}
@@ -233,47 +76,33 @@ export default function MainNav() {
 
             <SheetFooter>
               {loaded && user ? (
-                /* Logged-in quick links */
                 <div className="border border-brand/20 bg-brand/5 p-3">
                   <p className="truncate text-sm font-bold text-fg">{user.fullName}</p>
-                  <p className="truncate text-[11px] text-muted">{user.email}</p>
+                  <p className="truncate text-xs text-muted">{user.email}</p>
                   <div className="mt-3 grid grid-cols-2 gap-2">
                     <SheetClose>
-                      <Link
-                        href="/account"
-                        className="block border border-edge py-2 text-center text-xs font-bold uppercase tracking-wider text-secondary hover:border-white hover:text-fg"
-                      >
+                      <Link href="/account" className="block border border-edge py-2 text-center text-xs font-bold uppercase tracking-wider text-secondary hover:border-edge hover:text-fg">
                         Account
                       </Link>
                     </SheetClose>
                     <SheetClose>
-                      <Link
-                        href="/account?tab=orders"
-                        className="block border border-edge py-2 text-center text-xs font-bold uppercase tracking-wider text-secondary hover:border-white hover:text-fg"
-                      >
+                      <Link href="/account?tab=orders" className="block border border-edge py-2 text-center text-xs font-bold uppercase tracking-wider text-secondary hover:border-edge hover:text-fg">
                         Orders
                       </Link>
                     </SheetClose>
                   </div>
                 </div>
               ) : (
-                /* Logged-out auth buttons */
                 <div className="grid grid-cols-2 gap-3">
                   <LoginOverlay
                     triggerButton={
-                      <button
-                        type="button"
-                        className="border border-edge px-4 py-3 text-center text-sm font-bold uppercase tracking-wider text-secondary transition-colors hover:border-white hover:text-fg"
-                      >
+                      <button type="button" className="border border-edge px-4 py-3 text-center text-sm font-bold uppercase tracking-wider text-secondary transition-colors hover:border-fg hover:text-fg">
                         Sign In
                       </button>
                     }
                   />
                   <SheetClose>
-                    <Link
-                      href="/login"
-                      className="block border border-brand/40 px-4 py-3 text-center text-sm font-bold uppercase tracking-wider text-brand transition-colors hover:bg-brand hover:text-black"
-                    >
+                    <Link href="/login" className="block border border-brand/40 px-4 py-3 text-center text-sm font-bold uppercase tracking-wider text-brand transition-colors hover:bg-brand hover:text-black">
                       Register
                     </Link>
                   </SheetClose>
@@ -283,12 +112,12 @@ export default function MainNav() {
           </SheetContent>
         </Sheet>
 
-        {/* Logo — centred absolutely */}
+        {/* Center: Logo */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <Logo />
         </div>
 
-        {/* Right: search + cart */}
+        {/* Right: Search + Cart */}
         <div className="flex items-center gap-4">
           <button
             type="button"
@@ -302,40 +131,39 @@ export default function MainNav() {
         </div>
       </div>
 
-      {/* ── DESKTOP (≥ lg) ────────────────────────────── */}
-      <div className="hidden h-24 items-center px-6 transition-all duration-300 lg:flex">
-          {searchOpen ? (
-            <SearchBar onClose={() => setSearchOpen(false)} />
-          ) : (
-            <div className="flex w-full items-center justify-between">
-              {/* Logo */}
-              <div className="flex-none">
-                <Logo />
-              </div>
+      {/* ── DESKTOP (≥ lg) ────────────────────────────────────────────────── */}
+      <div className="hidden h-24 items-center px-6 lg:flex">
+        {searchOpen ? (
+          <SearchBar onClose={() => setSearchOpen(false)} />
+        ) : (
+          <div className="flex w-full items-center justify-between">
 
-              {/* Mega-menu — centred */}
-              <div className="flex flex-1 justify-center">
-                <CategoryMenu />
-              </div>
-
-              {/* Utility: search · cart · user */}
-              <div className="flex flex-none items-center gap-5">
-                <button
-                  type="button"
-                  onClick={() => setSearchOpen(true)}
-                  className="text-secondary transition-colors hover:text-fg"
-                  aria-label="Search"
-                >
-                  <Search size={22} />
-                </button>
-
-                <CartIcon count={cartCount} />
-
-                <UserMenu />
-              </div>
+            {/* Left: Logo */}
+            <div className="flex-none">
+              <Logo />
             </div>
-          )}
-        </div>
+
+            {/* Center: Category mega-menu */}
+            <div className="flex flex-1 justify-center">
+              <CategoryMenu />
+            </div>
+
+            {/* Right: Search · Cart · User */}
+            <div className="flex flex-none items-center gap-5">
+              <button
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                className="text-secondary transition-colors hover:text-fg"
+                aria-label="Search"
+              >
+                <Search size={22} />
+              </button>
+              <CartIcon count={cartCount} />
+              <UserMenu />
+            </div>
+          </div>
+        )}
+      </div>
     </nav>
   );
 }
