@@ -1,0 +1,974 @@
+{
+  "_comment": "Product data — mỗi imageUrl đã verify HTTP 200 trên Cloudinary (cloud: dxbvnueoq, base: TechStore/)",
+  "_schema": {
+    "category":    "khớp chính xác với Category.name trong DB",
+    "imageUrl":    "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/{folder}/{name}",
+    "salePrice":   "null nếu không giảm giá",
+    "stock":       "số lượng tồn kho ban đầu",
+    "isPublished": "true = hiện ngoài shop",
+    "spec":        "object tương ứng với bảng spec (cpuSpec / gpuSpec / ...), null nếu không có"
+  },
+  "products": [
+    {
+      "category": "Processors (CPU)",
+      "name": "Intel Core Ultra 9 285K",
+      "brand": "Intel",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/cpu/cpu-intel-core-ultra-9-285k-up-to-5-7ghz-20-cores-20-threads-36mb-01",
+      "price": 15990000,
+      "salePrice": 14990000,
+      "stock": 12,
+      "isPublished": true,
+      "spec": { "type": "cpuSpec", "socket": "LGA1851", "cores": 20, "threads": 20, "baseClockGhz": 3.7, "boostClockGhz": 5.7, "tdp": 125, "cacheL3": "36MB", "generation": "Core Ultra 200" }
+    },
+    {
+      "category": "Processors (CPU)",
+      "name": "Intel Core Ultra 7 265K",
+      "brand": "Intel",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/cpu/cpu-intel-core-ultra-7-265k-up-to-5-5ghz-20-cores-20-threads-30mb-03",
+      "price": 11990000,
+      "salePrice": 10990000,
+      "stock": 15,
+      "isPublished": true,
+      "spec": { "type": "cpuSpec", "socket": "LGA1851", "cores": 20, "threads": 20, "baseClockGhz": 3.9, "boostClockGhz": 5.5, "tdp": 125, "cacheL3": "30MB", "generation": "Core Ultra 200" }
+    },
+    {
+      "category": "Processors (CPU)",
+      "name": "Intel Core Ultra 5 245K",
+      "brand": "Intel",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/cpu/14600k-tray",
+      "price": 7990000,
+      "salePrice": null,
+      "stock": 20,
+      "isPublished": true,
+      "spec": { "type": "cpuSpec", "socket": "LGA1851", "cores": 14, "threads": 14, "baseClockGhz": 4.2, "boostClockGhz": 5.2, "tdp": 125, "cacheL3": "24MB", "generation": "Core Ultra 200" }
+    },
+    {
+      "category": "Processors (CPU)",
+      "name": "Intel Core i7-14700K",
+      "brand": "Intel",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/cpu/cpu-intel-core-i7-14700k-up-to-5-6ghz-20-cores-28-threads-33mb-tray-new-01",
+      "price": 10990000,
+      "salePrice": 9990000,
+      "stock": 10,
+      "isPublished": true,
+      "spec": { "type": "cpuSpec", "socket": "LGA1700", "cores": 20, "threads": 28, "baseClockGhz": 3.4, "boostClockGhz": 5.6, "tdp": 125, "cacheL3": "33MB", "generation": "Raptor Lake" }
+    },
+    {
+      "category": "Processors (CPU)",
+      "name": "Intel Core i5-14600K",
+      "brand": "Intel",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/cpu/14600k-tray",
+      "price": 5990000,
+      "salePrice": null,
+      "stock": 25,
+      "isPublished": true,
+      "spec": { "type": "cpuSpec", "socket": "LGA1700", "cores": 14, "threads": 20, "baseClockGhz": 3.5, "boostClockGhz": 5.3, "tdp": 125, "cacheL3": "24MB", "generation": "Raptor Lake" }
+    },
+    {
+      "category": "Processors (CPU)",
+      "name": "Intel Core i5-12400F",
+      "brand": "Intel",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/cpu/12400f-tray",
+      "price": 3490000,
+      "salePrice": 2990000,
+      "stock": 30,
+      "isPublished": true,
+      "spec": { "type": "cpuSpec", "socket": "LGA1700", "cores": 6, "threads": 12, "baseClockGhz": 2.5, "boostClockGhz": 4.4, "tdp": 65, "cacheL3": "18MB", "generation": "Alder Lake" }
+    },
+    {
+      "category": "Processors (CPU)",
+      "name": "AMD Ryzen 9 9950X",
+      "brand": "AMD",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/cpu/14700-tray",
+      "price": 14490000,
+      "salePrice": 13490000,
+      "stock": 8,
+      "isPublished": true,
+      "spec": { "type": "cpuSpec", "socket": "AM5", "cores": 16, "threads": 32, "baseClockGhz": 4.3, "boostClockGhz": 5.7, "tdp": 170, "cacheL3": "64MB", "generation": "Ryzen 9000" }
+    },
+    {
+      "category": "Processors (CPU)",
+      "name": "AMD Ryzen 7 9800X3D",
+      "brand": "AMD",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/cpu/14700-tray",
+      "price": 12990000,
+      "salePrice": null,
+      "stock": 10,
+      "isPublished": true,
+      "spec": { "type": "cpuSpec", "socket": "AM5", "cores": 8, "threads": 16, "baseClockGhz": 4.7, "boostClockGhz": 5.2, "tdp": 120, "cacheL3": "96MB", "generation": "Ryzen 9000" }
+    },
+
+    {
+      "category": "Graphics Cards (GPU)",
+      "name": "NVIDIA GeForce RTX 4090 Founders Edition",
+      "brand": "NVIDIA",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/gpu/asus_rtx-4080-strix",
+      "price": 42990000,
+      "salePrice": 39990000,
+      "stock": 5,
+      "isPublished": true,
+      "spec": { "type": "gpuSpec", "vramGb": 24, "tdp": 450, "lengthMm": 336, "pcieGen": 4, "boostClockMhz": 2520, "memType": "GDDR6X" }
+    },
+    {
+      "category": "Graphics Cards (GPU)",
+      "name": "ASUS ROG Strix RTX 4080 SUPER",
+      "brand": "ASUS",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/gpu/asus_rtx-4080-strix",
+      "price": 28990000,
+      "salePrice": 26990000,
+      "stock": 7,
+      "isPublished": true,
+      "spec": { "type": "gpuSpec", "vramGb": 16, "tdp": 320, "lengthMm": 358, "pcieGen": 4, "boostClockMhz": 2610, "memType": "GDDR6X" }
+    },
+    {
+      "category": "Graphics Cards (GPU)",
+      "name": "MSI GeForce RTX 4070 Ti SUPRIM X",
+      "brand": "MSI",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/gpu/asus_rtx-4080-strix",
+      "price": 18990000,
+      "salePrice": null,
+      "stock": 12,
+      "isPublished": true,
+      "spec": { "type": "gpuSpec", "vramGb": 12, "tdp": 285, "lengthMm": 340, "pcieGen": 4, "boostClockMhz": 2760, "memType": "GDDR6X" }
+    },
+    {
+      "category": "Graphics Cards (GPU)",
+      "name": "AMD Radeon RX 7900 XTX",
+      "brand": "AMD",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/gpu/gigabyte_rx-7900-xt",
+      "price": 22990000,
+      "salePrice": 20990000,
+      "stock": 9,
+      "isPublished": true,
+      "spec": { "type": "gpuSpec", "vramGb": 24, "tdp": 355, "lengthMm": 287, "pcieGen": 4, "boostClockMhz": 2615, "memType": "GDDR6" }
+    },
+    {
+      "category": "Graphics Cards (GPU)",
+      "name": "Gigabyte Radeon RX 7900 XT Gaming OC",
+      "brand": "Gigabyte",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/gpu/gigabyte_rx-7900-xt",
+      "price": 19990000,
+      "salePrice": null,
+      "stock": 11,
+      "isPublished": true,
+      "spec": { "type": "gpuSpec", "vramGb": 20, "tdp": 315, "lengthMm": 290, "pcieGen": 4, "boostClockMhz": 2150, "memType": "GDDR6" }
+    },
+    {
+      "category": "Graphics Cards (GPU)",
+      "name": "NVIDIA GeForce RTX 3080 iCHILL Black",
+      "brand": "NVIDIA",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/gpu/gigabyte_rx-7900-xt",
+      "price": 12990000,
+      "salePrice": 10990000,
+      "stock": 14,
+      "isPublished": true,
+      "spec": { "type": "gpuSpec", "vramGb": 10, "tdp": 320, "lengthMm": 305, "pcieGen": 4, "boostClockMhz": 1710, "memType": "GDDR6X" }
+    },
+
+    {
+      "category": "Motherboards",
+      "name": "ASUS ROG MAXIMUS Z890 HERO",
+      "brand": "ASUS",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/motherboard/47874",
+      "price": 14990000,
+      "salePrice": 13490000,
+      "stock": 6,
+      "isPublished": true,
+      "spec": { "type": "motherboardSpec", "socket": "LGA1851", "chipset": "Z890", "formFactor": "ATX", "ramGen": "DDR5", "ramSlots": 4, "maxRamGb": 192 }
+    },
+    {
+      "category": "Motherboards",
+      "name": "MSI MAG Z890 TOMAHAWK WIFI",
+      "brand": "MSI",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/motherboard/47879",
+      "price": 7990000,
+      "salePrice": null,
+      "stock": 10,
+      "isPublished": true,
+      "spec": { "type": "motherboardSpec", "socket": "LGA1851", "chipset": "Z890", "formFactor": "ATX", "ramGen": "DDR5", "ramSlots": 4, "maxRamGb": 192 }
+    },
+    {
+      "category": "Motherboards",
+      "name": "Gigabyte B760 AORUS ELITE AX",
+      "brand": "Gigabyte",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/motherboard/47937",
+      "price": 4490000,
+      "salePrice": null,
+      "stock": 15,
+      "isPublished": true,
+      "spec": { "type": "motherboardSpec", "socket": "LGA1700", "chipset": "B760", "formFactor": "ATX", "ramGen": "DDR5", "ramSlots": 4, "maxRamGb": 128 }
+    },
+    {
+      "category": "Motherboards",
+      "name": "ASUS ROG STRIX X870E-E GAMING",
+      "brand": "ASUS",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/motherboard/47953",
+      "price": 11990000,
+      "salePrice": 10990000,
+      "stock": 8,
+      "isPublished": true,
+      "spec": { "type": "motherboardSpec", "socket": "AM5", "chipset": "X870E", "formFactor": "ATX", "ramGen": "DDR5", "ramSlots": 4, "maxRamGb": 256 }
+    },
+    {
+      "category": "Motherboards",
+      "name": "ASRock B650M PG Riptide",
+      "brand": "ASRock",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/motherboard/47995",
+      "price": 3990000,
+      "salePrice": null,
+      "stock": 18,
+      "isPublished": true,
+      "spec": { "type": "motherboardSpec", "socket": "AM5", "chipset": "B650", "formFactor": "mATX", "ramGen": "DDR5", "ramSlots": 4, "maxRamGb": 128 }
+    },
+    {
+      "category": "Motherboards",
+      "name": "MSI PRO B760M-A WIFI DDR4",
+      "brand": "MSI",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/motherboard/47937",
+      "price": 2990000,
+      "salePrice": null,
+      "stock": 20,
+      "isPublished": true,
+      "spec": { "type": "motherboardSpec", "socket": "LGA1700", "chipset": "B760", "formFactor": "mATX", "ramGen": "DDR4", "ramSlots": 4, "maxRamGb": 128 }
+    },
+
+    {
+      "category": "RAM",
+      "name": "Corsair Dominator Titanium DDR5 32GB 6600MHz",
+      "brand": "Corsair",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/memory/DOMINATOR_TITANIUM_WH_Xl95Dvo.2e16d0ba.fill-630x380.format-webp",
+      "price": 8990000,
+      "salePrice": 7990000,
+      "stock": 10,
+      "isPublished": true,
+      "spec": { "type": "ramSpec", "capacityGb": 32, "speedMhz": 6600, "generation": "DDR5", "latency": "CL32", "kit": "2x16GB" }
+    },
+    {
+      "category": "RAM",
+      "name": "Corsair Vengeance RGB DDR5 32GB 6000MHz",
+      "brand": "Corsair",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/memory/DOMINATOR_TITANIUM_WH_Xl95Dvo.2e16d0ba.fill-630x380.format-webp",
+      "price": 3490000,
+      "salePrice": 2990000,
+      "stock": 20,
+      "isPublished": true,
+      "spec": { "type": "ramSpec", "capacityGb": 32, "speedMhz": 6000, "generation": "DDR5", "latency": "CL30", "kit": "2x16GB" }
+    },
+    {
+      "category": "RAM",
+      "name": "Corsair Vengeance DDR5 32GB 5600MHz",
+      "brand": "Corsair",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/memory/30120",
+      "price": 2790000,
+      "salePrice": null,
+      "stock": 25,
+      "isPublished": true,
+      "spec": { "type": "ramSpec", "capacityGb": 32, "speedMhz": 5600, "generation": "DDR5", "latency": "CL36", "kit": "2x16GB" }
+    },
+    {
+      "category": "RAM",
+      "name": "G.Skill Trident Z5 RGB DDR5 32GB 6400MHz",
+      "brand": "G.Skill",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/memory/30120",
+      "price": 4290000,
+      "salePrice": null,
+      "stock": 15,
+      "isPublished": true,
+      "spec": { "type": "ramSpec", "capacityGb": 32, "speedMhz": 6400, "generation": "DDR5", "latency": "CL32", "kit": "2x16GB" }
+    },
+    {
+      "category": "RAM",
+      "name": "Kingston Fury Beast DDR5 16GB 5200MHz",
+      "brand": "Kingston",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/memory/30121",
+      "price": 1790000,
+      "salePrice": 1490000,
+      "stock": 30,
+      "isPublished": true,
+      "spec": { "type": "ramSpec", "capacityGb": 16, "speedMhz": 5200, "generation": "DDR5", "latency": "CL40", "kit": "1x16GB" }
+    },
+    {
+      "category": "RAM",
+      "name": "Kingston Fury Beast DDR4 16GB 3600MHz",
+      "brand": "Kingston",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/memory/30121",
+      "price": 1290000,
+      "salePrice": null,
+      "stock": 35,
+      "isPublished": true,
+      "spec": { "type": "ramSpec", "capacityGb": 16, "speedMhz": 3600, "generation": "DDR4", "latency": "CL16", "kit": "1x16GB" }
+    },
+
+    {
+      "category": "Storage (SSD/HDD)",
+      "name": "Samsung 9100 PRO NVMe M.2 SSD 2TB",
+      "brand": "Samsung",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/memory/30120",
+      "price": 4990000,
+      "salePrice": 4490000,
+      "stock": 15,
+      "isPublished": true,
+      "spec": { "type": "storageSpec", "capacityGb": 2000, "storageType": "NVMe", "interfaceType": "PCIe 5.0", "readMbps": 14800, "writeMbps": 13400 }
+    },
+    {
+      "category": "Storage (SSD/HDD)",
+      "name": "Samsung 990 EVO Plus NVMe M.2 SSD 2TB",
+      "brand": "Samsung",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/memory/30121",
+      "price": 3290000,
+      "salePrice": 2890000,
+      "stock": 20,
+      "isPublished": true,
+      "spec": { "type": "storageSpec", "capacityGb": 2000, "storageType": "NVMe", "interfaceType": "PCIe 4.0", "readMbps": 7250, "writeMbps": 6300 }
+    },
+    {
+      "category": "Storage (SSD/HDD)",
+      "name": "Samsung 870 EVO SATA 2.5\" SSD 2TB",
+      "brand": "Samsung",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/memory/30120",
+      "price": 2190000,
+      "salePrice": null,
+      "stock": 25,
+      "isPublished": true,
+      "spec": { "type": "storageSpec", "capacityGb": 2000, "storageType": "SSD", "interfaceType": "SATA", "readMbps": 560, "writeMbps": 530 }
+    },
+    {
+      "category": "Storage (SSD/HDD)",
+      "name": "Samsung T9 Portable SSD 4TB",
+      "brand": "Samsung",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/memory/30121",
+      "price": 5890000,
+      "salePrice": 5290000,
+      "stock": 12,
+      "isPublished": true,
+      "spec": { "type": "storageSpec", "capacityGb": 4000, "storageType": "SSD", "interfaceType": "USB 3.2", "readMbps": 2000, "writeMbps": 1950 }
+    },
+
+    {
+      "category": "Power Supplies",
+      "name": "Corsair RM1000x 80+ Gold 1000W",
+      "brand": "Corsair",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/power-supply/Etail_C1000GoldCore_Carousel_Hero_EN",
+      "price": 4990000,
+      "salePrice": 4490000,
+      "stock": 12,
+      "isPublished": true,
+      "spec": { "type": "psuSpec", "wattage": 1000, "efficiency": "80+ Gold", "modular": "Full" }
+    },
+    {
+      "category": "Power Supplies",
+      "name": "Corsair RM850x 80+ Gold 850W",
+      "brand": "Corsair",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/power-supply/Etail_C850GoldCore_Carousel_Hero_EN",
+      "price": 3490000,
+      "salePrice": null,
+      "stock": 15,
+      "isPublished": true,
+      "spec": { "type": "psuSpec", "wattage": 850, "efficiency": "80+ Gold", "modular": "Full" }
+    },
+    {
+      "category": "Power Supplies",
+      "name": "Corsair RM750x 80+ Gold 750W",
+      "brand": "Corsair",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/power-supply/Etail_C850GoldCore_Carousel_Hero_EN",
+      "price": 2890000,
+      "salePrice": 2490000,
+      "stock": 18,
+      "isPublished": true,
+      "spec": { "type": "psuSpec", "wattage": 750, "efficiency": "80+ Gold", "modular": "Full" }
+    },
+    {
+      "category": "Power Supplies",
+      "name": "Corsair SF850 SFX 80+ Gold 850W",
+      "brand": "Corsair",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/power-supply/Etail_C850SFXGold_Carousel_Hero_EN",
+      "price": 3990000,
+      "salePrice": null,
+      "stock": 8,
+      "isPublished": true,
+      "spec": { "type": "psuSpec", "wattage": 850, "efficiency": "80+ Gold", "modular": "Full" }
+    },
+    {
+      "category": "Power Supplies",
+      "name": "EVGA SuperNOVA 1300 G2 80+ Gold 1300W",
+      "brand": "EVGA",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/power-supply/120-G2-1300-XR_MD_1",
+      "price": 6490000,
+      "salePrice": null,
+      "stock": 6,
+      "isPublished": true,
+      "spec": { "type": "psuSpec", "wattage": 1300, "efficiency": "80+ Gold", "modular": "Full" }
+    },
+    {
+      "category": "Power Supplies",
+      "name": "Cooler Master MWE Gold 650W",
+      "brand": "Cooler Master",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/power-supply/Etail_C850GoldCore_Carousel_Hero_EN",
+      "price": 1890000,
+      "salePrice": 1690000,
+      "stock": 22,
+      "isPublished": true,
+      "spec": { "type": "psuSpec", "wattage": 650, "efficiency": "80+ Gold", "modular": "Non" }
+    },
+
+    {
+      "category": "PC Cases",
+      "name": "NZXT H9 Flow RGB White",
+      "brand": "NZXT",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/case/Case_H9_Flow_RGB__WH_Carousel_Hero_EN_d5c60367-c559-4b2e-9fc1-2fefda287bed",
+      "price": 3990000,
+      "salePrice": 3490000,
+      "stock": 8,
+      "isPublished": true,
+      "spec": { "type": "caseSpec", "formFactor": "ATX", "maxGpuLengthMm": 435, "radiatorSupport": "360mm", "driveBays": 2 }
+    },
+    {
+      "category": "PC Cases",
+      "name": "NZXT H9 Flow White",
+      "brand": "NZXT",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/case/Case_H9_Flow_WH_Carousel_Hero_EN_6c6f2fc0-18de-4729-94c9-608b22094825",
+      "price": 3490000,
+      "salePrice": null,
+      "stock": 10,
+      "isPublished": true,
+      "spec": { "type": "caseSpec", "formFactor": "ATX", "maxGpuLengthMm": 435, "radiatorSupport": "360mm", "driveBays": 2 }
+    },
+    {
+      "category": "PC Cases",
+      "name": "NZXT H3 Flow White",
+      "brand": "NZXT",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/case/Etail_H3Flow_WH_Carousel_Hero_EN",
+      "price": 2190000,
+      "salePrice": 1890000,
+      "stock": 14,
+      "isPublished": true,
+      "spec": { "type": "caseSpec", "formFactor": "ATX", "maxGpuLengthMm": 360, "radiatorSupport": "240mm", "driveBays": 2 }
+    },
+    {
+      "category": "PC Cases",
+      "name": "Cooler Master Elite 600",
+      "brand": "Cooler Master",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/case/Etail_H3Flow_WH_Carousel_Hero_EN",
+      "price": 1490000,
+      "salePrice": null,
+      "stock": 18,
+      "isPublished": true,
+      "spec": { "type": "caseSpec", "formFactor": "ATX", "maxGpuLengthMm": 330, "radiatorSupport": "240mm", "driveBays": 3 }
+    },
+    {
+      "category": "PC Cases",
+      "name": "Cooler Master MasterFrame 360",
+      "brand": "Cooler Master",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/case/Case_H9_Flow_RGB__WH_Carousel_Hero_EN_d5c60367-c559-4b2e-9fc1-2fefda287bed",
+      "price": 3990000,
+      "salePrice": null,
+      "stock": 6,
+      "isPublished": true,
+      "spec": { "type": "caseSpec", "formFactor": "ATX", "maxGpuLengthMm": 400, "radiatorSupport": "360mm", "driveBays": 2 }
+    },
+    {
+      "category": "PC Cases",
+      "name": "Cooler Master Q300L V2",
+      "brand": "Cooler Master",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/case/Etail_H3Flow_WH_Carousel_Hero_EN",
+      "price": 1290000,
+      "salePrice": 1090000,
+      "stock": 20,
+      "isPublished": true,
+      "spec": { "type": "caseSpec", "formFactor": "mATX", "maxGpuLengthMm": 360, "radiatorSupport": "240mm", "driveBays": 2 }
+    },
+
+    {
+      "category": "CPU Coolers",
+      "name": "NZXT Kraken 360 RGB White AIO",
+      "brand": "NZXT",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/cpu-cooler/01_Kraken_Plus__RGB_360_white_0191545f-9605-4ef0-aec0-895f4f13b01c",
+      "price": 4990000,
+      "salePrice": 4490000,
+      "stock": 8,
+      "isPublished": true,
+      "spec": { "type": "coolerSpec", "coolerType": "AIO", "tdpRating": 400, "radiatorSizeMm": 360, "socketSupport": "AM5,AM4,LGA1700,LGA1851" }
+    },
+    {
+      "category": "CPU Coolers",
+      "name": "NZXT Kraken 360 RGB Black AIO",
+      "brand": "NZXT",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/cpu-cooler/01_Kraken_Plus__RGB_360_white_0191545f-9605-4ef0-aec0-895f4f13b01c",
+      "price": 4990000,
+      "salePrice": null,
+      "stock": 7,
+      "isPublished": true,
+      "spec": { "type": "coolerSpec", "coolerType": "AIO", "tdpRating": 400, "radiatorSizeMm": 360, "socketSupport": "AM5,AM4,LGA1700,LGA1851" }
+    },
+    {
+      "category": "CPU Coolers",
+      "name": "NZXT Kraken 240 RGB White AIO",
+      "brand": "NZXT",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/cpu-cooler/01_Kraken_Plus_RGB_240_white_7cf2ef28-fe55-4788-ba1e-c7c8dfd187e4",
+      "price": 3490000,
+      "salePrice": 2990000,
+      "stock": 12,
+      "isPublished": true,
+      "spec": { "type": "coolerSpec", "coolerType": "AIO", "tdpRating": 280, "radiatorSizeMm": 240, "socketSupport": "AM5,AM4,LGA1700,LGA1851" }
+    },
+    {
+      "category": "CPU Coolers",
+      "name": "NZXT Kraken 280 Black AIO",
+      "brand": "NZXT",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/cpu-cooler/01_KrakenPlus_nonRGB_280_black",
+      "price": 2990000,
+      "salePrice": null,
+      "stock": 10,
+      "isPublished": true,
+      "spec": { "type": "coolerSpec", "coolerType": "AIO", "tdpRating": 325, "radiatorSizeMm": 280, "socketSupport": "AM5,AM4,LGA1700,LGA1851" }
+    },
+
+    {
+      "category": "Gaming Monitors",
+      "name": "LG UltraGear 27\" QHD 240Hz",
+      "brand": "LG",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/monitor/46207",
+      "price": 8990000,
+      "salePrice": 7990000,
+      "stock": 10,
+      "isPublished": true,
+      "spec": { "type": "monitorSpec", "sizeIn": 27, "resolution": "2560x1440", "refreshRateHz": 240, "panelType": "IPS", "responseMs": 1.0, "hdr": true }
+    },
+    {
+      "category": "Gaming Monitors",
+      "name": "Samsung Odyssey G7 32\" 4K 165Hz",
+      "brand": "Samsung",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/monitor/46266",
+      "price": 12990000,
+      "salePrice": null,
+      "stock": 7,
+      "isPublished": true,
+      "spec": { "type": "monitorSpec", "sizeIn": 32, "resolution": "3840x2160", "refreshRateHz": 165, "panelType": "VA", "responseMs": 1.0, "hdr": true }
+    },
+    {
+      "category": "Gaming Monitors",
+      "name": "ASUS ROG Swift 27\" QHD 360Hz",
+      "brand": "ASUS",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/monitor/47103",
+      "price": 14990000,
+      "salePrice": 13490000,
+      "stock": 6,
+      "isPublished": true,
+      "spec": { "type": "monitorSpec", "sizeIn": 27, "resolution": "2560x1440", "refreshRateHz": 360, "panelType": "IPS", "responseMs": 0.5, "hdr": false }
+    },
+    {
+      "category": "Gaming Monitors",
+      "name": "Dell UltraSharp 27\" 4K USB-C",
+      "brand": "Dell",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/monitor/47387",
+      "price": 9990000,
+      "salePrice": null,
+      "stock": 9,
+      "isPublished": true,
+      "spec": { "type": "monitorSpec", "sizeIn": 27, "resolution": "3840x2160", "refreshRateHz": 60, "panelType": "IPS", "responseMs": 5.0, "hdr": false }
+    },
+    {
+      "category": "Gaming Monitors",
+      "name": "LG 34\" UltraWide QHD 144Hz",
+      "brand": "LG",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/monitor/47387",
+      "price": 11990000,
+      "salePrice": null,
+      "stock": 8,
+      "isPublished": true,
+      "spec": { "type": "monitorSpec", "sizeIn": 34, "resolution": "3440x1440", "refreshRateHz": 144, "panelType": "IPS", "responseMs": 1.0, "hdr": true }
+    },
+
+    {
+      "category": "Laptops",
+      "name": "Razer Blade 16 (2024) RTX 4090",
+      "brand": "Razer",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/PCs/h7-flow-rgb-hero-white",
+      "price": 69990000,
+      "salePrice": 64990000,
+      "stock": 4,
+      "isPublished": true,
+      "spec": { "type": "laptopSpec", "cpu": "Intel Core i9-14900HX", "gpu": "RTX 4090", "ramGb": 32, "storageGb": 2000, "displaySizeIn": 16, "displayResolution": "2560x1600", "os": "Windows 11" }
+    },
+    {
+      "category": "Laptops",
+      "name": "Razer Blade 14 (2024) RTX 4070",
+      "brand": "Razer",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/PCs/h6-flow-rgb-hero-white",
+      "price": 54990000,
+      "salePrice": null,
+      "stock": 5,
+      "isPublished": true,
+      "spec": { "type": "laptopSpec", "cpu": "AMD Ryzen 9 8945HX", "gpu": "RTX 4070", "ramGb": 16, "storageGb": 1000, "displaySizeIn": 14, "displayResolution": "2560x1600", "os": "Windows 11" }
+    },
+    {
+      "category": "Laptops",
+      "name": "ASUS ROG Zephyrus G16 RTX 4080",
+      "brand": "ASUS",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/PCs/h7-flow-hero-white",
+      "price": 48990000,
+      "salePrice": 45990000,
+      "stock": 5,
+      "isPublished": true,
+      "spec": { "type": "laptopSpec", "cpu": "Intel Core Ultra 9 185H", "gpu": "RTX 4080", "ramGb": 32, "storageGb": 2000, "displaySizeIn": 16, "displayResolution": "2560x1600", "os": "Windows 11" }
+    },
+    {
+      "category": "Laptops",
+      "name": "MSI Stealth 16 AI Studio",
+      "brand": "MSI",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/PCs/h6-flow-rgb-hero-white",
+      "price": 52990000,
+      "salePrice": null,
+      "stock": 4,
+      "isPublished": true,
+      "spec": { "type": "laptopSpec", "cpu": "Intel Core Ultra 7 155H", "gpu": "RTX 4070 Ti", "ramGb": 32, "storageGb": 2000, "displaySizeIn": 16, "displayResolution": "3840x2400", "os": "Windows 11" }
+    },
+
+    {
+      "category": "Case Fans",
+      "name": "Corsair iCUE LINK RX120 RGB White 3-Pack",
+      "brand": "Corsair",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/case-fan/Etail_F120X_White_Carousel_Hero_EN",
+      "price": 1990000,
+      "salePrice": 1690000,
+      "stock": 25,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Case Fans",
+      "name": "Corsair iCUE LINK RX120 RGB Black 3-Pack",
+      "brand": "Corsair",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/case-fan/Etail_F120X_Black_Carousel_Hero_EN",
+      "price": 1990000,
+      "salePrice": null,
+      "stock": 22,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Case Fans",
+      "name": "Corsair iCUE LINK RX360 RGB Black",
+      "brand": "Corsair",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/case-fan/Etail_F120X_Black_Carousel_Hero_EN",
+      "price": 990000,
+      "salePrice": 790000,
+      "stock": 30,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Case Fans",
+      "name": "Corsair AF140 Elite White",
+      "brand": "Corsair",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/case-fan/Etail_F120X_White_Carousel_Hero_EN",
+      "price": 690000,
+      "salePrice": null,
+      "stock": 35,
+      "isPublished": true,
+      "spec": null
+    },
+
+    {
+      "category": "Mechanical Keyboards",
+      "name": "Logitech G515 Lightspeed TKL",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/keyboard/g515-lightspeed-tkl-top-angle-gallery-1-en-fr",
+      "price": 4290000,
+      "salePrice": 3790000,
+      "stock": 15,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Mechanical Keyboards",
+      "name": "Logitech G915 X TKL Wireless",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/keyboard/g915-x-tkl-wireless-keyboard-gallery-1-us",
+      "price": 5490000,
+      "salePrice": null,
+      "stock": 10,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Mechanical Keyboards",
+      "name": "Logitech G512 X RGB Mechanical",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/keyboard/g512-x-75-black-top-angle-gallery-1",
+      "price": 2490000,
+      "salePrice": 1990000,
+      "stock": 20,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Mechanical Keyboards",
+      "name": "Logitech G PRO X TKL RAPID",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/keyboard/pro-x-tkl-rapid-black-gallery-1-us",
+      "price": 3990000,
+      "salePrice": null,
+      "stock": 12,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Mechanical Keyboards",
+      "name": "Logitech G413 SE Mechanical",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/keyboard/g413-se-gallery-4-new",
+      "price": 1490000,
+      "salePrice": null,
+      "stock": 25,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Mechanical Keyboards",
+      "name": "Logitech G213 Prodigy RGB",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/keyboard/g413-se-gallery-4-new",
+      "price": 990000,
+      "salePrice": 790000,
+      "stock": 30,
+      "isPublished": true,
+      "spec": null
+    },
+
+    {
+      "category": "Gaming Mice",
+      "name": "Logitech G309 Lightspeed Wireless White",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/mouse/g309-lightspeed-wireless-mouse-white-gallery-1",
+      "price": 1790000,
+      "salePrice": 1490000,
+      "stock": 20,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Gaming Mice",
+      "name": "Logitech G502 HERO",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/mouse/g502-hero-mouse-top-angle-gallery-1",
+      "price": 1490000,
+      "salePrice": null,
+      "stock": 25,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Gaming Mice",
+      "name": "Logitech G305 Lightspeed",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/mouse/g305-lightspeed-mouse-top-angle-black-gallery-1",
+      "price": 990000,
+      "salePrice": 790000,
+      "stock": 30,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Gaming Mice",
+      "name": "Logitech G403 HERO",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/mouse/g403-hero-mouse-top-angle-black-gallery-1",
+      "price": 1290000,
+      "salePrice": null,
+      "stock": 22,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Gaming Mice",
+      "name": "Logitech G203 Lightsync",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/mouse/g203-mouse-top-angle-black-gallery-1",
+      "price": 590000,
+      "salePrice": null,
+      "stock": 35,
+      "isPublished": true,
+      "spec": null
+    },
+
+    {
+      "category": "Gaming Headsets",
+      "name": "Logitech G733 Lightspeed Wireless White",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/headphones/g733-white-gallery-1",
+      "price": 3490000,
+      "salePrice": 2990000,
+      "stock": 12,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Gaming Headsets",
+      "name": "Logitech G535 Lightspeed Wireless",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/headphones/g535-wireless-gallery-1",
+      "price": 2490000,
+      "salePrice": null,
+      "stock": 15,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Gaming Headsets",
+      "name": "Logitech G635 RGB Gaming Headset",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/headphones/g535-wireless-gallery-1",
+      "price": 2990000,
+      "salePrice": null,
+      "stock": 10,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Gaming Headsets",
+      "name": "Logitech G522 Gaming Headset",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/headphones/g522-midnight-black-3qtr-front-left-gallery-1",
+      "price": 2290000,
+      "salePrice": 1990000,
+      "stock": 18,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Gaming Headsets",
+      "name": "Logitech G435 Lightspeed Wireless",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/headphones/g435-3qtr-front-left-angle-black-gallery-1",
+      "price": 1490000,
+      "salePrice": null,
+      "stock": 20,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Gaming Headsets",
+      "name": "Logitech G335 Wired Gaming Headset",
+      "brand": "Logitech",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/headphones/g335-black-gallery-1",
+      "price": 1790000,
+      "salePrice": null,
+      "stock": 22,
+      "isPublished": true,
+      "spec": null
+    },
+
+    {
+      "category": "Gaming Furniture",
+      "name": "Corsair TC500 LUXE Gaming Chair",
+      "brand": "Corsair",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/funiture/ChairPro",
+      "price": 9900000,
+      "salePrice": 8490000,
+      "stock": 6,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Gaming Furniture",
+      "name": "Pecify ChairPro Ergonomic",
+      "brand": "Pecify",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/funiture/ChairPro",
+      "price": 7990000,
+      "salePrice": null,
+      "stock": 8,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Gaming Furniture",
+      "name": "Pecify ErgoCore Mesh Chair",
+      "brand": "Pecify",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/funiture/ErgoCore",
+      "price": 6900000,
+      "salePrice": 5990000,
+      "stock": 10,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Gaming Furniture",
+      "name": "Corsair Platform:4 Gaming Desk",
+      "brand": "Corsair",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/funiture/PLATFORM_4_FIXED_BLACK_R_07",
+      "price": 5900000,
+      "salePrice": null,
+      "stock": 8,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Gaming Furniture",
+      "name": "Corsair Platform:4 Elevate Standing Desk",
+      "brand": "Corsair",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/funiture/PLATFORM_4_ELEVATE_WOOD_R_07",
+      "price": 8900000,
+      "salePrice": 7900000,
+      "stock": 5,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Gaming Furniture",
+      "name": "Thermaltake T3 RUSH Fabric Chair",
+      "brand": "Thermaltake",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/funiture/T3-RUSH-Fabric-Gaming-Chair-_2023_---Charcoal-0",
+      "price": 7490000,
+      "salePrice": 6490000,
+      "stock": 7,
+      "isPublished": true,
+      "spec": null
+    },
+
+    {
+      "category": "Prebuilt PCs",
+      "name": "Pecify Vortex — RTX 4090 / Ultra 9",
+      "brand": "Pecify",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/PCs/h7-flow-rgb-hero-white",
+      "price": 75990000,
+      "salePrice": 72990000,
+      "stock": 3,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Prebuilt PCs",
+      "name": "Pecify Stealth — RTX 4070 / i7-14700K",
+      "brand": "Pecify",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/PCs/h6-flow-rgb-hero-white",
+      "price": 42990000,
+      "salePrice": 39990000,
+      "stock": 5,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Prebuilt PCs",
+      "name": "Pecify Frost — RTX 4070 Ti / Ultra 7",
+      "brand": "Pecify",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/PCs/h7-flow-hero-white",
+      "price": 38990000,
+      "salePrice": null,
+      "stock": 4,
+      "isPublished": true,
+      "spec": null
+    },
+    {
+      "category": "Prebuilt PCs",
+      "name": "Pecify Mini — ITX RTX 4060 Build",
+      "brand": "Pecify",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/PCs/h7-flow-hero-white",
+      "price": 32990000,
+      "salePrice": 29990000,
+      "stock": 5,
+      "isPublished": true,
+      "spec": null
+    }
+  ]
+}
