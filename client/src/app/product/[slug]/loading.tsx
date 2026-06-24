@@ -1,3 +1,13 @@
+import type { CSSProperties } from "react";
+
+function Bone({ className = "", style }: { className?: string; style?: CSSProperties }) {
+  return (
+    <div className={`overflow-hidden rounded bg-elevated ${className}`} style={style}>
+      <div className="h-full w-full animate-shimmer bg-size-[200%_100%]" style={{ backgroundImage: "var(--gradient-shimmer-brand)" }} />
+    </div>
+  );
+}
+
 export default function ProductLoading() {
   return (
     <main className="min-h-screen bg-base px-4 py-10 text-fg md:px-8">
@@ -5,57 +15,30 @@ export default function ProductLoading() {
 
         {/* Image skeleton */}
         <div className="relative aspect-square overflow-hidden border border-edge bg-surface">
-          <div className="absolute inset-0 animate-shimmer bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 bg-[length:200%_100%]" />
+          <div className="absolute inset-0 animate-shimmer bg-size-[200%_100%]" style={{ backgroundImage: "var(--gradient-shimmer-brand)" }} />
         </div>
 
         {/* Info skeleton */}
         <div className="space-y-4 pt-2">
-          {/* Brand */}
-          <div className="h-3 w-20 overflow-hidden rounded bg-elevated">
-            <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800 bg-[length:200%_100%]" />
-          </div>
-
-          {/* Name */}
+          <Bone className="h-3 w-20" />
           <div className="space-y-2">
-            <div className="h-8 w-4/5 overflow-hidden rounded bg-elevated">
-              <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800 bg-[length:200%_100%]" />
-            </div>
-            <div className="h-8 w-1/2 overflow-hidden rounded bg-elevated">
-              <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800 bg-[length:200%_100%]" />
-            </div>
+            <Bone className="h-8 w-4/5" />
+            <Bone className="h-8 w-1/2" />
           </div>
+          <Bone className="h-4 w-32" />
+          <Bone className="mt-6 h-10 w-48" />
+          <Bone className="h-4 w-28" />
 
-          {/* Category */}
-          <div className="h-4 w-32 overflow-hidden rounded bg-elevated">
-            <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800 bg-[length:200%_100%]" />
-          </div>
-
-          {/* Price */}
-          <div className="mt-6 h-10 w-48 overflow-hidden rounded bg-elevated">
-            <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-brand/10 to-zinc-800 bg-[length:200%_100%]" />
-          </div>
-
-          {/* Stock */}
-          <div className="h-4 w-28 overflow-hidden rounded bg-elevated">
-            <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800 bg-[length:200%_100%]" />
-          </div>
-
-          {/* Description lines */}
           <div className="mt-6 space-y-2 border-y border-edge py-4">
             {[100, 90, 75].map((w, i) => (
-              <div key={i} className="h-3 overflow-hidden rounded bg-elevated" style={{ width: `${w}%` }}>
-                <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800 bg-[length:200%_100%]" />
-              </div>
+              <Bone key={i} className="h-3" style={{ width: `${w}%` }} />
             ))}
           </div>
 
-          {/* Buttons */}
           <div className="mt-6 flex items-stretch gap-3">
-            <div className="h-12 flex-1 overflow-hidden bg-elevated">
-              <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-800 via-brand/10 to-zinc-800 bg-[length:200%_100%]" />
-            </div>
+            <Bone className="h-12 flex-1" />
             <div className="h-12 w-12 overflow-hidden border border-edge bg-surface">
-              <div className="h-full w-full animate-shimmer bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 bg-[length:200%_100%]" />
+              <div className="h-full w-full animate-shimmer bg-size-[200%_100%]" style={{ backgroundImage: "var(--gradient-shimmer-brand)" }} />
             </div>
           </div>
         </div>

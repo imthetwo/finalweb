@@ -20,6 +20,11 @@ export type ProductListItem = {
   category?: { id: string; name: string };
 };
 
+// ProductDetail — đầy đủ hơn ProductListItem, dùng cho trang /product/[id]
+export type ProductDetail = ProductListItem & {
+  description: string | null;
+};
+
 export type ProductListResponse = {
   items: ProductListItem[];
   total: number;
