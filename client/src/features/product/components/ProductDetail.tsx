@@ -60,7 +60,7 @@ export async function ProductDetail({ id }: { id: string }) {
             )}
           </div>
 
-          <p className={`mt-2 text-sm ${product.stock > 0 ? "text-emerald-400" : "text-destructive"}`}>
+          <p className={`mt-2 text-sm ${product.stock > 0 ? "text-success" : "text-destructive"}`}>
             {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
           </p>
 

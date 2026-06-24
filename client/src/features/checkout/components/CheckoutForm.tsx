@@ -154,10 +154,10 @@ export function CheckoutForm() {
 
             {couponCode ? (
               <div className="flex items-center justify-between rounded border border-emerald-700/50 bg-emerald-950/20 px-4 py-2.5">
-                <div className="flex items-center gap-2 text-emerald-400">
+                <div className="flex items-center gap-2 text-success">
                   <Tag size={14} />
                   <span className="text-[13px] font-bold">{couponCode}</span>
-                  <span className="text-[12px] text-emerald-300">— {formatVnd(discount)} off</span>
+                  <span className="text-[12px] text-success/80">— {formatVnd(discount)} off</span>
                 </div>
                 <button
                   type="button"

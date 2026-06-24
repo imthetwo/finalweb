@@ -85,8 +85,8 @@ export default function AIConsultantFab() {
             <Bot size={24} />
             {/* online pulse dot */}
             <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-3.5 w-3.5 rounded-full border-2 border-edge bg-emerald-400" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+              <span className="relative inline-flex h-3.5 w-3.5 rounded-full border-2 border-edge bg-success" />
             </span>
           </button>
         </div>
@@ -105,7 +105,7 @@ export default function AIConsultantFab() {
               <div>
                 <p className="text-[13px] font-black uppercase tracking-wider text-fg">Pecify Assistant</p>
                 <p className="flex items-center gap-1.5 text-[10px] text-muted">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-success" />
                   PC Build Advisor
                 </p>
               </div>

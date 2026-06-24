@@ -20,7 +20,7 @@ export function StatusBar({ compatibility, estimatedWatts, totalPrice, validatin
     ? { Icon: AlertCircle, label: `${compatibility.errors.length} compatibility errors`, cls: "text-red-400 border-red-800/50 bg-red-950/30" }
     : compatibility.warnings.length > 0
     ? { Icon: AlertTriangle, label: `${compatibility.warnings.length} warnings`, cls: "text-yellow-400 border-yellow-800/50 bg-yellow-950/30" }
-    : { Icon: CheckCircle2, label: "Fully compatible", cls: "text-emerald-400 border-emerald-800/50 bg-emerald-950/30" };
+    : { Icon: CheckCircle2, label: "Fully compatible", cls: "text-success border-emerald-800/50 bg-emerald-950/30" };
 
   return (
     <div className="flex shrink-0 flex-col gap-2 border-b border-edge bg-base px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between md:px-6">

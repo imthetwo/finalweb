@@ -11,7 +11,7 @@ const STATUS_STYLE: Record<string, string> = {
   PAYMENT_FAILED: "border-red-700/50 bg-red-950/30 text-red-400",
   PROCESSING:     "border-blue-700/50 bg-blue-950/30 text-blue-400",
   SHIPPED:        "border-cyan-700/50 bg-cyan-950/30 text-brand",
-  DELIVERED:      "border-emerald-700/50 bg-emerald-950/30 text-emerald-400",
+  DELIVERED:      "border-emerald-700/50 bg-emerald-950/30 text-success",
   CANCELLED:      "border-edge bg-surface text-muted",
   RETURNED:       "border-orange-700/50 bg-orange-950/30 text-orange-400",
 };

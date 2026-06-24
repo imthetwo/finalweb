@@ -87,7 +87,7 @@ export default function ReviewsSection({ productId }: { productId: string }) {
                     </span>
                     <div>
                       <p className="text-[13px] font-semibold text-fg">{r.user.fullName}</p>
-                      {r.isVerifiedBuy && <p className="text-[10px] font-bold uppercase text-emerald-400">Verified buyer</p>}
+                      {r.isVerifiedBuy && <p className="text-[10px] font-bold uppercase text-success">Verified buyer</p>}
                     </div>
                   </div>
                   <Stars value={r.rating} />

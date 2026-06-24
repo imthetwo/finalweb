@@ -26,7 +26,7 @@ export function OrderSuccess() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-base px-4 py-16 text-center text-fg">
-      <CheckCircle2 size={56} className="text-emerald-400" />
+      <CheckCircle2 size={56} className="text-success" />
       <h1 className="mt-6 text-3xl font-black uppercase tracking-tight text-fg">Order placed successfully!</h1>
 
       {orderId && (
