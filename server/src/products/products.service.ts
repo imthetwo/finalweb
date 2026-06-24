@@ -46,9 +46,16 @@ export class ProductsService {
     const search = params.search?.slice(0, 100); // prevent ReDoS via overly long input
     if (search) { params.search = search; }
     if (params.search) {
+      const q = params.search;
       where.OR = [
-        { name:  { contains: params.search, mode: 'insensitive' } },
-        { brand: { contains: params.search, mode: 'insensitive' } },
+        // Tên sản phẩm bắt đầu bằng từ khóa
+        { name:  { startsWith: q, mode: 'insensitive' } },
+        // Từ trong tên bắt đầu bằng từ khóa (có khoảng trắng trước)
+        { name:  { contains: ` ${q}`, mode: 'insensitive' } },
+        // Thương hiệu khớp: "intel", "amd", "corsair"
+        { brand: { startsWith: q, mode: 'insensitive' } },
+        // Category bắt đầu bằng từ khóa: "ca" → "Case Fans" ✅, "pc" → "PC Cases" ✅
+        { category: { name: { startsWith: q, mode: 'insensitive' } } },
       ];
     }
 
