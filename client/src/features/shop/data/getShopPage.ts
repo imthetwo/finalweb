@@ -9,7 +9,13 @@ const URL_TO_LABEL: Record<string, string> = Object.fromEntries(
     .map((c) => [c.href.split("/").at(-1)!, c.label])
 );
 
-export async function getShopPage(slug: string[], page: number, search?: string) {
+// Nhận raw searchParams từ page.tsx, tự parse
+export async function getShopPage(
+  slug: string[],
+  searchParams: { page?: string; search?: string },
+) {
+  const page = Math.max(1, Number(searchParams.page) || 1);
+  const search = searchParams.search?.trim() || undefined;
   const isAllProducts = slug.length === 1 && slug[0] === "shop";
 
   const segments = [...slug].reverse();

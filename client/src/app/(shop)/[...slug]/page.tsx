@@ -9,11 +9,7 @@ type Props = {
 
 export default async function ShopCategoryPage({ params, searchParams }: Props) {
   const { slug } = await params;
-  const { page: pageParam, search: searchParam } = await searchParams;
-  const page = Math.max(1, Number(pageParam) || 1);
-  const search = searchParam?.trim() || undefined;
-
-  const { title, items, page: p, totalPages } = await getShopPage(slug, page, search);
-
-  return <ShopBrowser title={title} items={items} page={p} totalPages={totalPages} />;
+  const sp = await searchParams;
+  const { title, items, page, totalPages } = await getShopPage(slug, sp);
+  return <ShopBrowser title={title} items={items} page={page} totalPages={totalPages} />;
 }
