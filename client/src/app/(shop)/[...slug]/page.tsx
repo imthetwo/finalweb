@@ -1,31 +1,19 @@
 import ShopBrowser from "@/features/shop/ShopBrowser";
 import { fetchCategories, fetchProducts } from "@/lib/api";
+import { CATEGORY_NAV } from "@/lib/category-nav";
 
 type Props = {
   params: Promise<{ slug: string[] }>;
   searchParams: Promise<{ page?: string; search?: string }>;
 };
 
-// Map URL segment → tên category chính xác trong DB
-const URL_TO_CATEGORY: Record<string, string> = {
-  processors: "Processors (CPU)",
-  gpu: "Graphics Cards (GPU)",
-  "graphics-cards": "Graphics Cards (GPU)",
-  ram: "RAM",
-  motherboards: "Motherboards",
-  "power-supplies": "Power Supplies",
-  "pc-cases": "PC Cases",
-  "cpu-coolers": "CPU Coolers",
-  "case-fans": "Case Fans",
-  storage: "Storage (SSD/HDD)",
-  "gaming-monitors": "Gaming Monitors",
-  "mechanical-keyboards": "Mechanical Keyboards",
-  "gaming-mice": "Gaming Mice",
-  "gaming-headsets": "Gaming Headsets",
-  laptops: "Laptops",
-  pcs: "Prebuilt PCs",
-  "gaming-furniture": "Gaming Furniture",
-};
+// Build từ CATEGORY_NAV: last URL segment → category label
+// Ví dụ: "/components/processors" → segment "processors" → label "Processors (CPU)"
+const URL_TO_LABEL: Record<string, string> = Object.fromEntries(
+  CATEGORY_NAV
+    .filter((c) => c.href !== "/shop")
+    .map((c) => [c.href.split("/").at(-1)!, c.label])
+);
 
 export default async function ShopCategoryPage({ params, searchParams }: Props) {
   const { slug } = await params;
@@ -40,8 +28,8 @@ export default async function ShopCategoryPage({ params, searchParams }: Props) 
   const segments = [...slug].reverse();
   let targetCategoryName: string | undefined;
   for (const seg of segments) {
-    if (URL_TO_CATEGORY[seg]) {
-      targetCategoryName = URL_TO_CATEGORY[seg];
+    if (URL_TO_LABEL[seg]) {
+      targetCategoryName = URL_TO_LABEL[seg];
       break;
     }
   }

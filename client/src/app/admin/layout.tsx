@@ -72,7 +72,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 key={href}
                 href={href}
                 className={[
-                  "flex items-center gap-3 px-3 py-2.5 text-[13px] font-bold uppercase tracking-wide transition-colors",
+                  "flex items-center gap-3 px-3 py-2.5 text-body font-bold uppercase tracking-wide transition-colors",
                   active ? "bg-brand/10 text-brand" : "text-secondary hover:bg-white/4 hover:text-fg",
                 ].join(" ")}
               >
@@ -86,7 +86,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <button
               onClick={() => setProductsOpen((o) => !o)}
               className={[
-                "flex w-full items-center gap-3 px-3 py-2.5 text-[13px] font-bold uppercase tracking-wide transition-colors",
+                "flex w-full items-center gap-3 px-3 py-2.5 text-body font-bold uppercase tracking-wide transition-colors",
                 isProducts ? "text-brand" : "text-secondary hover:text-fg",
               ].join(" ")}
             >
@@ -100,7 +100,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link
                   href="/admin/products"
                   className={[
-                    "block py-1.5 text-[12px] font-semibold uppercase tracking-wide transition-colors",
+                    "block py-1.5 text-sm font-semibold uppercase tracking-wide transition-colors",
                     pathname === "/admin/products" ? "text-brand" : "text-muted hover:text-zinc-200",
                   ].join(" ")}
                 >
@@ -114,7 +114,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       key={cat.id}
                       href={href}
                       className={[
-                        "block py-1.5 text-[12px] font-semibold uppercase tracking-wide transition-colors",
+                        "block py-1.5 text-sm font-semibold uppercase tracking-wide transition-colors",
                         active ? "text-brand" : "text-muted hover:text-zinc-200",
                       ].join(" ")}
                     >
@@ -134,7 +134,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 key={href}
                 href={href}
                 className={[
-                  "flex items-center gap-3 px-3 py-2.5 text-[13px] font-bold uppercase tracking-wide transition-colors",
+                  "flex items-center gap-3 px-3 py-2.5 text-body font-bold uppercase tracking-wide transition-colors",
                   active ? "bg-brand/10 text-brand" : "text-secondary hover:bg-white/4 hover:text-fg",
                 ].join(" ")}
               >
@@ -146,7 +146,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <Link
           href="/"
-          className="flex items-center gap-2 border-t border-edge px-5 py-4 text-[11px] font-bold uppercase tracking-wider text-muted hover:text-fg"
+          className="flex items-center gap-2 border-t border-edge px-5 py-4 text-xs font-bold uppercase tracking-wider text-muted hover:text-fg"
         >
           <ArrowLeft size={13} /> Back to store
         </Link>
