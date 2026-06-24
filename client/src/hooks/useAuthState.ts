@@ -1,54 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { clearToken, getToken } from "@/lib/auth";
+import { useEffect } from "react";
+import { useAuthStore } from "@/store/authStore";
+import { clearToken, initAuth } from "@/lib/auth";
 
-export type AuthUser = {
-  id: string;
-  email: string;
-  fullName: string;
-  role: "USER" | "STAFF" | "ADMIN";
-};
-
-function parseJwt(token: string): AuthUser | null {
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    return {
-      id: payload.sub ?? "",
-      email: payload.email ?? "",
-      fullName: payload.fullName || payload.name || payload.email?.split("@")[0] || "User",
-      role: payload.role ?? "USER",
-    };
-  } catch {
-    return null;
-  }
-}
-
-function readUser(): AuthUser | null {
-  const token = getToken();
-  return token ? parseJwt(token) : null;
-}
+export type { AuthUser } from "@/store/authStore";
 
 export function useAuthState() {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const user = useAuthStore((s) => s.user);
+  const loaded = useAuthStore((s) => s.loaded);
 
+  // Khởi tạo auth từ localStorage lần đầu mount
   useEffect(() => {
-    setUser(readUser());
-    setLoaded(true);
-
-    // Lắng nghe event auth:change để cập nhật ngay khi login/logout
-    const handleChange = () => setUser(readUser());
-    window.addEventListener("auth:change", handleChange);
-    return () => window.removeEventListener("auth:change", handleChange);
-  }, []);
+    if (!loaded) initAuth();
+  }, [loaded]);
 
   const logout = () => {
     clearToken();
     window.location.href = "/";
   };
 
-  const refresh = () => setUser(readUser());
+  const refresh = () => initAuth();
 
   return { user, loaded, logout, refresh };
 }
