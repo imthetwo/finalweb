@@ -6,7 +6,7 @@ import { Save, KeyRound } from "lucide-react";
 
 import { changePassword, updateProfile, type UserProfile } from "@/lib/api";
 
-export default function ProfileTab({ profile, onUpdated }: { profile: UserProfile; onUpdated: (p: UserProfile) => void }) {
+export function ProfileTab({ profile, onUpdated }: { profile: UserProfile; onUpdated: (p: UserProfile) => void }) {
   const [form, setForm] = useState({
     fullName: profile.fullName ?? "",
     email: profile.email ?? "",
@@ -47,7 +47,7 @@ export default function ProfileTab({ profile, onUpdated }: { profile: UserProfil
 
   const inputCls =
     "w-full border border-edge bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors focus:border-brand/50 placeholder:text-subtle";
-  const labelCls = "mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-muted";
+  const labelCls = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted";
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
@@ -69,7 +69,7 @@ export default function ProfileTab({ profile, onUpdated }: { profile: UserProfil
         <button
           type="submit"
           disabled={savingProfile}
-          className="inline-flex items-center gap-2 bg-brand px-5 py-2.5 text-[12px] font-black uppercase tracking-wider text-black transition hover:bg-brand/85 disabled:opacity-50"
+          className="inline-flex items-center gap-2 bg-brand px-5 py-2.5 text-sm font-black uppercase tracking-wider text-black transition hover:bg-brand/85 disabled:opacity-50"
         >
           <Save size={13} /> {savingProfile ? "Saving…" : "Save changes"}
         </button>
@@ -89,7 +89,7 @@ export default function ProfileTab({ profile, onUpdated }: { profile: UserProfil
         <button
           type="submit"
           disabled={savingPwd}
-          className="inline-flex items-center gap-2 border border-edge px-5 py-2.5 text-[12px] font-black uppercase tracking-wider text-secondary transition hover:border-white hover:text-fg disabled:opacity-50"
+          className="inline-flex items-center gap-2 border border-edge px-5 py-2.5 text-sm font-black uppercase tracking-wider text-secondary transition hover:border-fg hover:text-fg disabled:opacity-50"
         >
           <KeyRound size={13} /> {savingPwd ? "Changing…" : "Change password"}
         </button>

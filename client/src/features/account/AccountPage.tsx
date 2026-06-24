@@ -8,7 +8,7 @@ import { LogOut, Shield } from "lucide-react";
 import { fetchProfile, type UserProfile } from "@/lib/api";
 import { useAuthState } from "@/hooks/useAuthState";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProfileTab from "./components/ProfileTab";
+import { ProfileTab } from "./components/ProfileTab";
 import OrdersTab from "./components/OrdersTab";
 import WishlistTab from "./components/WishlistTab";
 
