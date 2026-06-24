@@ -5,7 +5,7 @@ import { prisma } from './prisma-client';
 async function main() {
   const password = await bcrypt.hash('admin123', 10);
 
-  // ── 1. Admin account ──
+  // ── 1. Admin account — toàn quyền ──
   await prisma.user.upsert({
     where: { email: 'admin@pecify.tech' },
     create: { email: 'admin@pecify.tech', password, fullName: 'Pecify Admin', role: Role.ADMIN },
@@ -13,7 +13,15 @@ async function main() {
   });
   console.log(`✅ Admin: admin@pecify.tech / admin123`);
 
-  // ── 2. Demo customer ──
+  // ── 2. Staff account — nhập liệu, xem kho, xem giá ──
+  await prisma.user.upsert({
+    where: { email: 'staff@pecify.tech' },
+    create: { email: 'staff@pecify.tech', password, fullName: 'Pecify Staff', role: Role.STAFF },
+    update: { role: Role.STAFF },
+  });
+  console.log(`✅ Staff:  staff@pecify.tech  / admin123`);
+
+  // ── 3. Demo customer ──
   const customer = await prisma.user.upsert({
     where: { email: 'customer@pecify.tech' },
     create: { email: 'customer@pecify.tech', password, fullName: 'Demo Customer', role: Role.USER },

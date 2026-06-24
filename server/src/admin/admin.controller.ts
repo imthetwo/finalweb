@@ -1,10 +1,10 @@
 import {
   BadRequestException,
-  Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UploadedFile,
+  Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, Res, UploadedFile,
   UseGuards, UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { Role } from '@prisma/client';
 import { AdminService } from './admin.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -16,20 +16,27 @@ import {
 
 type UploadedFileType = { buffer: Buffer; mimetype: string; size: number };
 
+// Helper để lấy role từ request (sau JwtAuthGuard)
+function getRole(req: Request & { user?: { role?: Role } }): Role | undefined {
+  return req.user?.role;
+}
+
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
 export class AdminController {
   constructor(private readonly admin: AdminService) {}
 
-  // ── Dashboard ──
+  // ── Dashboard — STAFF chỉ xem, ADMIN đầy đủ ──────────────────────────────
   @Get('stats')
+  @Roles(Role.ADMIN, Role.STAFF)
   stats() {
     return this.admin.stats();
   }
 
-  // ── Products CRUD ──
+  // ── Products: STAFF chỉ được xem + import (draft) ────────────────────────
+
   @Get('products')
+  @Roles(Role.ADMIN, Role.STAFF)
   listProducts(
     @Query('search') search?: string,
     @Query('page') page?: string,
@@ -44,23 +51,30 @@ export class AdminController {
     });
   }
 
+  // ADMIN ONLY — tạo sản phẩm trực tiếp (published)
   @Post('products')
+  @Roles(Role.ADMIN)
   createProduct(@Body() dto: CreateProductDto) {
     return this.admin.createProduct(dto);
   }
 
+  // ADMIN ONLY — chỉnh sửa sản phẩm
   @Patch('products/:id')
+  @Roles(Role.ADMIN)
   updateProduct(@Param('id') id: string, @Body() dto: UpdateProductDto) {
     return this.admin.updateProduct(id, dto);
   }
 
+  // ADMIN ONLY — xóa sản phẩm
   @Delete('products/:id')
+  @Roles(Role.ADMIN)
   deleteProduct(@Param('id') id: string) {
     return this.admin.deleteProduct(id);
   }
 
-  // ── Image upload → Cloudinary ──
+  // ── Image upload — ADMIN ONLY ─────────────────────────────────────────────
   @Post('upload')
+  @Roles(Role.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
   uploadImage(@UploadedFile() file: UploadedFileType) {
     if (!file) throw new BadRequestException('No file uploaded');
@@ -68,8 +82,9 @@ export class AdminController {
     return this.admin.uploadImage(file.buffer);
   }
 
-  // ── Download Excel template cho nhân viên nhập liệu ──
+  // ── Excel template — STAFF + ADMIN ───────────────────────────────────────
   @Get('products/template')
+  @Roles(Role.ADMIN, Role.STAFF)
   async downloadTemplate(@Res() res: Response) {
     const buffer = await this.admin.exportProductTemplate();
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -77,16 +92,24 @@ export class AdminController {
     res.end(buffer);
   }
 
-  // ── Bulk import products from Excel ──
+  // ── Excel import — STAFF tạo draft (isPublished: false), ADMIN publish ngay
   @Post('products/import')
+  @Roles(Role.ADMIN, Role.STAFF)
   @UseInterceptors(FileInterceptor('file'))
-  importProducts(@UploadedFile() file: UploadedFileType) {
+  importProducts(
+    @UploadedFile() file: UploadedFileType,
+    @Req() req: Request & { user?: { role?: Role } },
+  ) {
     if (!file) throw new BadRequestException('No file uploaded');
-    return this.admin.importProductsExcel(file.buffer);
+    // Staff import → tạo draft, admin phải duyệt trước khi publish
+    const asDraft = getRole(req) === Role.STAFF;
+    return this.admin.importProductsExcel(file.buffer, asDraft);
   }
 
-  // ── Orders ──
+  // ── Orders: STAFF xem, ADMIN cập nhật trạng thái ─────────────────────────
+
   @Get('orders')
+  @Roles(Role.ADMIN, Role.STAFF)
   listOrders(
     @Query('status') status?: string,
     @Query('page') page?: string,
@@ -99,13 +122,17 @@ export class AdminController {
     });
   }
 
+  // ADMIN ONLY — đổi trạng thái đơn hàng
   @Patch('orders/:id/status')
+  @Roles(Role.ADMIN)
   updateOrderStatus(@Param('id') id: string, @Body() dto: UpdateOrderStatusDto) {
     return this.admin.updateOrderStatus(id, dto.status);
   }
 
-  // ── Excel export (báo cáo đơn hàng) ──
+  // ── Exports — ADMIN ONLY ──────────────────────────────────────────────────
+
   @Get('orders/export')
+  @Roles(Role.ADMIN)
   async exportOrders(@Res() res: Response) {
     const buffer = await this.admin.exportOrdersExcel();
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -113,8 +140,8 @@ export class AdminController {
     res.send(buffer);
   }
 
-  // ── Excel export (danh mục sản phẩm theo loại) ──
   @Get('products/export')
+  @Roles(Role.ADMIN)
   async exportProducts(@Res() res: Response) {
     const buffer = await this.admin.exportProductsExcel();
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -122,13 +149,14 @@ export class AdminController {
     res.send(buffer);
   }
 
-  // ── Users ──
+  // ── Users — ADMIN ONLY ────────────────────────────────────────────────────
+
   @Get('users')
+  @Roles(Role.ADMIN)
   listUsers(@Query('page') page?: string, @Query('limit') limit?: string) {
     return this.admin.listUsers({
       page: page ? Number(page) : undefined,
       limit: limit ? Number(limit) : undefined,
     });
   }
-
 }

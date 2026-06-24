@@ -17,7 +17,7 @@ export class AdminService {
 
   // ── Products ──────────────────────────────────────────────
   uploadImage(buffer: Buffer) { return this.productsService.uploadImage(buffer); }
-  importProductsExcel(buffer: Buffer) { return this.productsService.importExcel(buffer); }
+  importProductsExcel(buffer: Buffer, asDraft = false) { return this.productsService.importExcel(buffer, asDraft); }
   exportProductTemplate() { return this.productsService.exportProductTemplate(); }
   listProducts(p: { search?: string; page?: number; limit?: number; categoryId?: string }) { return this.productsService.list(p); }
   createProduct(dto: CreateProductDto) { return this.productsService.create(dto); }

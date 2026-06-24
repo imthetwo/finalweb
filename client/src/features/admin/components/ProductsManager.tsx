@@ -11,9 +11,12 @@ import {
   type AdminProduct, type Paginated,
 } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
+import { useAuthState } from "@/hooks/useAuthState";
 import ProductFormModal from "@/features/admin/ProductFormModal";
 
 export function ProductsManager() {
+  const { user } = useAuthState();
+  const isAdmin = user?.role === "ADMIN";
   const [data, setData] = useState<Paginated<AdminProduct> | null>(null);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -78,11 +81,14 @@ export function ProductsManager() {
             <Download size={14} /> Template
           </button>
           <button onClick={() => importRef.current?.click()} className="inline-flex items-center gap-2 border border-emerald-700/50 bg-emerald-950/30 px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-emerald-400 hover:bg-emerald-950/50">
-            <Upload size={14} /> Import Excel
+            <Upload size={14} />
+            {isAdmin ? "Import Excel" : "Import Excel (Draft)"}
           </button>
-          <button onClick={openCreate} className="inline-flex items-center gap-2 bg-brand px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-black hover:bg-brand/85">
-            <Plus size={14} /> Add Product
-          </button>
+          {isAdmin && (
+            <button onClick={openCreate} className="inline-flex items-center gap-2 bg-brand px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-black hover:bg-brand/85">
+              <Plus size={14} /> Add Product
+            </button>
+          )}
         </div>
       </div>
 
@@ -162,15 +168,23 @@ export function ProductsManager() {
                     <span className={p.stock <= 5 ? "text-yellow-400" : "text-secondary"}>{p.stock}</span>
                   </td>
                   <td className="px-4 py-2.5 text-center">
-                    <span className={`text-[10px] font-bold uppercase ${p.isPublished ? "text-emerald-400" : "text-subtle"}`}>
-                      {p.isPublished ? "Live" : "Draft"}
-                    </span>
+                    {p.isPublished ? (
+                      <span className="text-[10px] font-bold uppercase text-emerald-400">Live</span>
+                    ) : (
+                      <span className="inline-block rounded bg-yellow-900/30 px-2 py-0.5 text-[10px] font-bold uppercase text-yellow-400">
+                        Draft · Chờ duyệt
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-2.5">
-                    <div className="flex items-center justify-end gap-1.5">
-                      <button onClick={() => openEdit(p)} className="flex h-7 w-7 items-center justify-center border border-edge text-secondary hover:border-brand/50 hover:text-brand" aria-label="Edit"><Pencil size={12} /></button>
-                      <button onClick={() => remove(p)} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-red-500 hover:border-red-500" aria-label="Delete"><Trash2 size={12} /></button>
-                    </div>
+                    {isAdmin ? (
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button onClick={() => openEdit(p)} className="flex h-7 w-7 items-center justify-center border border-edge text-secondary hover:border-brand/50 hover:text-brand" aria-label="Edit"><Pencil size={12} /></button>
+                        <button onClick={() => remove(p)} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-red-500 hover:border-red-500" aria-label="Delete"><Trash2 size={12} /></button>
+                      </div>
+                    ) : (
+                      <span className="text-[10px] text-subtle">View only</span>
+                    )}
                   </td>
                 </tr>
               ))

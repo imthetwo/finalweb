@@ -27,7 +27,7 @@ export class AdminProductsService {
   }
 
   // ── Excel import ──────────────────────────────────────────
-  async importExcel(buffer: Buffer) {
+  async importExcel(buffer: Buffer, asDraft = false) {
     const wb = new ExcelJS.Workbook();
     await wb.xlsx.load(buffer as unknown as ExcelJS.Buffer);
     const ws = wb.worksheets[0];
@@ -64,7 +64,8 @@ export class AdminProductsService {
         stock: get('stock') ? Number(get('stock')) : 10,
         description: get('description')?.toString().trim() || null,
         imageUrl: get('imageurl')?.toString().trim() || null,
-        isPublished: get('published')?.toString().toLowerCase() !== 'no',
+        // Staff import → luôn là draft, dù Excel ghi Published=Yes
+        isPublished: asDraft ? false : get('published')?.toString().toLowerCase() !== 'no',
       };
 
       try {

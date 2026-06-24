@@ -38,7 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     if (!loaded) return;
     if (!user) { router.replace("/login"); return; }
-    if (user.role !== "ADMIN") { router.replace("/"); return; }
+    if (user.role !== "ADMIN" && user.role !== "STAFF") { router.replace("/"); return; }
     setChecked(true);
     fetchCategories().then(setCategories).catch(() => {});
   }, [loaded, user, router]);
@@ -51,12 +51,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
+  const isAdmin = user?.role === "ADMIN";
+
   return (
     <div className="flex min-h-screen bg-base text-fg">
       <aside className="flex w-56 shrink-0 flex-col border-r border-edge bg-surface">
         <div className="border-b border-edge px-5 py-5">
           <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-brand">Pecify</p>
-          <p className="text-sm font-black uppercase tracking-wider text-fg">Admin Panel</p>
+          <p className="text-sm font-black uppercase tracking-wider text-fg">
+            {isAdmin ? "Admin Panel" : "Staff Panel"}
+          </p>
+          <p className="mt-0.5 text-[9px] uppercase tracking-widest text-muted">{user?.fullName}</p>
         </div>
 
         <nav className="flex-1 overflow-y-auto space-y-0.5 p-3">
@@ -121,7 +126,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             )}
           </div>
 
-          {TOP_NAV.slice(1).map(({ href, label, icon: Icon }) => {
+          {/* Orders + Users — chỉ ADMIN thấy */}
+          {isAdmin && TOP_NAV.slice(1).map(({ href, label, icon: Icon }) => {
             const active = pathname === href;
             return (
               <Link

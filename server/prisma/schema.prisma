@@ -173,6 +173,7 @@ model LaptopSpec {
 
 enum Role {
   USER
+  STAFF
   ADMIN
 }
 
