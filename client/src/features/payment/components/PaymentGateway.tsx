@@ -36,14 +36,14 @@ export function PaymentGateway() {
   const isMomo   = method?.toLowerCase() === "momo";
 
   const [payment, setPayment]     = useState<InitiateResponse | null>(null);
-  const [loading, setLoading]     = useState(true);
+  const [loading, setLoading]     = useState(Boolean(orderId));
   const [processing, setProcessing] = useState(false);
   const [expired, setExpired]     = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // ── 1. Call /payments/initiate on mount ──────────────────────────────────
   useEffect(() => {
-    if (!orderId) { setLoading(false); return; }
+    if (!orderId) return;
 
     initiatePayment(orderId)
       .then((data) => {

@@ -25,6 +25,20 @@ export function ProductsManager() {
   const [editing, setEditing] = useState<AdminProduct | null>(null);
   const importRef = useRef<HTMLInputElement>(null);
 
+  // `load` just bumps a key; the effect below does the actual fetch so all
+  // setState happens inside async callbacks (avoids the set-state-in-effect lint).
+  const [reloadKey, setReloadKey] = useState(0);
+  const load = useCallback(() => setReloadKey((k) => k + 1), []);
+
+  useEffect(() => {
+    let active = true;
+    fetchAdminProducts(search, page)
+      .then((d) => { if (active) setData(d); })
+      .catch(() => { if (active) setData(null); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [search, page, reloadKey]);
+
   async function onImport(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -39,19 +53,6 @@ export function ProductsManager() {
       if (importRef.current) importRef.current.value = "";
     }
   }
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      setData(await fetchAdminProducts(search, page));
-    } catch {
-      setData(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [search, page]);
-
-  useEffect(() => { load(); }, [load]);
 
   async function remove(p: AdminProduct) {
     if (!confirm(`Delete "${p.name}"?`)) return;

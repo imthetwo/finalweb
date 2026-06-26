@@ -14,34 +14,17 @@ import {
   type ProductInput,
   type Category,
 } from "@/lib/api";
+import {
+  ProductSpecFields,
+  Field,
+  inputCls,
+  labelCls,
+  NAME_TO_SPEC,
+  type SpecKey,
+} from "@/features/admin/components/ProductSpecFields";
 
-// Map category name → spec key
-type SpecKey = "cpuSpec" | "gpuSpec" | "ramSpec" | "motherboardSpec" | "psuSpec" | "caseSpec" | "coolerSpec" | "monitorSpec" | "storageSpec" | "laptopSpec";
-
-const NAME_TO_SPEC: Record<string, SpecKey> = {
-  "processors (cpu)": "cpuSpec",
-  "processors": "cpuSpec",
-  "cpu": "cpuSpec",
-  "graphics cards (gpu)": "gpuSpec",
-  "graphics cards": "gpuSpec",
-  "gpu": "gpuSpec",
-  "ram": "ramSpec",
-  "motherboards": "motherboardSpec",
-  "power supplies": "psuSpec",
-  "pc cases": "caseSpec",
-  "cpu coolers": "coolerSpec",
-  "gaming monitors": "monitorSpec",
-  "storage (ssd/hdd)": "storageSpec",
-  "storage": "storageSpec",
-  "laptops": "laptopSpec",
-};
-
-const SPEC_LABELS: Record<SpecKey, string> = {
-  cpuSpec: "CPU Specs", gpuSpec: "GPU Specs", ramSpec: "RAM Specs",
-  motherboardSpec: "Motherboard Specs", psuSpec: "PSU Specs", caseSpec: "Case Specs",
-  coolerSpec: "Cooler Specs", monitorSpec: "Monitor Specs", storageSpec: "Storage Specs",
-  laptopSpec: "Laptop Specs",
-};
+const rowCls = "grid grid-cols-2 gap-4";
+const row3Cls = "grid grid-cols-3 gap-4";
 
 const BASE_EMPTY: Omit<ProductInput, SpecKey> = {
   categoryId: "", name: "", brand: "", description: "", price: 0,
@@ -57,7 +40,24 @@ export default function ProductFormModal({
   onSaved: () => void;
 }) {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [form, setForm] = useState<Omit<ProductInput, SpecKey>>({ ...BASE_EMPTY });
+  // Initialize the form straight from the `editing` prop. The modal is mounted
+  // fresh each time it opens (parent renders it behind `{modalOpen && …}`), so a
+  // lazy initializer is enough — no effect needed to sync state from the prop.
+  const [form, setForm] = useState<Omit<ProductInput, SpecKey>>(() =>
+    editing
+      ? {
+          categoryId: editing.category?.id ?? "",
+          name: editing.name,
+          brand: editing.brand,
+          description: editing.description ?? "",
+          imageUrl: editing.imageUrl ?? undefined,
+          price: editing.price,
+          salePrice: editing.salePrice ?? undefined,
+          stock: editing.stock,
+          isPublished: editing.isPublished,
+        }
+      : { ...BASE_EMPTY, categoryId: defaultCategoryId ?? "" }
+  );
   const [specFields, setSpecFields] = useState<Record<string, string | number | boolean>>({});
   const [saving, setSaving] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
@@ -67,53 +67,30 @@ export default function ProductFormModal({
   const selectedCat = categories.find((c) => c.id === form.categoryId);
   const specKey = selectedCat ? NAME_TO_SPEC[selectedCat.name.toLowerCase()] : undefined;
 
+  // Load categories. When editing, prefill the spec fields once the category
+  // list is known — done inside the async callback (not synchronously in the
+  // effect body) so it doesn't trigger the cascading-render lint.
   useEffect(() => {
-    fetchCategories().then(setCategories).catch(() => setCategories([]));
-  }, []);
-
-  useEffect(() => {
-    if (editing) {
-      setForm({
-        categoryId: editing.category?.id ?? "",
-        name: editing.name,
-        brand: editing.brand,
-        description: editing.description ?? "",
-        imageUrl: editing.imageUrl ?? undefined,
-        price: editing.price,
-        salePrice: editing.salePrice ?? undefined,
-        stock: editing.stock,
-        isPublished: editing.isPublished,
-      });
-      setPreview(null);
-    } else {
-      setForm({ ...BASE_EMPTY, categoryId: defaultCategoryId ?? "" });
-      setSpecFields({});
-      setPreview(null);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editing]);
-
-  // Prefill spec fields when editing
-  useEffect(() => {
-    if (editing && categories.length) {
-      const cat = categories.find((c) => c.id === editing.category?.id);
-      if (cat) {
-        const sk = NAME_TO_SPEC[cat.name.toLowerCase()];
-        if (sk) {
-          const specData = editing[sk] as Record<string, unknown> | undefined;
-          if (specData) {
-            const flat: Record<string, string | number | boolean> = {};
-            for (const [k, v] of Object.entries(specData)) {
-              if (v !== null && v !== undefined && k !== "id" && k !== "productId") {
-                flat[k] = v as string | number | boolean;
-              }
-            }
-            setSpecFields(flat);
+    fetchCategories()
+      .then((cats) => {
+        setCategories(cats);
+        if (!editing) return;
+        const cat = cats.find((c) => c.id === editing.category?.id);
+        const sk = cat ? NAME_TO_SPEC[cat.name.toLowerCase()] : undefined;
+        if (!sk) return;
+        const specData = editing[sk] as Record<string, unknown> | undefined;
+        if (!specData) return;
+        const flat: Record<string, string | number | boolean> = {};
+        for (const [k, v] of Object.entries(specData)) {
+          if (v !== null && v !== undefined && k !== "id" && k !== "productId") {
+            flat[k] = v as string | number | boolean;
           }
         }
-      }
-    }
-  }, [editing, categories]);
+        setSpecFields(flat);
+      })
+      .catch(() => setCategories([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const prevCatId = useRef(form.categoryId);
   useEffect(() => {
@@ -128,13 +105,6 @@ export default function ProductFormModal({
   }
   function setSpec(key: string, val: string | number | boolean) {
     setSpecFields((f) => ({ ...f, [key]: val }));
-  }
-  function numSpec(key: string): number | "" {
-    const v = specFields[key];
-    return typeof v === "number" ? v : v !== undefined ? Number(v) || "" : "";
-  }
-  function strSpec(key: string): string {
-    return specFields[key] !== undefined ? String(specFields[key]) : "";
   }
 
   async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -182,149 +152,11 @@ export default function ProductFormModal({
   }
 
   const cls = {
-    input: "w-full border border-edge bg-surface px-3 py-2 text-body text-fg outline-none focus:border-brand/50 placeholder:text-subtle",
-    label: "mb-1 block text-[10px] font-bold uppercase tracking-wider text-muted",
-    row: "grid grid-cols-2 gap-4",
-    row3: "grid grid-cols-3 gap-4",
+    input: inputCls,
+    label: labelCls,
+    row: rowCls,
+    row3: row3Cls,
   };
-
-  function Field({ label, children }: { label: string; children: React.ReactNode }) {
-    return <div><label className={cls.label}>{label}</label>{children}</div>;
-  }
-
-  function i(key: string, placeholder?: string, type: "text" | "number" = "text") {
-    return (
-      <input
-        type={type}
-        className={cls.input}
-        placeholder={placeholder}
-        value={type === "number" ? numSpec(key) : strSpec(key)}
-        onChange={(e) => setSpec(key, type === "number" ? (e.target.value ? Number(e.target.value) : 0) : e.target.value)}
-      />
-    );
-  }
-
-  function sel(key: string, opts: string[]) {
-    return (
-      <select className={cls.input} value={strSpec(key)} onChange={(e) => setSpec(key, e.target.value)}>
-        <option value="">— Select —</option>
-        {opts.map((o) => <option key={o} value={o}>{o}</option>)}
-      </select>
-    );
-  }
-
-  function renderSpec() {
-    if (!specKey) return null;
-    const sections: Record<SpecKey, React.ReactNode> = {
-      cpuSpec: (
-        <div className={cls.row}>
-          <Field label="Socket *">{sel("socket", ["AM5", "AM4", "LGA1700", "LGA1851"])}</Field>
-          <Field label="Generation">{i("generation", "Ryzen 9000 / Core Ultra 200")}</Field>
-          <Field label="Cores *">{i("cores", "8", "number")}</Field>
-          <Field label="Threads *">{i("threads", "16", "number")}</Field>
-          <Field label="Base clock (GHz) *">{i("baseClockGhz", "3.7", "number")}</Field>
-          <Field label="Boost clock (GHz) *">{i("boostClockGhz", "5.5", "number")}</Field>
-          <Field label="TDP (W) *">{i("tdp", "65", "number")}</Field>
-          <Field label="L3 cache">{i("cacheL3", "32MB")}</Field>
-        </div>
-      ),
-      gpuSpec: (
-        <div className={cls.row}>
-          <Field label="VRAM (GB) *">{i("vramGb", "16", "number")}</Field>
-          <Field label="TDP (W) *">{i("tdp", "200", "number")}</Field>
-          <Field label="Length (mm)">{i("lengthMm", "336", "number")}</Field>
-          <Field label="PCIe gen">{i("pcieGen", "4", "number")}</Field>
-          <Field label="Boost clock (MHz)">{i("boostClockMhz", "2610", "number")}</Field>
-          <Field label="Memory type">{sel("memType", ["GDDR6", "GDDR6X", "GDDR7"])}</Field>
-        </div>
-      ),
-      ramSpec: (
-        <div className={cls.row}>
-          <Field label="Capacity (GB) *">{i("capacityGb", "32", "number")}</Field>
-          <Field label="Speed (MHz) *">{i("speedMhz", "6000", "number")}</Field>
-          <Field label="Generation *">{sel("generation", ["DDR5", "DDR4"])}</Field>
-          <Field label="Latency">{i("latency", "CL30")}</Field>
-          <Field label="Kit">{i("kit", "2x16GB")}</Field>
-        </div>
-      ),
-      motherboardSpec: (
-        <div className={cls.row}>
-          <Field label="Socket *">{sel("socket", ["AM5", "AM4", "LGA1700", "LGA1851"])}</Field>
-          <Field label="Chipset">{i("chipset", "X670E / Z890")}</Field>
-          <Field label="Form factor *">{sel("formFactor", ["ATX", "mATX", "ITX"])}</Field>
-          <Field label="RAM gen *">{sel("ramGen", ["DDR5", "DDR4"])}</Field>
-          <Field label="RAM slots *">{i("ramSlots", "4", "number")}</Field>
-          <Field label="Max RAM (GB)">{i("maxRamGb", "192", "number")}</Field>
-        </div>
-      ),
-      psuSpec: (
-        <div className={cls.row}>
-          <Field label="Wattage (W) *">{i("wattage", "850", "number")}</Field>
-          <Field label="Efficiency">{sel("efficiency", ["80+ White", "80+ Bronze", "80+ Gold", "80+ Platinum", "80+ Titanium"])}</Field>
-          <Field label="Modular">{sel("modular", ["Full", "Semi", "Non"])}</Field>
-        </div>
-      ),
-      caseSpec: (
-        <div className={cls.row}>
-          <Field label="Form factor *">{sel("formFactor", ["ATX", "mATX", "ITX"])}</Field>
-          <Field label="Max GPU length (mm)">{i("maxGpuLengthMm", "360", "number")}</Field>
-          <Field label="Radiator support">{i("radiatorSupport", "360mm")}</Field>
-          <Field label="Drive bays">{i("driveBays", "2", "number")}</Field>
-        </div>
-      ),
-      coolerSpec: (
-        <div className={cls.row}>
-          <Field label="Type *">{sel("coolerType", ["Air", "AIO"])}</Field>
-          <Field label="TDP rating (W)">{i("tdpRating", "250", "number")}</Field>
-          <Field label="Radiator size (mm)">{sel("radiatorSizeMm", ["120", "240", "280", "360"])}</Field>
-          <Field label="Socket support">{i("socketSupport", "AM5,LGA1700,LGA1851")}</Field>
-        </div>
-      ),
-      monitorSpec: (
-        <div className={cls.row}>
-          <Field label="Size (in) *">{i("sizeIn", "27", "number")}</Field>
-          <Field label="Resolution *">{i("resolution", "2560x1440")}</Field>
-          <Field label="Refresh rate (Hz) *">{i("refreshRateHz", "165", "number")}</Field>
-          <Field label="Panel type">{sel("panelType", ["IPS", "VA", "TN", "OLED"])}</Field>
-          <Field label="Response (ms)">{i("responseMs", "1", "number")}</Field>
-          <Field label="HDR">
-            <select className={cls.input} value={specFields.hdr !== undefined ? String(specFields.hdr) : ""}
-              onChange={(e) => setSpec("hdr", e.target.value === "true")}>
-              <option value="">— Select —</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-          </Field>
-        </div>
-      ),
-      storageSpec: (
-        <div className={cls.row}>
-          <Field label="Capacity (GB) *">{i("capacityGb", "1000", "number")}</Field>
-          <Field label="Type *">{sel("storageType", ["NVMe", "SSD", "HDD"])}</Field>
-          <Field label="Interface">{i("interfaceType", "PCIe 4.0")}</Field>
-          <Field label="Read (MB/s)">{i("readMbps", "7000", "number")}</Field>
-          <Field label="Write (MB/s)">{i("writeMbps", "6500", "number")}</Field>
-        </div>
-      ),
-      laptopSpec: (
-        <div className={cls.row}>
-          <Field label="CPU *">{i("cpu", "Intel Core i7-13700H")}</Field>
-          <Field label="GPU">{i("gpu", "RTX 4060")}</Field>
-          <Field label="RAM (GB) *">{i("ramGb", "16", "number")}</Field>
-          <Field label="Storage (GB) *">{i("storageGb", "512", "number")}</Field>
-          <Field label="Display size (in) *">{i("displaySizeIn", "15.6", "number")}</Field>
-          <Field label="Resolution">{i("displayResolution", "1920x1080")}</Field>
-          <Field label="OS">{i("os", "Windows 11")}</Field>
-        </div>
-      ),
-    };
-    return (
-      <div className="border border-edge p-4">
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-brand/70">{SPEC_LABELS[specKey]}</p>
-        {sections[specKey]}
-      </div>
-    );
-  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-base/70 p-4">
@@ -380,7 +212,7 @@ export default function ProductFormModal({
 
           {/* Pricing */}
           <div className={`${cls.row3} border-y border-edge py-4`}>
-            <Field label="Giá nhập vốn (VND)">
+            <Field label="Cost price (VND)">
               <input type="number" min={0} className={cls.input} value={form.costPrice ?? ""} onChange={(e) => set("costPrice", e.target.value ? Number(e.target.value) : undefined)} placeholder="12000000" />
               {form.costPrice && form.price > 0 && (
                 <p className="mt-1 text-xs text-brand">
@@ -388,21 +220,21 @@ export default function ProductFormModal({
                 </p>
               )}
             </Field>
-            <Field label="Giá bán (VND) *">
+            <Field label="Selling price (VND) *">
               <input type="number" min={0} className={cls.input} value={form.price || ""} onChange={(e) => set("price", Number(e.target.value))} placeholder="15990000" />
             </Field>
-            <Field label="Giá khuyến mãi (VND)">
-              <input type="number" min={0} className={cls.input} value={form.salePrice ?? ""} onChange={(e) => set("salePrice", e.target.value ? Number(e.target.value) : undefined)} placeholder="Để trống nếu không có" />
+            <Field label="Sale price (VND)">
+              <input type="number" min={0} className={cls.input} value={form.salePrice ?? ""} onChange={(e) => set("salePrice", e.target.value ? Number(e.target.value) : undefined)} placeholder="Leave empty if none" />
             </Field>
           </div>
           <div className="border-b border-edge pb-4">
-            <Field label="Tồn kho">
+            <Field label="Stock">
               <input type="number" min={0} className={cls.input} value={form.stock ?? 0} onChange={(e) => set("stock", Number(e.target.value))} />
             </Field>
           </div>
 
           {/* Spec section */}
-          {renderSpec()}
+          <ProductSpecFields specKey={specKey} specFields={specFields} setSpec={setSpec} />
 
           <label className="flex items-center gap-2 text-sm text-secondary">
             <input type="checkbox" className="accent-brand" checked={form.isPublished ?? true} onChange={(e) => set("isPublished", e.target.checked)} />

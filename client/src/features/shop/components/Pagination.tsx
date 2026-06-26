@@ -8,7 +8,6 @@ import { usePathname, useSearchParams } from "next/navigation";
 export function Pagination({ page, totalPages }: { page: number; totalPages: number }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  if (totalPages <= 1) return null;
 
   const hrefForPage = (p: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -29,6 +28,8 @@ export function Pagination({ page, totalPages }: { page: number; totalPages: num
         ? "border-brand text-brand"
         : "border-edge text-secondary hover:border-brand hover:text-brand"
     }`;
+
+  if (totalPages <= 1) return null;
 
   return (
     <nav className="mt-8 flex items-center justify-center gap-1.5 text-sm">

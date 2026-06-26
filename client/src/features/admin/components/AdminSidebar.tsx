@@ -19,22 +19,28 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, loaded } = useAuthState();
-  const [checked, setChecked] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const isProducts = pathname.startsWith("/admin/products");
   const [productsOpen, setProductsOpen] = useState(isProducts);
 
-  useEffect(() => { if (isProducts) setProductsOpen(true); }, [isProducts]);
+  // Auto-open the Products submenu when navigating into it (adjust state during
+  // render — the React-recommended alternative to a setState-in-effect).
+  const [prevIsProducts, setPrevIsProducts] = useState(isProducts);
+  if (isProducts !== prevIsProducts) {
+    setPrevIsProducts(isProducts);
+    if (isProducts) setProductsOpen(true);
+  }
+
+  const allowed = loaded && !!user && (user.role === "ADMIN" || user.role === "STAFF");
 
   useEffect(() => {
     if (!loaded) return;
     if (!user) { router.replace("/login"); return; }
     if (user.role !== "ADMIN" && user.role !== "STAFF") { router.replace("/"); return; }
-    setChecked(true);
     fetchCategories().then(setCategories).catch(() => {});
   }, [loaded, user, router]);
 
-  if (!checked) {
+  if (!allowed) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-base text-muted">
         Checking access…

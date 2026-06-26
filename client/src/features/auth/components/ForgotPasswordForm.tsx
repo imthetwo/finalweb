@@ -66,7 +66,7 @@ export function ForgotPasswordForm() {
             <div className="border-b border-edge px-6 py-5">
               <h1 className="text-lg font-black uppercase tracking-wide text-fg">Forgot password</h1>
               <p className="mt-1 text-sm text-muted">
-                Enter your email and we'll send you a reset link.
+                Enter your email and we&apos;ll send you a reset link.
               </p>
             </div>
 

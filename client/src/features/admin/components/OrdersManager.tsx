@@ -26,14 +26,19 @@ export function OrdersManager() {
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try { setData(await fetchAdminOrders(filter, page)); }
-    catch { setData(null); }
-    finally { setLoading(false); }
-  }, [filter, page]);
+  // `load` just bumps a key; the effect below does the actual fetch so all
+  // setState happens inside async callbacks (avoids the set-state-in-effect lint).
+  const [reloadKey, setReloadKey] = useState(0);
+  const load = useCallback(() => setReloadKey((k) => k + 1), []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    let active = true;
+    fetchAdminOrders(filter, page)
+      .then((d) => { if (active) setData(d); })
+      .catch(() => { if (active) setData(null); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [filter, page, reloadKey]);
 
   async function changeStatus(id: string, status: string) {
     try {

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Tag, X } from "lucide-react";
 
-import { apiFetch, initiatePayment, validateCoupon } from "@/lib/api";
+import { apiFetch, validateCoupon } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
 import { getToken } from "@/lib/auth";
 

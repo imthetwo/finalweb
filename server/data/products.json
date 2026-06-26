@@ -1,14 +1,14 @@
 {
   "_comment": "Product data — source of truth cho catalog. imageUrl đã verify HTTP 200 trên Cloudinary.",
   "_schema": {
-    "category":    "khớp chính xác Category.name trong DB",
-    "costPrice":   "giá nhập vốn (VND) — dùng tính margin trong admin",
-    "price":       "giá bán lẻ (VND)",
-    "salePrice":   "null nếu không khuyến mãi",
-    "stock":       "tồn kho ban đầu",
+    "category": "khớp chính xác Category.name trong DB",
+    "costPrice": "giá nhập vốn (VND) — dùng tính margin trong admin",
+    "price": "giá bán lẻ (VND)",
+    "salePrice": "null nếu không khuyến mãi",
+    "stock": "tồn kho ban đầu",
     "isPublished": "true = hiện ngoài shop",
     "description": "mô tả sản phẩm hiện trên trang detail",
-    "spec":        "object spec tương ứng bảng spec, null nếu không có"
+    "spec": "object spec tương ứng bảng spec, null nếu không có"
   },
   "products": [
     {
@@ -22,7 +22,17 @@
       "stock": 12,
       "isPublished": true,
       "description": "Bộ vi xử lý Intel Core Ultra 9 285K thế hệ Arrow Lake, 20 nhân (8P+16E), xung nhịp tối đa 5.7GHz, cache L3 36MB, socket LGA1851, TDP 125W. Hiệu năng đỉnh cao cho workstation và gaming chuyên nghiệp.",
-      "spec": { "type": "cpuSpec", "socket": "LGA1851", "cores": 20, "threads": 20, "baseClockGhz": 3.7, "boostClockGhz": 5.7, "tdp": 125, "cacheL3": "36MB", "generation": "Core Ultra 200" }
+      "spec": {
+        "type": "cpuSpec",
+        "socket": "LGA1851",
+        "cores": 20,
+        "threads": 20,
+        "baseClockGhz": 3.7,
+        "boostClockGhz": 5.7,
+        "tdp": 125,
+        "cacheL3": "36MB",
+        "generation": "Core Ultra 200"
+      }
     },
     {
       "category": "Processors (CPU)",
@@ -35,7 +45,17 @@
       "stock": 15,
       "isPublished": true,
       "description": "Intel Core Ultra 7 265K, 20 nhân, boost đến 5.5GHz, cache L3 30MB, socket LGA1851. Lựa chọn cân bằng giữa hiệu năng và giá thành cho hệ thống gaming/content creation cao cấp.",
-      "spec": { "type": "cpuSpec", "socket": "LGA1851", "cores": 20, "threads": 20, "baseClockGhz": 3.9, "boostClockGhz": 5.5, "tdp": 125, "cacheL3": "30MB", "generation": "Core Ultra 200" }
+      "spec": {
+        "type": "cpuSpec",
+        "socket": "LGA1851",
+        "cores": 20,
+        "threads": 20,
+        "baseClockGhz": 3.9,
+        "boostClockGhz": 5.5,
+        "tdp": 125,
+        "cacheL3": "30MB",
+        "generation": "Core Ultra 200"
+      }
     },
     {
       "category": "Processors (CPU)",
@@ -48,7 +68,17 @@
       "stock": 20,
       "isPublished": true,
       "description": "Intel Core Ultra 5 245K, 14 nhân, boost 5.2GHz, socket LGA1851. Phù hợp cho hệ gaming tầm trung muốn nâng cấp lên nền tảng Intel 200 series mới nhất.",
-      "spec": { "type": "cpuSpec", "socket": "LGA1851", "cores": 14, "threads": 14, "baseClockGhz": 4.2, "boostClockGhz": 5.2, "tdp": 125, "cacheL3": "24MB", "generation": "Core Ultra 200" }
+      "spec": {
+        "type": "cpuSpec",
+        "socket": "LGA1851",
+        "cores": 14,
+        "threads": 14,
+        "baseClockGhz": 4.2,
+        "boostClockGhz": 5.2,
+        "tdp": 125,
+        "cacheL3": "24MB",
+        "generation": "Core Ultra 200"
+      }
     },
     {
       "category": "Processors (CPU)",
@@ -61,7 +91,17 @@
       "stock": 10,
       "isPublished": true,
       "description": "Intel Core i7-14700K Raptor Lake Refresh, 20 nhân 28 luồng, xung nhịp tối đa 5.6GHz, cache L3 33MB, socket LGA1700. Hiệu năng gaming và đa nhiệm xuất sắc, tương thích bo mạch Z690/Z790.",
-      "spec": { "type": "cpuSpec", "socket": "LGA1700", "cores": 20, "threads": 28, "baseClockGhz": 3.4, "boostClockGhz": 5.6, "tdp": 125, "cacheL3": "33MB", "generation": "Raptor Lake" }
+      "spec": {
+        "type": "cpuSpec",
+        "socket": "LGA1700",
+        "cores": 20,
+        "threads": 28,
+        "baseClockGhz": 3.4,
+        "boostClockGhz": 5.6,
+        "tdp": 125,
+        "cacheL3": "33MB",
+        "generation": "Raptor Lake"
+      }
     },
     {
       "category": "Processors (CPU)",
@@ -74,7 +114,17 @@
       "stock": 25,
       "isPublished": true,
       "description": "Intel Core i5-14600K, 14 nhân 20 luồng, boost 5.3GHz, socket LGA1700. CPU gaming giá tốt nhất phân khúc tầm trung, hiệu năng/giá vượt trội so với thế hệ trước.",
-      "spec": { "type": "cpuSpec", "socket": "LGA1700", "cores": 14, "threads": 20, "baseClockGhz": 3.5, "boostClockGhz": 5.3, "tdp": 125, "cacheL3": "24MB", "generation": "Raptor Lake" }
+      "spec": {
+        "type": "cpuSpec",
+        "socket": "LGA1700",
+        "cores": 14,
+        "threads": 20,
+        "baseClockGhz": 3.5,
+        "boostClockGhz": 5.3,
+        "tdp": 125,
+        "cacheL3": "24MB",
+        "generation": "Raptor Lake"
+      }
     },
     {
       "category": "Processors (CPU)",
@@ -87,7 +137,17 @@
       "stock": 30,
       "isPublished": true,
       "description": "Intel Core i5-12400F Alder Lake, 6 nhân 12 luồng, boost 4.4GHz, socket LGA1700, không có GPU tích hợp. Lựa chọn ngân sách tối ưu cho PC gaming entry-level kết hợp card đồ họa rời.",
-      "spec": { "type": "cpuSpec", "socket": "LGA1700", "cores": 6, "threads": 12, "baseClockGhz": 2.5, "boostClockGhz": 4.4, "tdp": 65, "cacheL3": "18MB", "generation": "Alder Lake" }
+      "spec": {
+        "type": "cpuSpec",
+        "socket": "LGA1700",
+        "cores": 6,
+        "threads": 12,
+        "baseClockGhz": 2.5,
+        "boostClockGhz": 4.4,
+        "tdp": 65,
+        "cacheL3": "18MB",
+        "generation": "Alder Lake"
+      }
     },
     {
       "category": "Processors (CPU)",
@@ -100,7 +160,17 @@
       "stock": 8,
       "isPublished": true,
       "description": "AMD Ryzen 9 9950X Zen 5, 16 nhân 32 luồng, boost 5.7GHz, cache L3 64MB, socket AM5, TDP 170W. Flagship AMD mạnh nhất cho workstation chuyên nghiệp, render 3D và streaming đồng thời.",
-      "spec": { "type": "cpuSpec", "socket": "AM5", "cores": 16, "threads": 32, "baseClockGhz": 4.3, "boostClockGhz": 5.7, "tdp": 170, "cacheL3": "64MB", "generation": "Ryzen 9000" }
+      "spec": {
+        "type": "cpuSpec",
+        "socket": "AM5",
+        "cores": 16,
+        "threads": 32,
+        "baseClockGhz": 4.3,
+        "boostClockGhz": 5.7,
+        "tdp": 170,
+        "cacheL3": "64MB",
+        "generation": "Ryzen 9000"
+      }
     },
     {
       "category": "Processors (CPU)",
@@ -113,9 +183,18 @@
       "stock": 10,
       "isPublished": true,
       "description": "AMD Ryzen 7 9800X3D với công nghệ 3D V-Cache độc quyền, 8 nhân 16 luồng, boost 5.2GHz, cache L3 96MB. CPU gaming số 1 thế giới hiện tại — FPS cao nhất trong mọi tựa game AAA.",
-      "spec": { "type": "cpuSpec", "socket": "AM5", "cores": 8, "threads": 16, "baseClockGhz": 4.7, "boostClockGhz": 5.2, "tdp": 120, "cacheL3": "96MB", "generation": "Ryzen 9000" }
+      "spec": {
+        "type": "cpuSpec",
+        "socket": "AM5",
+        "cores": 8,
+        "threads": 16,
+        "baseClockGhz": 4.7,
+        "boostClockGhz": 5.2,
+        "tdp": 120,
+        "cacheL3": "96MB",
+        "generation": "Ryzen 9000"
+      }
     },
-
     {
       "category": "Graphics Cards (GPU)",
       "name": "NVIDIA GeForce RTX 4090 Founders Edition",
@@ -127,7 +206,15 @@
       "stock": 5,
       "isPublished": true,
       "description": "NVIDIA GeForce RTX 4090 Founders Edition, 24GB GDDR6X, TDP 450W, PCIe 4.0 x16. GPU mạnh nhất thế giới cho gaming 4K/8K, render 3D, AI và deep learning chuyên nghiệp.",
-      "spec": { "type": "gpuSpec", "vramGb": 24, "tdp": 450, "lengthMm": 336, "pcieGen": 4, "boostClockMhz": 2520, "memType": "GDDR6X" }
+      "spec": {
+        "type": "gpuSpec",
+        "vramGb": 24,
+        "tdp": 450,
+        "lengthMm": 336,
+        "pcieGen": 4,
+        "boostClockMhz": 2520,
+        "memType": "GDDR6X"
+      }
     },
     {
       "category": "Graphics Cards (GPU)",
@@ -140,7 +227,15 @@
       "stock": 7,
       "isPublished": true,
       "description": "ASUS ROG Strix RTX 4080 SUPER, 16GB GDDR6X, 3 quạt Axial-tech, TDP 320W, boost 2610MHz. Hiệu năng gaming 4K ổn định với tản nhiệt đẳng cấp ROG, lý tưởng cho màn 1440p/4K high refresh.",
-      "spec": { "type": "gpuSpec", "vramGb": 16, "tdp": 320, "lengthMm": 358, "pcieGen": 4, "boostClockMhz": 2610, "memType": "GDDR6X" }
+      "spec": {
+        "type": "gpuSpec",
+        "vramGb": 16,
+        "tdp": 320,
+        "lengthMm": 358,
+        "pcieGen": 4,
+        "boostClockMhz": 2610,
+        "memType": "GDDR6X"
+      }
     },
     {
       "category": "Graphics Cards (GPU)",
@@ -153,7 +248,15 @@
       "stock": 12,
       "isPublished": true,
       "description": "MSI RTX 4070 Ti SUPRIM X, 12GB GDDR6X, 3 quạt TORX Fan 5.0, boost 2760MHz. Hiệu năng gaming 1440p/4K cao, tiết kiệm điện hơn thế hệ trước với kiến trúc Ada Lovelace.",
-      "spec": { "type": "gpuSpec", "vramGb": 12, "tdp": 285, "lengthMm": 340, "pcieGen": 4, "boostClockMhz": 2760, "memType": "GDDR6X" }
+      "spec": {
+        "type": "gpuSpec",
+        "vramGb": 12,
+        "tdp": 285,
+        "lengthMm": 340,
+        "pcieGen": 4,
+        "boostClockMhz": 2760,
+        "memType": "GDDR6X"
+      }
     },
     {
       "category": "Graphics Cards (GPU)",
@@ -166,7 +269,15 @@
       "stock": 9,
       "isPublished": true,
       "description": "AMD Radeon RX 7900 XTX, 24GB GDDR6, kiến trúc RDNA 3, PCIe 4.0. Vram 24GB lớn nhất phân khúc, lý tưởng cho gaming 4K và workload sáng tạo đòi hỏi bộ nhớ cao.",
-      "spec": { "type": "gpuSpec", "vramGb": 24, "tdp": 355, "lengthMm": 287, "pcieGen": 4, "boostClockMhz": 2615, "memType": "GDDR6" }
+      "spec": {
+        "type": "gpuSpec",
+        "vramGb": 24,
+        "tdp": 355,
+        "lengthMm": 287,
+        "pcieGen": 4,
+        "boostClockMhz": 2615,
+        "memType": "GDDR6"
+      }
     },
     {
       "category": "Graphics Cards (GPU)",
@@ -179,7 +290,15 @@
       "stock": 11,
       "isPublished": true,
       "description": "Gigabyte RX 7900 XT Gaming OC, 20GB GDDR6, tản nhiệt WINDFORCE 3X, boost 2150MHz. Hiệu năng 4K mạnh mẽ từ AMD, kết hợp hệ thống làm mát Gigabyte chất lượng cao.",
-      "spec": { "type": "gpuSpec", "vramGb": 20, "tdp": 315, "lengthMm": 290, "pcieGen": 4, "boostClockMhz": 2150, "memType": "GDDR6" }
+      "spec": {
+        "type": "gpuSpec",
+        "vramGb": 20,
+        "tdp": 315,
+        "lengthMm": 290,
+        "pcieGen": 4,
+        "boostClockMhz": 2150,
+        "memType": "GDDR6"
+      }
     },
     {
       "category": "Graphics Cards (GPU)",
@@ -192,9 +311,16 @@
       "stock": 14,
       "isPublished": true,
       "description": "NVIDIA RTX 3080 iCHILL Black, 10GB GDDR6X, kiến trúc Ampere, boost 1710MHz. Lựa chọn gaming 1440p/4K giá tốt, ray tracing và DLSS 2.0 mượt mà cho mọi tựa game AAA.",
-      "spec": { "type": "gpuSpec", "vramGb": 10, "tdp": 320, "lengthMm": 305, "pcieGen": 4, "boostClockMhz": 1710, "memType": "GDDR6X" }
+      "spec": {
+        "type": "gpuSpec",
+        "vramGb": 10,
+        "tdp": 320,
+        "lengthMm": 305,
+        "pcieGen": 4,
+        "boostClockMhz": 1710,
+        "memType": "GDDR6X"
+      }
     },
-
     {
       "category": "Motherboards",
       "name": "ASUS ROG MAXIMUS Z890 HERO",
@@ -206,7 +332,15 @@
       "stock": 6,
       "isPublished": true,
       "description": "ASUS ROG MAXIMUS Z890 HERO, socket LGA1851, chipset Z890, ATX, DDR5, 4 khe RAM tối đa 192GB. Bo mạch flagship ROG với VRM 20+1 phase, WiFi 7, Thunderbolt 4, tối ưu cho ép xung cực đại.",
-      "spec": { "type": "motherboardSpec", "socket": "LGA1851", "chipset": "Z890", "formFactor": "ATX", "ramGen": "DDR5", "ramSlots": 4, "maxRamGb": 192 }
+      "spec": {
+        "type": "motherboardSpec",
+        "socket": "LGA1851",
+        "chipset": "Z890",
+        "formFactor": "ATX",
+        "ramGen": "DDR5",
+        "ramSlots": 4,
+        "maxRamGb": 192
+      }
     },
     {
       "category": "Motherboards",
@@ -219,7 +353,15 @@
       "stock": 10,
       "isPublished": true,
       "description": "MSI MAG Z890 TOMAHAWK WIFI, socket LGA1851, chipset Z890, ATX, DDR5, WiFi 7, 2.5G LAN. Bo mạch gaming tầm trung cao cấp, hỗ trợ ép xung DDR5, tương thích Core Ultra 200.",
-      "spec": { "type": "motherboardSpec", "socket": "LGA1851", "chipset": "Z890", "formFactor": "ATX", "ramGen": "DDR5", "ramSlots": 4, "maxRamGb": 192 }
+      "spec": {
+        "type": "motherboardSpec",
+        "socket": "LGA1851",
+        "chipset": "Z890",
+        "formFactor": "ATX",
+        "ramGen": "DDR5",
+        "ramSlots": 4,
+        "maxRamGb": 192
+      }
     },
     {
       "category": "Motherboards",
@@ -232,7 +374,15 @@
       "stock": 15,
       "isPublished": true,
       "description": "Gigabyte B760 AORUS ELITE AX, socket LGA1700, chipset B760, ATX, DDR5, WiFi 6E. Bo mạch gaming tầm trung giá tốt cho Intel Gen 12/13/14, hỗ trợ PCIe 4.0 M.2 x4.",
-      "spec": { "type": "motherboardSpec", "socket": "LGA1700", "chipset": "B760", "formFactor": "ATX", "ramGen": "DDR5", "ramSlots": 4, "maxRamGb": 128 }
+      "spec": {
+        "type": "motherboardSpec",
+        "socket": "LGA1700",
+        "chipset": "B760",
+        "formFactor": "ATX",
+        "ramGen": "DDR5",
+        "ramSlots": 4,
+        "maxRamGb": 128
+      }
     },
     {
       "category": "Motherboards",
@@ -245,7 +395,15 @@
       "stock": 8,
       "isPublished": true,
       "description": "ASUS ROG STRIX X870E-E GAMING, socket AM5, chipset X870E, ATX, DDR5, WiFi 7, USB4 40Gbps. Bo mạch cao cấp cho Ryzen 9000, hỗ trợ ép xung DDR5 và PCIe 5.0 đầy đủ.",
-      "spec": { "type": "motherboardSpec", "socket": "AM5", "chipset": "X870E", "formFactor": "ATX", "ramGen": "DDR5", "ramSlots": 4, "maxRamGb": 256 }
+      "spec": {
+        "type": "motherboardSpec",
+        "socket": "AM5",
+        "chipset": "X870E",
+        "formFactor": "ATX",
+        "ramGen": "DDR5",
+        "ramSlots": 4,
+        "maxRamGb": 256
+      }
     },
     {
       "category": "Motherboards",
@@ -258,7 +416,15 @@
       "stock": 18,
       "isPublished": true,
       "description": "ASRock B650M PG Riptide, socket AM5, chipset B650, mATX, DDR5. Bo mạch compact giá tốt cho Ryzen 7000/8000, phù hợp build mini-ITX/mATX tiết kiệm không gian.",
-      "spec": { "type": "motherboardSpec", "socket": "AM5", "chipset": "B650", "formFactor": "mATX", "ramGen": "DDR5", "ramSlots": 4, "maxRamGb": 128 }
+      "spec": {
+        "type": "motherboardSpec",
+        "socket": "AM5",
+        "chipset": "B650",
+        "formFactor": "mATX",
+        "ramGen": "DDR5",
+        "ramSlots": 4,
+        "maxRamGb": 128
+      }
     },
     {
       "category": "Motherboards",
@@ -271,9 +437,16 @@
       "stock": 20,
       "isPublished": true,
       "description": "MSI PRO B760M-A WIFI DDR4, socket LGA1700, mATX, WiFi 6. Lựa chọn tiết kiệm cho hệ Intel tầm trung, tương thích DDR4 cũ giúp giảm chi phí nâng cấp từ gen 10/11.",
-      "spec": { "type": "motherboardSpec", "socket": "LGA1700", "chipset": "B760", "formFactor": "mATX", "ramGen": "DDR4", "ramSlots": 4, "maxRamGb": 128 }
+      "spec": {
+        "type": "motherboardSpec",
+        "socket": "LGA1700",
+        "chipset": "B760",
+        "formFactor": "mATX",
+        "ramGen": "DDR4",
+        "ramSlots": 4,
+        "maxRamGb": 128
+      }
     },
-
     {
       "category": "RAM",
       "name": "Corsair Dominator Titanium DDR5 32GB 6600MHz",
@@ -285,7 +458,14 @@
       "stock": 10,
       "isPublished": true,
       "description": "Corsair Dominator Titanium DDR5 32GB (2x16GB) 6600MHz CL32, tản nhiệt nhôm cao cấp, RGB DHX. Bộ RAM cao cấp nhất của Corsair, tối ưu cho hệ thống Intel Z890/X870E cần tốc độ và độ ổn định cực cao.",
-      "spec": { "type": "ramSpec", "capacityGb": 32, "speedMhz": 6600, "generation": "DDR5", "latency": "CL32", "kit": "2x16GB" }
+      "spec": {
+        "type": "ramSpec",
+        "capacityGb": 32,
+        "speedMhz": 6600,
+        "generation": "DDR5",
+        "latency": "CL32",
+        "kit": "2x16GB"
+      }
     },
     {
       "category": "RAM",
@@ -298,7 +478,14 @@
       "stock": 20,
       "isPublished": true,
       "description": "Corsair Vengeance RGB DDR5 32GB (2x16GB) 6000MHz CL30, RGB đồng bộ iCUE. Bộ RAM DDR5 phổ biến nhất, tốc độ 6000MHz đạt sweet spot hiệu năng/giá cho mọi nền tảng Intel/AMD.",
-      "spec": { "type": "ramSpec", "capacityGb": 32, "speedMhz": 6000, "generation": "DDR5", "latency": "CL30", "kit": "2x16GB" }
+      "spec": {
+        "type": "ramSpec",
+        "capacityGb": 32,
+        "speedMhz": 6000,
+        "generation": "DDR5",
+        "latency": "CL30",
+        "kit": "2x16GB"
+      }
     },
     {
       "category": "RAM",
@@ -311,7 +498,14 @@
       "stock": 25,
       "isPublished": true,
       "description": "Corsair Vengeance DDR5 32GB (2x16GB) 5600MHz CL36, không RGB, tối ưu hiệu năng/giá. Lựa chọn DDR5 entry đáng tin cậy cho hệ thống mới xây dựng với ngân sách hợp lý.",
-      "spec": { "type": "ramSpec", "capacityGb": 32, "speedMhz": 5600, "generation": "DDR5", "latency": "CL36", "kit": "2x16GB" }
+      "spec": {
+        "type": "ramSpec",
+        "capacityGb": 32,
+        "speedMhz": 5600,
+        "generation": "DDR5",
+        "latency": "CL36",
+        "kit": "2x16GB"
+      }
     },
     {
       "category": "RAM",
@@ -324,7 +518,14 @@
       "stock": 15,
       "isPublished": true,
       "description": "G.Skill Trident Z5 RGB DDR5 32GB (2x16GB) 6400MHz CL32, tản nhiệt nhôm RGB đẳng cấp. Bộ nhớ hiệu suất cao từ G.Skill, lý tưởng cho ép xung XMP/EXPO trên nền tảng Intel và AMD.",
-      "spec": { "type": "ramSpec", "capacityGb": 32, "speedMhz": 6400, "generation": "DDR5", "latency": "CL32", "kit": "2x16GB" }
+      "spec": {
+        "type": "ramSpec",
+        "capacityGb": 32,
+        "speedMhz": 6400,
+        "generation": "DDR5",
+        "latency": "CL32",
+        "kit": "2x16GB"
+      }
     },
     {
       "category": "RAM",
@@ -337,7 +538,14 @@
       "stock": 30,
       "isPublished": true,
       "description": "Kingston Fury Beast DDR5 16GB 5200MHz CL40, không RGB, profile thấp. RAM DDR5 single-stick giá rẻ nhất thị trường, phù hợp nâng cấp dần hoặc hệ thống ngân sách thấp.",
-      "spec": { "type": "ramSpec", "capacityGb": 16, "speedMhz": 5200, "generation": "DDR5", "latency": "CL40", "kit": "1x16GB" }
+      "spec": {
+        "type": "ramSpec",
+        "capacityGb": 16,
+        "speedMhz": 5200,
+        "generation": "DDR5",
+        "latency": "CL40",
+        "kit": "1x16GB"
+      }
     },
     {
       "category": "RAM",
@@ -350,9 +558,15 @@
       "stock": 35,
       "isPublished": true,
       "description": "Kingston Fury Beast DDR4 16GB 3600MHz CL16, tương thích bo mạch DDR4 Intel LGA1700/AMD AM4. Bộ nhớ DDR4 tốc độ cao giá rẻ, tối ưu cho hệ thống nâng cấp tiết kiệm.",
-      "spec": { "type": "ramSpec", "capacityGb": 16, "speedMhz": 3600, "generation": "DDR4", "latency": "CL16", "kit": "1x16GB" }
+      "spec": {
+        "type": "ramSpec",
+        "capacityGb": 16,
+        "speedMhz": 3600,
+        "generation": "DDR4",
+        "latency": "CL16",
+        "kit": "1x16GB"
+      }
     },
-
     {
       "category": "Storage (SSD/HDD)",
       "name": "Samsung 9100 PRO NVMe M.2 SSD 2TB",
@@ -364,7 +578,14 @@
       "stock": 15,
       "isPublished": true,
       "description": "Samsung 9100 PRO NVMe M.2 2280, 2TB, PCIe 5.0 x4, đọc 14800MB/s, ghi 13400MB/s. SSD nhanh nhất trên thị trường, lý tưởng cho workstation đòi hỏi tốc độ I/O cực cao.",
-      "spec": { "type": "storageSpec", "capacityGb": 2000, "storageType": "NVMe", "interfaceType": "PCIe 5.0", "readMbps": 14800, "writeMbps": 13400 }
+      "spec": {
+        "type": "storageSpec",
+        "capacityGb": 2000,
+        "storageType": "NVMe",
+        "interfaceType": "PCIe 5.0",
+        "readMbps": 14800,
+        "writeMbps": 13400
+      }
     },
     {
       "category": "Storage (SSD/HDD)",
@@ -377,7 +598,14 @@
       "stock": 20,
       "isPublished": true,
       "description": "Samsung 990 EVO Plus NVMe M.2, 2TB, PCIe 4.0 x4, đọc 7250MB/s, ghi 6300MB/s. SSD PCIe 4.0 tầm trung cao cấp, cân bằng hoàn hảo giữa tốc độ và giá thành.",
-      "spec": { "type": "storageSpec", "capacityGb": 2000, "storageType": "NVMe", "interfaceType": "PCIe 4.0", "readMbps": 7250, "writeMbps": 6300 }
+      "spec": {
+        "type": "storageSpec",
+        "capacityGb": 2000,
+        "storageType": "NVMe",
+        "interfaceType": "PCIe 4.0",
+        "readMbps": 7250,
+        "writeMbps": 6300
+      }
     },
     {
       "category": "Storage (SSD/HDD)",
@@ -390,7 +618,14 @@
       "stock": 25,
       "isPublished": true,
       "description": "Samsung 870 EVO SATA 2.5\", 2TB, đọc 560MB/s, ghi 530MB/s. SSD SATA đáng tin cậy nhất, phù hợp nâng cấp laptop cũ hoặc làm ổ lưu trữ thứ hai trong hệ thống PC.",
-      "spec": { "type": "storageSpec", "capacityGb": 2000, "storageType": "SSD", "interfaceType": "SATA", "readMbps": 560, "writeMbps": 530 }
+      "spec": {
+        "type": "storageSpec",
+        "capacityGb": 2000,
+        "storageType": "SSD",
+        "interfaceType": "SATA",
+        "readMbps": 560,
+        "writeMbps": 530
+      }
     },
     {
       "category": "Storage (SSD/HDD)",
@@ -403,9 +638,15 @@
       "stock": 12,
       "isPublished": true,
       "description": "Samsung T9 Portable SSD 4TB, USB 3.2 Gen 2x2, đọc 2000MB/s, ghi 1950MB/s. SSD di động tốc độ cao nhất Samsung, chống sốc và chống nước IP55, lý tưởng cho content creator.",
-      "spec": { "type": "storageSpec", "capacityGb": 4000, "storageType": "SSD", "interfaceType": "USB 3.2", "readMbps": 2000, "writeMbps": 1950 }
+      "spec": {
+        "type": "storageSpec",
+        "capacityGb": 4000,
+        "storageType": "SSD",
+        "interfaceType": "USB 3.2",
+        "readMbps": 2000,
+        "writeMbps": 1950
+      }
     },
-
     {
       "category": "Power Supplies",
       "name": "Corsair RM1000x 80+ Gold 1000W",
@@ -417,7 +658,12 @@
       "stock": 12,
       "isPublished": true,
       "description": "Corsair RM1000x 80 Plus Gold 1000W, fully modular, quạt 135mm bán thụ động, bảo hành 10 năm. PSU lý tưởng cho hệ thống RTX 4090 + CPU high-end, đảm bảo điện sạch và ổn định.",
-      "spec": { "type": "psuSpec", "wattage": 1000, "efficiency": "80+ Gold", "modular": "Full" }
+      "spec": {
+        "type": "psuSpec",
+        "wattage": 1000,
+        "efficiency": "80+ Gold",
+        "modular": "Full"
+      }
     },
     {
       "category": "Power Supplies",
@@ -430,7 +676,12 @@
       "stock": 15,
       "isPublished": true,
       "description": "Corsair RM850x 80 Plus Gold 850W, fully modular, bảo hành 10 năm. Phù hợp cho hệ thống RTX 4080/4070Ti + CPU i7/R7, nguồn điện ổn định đáng tin cậy cho gaming PC cao cấp.",
-      "spec": { "type": "psuSpec", "wattage": 850, "efficiency": "80+ Gold", "modular": "Full" }
+      "spec": {
+        "type": "psuSpec",
+        "wattage": 850,
+        "efficiency": "80+ Gold",
+        "modular": "Full"
+      }
     },
     {
       "category": "Power Supplies",
@@ -443,7 +694,12 @@
       "stock": 18,
       "isPublished": true,
       "description": "Corsair RM750x 80 Plus Gold 750W, fully modular. Lựa chọn tối ưu cho hệ RTX 4070/RX 7900 XT, đủ công suất cho mọi build gaming tầm trung-cao cấp.",
-      "spec": { "type": "psuSpec", "wattage": 750, "efficiency": "80+ Gold", "modular": "Full" }
+      "spec": {
+        "type": "psuSpec",
+        "wattage": 750,
+        "efficiency": "80+ Gold",
+        "modular": "Full"
+      }
     },
     {
       "category": "Power Supplies",
@@ -456,7 +712,12 @@
       "stock": 8,
       "isPublished": true,
       "description": "Corsair SF850 SFX 80 Plus Gold 850W, fully modular, kích thước nhỏ gọn SFX. PSU dành cho PC mini-ITX hiệu năng cao, đủ công suất chạy GPU flagship trong thùng máy nhỏ.",
-      "spec": { "type": "psuSpec", "wattage": 850, "efficiency": "80+ Gold", "modular": "Full" }
+      "spec": {
+        "type": "psuSpec",
+        "wattage": 850,
+        "efficiency": "80+ Gold",
+        "modular": "Full"
+      }
     },
     {
       "category": "Power Supplies",
@@ -469,7 +730,12 @@
       "stock": 6,
       "isPublished": true,
       "description": "EVGA SuperNOVA 1300 G2 80 Plus Gold 1300W, fully modular, bảo hành 7 năm. Siêu nguồn cho workstation đa GPU, AI/ML training rig hoặc build dual-GPU gaming đòi hỏi điện năng khổng lồ.",
-      "spec": { "type": "psuSpec", "wattage": 1300, "efficiency": "80+ Gold", "modular": "Full" }
+      "spec": {
+        "type": "psuSpec",
+        "wattage": 1300,
+        "efficiency": "80+ Gold",
+        "modular": "Full"
+      }
     },
     {
       "category": "Power Supplies",
@@ -482,9 +748,13 @@
       "stock": 22,
       "isPublished": true,
       "description": "Cooler Master MWE Gold 650W, non-modular, 80 Plus Gold. PSU ngân sách giá rẻ đáng tin cậy cho PC gaming entry-level với RTX 4060/RX 7700 XT và CPU tầm trung.",
-      "spec": { "type": "psuSpec", "wattage": 650, "efficiency": "80+ Gold", "modular": "Non" }
+      "spec": {
+        "type": "psuSpec",
+        "wattage": 650,
+        "efficiency": "80+ Gold",
+        "modular": "Non"
+      }
     },
-
     {
       "category": "PC Cases",
       "name": "NZXT H9 Flow RGB White",
@@ -496,7 +766,13 @@
       "stock": 8,
       "isPublished": true,
       "description": "NZXT H9 Flow RGB White, ATX, kính cường lực 4 mặt, hỗ trợ GPU dài 435mm, radiator 360mm top+front. Thùng máy gaming thiết kế hiện đại tối giản, luồng gió xuất sắc với cửa gió flow mesh.",
-      "spec": { "type": "caseSpec", "formFactor": "ATX", "maxGpuLengthMm": 435, "radiatorSupport": "360mm", "driveBays": 2 }
+      "spec": {
+        "type": "caseSpec",
+        "formFactor": "ATX",
+        "maxGpuLengthMm": 435,
+        "radiatorSupport": "360mm",
+        "driveBays": 2
+      }
     },
     {
       "category": "PC Cases",
@@ -509,7 +785,13 @@
       "stock": 10,
       "isPublished": true,
       "description": "NZXT H9 Flow White (phiên bản không RGB), ATX, kính cường lực, GPU 435mm, radiator 360mm. Thiết kế tối giản elegant, phù hợp build PC trắng hoàn toàn.",
-      "spec": { "type": "caseSpec", "formFactor": "ATX", "maxGpuLengthMm": 435, "radiatorSupport": "360mm", "driveBays": 2 }
+      "spec": {
+        "type": "caseSpec",
+        "formFactor": "ATX",
+        "maxGpuLengthMm": 435,
+        "radiatorSupport": "360mm",
+        "driveBays": 2
+      }
     },
     {
       "category": "PC Cases",
@@ -522,7 +804,13 @@
       "stock": 14,
       "isPublished": true,
       "description": "NZXT H3 Flow White, ATX, mặt trước lưới mesh tản nhiệt tốt, GPU 360mm, radiator 240mm. Thùng máy compact giá tốt, thiết kế gọn gàng cho không gian phòng hạn chế.",
-      "spec": { "type": "caseSpec", "formFactor": "ATX", "maxGpuLengthMm": 360, "radiatorSupport": "240mm", "driveBays": 2 }
+      "spec": {
+        "type": "caseSpec",
+        "formFactor": "ATX",
+        "maxGpuLengthMm": 360,
+        "radiatorSupport": "240mm",
+        "driveBays": 2
+      }
     },
     {
       "category": "PC Cases",
@@ -535,7 +823,13 @@
       "stock": 18,
       "isPublished": true,
       "description": "Cooler Master Elite 600, ATX, mặt hông kính cường lực, GPU 330mm, 3 khe ổ đĩa. Thùng máy entry-level đáng tin cậy từ Cooler Master, phù hợp build PC ngân sách tiết kiệm.",
-      "spec": { "type": "caseSpec", "formFactor": "ATX", "maxGpuLengthMm": 330, "radiatorSupport": "240mm", "driveBays": 3 }
+      "spec": {
+        "type": "caseSpec",
+        "formFactor": "ATX",
+        "maxGpuLengthMm": 330,
+        "radiatorSupport": "240mm",
+        "driveBays": 3
+      }
     },
     {
       "category": "PC Cases",
@@ -548,7 +842,13 @@
       "stock": 6,
       "isPublished": true,
       "description": "Cooler Master MasterFrame 360, ATX, khung mở full tower, GPU 400mm, hỗ trợ 3 radiator 360mm. Thùng máy open-frame đặc biệt cho watercooling custom và build showcase RGB.",
-      "spec": { "type": "caseSpec", "formFactor": "ATX", "maxGpuLengthMm": 400, "radiatorSupport": "360mm", "driveBays": 2 }
+      "spec": {
+        "type": "caseSpec",
+        "formFactor": "ATX",
+        "maxGpuLengthMm": 400,
+        "radiatorSupport": "360mm",
+        "driveBays": 2
+      }
     },
     {
       "category": "PC Cases",
@@ -561,9 +861,14 @@
       "stock": 20,
       "isPublished": true,
       "description": "Cooler Master Q300L V2, mATX, kính cường lực, GPU 360mm, cửa gió đa hướng. Thùng mATX giá tốt nhất thị trường, thiết kế linh hoạt cho phép lắp theo nhiều chiều.",
-      "spec": { "type": "caseSpec", "formFactor": "mATX", "maxGpuLengthMm": 360, "radiatorSupport": "240mm", "driveBays": 2 }
+      "spec": {
+        "type": "caseSpec",
+        "formFactor": "mATX",
+        "maxGpuLengthMm": 360,
+        "radiatorSupport": "240mm",
+        "driveBays": 2
+      }
     },
-
     {
       "category": "CPU Coolers",
       "name": "NZXT Kraken 360 RGB White AIO",
@@ -575,7 +880,13 @@
       "stock": 8,
       "isPublished": true,
       "description": "NZXT Kraken 360 RGB White AIO, radiator 360mm, 3 quạt F120 RGB, màn hình LCD hiển thị nhiệt độ/ảnh. Tản nhiệt nước 360mm đỉnh cao, hỗ trợ mọi socket AM5/AM4/LGA1851/LGA1700.",
-      "spec": { "type": "coolerSpec", "coolerType": "AIO", "tdpRating": 400, "radiatorSizeMm": 360, "socketSupport": "AM5,AM4,LGA1700,LGA1851" }
+      "spec": {
+        "type": "coolerSpec",
+        "coolerType": "AIO",
+        "tdpRating": 400,
+        "radiatorSizeMm": 360,
+        "socketSupport": "AM5,AM4,LGA1700,LGA1851"
+      }
     },
     {
       "category": "CPU Coolers",
@@ -588,7 +899,13 @@
       "stock": 7,
       "isPublished": true,
       "description": "NZXT Kraken 360 RGB Black AIO, radiator 360mm, 3 quạt F120 RGB, màn hình LCD. Phiên bản màu đen sang trọng của Kraken 360, phù hợp build PC tối màu stealth.",
-      "spec": { "type": "coolerSpec", "coolerType": "AIO", "tdpRating": 400, "radiatorSizeMm": 360, "socketSupport": "AM5,AM4,LGA1700,LGA1851" }
+      "spec": {
+        "type": "coolerSpec",
+        "coolerType": "AIO",
+        "tdpRating": 400,
+        "radiatorSizeMm": 360,
+        "socketSupport": "AM5,AM4,LGA1700,LGA1851"
+      }
     },
     {
       "category": "CPU Coolers",
@@ -601,7 +918,13 @@
       "stock": 12,
       "isPublished": true,
       "description": "NZXT Kraken 240 RGB White AIO, radiator 240mm, 2 quạt F120 RGB, màn hình LCD vòng. Tản nhiệt nước 240mm tối ưu cho CPU tầm trung, phù hợp thùng máy hạn chế không gian.",
-      "spec": { "type": "coolerSpec", "coolerType": "AIO", "tdpRating": 280, "radiatorSizeMm": 240, "socketSupport": "AM5,AM4,LGA1700,LGA1851" }
+      "spec": {
+        "type": "coolerSpec",
+        "coolerType": "AIO",
+        "tdpRating": 280,
+        "radiatorSizeMm": 240,
+        "socketSupport": "AM5,AM4,LGA1700,LGA1851"
+      }
     },
     {
       "category": "CPU Coolers",
@@ -614,9 +937,14 @@
       "stock": 10,
       "isPublished": true,
       "description": "NZXT Kraken 280 Black AIO, radiator 280mm, 2 quạt 140mm, không RGB. Tản nhiệt nước 280mm hiệu quả và yên tĩnh, lý tưởng cho PC văn phòng/studio cần mát lạnh mà không ồn.",
-      "spec": { "type": "coolerSpec", "coolerType": "AIO", "tdpRating": 325, "radiatorSizeMm": 280, "socketSupport": "AM5,AM4,LGA1700,LGA1851" }
+      "spec": {
+        "type": "coolerSpec",
+        "coolerType": "AIO",
+        "tdpRating": 325,
+        "radiatorSizeMm": 280,
+        "socketSupport": "AM5,AM4,LGA1700,LGA1851"
+      }
     },
-
     {
       "category": "Gaming Monitors",
       "name": "LG UltraGear 27\" QHD 240Hz",
@@ -628,7 +956,15 @@
       "stock": 10,
       "isPublished": true,
       "description": "LG UltraGear 27\" QHD 2560x1440, IPS, 240Hz, 1ms GtG, HDR400. Màn hình gaming hiệu năng cao nhất tầm trung, lý tưởng cho FPS/MOBA thi đấu cạnh tranh với độ phân giải sắc nét.",
-      "spec": { "type": "monitorSpec", "sizeIn": 27, "resolution": "2560x1440", "refreshRateHz": 240, "panelType": "IPS", "responseMs": 1.0, "hdr": true }
+      "spec": {
+        "type": "monitorSpec",
+        "sizeIn": 27,
+        "resolution": "2560x1440",
+        "refreshRateHz": 240,
+        "panelType": "IPS",
+        "responseMs": 1,
+        "hdr": true
+      }
     },
     {
       "category": "Gaming Monitors",
@@ -641,7 +977,15 @@
       "stock": 7,
       "isPublished": true,
       "description": "Samsung Odyssey G7 32\" 4K 3840x2160, VA, 165Hz, 1ms, HDR600, DisplayHDR. Màn hình 4K gaming với panel VA contrast cao, màu sắc đậm sâu cho trải nghiệm chơi game và xem phim đỉnh cao.",
-      "spec": { "type": "monitorSpec", "sizeIn": 32, "resolution": "3840x2160", "refreshRateHz": 165, "panelType": "VA", "responseMs": 1.0, "hdr": true }
+      "spec": {
+        "type": "monitorSpec",
+        "sizeIn": 32,
+        "resolution": "3840x2160",
+        "refreshRateHz": 165,
+        "panelType": "VA",
+        "responseMs": 1,
+        "hdr": true
+      }
     },
     {
       "category": "Gaming Monitors",
@@ -654,7 +998,15 @@
       "stock": 6,
       "isPublished": true,
       "description": "ASUS ROG Swift 27\" QHD 2560x1440, IPS, 360Hz, 0.5ms. Màn hình tốc độ cao nhất cho game thủ chuyên nghiệp và e-sports, 360Hz cho phép xử lý chuyển động cực mượt không lag.",
-      "spec": { "type": "monitorSpec", "sizeIn": 27, "resolution": "2560x1440", "refreshRateHz": 360, "panelType": "IPS", "responseMs": 0.5, "hdr": false }
+      "spec": {
+        "type": "monitorSpec",
+        "sizeIn": 27,
+        "resolution": "2560x1440",
+        "refreshRateHz": 360,
+        "panelType": "IPS",
+        "responseMs": 0.5,
+        "hdr": false
+      }
     },
     {
       "category": "Gaming Monitors",
@@ -667,7 +1019,15 @@
       "stock": 9,
       "isPublished": true,
       "description": "Dell UltraSharp 27\" 4K 3840x2160, IPS, 60Hz, 5ms, USB-C 65W charging. Màn hình văn phòng/sáng tạo chất lượng màu xuất sắc, phù hợp designer, nhiếp ảnh gia và lập trình viên.",
-      "spec": { "type": "monitorSpec", "sizeIn": 27, "resolution": "3840x2160", "refreshRateHz": 60, "panelType": "IPS", "responseMs": 5.0, "hdr": false }
+      "spec": {
+        "type": "monitorSpec",
+        "sizeIn": 27,
+        "resolution": "3840x2160",
+        "refreshRateHz": 60,
+        "panelType": "IPS",
+        "responseMs": 5,
+        "hdr": false
+      }
     },
     {
       "category": "Gaming Monitors",
@@ -680,62 +1040,104 @@
       "stock": 8,
       "isPublished": true,
       "description": "LG 34\" UltraWide 3440x1440, IPS, 144Hz, 1ms, HDR400. Màn hình ultrawide immersive cho game nhập vai và productivity, tỷ lệ 21:9 mang lại tầm nhìn rộng hơn 33% so với màn 16:9.",
-      "spec": { "type": "monitorSpec", "sizeIn": 34, "resolution": "3440x1440", "refreshRateHz": 144, "panelType": "IPS", "responseMs": 1.0, "hdr": true }
+      "spec": {
+        "type": "monitorSpec",
+        "sizeIn": 34,
+        "resolution": "3440x1440",
+        "refreshRateHz": 144,
+        "panelType": "IPS",
+        "responseMs": 1,
+        "hdr": true
+      }
     },
-
     {
       "category": "Laptops",
       "name": "Razer Blade 16 (2024) RTX 4090",
       "brand": "Razer",
-      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/PCs/h7-flow-rgb-hero-white",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/laptop/razer-blade-16",
       "price": 69990000,
       "costPrice": 58000000,
       "salePrice": 64990000,
       "stock": 4,
       "isPublished": true,
       "description": "Razer Blade 16 (2024), Core i9-14900HX, RTX 4090 Laptop 175W, 32GB DDR5, 2TB NVMe, màn 16\" 2560x1600 240Hz QHD+ OLED. Gaming laptop flagship mạnh nhất thị trường trong thiết kế nhôm CNC siêu mỏng.",
-      "spec": { "type": "laptopSpec", "cpu": "Intel Core i9-14900HX", "gpu": "RTX 4090", "ramGb": 32, "storageGb": 2000, "displaySizeIn": 16, "displayResolution": "2560x1600", "os": "Windows 11" }
+      "spec": {
+        "type": "laptopSpec",
+        "cpu": "Intel Core i9-14900HX",
+        "gpu": "RTX 4090",
+        "ramGb": 32,
+        "storageGb": 2000,
+        "displaySizeIn": 16,
+        "displayResolution": "2560x1600",
+        "os": "Windows 11"
+      }
     },
     {
       "category": "Laptops",
       "name": "Razer Blade 14 (2024) RTX 4070",
       "brand": "Razer",
-      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/PCs/h6-flow-rgb-hero-white",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/laptop/razer-blade-14",
       "price": 54990000,
       "costPrice": 45000000,
       "salePrice": null,
       "stock": 5,
       "isPublished": true,
       "description": "Razer Blade 14 (2024), AMD Ryzen 9 8945HX, RTX 4070 Laptop 140W, 16GB DDR5, 1TB NVMe, màn 14\" 2560x1600 240Hz. Laptop gaming compact nhất với hiệu năng đầy đủ, trọng lượng chỉ 1.75kg.",
-      "spec": { "type": "laptopSpec", "cpu": "AMD Ryzen 9 8945HX", "gpu": "RTX 4070", "ramGb": 16, "storageGb": 1000, "displaySizeIn": 14, "displayResolution": "2560x1600", "os": "Windows 11" }
+      "spec": {
+        "type": "laptopSpec",
+        "cpu": "AMD Ryzen 9 8945HX",
+        "gpu": "RTX 4070",
+        "ramGb": 16,
+        "storageGb": 1000,
+        "displaySizeIn": 14,
+        "displayResolution": "2560x1600",
+        "os": "Windows 11"
+      }
     },
     {
       "category": "Laptops",
       "name": "ASUS ROG Zephyrus G16 RTX 4080",
       "brand": "ASUS",
-      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/PCs/h7-flow-hero-white",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/laptop/zephyrus-g16",
       "price": 48990000,
       "costPrice": 40000000,
       "salePrice": 45990000,
       "stock": 5,
       "isPublished": true,
       "description": "ASUS ROG Zephyrus G16, Core Ultra 9 185H, RTX 4080 165W, 32GB DDR5, 2TB NVMe, màn 16\" OLED 2560x1600 240Hz. Laptop gaming OLED đỉnh cao, màu sắc chuẩn DCI-P3 100% cho creative work.",
-      "spec": { "type": "laptopSpec", "cpu": "Intel Core Ultra 9 185H", "gpu": "RTX 4080", "ramGb": 32, "storageGb": 2000, "displaySizeIn": 16, "displayResolution": "2560x1600", "os": "Windows 11" }
+      "spec": {
+        "type": "laptopSpec",
+        "cpu": "Intel Core Ultra 9 185H",
+        "gpu": "RTX 4080",
+        "ramGb": 32,
+        "storageGb": 2000,
+        "displaySizeIn": 16,
+        "displayResolution": "2560x1600",
+        "os": "Windows 11"
+      }
     },
     {
       "category": "Laptops",
       "name": "MSI Stealth 16 AI Studio",
       "brand": "MSI",
-      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/PCs/h6-flow-rgb-hero-white",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/laptop/stealth-16",
       "price": 52990000,
       "costPrice": 43000000,
       "salePrice": null,
       "stock": 4,
       "isPublished": true,
       "description": "MSI Stealth 16 AI Studio, Core Ultra 7 155H, RTX 4070 Ti 150W, 32GB DDR5, 2TB NVMe, màn 16\" Mini LED 3840x2400 120Hz. Laptop AI creator với màn Mini LED cực sắc nét cho thiết kế chuyên nghiệp.",
-      "spec": { "type": "laptopSpec", "cpu": "Intel Core Ultra 7 155H", "gpu": "RTX 4070 Ti", "ramGb": 32, "storageGb": 2000, "displaySizeIn": 16, "displayResolution": "3840x2400", "os": "Windows 11" }
+      "spec": {
+        "type": "laptopSpec",
+        "cpu": "Intel Core Ultra 7 155H",
+        "gpu": "RTX 4070 Ti",
+        "ramGb": 32,
+        "storageGb": 2000,
+        "displaySizeIn": 16,
+        "displayResolution": "3840x2400",
+        "os": "Windows 11"
+      }
     },
-
     {
       "category": "Case Fans",
       "name": "Corsair iCUE LINK RX120 RGB White 3-Pack",
@@ -788,7 +1190,6 @@
       "description": "Corsair AF140 Elite White, quạt 140mm airflow cao, ổ trục từ AirGuide. Quạt 140mm hiệu suất luồng khí cao giá rẻ, lý tưởng cho intake front hoặc exhaust rear trong thùng máy ATX.",
       "spec": null
     },
-
     {
       "category": "Mechanical Keyboards",
       "name": "Logitech G515 Lightspeed TKL",
@@ -867,7 +1268,6 @@
       "description": "Logitech G213 Prodigy RGB, gaming membrane full-size, RGB LIGHTSYNC 5-zone, chống nước. Bàn phím gaming membrane giá rẻ nhất của Logitech, cảm giác gõ mượt mà và chịu nước tốt.",
       "spec": null
     },
-
     {
       "category": "Gaming Mice",
       "name": "Logitech G309 Lightspeed Wireless White",
@@ -933,7 +1333,6 @@
       "description": "Logitech G203 Lightsync, sensor 8000 DPI, RGB 16.8M màu, 6 nút, thiết kế ambidextrous. Chuột gaming entry-level giá cực rẻ của Logitech, phù hợp game thủ mới bắt đầu hoặc PC ngân sách.",
       "spec": null
     },
-
     {
       "category": "Gaming Headsets",
       "name": "Logitech G733 Lightspeed Wireless White",
@@ -1012,7 +1411,6 @@
       "description": "Logitech G335 có dây 3.5mm jack, driver 40mm, mic flip-to-mute, đệm tai memory foam mềm mại. Headset gaming có dây đa năng, kết nối 3.5mm tương thích mọi thiết bị PC/console/điện thoại.",
       "spec": null
     },
-
     {
       "category": "Gaming Furniture",
       "name": "Corsair TC500 LUXE Gaming Chair",
@@ -1091,7 +1489,6 @@
       "description": "Thermaltake T3 RUSH Fabric, vải dệt thoáng khí, đệm mút memory foam cao cấp, tay nghỉ 4D, ngả 180°. Ghế gaming vải cao cấp chống bám bẩn, bền đẹp hơn da PU, phù hợp sử dụng hàng ngày lâu dài.",
       "spec": null
     },
-
     {
       "category": "Prebuilt PCs",
       "name": "Pecify Vortex — RTX 4090 / Ultra 9",
@@ -1143,6 +1540,94 @@
       "isPublished": true,
       "description": "Pecify Mini ITX: Core i5-14600K + RTX 4060 8GB + 16GB DDR5 + 500GB NVMe, thùng Mini-ITX nhỏ gọn. PC gaming compact nhỏ nhất của Pecify, phù hợp phòng nhỏ hoặc mang đến LAN party.",
       "spec": null
+    },
+    {
+      "category": "Laptops",
+      "name": "ASUS Vivobook 15 OLED A1505VA",
+      "brand": "ASUS",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/laptop/vivobook-15",
+      "price": 16990000,
+      "costPrice": 13500000,
+      "salePrice": 15490000,
+      "stock": 20,
+      "isPublished": true,
+      "description": "ASUS Vivobook 15 OLED, Intel Core i5-13500H, 16GB DDR4, 512GB NVMe, màn 15.6\" Full HD OLED 100% DCI-P3. Laptop văn phòng – học tập mỏng nhẹ 1.7kg, màn OLED sống động cho giải trí.",
+      "spec": {
+        "type": "laptopSpec",
+        "cpu": "Intel Core i5-13500H",
+        "gpu": "Intel Iris Xe",
+        "ramGb": 16,
+        "storageGb": 512,
+        "displaySizeIn": 15.6,
+        "displayResolution": "1920x1080",
+        "os": "Windows 11"
+      }
+    },
+    {
+      "category": "Laptops",
+      "name": "Acer Aspire 5 A515-58GM",
+      "brand": "Acer",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/laptop/aspire-5",
+      "price": 14990000,
+      "costPrice": 12000000,
+      "salePrice": null,
+      "stock": 25,
+      "isPublished": true,
+      "description": "Acer Aspire 5, Intel Core i5-13420H, RTX 2050 4GB, 16GB DDR4, 512GB NVMe, màn 15.6\" Full HD IPS. Laptop phổ thông đa dụng cho học tập, văn phòng và giải trí nhẹ.",
+      "spec": {
+        "type": "laptopSpec",
+        "cpu": "Intel Core i5-13420H",
+        "gpu": "RTX 2050",
+        "ramGb": 16,
+        "storageGb": 512,
+        "displaySizeIn": 15.6,
+        "displayResolution": "1920x1080",
+        "os": "Windows 11"
+      }
+    },
+    {
+      "category": "Laptops",
+      "name": "Acer Nitro V 15 ANV15-51 RTX 4050",
+      "brand": "Acer",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/laptop/nitro-v-15",
+      "price": 21990000,
+      "costPrice": 18000000,
+      "salePrice": 19990000,
+      "stock": 18,
+      "isPublished": true,
+      "description": "Acer Nitro V 15, Intel Core i5-13420H, RTX 4050 6GB, 16GB DDR5, 512GB NVMe, màn 15.6\" Full HD IPS 144Hz. Laptop gaming tầm trung giá tốt, chiến mượt eSports và game AAA.",
+      "spec": {
+        "type": "laptopSpec",
+        "cpu": "Intel Core i5-13420H",
+        "gpu": "RTX 4050",
+        "ramGb": 16,
+        "storageGb": 512,
+        "displaySizeIn": 15.6,
+        "displayResolution": "1920x1080",
+        "os": "Windows 11"
+      }
+    },
+    {
+      "category": "Laptops",
+      "name": "MacBook Air M3 13 inch (2024)",
+      "brand": "Apple",
+      "imageUrl": "https://res.cloudinary.com/dxbvnueoq/image/upload/f_auto,q_auto,w_600/TechStore/laptop/macbook-air-m3",
+      "price": 27990000,
+      "costPrice": 23500000,
+      "salePrice": 26490000,
+      "stock": 15,
+      "isPublished": true,
+      "description": "MacBook Air M3 13 inch 2024, chip Apple M3 8 nhân CPU / 10 nhân GPU, 16GB RAM, 256GB SSD, màn 13.6\" Liquid Retina. Ultrabook mỏng nhẹ 1.24kg, pin tới 18 giờ, hiệu năng mạnh cho công việc di động.",
+      "spec": {
+        "type": "laptopSpec",
+        "cpu": "Apple M3",
+        "gpu": "Apple M3 10-core GPU",
+        "ramGb": 16,
+        "storageGb": 256,
+        "displaySizeIn": 13.6,
+        "displayResolution": "2560x1664",
+        "os": "macOS Sonoma"
+      }
     }
   ]
 }

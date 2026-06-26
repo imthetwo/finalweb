@@ -32,7 +32,12 @@ export default function ShopBrowser({
   const specialCount = useMemo(() => items.filter((p) => p.salePrice && p.salePrice < p.price).length, [items]);
 
   const toggleBrand = (b: string) =>
-    setBrands((prev) => { const n = new Set(prev); n.has(b) ? n.delete(b) : n.add(b); return n; });
+    setBrands((prev) => {
+      const n = new Set(prev);
+      if (n.has(b)) n.delete(b);
+      else n.add(b);
+      return n;
+    });
 
   const filtered = useMemo(() => {
     let list = [...items];

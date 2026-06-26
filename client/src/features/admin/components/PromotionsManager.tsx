@@ -28,18 +28,19 @@ export function PromotionsManager() {
   const [form, setForm] = useState<PromotionInput>(EMPTY);
   const [saving, setSaving] = useState(false);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      setItems(await fetchAdminPromotions());
-    } catch {
-      setItems([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // `load` just bumps a key; the effect below does the actual fetch so all
+  // setState happens inside async callbacks (avoids the set-state-in-effect lint).
+  const [reloadKey, setReloadKey] = useState(0);
+  const load = useCallback(() => setReloadKey((k) => k + 1), []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    let active = true;
+    fetchAdminPromotions()
+      .then((d) => { if (active) setItems(d); })
+      .catch(() => { if (active) setItems([]); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [reloadKey]);
 
   function openCreate() {
     setEditing(null);

@@ -16,14 +16,15 @@ type CartItem = {
 type Cart = { items: CartItem[]; subTotal: number };
 
 export function CartView() {
-  const [cart, setCart] = useState<Cart | null>(null);
+  // Guests start with an empty cart; logged-in users get it fetched below.
+  const [cart, setCart] = useState<Cart | null>(() =>
+    getToken() ? null : { items: [], subTotal: 0 }
+  );
 
-  function load() {
-    if (!getToken()) { setCart({ items: [], subTotal: 0 }); return; }
+  useEffect(() => {
+    if (!getToken()) return;
     apiFetch<Cart>("/cart").then(setCart).catch(() => setCart(null));
-  }
-
-  useEffect(() => { load(); }, []);
+  }, []);
 
   async function updateQty(itemId: string, quantity: number) {
     try {

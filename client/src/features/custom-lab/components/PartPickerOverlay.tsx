@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { ArrowUpDown, Box, Search, X, Zap } from "lucide-react";
+import { ArrowUpDown, Box, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatVnd } from "@/lib/format";
 import type { ApiPart, SlotCfg, SortKey } from "../types";
@@ -34,7 +34,12 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
   const allBrands = useMemo(() => [...new Set(parts.map((p) => p.brand))].sort(), [parts]);
 
   const toggleBrand = (brand: string) =>
-    setBrands((prev) => { const n = new Set(prev); n.has(brand) ? n.delete(brand) : n.add(brand); return n; });
+    setBrands((prev) => {
+      const n = new Set(prev);
+      if (n.has(brand)) n.delete(brand);
+      else n.add(brand);
+      return n;
+    });
 
   const filtered = useMemo(() => {
     let list = [...parts];

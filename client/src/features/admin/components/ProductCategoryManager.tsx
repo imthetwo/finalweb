@@ -38,19 +38,27 @@ export function ProductCategoryManager() {
       .catch(() => {});
   }, [categoryId]);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      setData(await fetchAdminProducts(search, page, categoryId));
-    } catch {
-      setData(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [search, page, categoryId]);
+  // `load` just bumps a key; the effect below does the actual fetch so all
+  // setState happens inside async callbacks (avoids the set-state-in-effect lint).
+  const [reloadKey, setReloadKey] = useState(0);
+  const load = useCallback(() => setReloadKey((k) => k + 1), []);
 
-  useEffect(() => { setPage(1); }, [categoryId]);
-  useEffect(() => { load(); }, [load]);
+  // Reset to page 1 when the category changes (adjust state during render —
+  // the React-recommended alternative to a setState-in-effect).
+  const [prevCategoryId, setPrevCategoryId] = useState(categoryId);
+  if (categoryId !== prevCategoryId) {
+    setPrevCategoryId(categoryId);
+    setPage(1);
+  }
+
+  useEffect(() => {
+    let active = true;
+    fetchAdminProducts(search, page, categoryId)
+      .then((d) => { if (active) setData(d); })
+      .catch(() => { if (active) setData(null); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [search, page, categoryId, reloadKey]);
 
   async function remove(p: AdminProduct) {
     if (!confirm(`Delete "${p.name}"?`)) return;

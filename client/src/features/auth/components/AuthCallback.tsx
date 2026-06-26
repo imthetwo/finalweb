@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { saveToken } from "@/lib/auth";
 
 export function AuthCallback() {
@@ -16,6 +17,9 @@ export function AuthCallback() {
     const token = params.get("token");
 
     if (!token) {
+      // The OAuth token lives in the URL fragment, only readable after mount,
+      // so this one-shot setState in the effect is intentional.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setError("No token received from Google. Please try again.");
       return;
     }
@@ -32,12 +36,12 @@ export function AuthCallback() {
       <main className="flex min-h-screen items-center justify-center bg-base px-4 text-fg">
         <div className="w-full max-w-sm border border-red-800/40 bg-red-950/20 p-6 text-center">
           <p className="text-sm font-bold text-destructive">{error}</p>
-          <a
+          <Link
             href="/login"
             className="mt-4 inline-block text-sm text-secondary underline hover:text-fg"
           >
             Back to login
-          </a>
+          </Link>
         </div>
       </main>
     );
