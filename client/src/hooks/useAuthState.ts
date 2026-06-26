@@ -10,7 +10,6 @@ export function useAuthState() {
   const user = useAuthStore((s) => s.user);
   const loaded = useAuthStore((s) => s.loaded);
 
-  // Khởi tạo auth từ localStorage lần đầu mount
   useEffect(() => {
     if (!loaded) initAuth();
   }, [loaded]);

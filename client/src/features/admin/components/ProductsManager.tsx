@@ -1,7 +1,7 @@
 "use client";
 // "use client" vì: useState, useCallback, useEffect, event handlers (CRUD, pagination)
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import { Plus, Pencil, Trash2, Search, Upload, Download } from "lucide-react";
 import { toast } from "sonner";
@@ -12,32 +12,21 @@ import {
 } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
 import { useAuthState } from "@/hooks/useAuthState";
+import { useCRUDManager } from "@/features/admin/hooks/useCRUDManager";
 import ProductFormModal from "@/features/admin/ProductFormModal";
 
 export function ProductsManager() {
   const { user } = useAuthState();
   const isAdmin = user?.role === "ADMIN";
-  const [data, setData] = useState<Paginated<AdminProduct> | null>(null);
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<AdminProduct | null>(null);
   const importRef = useRef<HTMLInputElement>(null);
 
-  // `load` just bumps a key; the effect below does the actual fetch so all
-  // setState happens inside async callbacks (avoids the set-state-in-effect lint).
-  const [reloadKey, setReloadKey] = useState(0);
-  const load = useCallback(() => setReloadKey((k) => k + 1), []);
-
-  useEffect(() => {
-    let active = true;
-    fetchAdminProducts(search, page)
-      .then((d) => { if (active) setData(d); })
-      .catch(() => { if (active) setData(null); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
-  }, [search, page, reloadKey]);
+  const { data, search, page, loading, reload, setPage, handleSearch } =
+    useCRUDManager<AdminProduct>(useCallback(
+      (s, p) => fetchAdminProducts(s, p),
+      [],
+    ));
 
   async function onImport(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -46,7 +35,7 @@ export function ProductsManager() {
       const res = await importProductsExcel(file);
       toast.success(`Imported: ${res.created} created, ${res.updated} updated`);
       if (res.errors.length) toast.message(`${res.errors.length} row(s) had errors`);
-      load();
+      reload();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Import failed");
     } finally {
@@ -59,7 +48,7 @@ export function ProductsManager() {
     try {
       await deleteAdminProduct(p.id);
       toast.success("Product deleted");
-      load();
+      reload();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Delete failed");
     }
@@ -98,7 +87,7 @@ export function ProductsManager() {
         <Search size={14} className="text-muted" />
         <input
           value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+          onChange={(e) => { handleSearch(e.target.value); }}
           placeholder="Search by name, SKU, brand…"
           className="flex-1 bg-transparent text-body text-fg outline-none placeholder:text-subtle"
         />

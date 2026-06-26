@@ -1,7 +1,7 @@
 "use client";
 // "use client" vì: useState (filter, page, loading), useCallback, event handlers (changeStatus, exportExcel, pagination)
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { FileSpreadsheet } from "lucide-react";
 import { toast } from "sonner";
 
@@ -9,6 +9,7 @@ import {
   fetchAdminOrders, updateOrderStatus, downloadOrdersExcel,
   type AdminOrder, type Paginated,
 } from "@/lib/api";
+import { useCRUDManager } from "@/features/admin/hooks/useCRUDManager";
 import { formatVnd } from "@/lib/format";
 
 const STATUSES = ["PENDING", "PAYMENT_FAILED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED", "RETURNED"];
@@ -20,31 +21,19 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 export function OrdersManager() {
-  const [data, setData] = useState<Paginated<AdminOrder> | null>(null);
-  const [filter, setFilter] = useState("");
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
 
-  // `load` just bumps a key; the effect below does the actual fetch so all
-  // setState happens inside async callbacks (avoids the set-state-in-effect lint).
-  const [reloadKey, setReloadKey] = useState(0);
-  const load = useCallback(() => setReloadKey((k) => k + 1), []);
-
-  useEffect(() => {
-    let active = true;
-    fetchAdminOrders(filter, page)
-      .then((d) => { if (active) setData(d); })
-      .catch(() => { if (active) setData(null); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
-  }, [filter, page, reloadKey]);
+  const { data, search: filter, page, loading, reload, setPage, handleSearch: setFilter } =
+    useCRUDManager<AdminOrder>(useCallback(
+      (s, p) => fetchAdminOrders(s, p),
+      [],
+    ));
 
   async function changeStatus(id: string, status: string) {
     try {
       await updateOrderStatus(id, status);
       toast.success("Order status updated");
-      load();
+      reload();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Update failed");
     }

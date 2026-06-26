@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useCRUDManager } from "@/features/admin/hooks/useCRUDManager";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
@@ -11,7 +12,6 @@ import {
   deleteAdminProduct,
   fetchCategories,
   type AdminProduct,
-  type Paginated,
   type Category,
 } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
@@ -21,51 +21,29 @@ export function ProductCategoryManager() {
   const params = useParams();
   const categoryId = params.categoryId as string;
 
-  const [data, setData] = useState<Paginated<AdminProduct> | null>(null);
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<AdminProduct | null>(null);
   const [category, setCategory] = useState<Category | null>(null);
 
   useEffect(() => {
     fetchCategories()
-      .then((cats) => {
-        const cat = cats.find((c) => c.id === categoryId);
-        if (cat) setCategory(cat);
-      })
+      .then((cats) => { const cat = cats.find((c) => c.id === categoryId); if (cat) setCategory(cat); })
       .catch(() => {});
   }, [categoryId]);
 
-  // `load` just bumps a key; the effect below does the actual fetch so all
-  // setState happens inside async callbacks (avoids the set-state-in-effect lint).
-  const [reloadKey, setReloadKey] = useState(0);
-  const load = useCallback(() => setReloadKey((k) => k + 1), []);
-
-  // Reset to page 1 when the category changes (adjust state during render —
-  // the React-recommended alternative to a setState-in-effect).
-  const [prevCategoryId, setPrevCategoryId] = useState(categoryId);
-  if (categoryId !== prevCategoryId) {
-    setPrevCategoryId(categoryId);
-    setPage(1);
-  }
-
-  useEffect(() => {
-    let active = true;
-    fetchAdminProducts(search, page, categoryId)
-      .then((d) => { if (active) setData(d); })
-      .catch(() => { if (active) setData(null); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
-  }, [search, page, categoryId, reloadKey]);
+  // fetchFn captures categoryId — useCRUDManager re-runs when categoryId changes
+  const { data, search, page, loading, reload, setPage, handleSearch } =
+    useCRUDManager<AdminProduct>(useCallback(
+      (s, p) => fetchAdminProducts(s, p, categoryId),
+      [categoryId],
+    ));
 
   async function remove(p: AdminProduct) {
     if (!confirm(`Delete "${p.name}"?`)) return;
     try {
       await deleteAdminProduct(p.id);
       toast.success("Deleted");
-      load();
+      reload();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Delete failed");
     }
@@ -89,7 +67,7 @@ export function ProductCategoryManager() {
         <Search size={14} className="text-muted" />
         <input
           value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+          onChange={(e) => { handleSearch(e.target.value); }}
           placeholder="Search…"
           className="flex-1 bg-transparent text-body text-fg outline-none placeholder:text-subtle"
         />
@@ -175,7 +153,7 @@ export function ProductCategoryManager() {
           editing={editing}
           defaultCategoryId={categoryId}
           onClose={() => setModalOpen(false)}
-          onSaved={load}
+          onSaved={reload}
         />
       )}
     </div>
