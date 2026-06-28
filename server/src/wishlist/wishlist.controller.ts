@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/c
 import { WishlistService } from './wishlist.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
+import { AddWishlistDto } from './dto/add-wishlist.dto';
 
 @Controller('wishlist')
 @UseGuards(JwtAuthGuard)
@@ -14,8 +15,8 @@ export class WishlistController {
   }
 
   @Post()
-  add(@CurrentUser('userId') userId: string, @Body() body: { productId: string }) {
-    return this.wishlist.add(userId, body.productId);
+  add(@CurrentUser('userId') userId: string, @Body() dto: AddWishlistDto) {
+    return this.wishlist.add(userId, dto.productId);
   }
 
   @Delete(':productId')

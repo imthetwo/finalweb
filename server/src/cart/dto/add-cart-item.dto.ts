@@ -1,4 +1,4 @@
-import { IsInt, IsOptional, IsUUID, Min } from 'class-validator';
+import { IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
 
 export class AddCartItemDto {
   @IsUUID()
@@ -6,6 +6,7 @@ export class AddCartItemDto {
 
   @IsInt()
   @Min(1)
+  @Max(999)
   @IsOptional()
   quantity?: number;
 }

@@ -10,6 +10,10 @@ const PARTNER_CODE   = process.env.MOMO_PARTNER_CODE || 'MOMO';
 const ACCESS_KEY     = process.env.MOMO_ACCESS_KEY || '';
 const SECRET_KEY     = process.env.MOMO_SECRET_KEY || '';
 
+if (!SECRET_KEY) {
+  console.warn('[PaymentsService] MOMO_SECRET_KEY is not set — MoMo payments will fail. Set it in .env to enable real payments.');
+}
+
 // ── MoMo IPN response body shape ────────────────────────────────────────────
 export interface MomoIpnBody {
   partnerCode: string;
