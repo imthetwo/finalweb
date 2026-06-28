@@ -83,19 +83,19 @@ export default function ReviewsSection({ productId }: { productId: string }) {
               <div key={r.id} className="border border-edge bg-elevated p-5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand/10 text-[11px] font-black text-brand">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand/10 text-xs font-black text-brand">
                       {r.user.fullName.slice(0, 2).toUpperCase()}
                     </span>
                     <div>
-                      <p className="text-[13px] font-semibold text-fg">{r.user.fullName}</p>
-                      {r.isVerifiedBuy && <p className="text-[10px] font-bold uppercase text-success">Verified buyer</p>}
+                      <p className="text-body font-semibold text-fg">{r.user.fullName}</p>
+                      {r.isVerifiedBuy && <p className="text-2xs font-bold uppercase text-success">Verified buyer</p>}
                     </div>
                   </div>
                   <Stars value={r.rating} />
                 </div>
-                {r.title && <p className="mt-3 text-[14px] font-bold text-fg">{r.title}</p>}
-                {r.text && <p className="mt-1 text-[13px] leading-relaxed text-secondary">{r.text}</p>}
-                <p className="mt-2 text-[11px] text-subtle">{new Date(r.createdAt).toLocaleDateString("en-GB")}</p>
+                {r.title && <p className="mt-3 text-base font-bold text-fg">{r.title}</p>}
+                {r.text && <p className="mt-1 text-body leading-relaxed text-secondary">{r.text}</p>}
+                <p className="mt-2 text-xs text-subtle">{new Date(r.createdAt).toLocaleDateString("en-GB")}</p>
               </div>
             ))
           )}
@@ -106,7 +106,7 @@ export default function ReviewsSection({ productId }: { productId: string }) {
           <h3 className="text-sm font-black uppercase tracking-wider text-fg">Write a Review</h3>
 
           <div>
-            <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-muted">Rating</p>
+            <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-muted">Rating</p>
             <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((i) => (
                 <button key={i} type="button" onClick={() => setRating(i)} aria-label={`${i} stars`}>
@@ -121,12 +121,12 @@ export default function ReviewsSection({ productId }: { productId: string }) {
             onChange={(e) => setText(e.target.value)}
             placeholder="Share your experience…"
             rows={4}
-            className="w-full resize-none border border-edge bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-brand/50 placeholder:text-subtle"
+            className="w-full resize-none border border-edge bg-surface px-3 py-2 text-body text-fg outline-none focus:border-brand/50 placeholder:text-subtle"
           />
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-brand py-2.5 text-[12px] font-black uppercase tracking-wider text-brand-fg hover:bg-brand/85 disabled:opacity-50"
+            className="w-full bg-brand py-2.5 text-sm font-black uppercase tracking-wider text-brand-fg hover:bg-brand/85 disabled:opacity-50"
           >
             {submitting ? "Submitting…" : "Submit Review"}
           </button>

@@ -36,7 +36,7 @@ export function StatusBar({ compatibility, estimatedWatts, totalPrice, validatin
         <span className="hidden h-3.5 w-px bg-edge sm:block" />
         <span className="text-sm font-black text-fg">{formatVnd(totalPrice)}</span>
         <button type="button" onClick={onValidate} disabled={validating}
-          className="border border-brand/40 bg-brand/6 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-brand hover:bg-brand/15 disabled:opacity-50">
+          className="border border-brand/40 bg-brand/6 px-3 py-1 text-2xs font-black uppercase tracking-wider text-brand hover:bg-brand/15 disabled:opacity-50">
           {validating ? "Checking…" : "Validate"}
         </button>
       </div>

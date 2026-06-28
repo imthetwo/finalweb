@@ -14,7 +14,7 @@ export function ProductCard({ p }: { p: ProductListItem }) {
     <div className="group flex flex-col bg-elevated">
       <Link href={`/product/${p.id}`} className="relative aspect-square overflow-hidden bg-elevated">
         {hasSale && (
-          <span className="absolute left-3 top-3 z-10 bg-brand px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-brand-fg">
+          <span className="absolute left-3 top-3 z-10 bg-brand px-2 py-0.5 text-2xs font-black uppercase tracking-wider text-brand-fg">
             Sale
           </span>
         )}
@@ -33,7 +33,7 @@ export function ProductCard({ p }: { p: ProductListItem }) {
       </Link>
 
       <div className="flex flex-1 flex-col p-4">
-        <p className="text-[10px] font-bold uppercase tracking-wider text-brand/60">{p.brand}</p>
+        <p className="text-2xs font-bold uppercase tracking-wider text-brand/60">{p.brand}</p>
         <Link
           href={`/product/${p.id}`}
           className="mt-1 line-clamp-2 text-body font-semibold leading-snug text-fg hover:text-brand"

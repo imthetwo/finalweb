@@ -75,7 +75,7 @@ export function ProductCategoryManager() {
 
       <div className="overflow-x-auto border border-edge bg-elevated">
         <table className="w-full text-body">
-          <thead className="border-b border-edge text-[10px] uppercase tracking-wider text-muted">
+          <thead className="border-b border-edge text-2xs uppercase tracking-wider text-muted">
             <tr>
               <th className="px-4 py-3 text-left">Product</th>
               <th className="px-4 py-3 text-right">Price</th>
@@ -119,7 +119,7 @@ export function ProductCategoryManager() {
                     <span className={p.stock <= 5 ? "text-warning" : "text-secondary"}>{p.stock}</span>
                   </td>
                   <td className="px-4 py-2.5 text-center">
-                    <span className={`text-[10px] font-bold uppercase ${p.isPublished ? "text-success" : "text-subtle"}`}>
+                    <span className={`text-2xs font-bold uppercase ${p.isPublished ? "text-success" : "text-subtle"}`}>
                       {p.isPublished ? "Live" : "Draft"}
                     </span>
                   </td>

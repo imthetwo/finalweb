@@ -34,7 +34,7 @@ const SPEC_LABELS: Record<SpecKey, string> = {
 export const inputCls =
   "w-full border border-edge bg-surface px-3 py-2 text-body text-fg outline-none focus:border-brand/50 placeholder:text-subtle";
 export const labelCls =
-  "mb-1 block text-[10px] font-bold uppercase tracking-wider text-muted";
+  "mb-1 block text-2xs font-bold uppercase tracking-wider text-muted";
 const rowCls = "grid grid-cols-2 gap-4";
 
 // Defined at module scope (not inside a component) so its identity is stable
@@ -187,7 +187,7 @@ export function ProductSpecFields({
 
   return (
     <div className="border border-edge p-4">
-      <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-brand/70">{SPEC_LABELS[specKey]}</p>
+      <p className="mb-3 text-2xs font-bold uppercase tracking-wider text-brand/70">{SPEC_LABELS[specKey]}</p>
       {sections[specKey]}
     </div>
   );

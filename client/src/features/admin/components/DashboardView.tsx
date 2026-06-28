@@ -42,7 +42,7 @@ export function DashboardView({ stats }: { stats: AdminStats }) {
           <h2 className="text-sm font-black uppercase tracking-wider text-fg">Recent Orders</h2>
         </div>
         <table className="w-full text-body">
-          <thead className="border-b border-edge text-[10px] uppercase tracking-wider text-muted">
+          <thead className="border-b border-edge text-2xs uppercase tracking-wider text-muted">
             <tr>
               <th className="px-5 py-2.5 text-left">Order</th>
               <th className="px-5 py-2.5 text-left">Customer</th>

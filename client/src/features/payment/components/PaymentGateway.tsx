@@ -135,7 +135,7 @@ export function PaymentGateway() {
 
         {/* Header */}
         <div className="border-b border-edge bg-[linear-gradient(180deg,#2d1b3d_0%,#111_100%)] px-6 py-5 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-pink-400">
+          <p className="text-2xs font-bold uppercase tracking-[0.3em] text-pink-400">
             Payment Gateway
           </p>
           <h1 className="mt-1 text-xl font-black uppercase tracking-wide">{methodLabel}</h1>
@@ -220,7 +220,7 @@ export function PaymentGateway() {
                 <XCircle size={14} /> Cancel payment
               </button>
 
-              <p className="text-center text-[10px] text-subtle">
+              <p className="text-center text-2xs text-subtle">
                 {payment?.source === "simulated"
                   ? "MoMo sandbox unreachable — using simulated flow."
                   : "Demo gateway for non-MoMo payments."}

@@ -129,7 +129,7 @@ export default async function ShopByCategory() {
                     <span className="mr-1 font-bold opacity-50">{"//"}</span>
                     {cat.label}
                     {count > 0 && (
-                      <span className="ml-1.5 text-[9px] font-semibold text-muted">
+                      <span className="ml-1.5 text-3xs font-semibold text-muted">
                         ({count})
                       </span>
                     )}

@@ -96,7 +96,7 @@ export function ProductsManager() {
       {/* Table */}
       <div className="border border-edge bg-elevated">
         <table className="w-full text-body">
-          <thead className="border-b border-edge text-[10px] uppercase tracking-wider text-muted">
+          <thead className="border-b border-edge text-2xs uppercase tracking-wider text-muted">
             <tr>
               <th className="px-4 py-3 text-left">Product</th>
               <th className="px-4 py-3 text-left">Category</th>
@@ -159,9 +159,9 @@ export function ProductsManager() {
                   </td>
                   <td className="px-4 py-2.5 text-center">
                     {p.isPublished ? (
-                      <span className="text-[10px] font-bold uppercase text-success">Live</span>
+                      <span className="text-2xs font-bold uppercase text-success">Live</span>
                     ) : (
-                      <span className="inline-block rounded bg-yellow-900/30 px-2 py-0.5 text-[10px] font-bold uppercase text-warning">
+                      <span className="inline-block rounded bg-yellow-900/30 px-2 py-0.5 text-2xs font-bold uppercase text-warning">
                         Draft · Chờ duyệt
                       </span>
                     )}
@@ -173,7 +173,7 @@ export function ProductsManager() {
                         <button onClick={() => remove(p)} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-destructive hover:border-destructive" aria-label="Delete"><Trash2 size={12} /></button>
                       </div>
                     ) : (
-                      <span className="text-[10px] text-subtle">View only</span>
+                      <span className="text-2xs text-subtle">View only</span>
                     )}
                   </td>
                 </tr>
@@ -193,7 +193,7 @@ export function ProductsManager() {
       )}
 
       {modalOpen && (
-        <ProductFormModal editing={editing} onClose={() => setModalOpen(false)} onSaved={load} />
+        <ProductFormModal editing={editing} onClose={() => setModalOpen(false)} onSaved={reload} />
       )}
     </div>
   );

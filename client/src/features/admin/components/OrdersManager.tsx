@@ -67,7 +67,7 @@ export function OrdersManager() {
 
       <div className="border border-edge bg-elevated">
         <table className="w-full text-body">
-          <thead className="border-b border-edge text-[10px] uppercase tracking-wider text-muted">
+          <thead className="border-b border-edge text-2xs uppercase tracking-wider text-muted">
             <tr>
               <th className="px-4 py-3 text-left">Order</th>
               <th className="px-4 py-3 text-left">Customer</th>

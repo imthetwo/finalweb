@@ -94,12 +94,12 @@ export default function PromoBar() {
                   key={i}
                   className="flex h-full w-full shrink-0 items-center justify-center gap-2 px-2"
                 >
-                  <span className="truncate text-[11px] font-medium uppercase tracking-wide text-fg">
+                  <span className="truncate text-xs font-medium uppercase tracking-wide text-fg">
                     {p.text}
                   </span>
                   <Link
                     href={p.href}
-                    className="shrink-0 text-[11px] font-black text-brand hover:underline"
+                    className="shrink-0 text-xs font-black text-brand hover:underline"
                   >
                     {p.action} →
                   </Link>

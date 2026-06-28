@@ -58,12 +58,12 @@ function ProductCard({ product }: { product: ProductItem }) {
           />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <span className="text-[10px] uppercase tracking-widest text-subtle">No Image</span>
+            <span className="text-2xs uppercase tracking-widest text-subtle">No Image</span>
           </div>
         )}
 
         {hasSale && (
-          <span className="absolute left-3 top-3 z-20 bg-brand px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-black">
+          <span className="absolute left-3 top-3 z-20 bg-brand px-2 py-0.5 text-2xs font-black uppercase tracking-wider text-black">
             -{discountPct}%
           </span>
         )}
@@ -77,7 +77,7 @@ function ProductCard({ product }: { product: ProductItem }) {
 
       {/* Info */}
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand/60">
+        <p className="text-2xs font-bold uppercase tracking-[0.2em] text-brand/60">
           {product.brand}
         </p>
         <h3 className="line-clamp-2 text-body font-semibold leading-snug text-fg transition-colors duration-200 group-hover:text-brand">
@@ -89,7 +89,7 @@ function ProductCard({ product }: { product: ProductItem }) {
           <div className="flex flex-col">
             {hasSale ? (
               <>
-                <span className="text-[10px] text-subtle line-through">
+                <span className="text-2xs text-subtle line-through">
                   {formatVnd(product.price)}
                 </span>
                 <span className="text-base font-black text-brand">

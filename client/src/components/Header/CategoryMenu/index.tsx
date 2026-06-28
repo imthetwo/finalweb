@@ -162,7 +162,7 @@ const NAV: NavSection[] = [
 
 // ─── Trigger class ─────────────────────────────────────────────────────
 const TRIGGER_CLS =
-  "relative bg-transparent px-3 py-2 text-[13px] font-bold uppercase tracking-wide text-secondary transition-colors hover:bg-transparent hover:text-fg focus:bg-transparent data-[state=open]:bg-transparent data-[state=open]:text-fg after:absolute after:bottom-0 after:left-1/2 after:h-[2px] after:w-0 after:-translate-x-1/2 after:bg-brand after:transition-all after:duration-300 hover:after:w-3/4 data-[state=open]:after:w-3/4";
+  "relative bg-transparent px-3 py-2 text-body font-bold uppercase tracking-wide text-secondary transition-colors hover:bg-transparent hover:text-fg focus:bg-transparent data-[state=open]:bg-transparent data-[state=open]:text-fg after:absolute after:bottom-0 after:left-1/2 after:h-[2px] after:w-0 after:-translate-x-1/2 after:bg-brand after:transition-all after:duration-300 hover:after:w-3/4 data-[state=open]:after:w-3/4";
 
 // ─── Link item ─────────────────────────────────────────────────────────
 function MegaLink({ label, href }: { label: string; href: string }) {
@@ -201,7 +201,7 @@ function StandardMegaMenu({ section }: { section: NavSection }) {
             <div className="absolute inset-0 bg-linear-to-r from-transparent via-[#0a0a0a]/20 to-[#0a0a0a]" />
             {/* Bottom info overlay */}
             <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-[#0a0a0a] to-transparent px-6 py-5">
-              <p className="text-[9px] font-black uppercase tracking-[0.35em] text-brand">
+              <p className="text-3xs font-black uppercase tracking-[0.35em] text-brand">
                 Pecify Store
               </p>
               <p className="mt-1 text-base font-black uppercase text-fg">
@@ -209,7 +209,7 @@ function StandardMegaMenu({ section }: { section: NavSection }) {
               </p>
               <Link
                 href={section.href}
-                className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-brand transition-all hover:gap-3"
+                className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-brand transition-all hover:gap-3"
               >
                 View all <ArrowRight size={10} />
               </Link>
@@ -220,7 +220,7 @@ function StandardMegaMenu({ section }: { section: NavSection }) {
           <div className="flex flex-1 items-start gap-12 px-10 py-8">
             {section.columns.map((col) => (
               <div key={col.title} className="flex-1">
-                <p className="mb-4 text-[10px] font-black uppercase tracking-[0.28em] text-brand">
+                <p className="mb-4 text-2xs font-black uppercase tracking-[0.28em] text-brand">
                   {col.title}
                 </p>
                 <div className="flex flex-col gap-0.5">

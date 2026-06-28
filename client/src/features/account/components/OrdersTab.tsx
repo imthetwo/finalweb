@@ -50,7 +50,7 @@ export default function OrdersTab() {
               <p className="text-xs uppercase tracking-wider text-muted">Order</p>
               <p className="font-mono text-sm font-bold text-fg">#{o.id.slice(0, 8).toUpperCase()}</p>
             </div>
-            <span className={`border px-3 py-1 text-[10px] font-black uppercase tracking-wider ${STATUS_STYLE[o.status] ?? STATUS_STYLE.PENDING}`}>
+            <span className={`border px-3 py-1 text-2xs font-black uppercase tracking-wider ${STATUS_STYLE[o.status] ?? STATUS_STYLE.PENDING}`}>
               {STATUS_LABEL[o.status] ?? o.status}
             </span>
           </div>

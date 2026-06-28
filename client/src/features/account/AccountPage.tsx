@@ -51,17 +51,17 @@ export default function AccountPage() {
             </span>
             <div>
               <h1 className="text-xl font-black uppercase tracking-wide text-fg">{profile.fullName}</h1>
-              <p className="text-[13px] text-muted">{profile.email}</p>
+              <p className="text-body text-muted">{profile.email}</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             {profile.role === "ADMIN" && (
-              <Link href="/admin/dashboard" className="inline-flex items-center gap-1.5 border border-brand/40 px-3 py-2 text-[11px] font-black uppercase tracking-wider text-brand transition hover:bg-brand/10">
+              <Link href="/admin/dashboard" className="inline-flex items-center gap-1.5 border border-brand/40 px-3 py-2 text-xs font-black uppercase tracking-wider text-brand transition hover:bg-brand/10">
                 <Shield size={12} /> Admin
               </Link>
             )}
-            <button type="button" onClick={logout} className="inline-flex items-center gap-1.5 border border-edge px-3 py-2 text-[11px] font-black uppercase tracking-wider text-secondary transition hover:border-red-500 hover:text-red-400">
+            <button type="button" onClick={logout} className="inline-flex items-center gap-1.5 border border-edge px-3 py-2 text-xs font-black uppercase tracking-wider text-secondary transition hover:border-destructive hover:text-destructive">
               <LogOut size={12} /> Sign out
             </button>
           </div>
@@ -75,7 +75,7 @@ export default function AccountPage() {
           ].map((s) => (
             <div key={s.label} className="border border-edge bg-elevated p-4 text-center">
               <p className="text-2xl font-black text-fg">{s.value}</p>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted">{s.label}</p>
+              <p className="text-2xs font-bold uppercase tracking-wider text-muted">{s.label}</p>
             </div>
           ))}
         </div>
@@ -83,9 +83,9 @@ export default function AccountPage() {
         {/* Tabs */}
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="mb-6 grid h-auto grid-cols-3 bg-surface p-1">
-            <TabsTrigger value="profile" className="text-[12px] font-bold uppercase tracking-wider data-[state=active]:bg-brand data-[state=active]:text-black">Profile</TabsTrigger>
-            <TabsTrigger value="orders" className="text-[12px] font-bold uppercase tracking-wider data-[state=active]:bg-brand data-[state=active]:text-black">Orders</TabsTrigger>
-            <TabsTrigger value="wishlist" className="text-[12px] font-bold uppercase tracking-wider data-[state=active]:bg-brand data-[state=active]:text-black">Wishlist</TabsTrigger>
+            <TabsTrigger value="profile" className="text-sm font-bold uppercase tracking-wider data-[state=active]:bg-brand data-[state=active]:text-black">Profile</TabsTrigger>
+            <TabsTrigger value="orders" className="text-sm font-bold uppercase tracking-wider data-[state=active]:bg-brand data-[state=active]:text-black">Orders</TabsTrigger>
+            <TabsTrigger value="wishlist" className="text-sm font-bold uppercase tracking-wider data-[state=active]:bg-brand data-[state=active]:text-black">Wishlist</TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile"><ProfileTab profile={profile} onUpdated={setProfile} /></TabsContent>

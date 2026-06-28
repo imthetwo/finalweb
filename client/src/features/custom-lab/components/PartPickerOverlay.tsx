@@ -62,7 +62,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
       {/* Header */}
       <div className="relative shrink-0 border-b border-edge bg-[linear-gradient(180deg,#2d2b48_0%,#22203a_100%)]">
         <button type="button" onClick={onClose}
-          className="absolute left-4 top-1/2 flex -translate-y-1/2 items-center gap-1.5 border border-white/20 bg-base/30 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-secondary hover:border-white/40 hover:text-fg md:left-6">
+          className="absolute left-4 top-1/2 flex -translate-y-1/2 items-center gap-1.5 border border-white/20 bg-base/30 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-secondary hover:border-fg/40 hover:text-fg md:left-6">
           <X size={12} /> Cancel
         </button>
         <div className="flex items-center justify-center py-5">
@@ -88,7 +88,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
                 { label: "Watts", value: `${buildSummary.watts}W` },
               ].map(({ label, value, cyan }) => (
                 <div key={label}>
-                  <p className="text-[9px] font-bold uppercase tracking-wider text-muted">{label}</p>
+                  <p className="text-3xs font-bold uppercase tracking-wider text-muted">{label}</p>
                   <p className={`text-sm font-black ${cyan ? "text-brand" : "text-fg"}`}>{value}</p>
                 </div>
               ))}
@@ -101,7 +101,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
           </label>
 
           <div className="mb-6">
-            <p className="mb-3 text-[10px] font-black uppercase tracking-[0.25em] text-muted">Price</p>
+            <p className="mb-3 text-2xs font-black uppercase tracking-[0.25em] text-muted">Price</p>
             <input type="range" min={priceBounds.min} max={priceBounds.max} step={100000}
               value={effectiveMax} onChange={(e) => setMaxPrice(Number(e.target.value))} className="w-full accent-brand" />
             <div className="mt-2 flex justify-between text-xs text-muted">
@@ -111,7 +111,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
           </div>
 
           <div>
-            <p className="mb-3 text-[10px] font-black uppercase tracking-[0.25em] text-muted">Manufacturer</p>
+            <p className="mb-3 text-2xs font-black uppercase tracking-[0.25em] text-muted">Manufacturer</p>
             <div className="flex flex-col gap-1.5">
               {allBrands.map((brand) => (
                 <label key={brand} className="group flex cursor-pointer items-center gap-2 py-0.5">
@@ -131,7 +131,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
         {/* Content */}
         <div className="flex flex-1 flex-col overflow-hidden">
           <div className="flex shrink-0 flex-col gap-3 border-b border-edge bg-surface px-4 py-3 lg:flex-row lg:items-center lg:justify-between md:px-6">
-            <h3 className="text-[15px] font-black text-fg">
+            <h3 className="text-base font-black text-fg">
               {filtered.length} <span className="font-medium text-muted">Compatible Products</span>
             </h3>
             <div className="flex items-center gap-3">
@@ -167,15 +167,15 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
                   <tr>
                     <th className="w-9 px-2 py-2.5" />
                     <th className="w-14 px-3 py-2.5" />
-                    <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-muted">
+                    <th className="px-3 py-2.5 text-left text-2xs font-bold uppercase tracking-wider text-muted">
                       <button type="button" onClick={() => setSort("name-asc")} className="flex items-center gap-1 hover:text-fg">
                         Name <ArrowUpDown size={9} />
                       </button>
                     </th>
                     {slotCfg.specs.map((s) => (
-                      <th key={s.key} className="hidden px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-muted md:table-cell">{s.label}</th>
+                      <th key={s.key} className="hidden px-3 py-2.5 text-left text-2xs font-bold uppercase tracking-wider text-muted md:table-cell">{s.label}</th>
                     ))}
-                    <th className="px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-wider text-muted">
+                    <th className="px-4 py-2.5 text-right text-2xs font-bold uppercase tracking-wider text-muted">
                       <button type="button" onClick={() => setSort(sort === "price-asc" ? "price-desc" : "price-asc")}
                         className="ml-auto flex items-center gap-1 hover:text-fg">Price <ArrowUpDown size={9} /></button>
                     </th>

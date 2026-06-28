@@ -43,7 +43,7 @@ export default function Footer() {
           {/* Brand column */}
           <div className="lg:col-span-1">
             <p className="text-xl font-black uppercase tracking-tight text-fg">PECIFY</p>
-            <p className="mt-3 text-[12px] leading-relaxed text-muted">
+            <p className="mt-3 text-sm leading-relaxed text-muted">
               Premium PC components & gaming gear. Engineered for those who demand
               the edge.
             </p>
@@ -52,7 +52,7 @@ export default function Footer() {
           {/* Link columns */}
           {Object.entries(LINKS).map(([title, links]) => (
             <div key={title} className="space-y-4">
-              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-brand">
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-brand">
                 {title}
               </p>
               <ul className="space-y-2">
@@ -60,7 +60,7 @@ export default function Footer() {
                   <li key={label}>
                     <Link
                       href={href}
-                      className="text-[12px] text-muted transition-colors hover:text-fg"
+                      className="text-sm text-muted transition-colors hover:text-fg"
                     >
                       {label}
                     </Link>
@@ -75,12 +75,12 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-white/5">
         <div className="mx-auto flex max-w-350 flex-col items-center justify-between gap-3 px-4 py-5 md:flex-row md:px-8">
-          <p className="text-[10px] uppercase tracking-widest text-subtle">
+          <p className="text-2xs uppercase tracking-widest text-subtle">
             © 2025 Pecify. All rights reserved.
           </p>
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
-            <p className="text-[10px] uppercase tracking-[0.2em] text-brand/50">
+            <p className="text-2xs uppercase tracking-[0.2em] text-brand/50">
               All Systems Online
             </p>
           </div>

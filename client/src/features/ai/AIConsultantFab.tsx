@@ -104,7 +104,7 @@ export default function AIConsultantFab() {
               </div>
               <div>
                 <p className="text-body font-black uppercase tracking-wider text-fg">Pecify Assistant</p>
-                <p className="flex items-center gap-1.5 text-[10px] text-muted">
+                <p className="flex items-center gap-1.5 text-2xs text-muted">
                   <span className="h-1.5 w-1.5 rounded-full bg-success" />
                   PC Build Advisor
                 </p>
@@ -155,7 +155,7 @@ export default function AIConsultantFab() {
             {/* Quick prompts (chỉ hiện ở đầu) */}
             {messages.length === 1 && !loading && (
               <div className="space-y-2 pt-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-subtle">Quick prompts</p>
+                <p className="text-2xs font-bold uppercase tracking-wider text-subtle">Quick prompts</p>
                 {QUICK_PROMPTS.map((p) => (
                   <button
                     key={p}

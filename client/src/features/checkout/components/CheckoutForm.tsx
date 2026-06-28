@@ -20,7 +20,7 @@ const FIELDS: { key: "recipient" | "phone" | "street" | "district" | "city"; lab
 
 const inputCls =
   "w-full border border-edge bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors focus:border-brand/50 placeholder:text-subtle";
-const labelCls = "mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-muted";
+const labelCls = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted";
 
 export function CheckoutForm() {
   const router = useRouter();
@@ -99,7 +99,7 @@ export function CheckoutForm() {
         <form onSubmit={submit} className="space-y-6">
           {/* Shipping info */}
           <div className="border border-edge bg-elevated p-6">
-            <h2 className="mb-4 text-[11px] font-black uppercase tracking-wider text-secondary">
+            <h2 className="mb-4 text-xs font-black uppercase tracking-wider text-secondary">
               Shipping information
             </h2>
             <div className="space-y-4">
@@ -120,7 +120,7 @@ export function CheckoutForm() {
 
           {/* Payment method */}
           <div className="border border-edge bg-elevated p-6">
-            <h2 className="mb-4 text-[11px] font-black uppercase tracking-wider text-secondary">
+            <h2 className="mb-4 text-xs font-black uppercase tracking-wider text-secondary">
               Payment method
             </h2>
             <div className="grid grid-cols-2 gap-3">
@@ -130,7 +130,7 @@ export function CheckoutForm() {
                   className={`flex cursor-pointer items-center gap-3 border px-4 py-3 transition ${
                     paymentMethod === m
                       ? "border-brand bg-brand/5 text-fg"
-                      : "border-edge text-secondary hover:border-zinc-500"
+                      : "border-edge text-secondary hover:border-secondary"
                   }`}
                 >
                   <input
@@ -141,7 +141,7 @@ export function CheckoutForm() {
                     onChange={() => setPaymentMethod(m)}
                     className="accent-brand"
                   />
-                  <span className="text-[13px] font-bold">{m === "COD" ? "Cash on Delivery" : "MoMo"}</span>
+                  <span className="text-body font-bold">{m === "COD" ? "Cash on Delivery" : "MoMo"}</span>
                 </label>
               ))}
             </div>
@@ -149,7 +149,7 @@ export function CheckoutForm() {
 
           {/* Coupon */}
           <div className="border border-edge bg-elevated p-6">
-            <h2 className="mb-4 text-[11px] font-black uppercase tracking-wider text-secondary">
+            <h2 className="mb-4 text-xs font-black uppercase tracking-wider text-secondary">
               Coupon code
             </h2>
 
@@ -157,8 +157,8 @@ export function CheckoutForm() {
               <div className="flex items-center justify-between rounded border border-emerald-700/50 bg-emerald-950/20 px-4 py-2.5">
                 <div className="flex items-center gap-2 text-success">
                   <Tag size={14} />
-                  <span className="text-[13px] font-bold">{couponCode}</span>
-                  <span className="text-[12px] text-success/80">— {formatVnd(discount)} off</span>
+                  <span className="text-body font-bold">{couponCode}</span>
+                  <span className="text-sm text-success/80">— {formatVnd(discount)} off</span>
                 </div>
                 <button
                   type="button"
@@ -183,7 +183,7 @@ export function CheckoutForm() {
                   type="button"
                   onClick={applyCoupon}
                   disabled={couponLoading || !couponInput.trim()}
-                  className="border border-edge px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider text-secondary transition hover:border-white hover:text-fg disabled:opacity-40"
+                  className="border border-edge px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-secondary transition hover:border-fg hover:text-fg disabled:opacity-40"
                 >
                   {couponLoading ? "…" : "Apply"}
                 </button>
@@ -195,7 +195,7 @@ export function CheckoutForm() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-brand py-3.5 text-[13px] font-black uppercase tracking-wider text-black transition hover:bg-brand/85 disabled:opacity-50"
+            className="w-full bg-brand py-3.5 text-body font-black uppercase tracking-wider text-black transition hover:bg-brand/85 disabled:opacity-50"
           >
             {submitting ? "Processing…" : "Place order"}
           </button>

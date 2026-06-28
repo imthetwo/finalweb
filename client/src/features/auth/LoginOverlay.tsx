@@ -96,7 +96,7 @@ export function LoginOverlay({ triggerButton, open: controlledOpen, onOpenChange
 
           <div className="relative my-2 flex items-center gap-3">
             <div className="h-px flex-1 bg-zinc-200" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">or</span>
+            <span className="text-2xs font-bold uppercase tracking-widest text-secondary">or</span>
             <div className="h-px flex-1 bg-zinc-200" />
           </div>
 

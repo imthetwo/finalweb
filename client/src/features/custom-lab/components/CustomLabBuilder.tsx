@@ -33,12 +33,12 @@ export default function CustomLabBuilder() {
         {/* Header */}
         <header className="flex shrink-0 items-center justify-between border-b border-edge bg-surface px-4 py-3 md:px-6">
           <div className="flex items-center gap-3">
-            <Link href="/" className="border border-edge px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted hover:border-brand/50 hover:text-brand">
+            <Link href="/" className="border border-edge px-3 py-1.5 text-2xs font-black uppercase tracking-widest text-muted hover:border-brand/50 hover:text-brand">
               ← Exit Lab
             </Link>
             <div className="h-4 w-px bg-edge" />
             <div>
-              <p className="text-[9px] uppercase tracking-[0.3em] text-brand">Pecify</p>
+              <p className="text-3xs uppercase tracking-[0.3em] text-brand">Pecify</p>
               <h1 className="text-body font-black uppercase tracking-wider text-fg">PC Builder</h1>
             </div>
           </div>
@@ -93,7 +93,7 @@ export default function CustomLabBuilder() {
                                   : <div className="flex h-full items-center justify-center"><cfg.Icon size={18} className="text-subtle" /></div>}
                               </div>
                               <div className="min-w-0">
-                                <p className="truncate text-[15px] font-semibold text-fg">{part.name}</p>
+                                <p className="truncate text-base font-semibold text-fg">{part.name}</p>
                                 <p className="text-xs text-muted">{part.brand}</p>
                               </div>
                             </div>
@@ -107,8 +107,8 @@ export default function CustomLabBuilder() {
                         </TableCell>
                         <TableCell className="py-5 text-right">
                           {part
-                            ? <span className="text-[16px] font-black text-fg">{formatVnd(part.displayPrice)}</span>
-                            : <span className="text-[14px] text-subtle">—</span>}
+                            ? <span className="text-md font-black text-fg">{formatVnd(part.displayPrice)}</span>
+                            : <span className="text-base text-subtle">—</span>}
                         </TableCell>
                         <TableCell className="py-5 pr-6">
                           {part && (
@@ -126,7 +126,7 @@ export default function CustomLabBuilder() {
                   <TableRow className="border-t border-edge bg-elevated hover:bg-elevated">
                     <TableCell colSpan={3} className="py-5 pl-6">
                       <div className="flex items-center gap-3">
-                        <span className="text-[14px] font-black uppercase tracking-wider text-fg">Total ({selectedCount} parts)</span>
+                        <span className="text-base font-black uppercase tracking-wider text-fg">Total ({selectedCount} parts)</span>
                         {estimatedWatts > 0 && (
                           <Badge variant="outline" className="border-edge text-xs text-muted">
                             <Zap size={11} className="mr-1" />~{estimatedWatts}W
@@ -135,7 +135,7 @@ export default function CustomLabBuilder() {
                       </div>
                     </TableCell>
                     <TableCell className="py-5 text-right">
-                      <span className="text-[20px] font-black text-brand">{totalPrice > 0 ? formatVnd(totalPrice) : "—"}</span>
+                      <span className="text-xl font-black text-brand">{totalPrice > 0 ? formatVnd(totalPrice) : "—"}</span>
                     </TableCell>
                     <TableCell />
                   </TableRow>
@@ -164,7 +164,7 @@ export default function CustomLabBuilder() {
             {/* Actions */}
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
               <Button variant="outline" onClick={saveBuild} disabled={saving || selectedCount === 0}
-                className="h-12 gap-2 border-edge bg-transparent px-6 text-body font-bold uppercase tracking-wider text-secondary hover:border-zinc-500 hover:text-fg">
+                className="h-12 gap-2 border-edge bg-transparent px-6 text-body font-bold uppercase tracking-wider text-secondary hover:border-secondary hover:text-fg">
                 <Save size={15} />{saving ? "Saving…" : "Save Build"}
               </Button>
               <Button onClick={addAllToCart} disabled={addingCart || selectedCount === 0}

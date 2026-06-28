@@ -123,7 +123,7 @@ export function PromotionsManager() {
 
       <div className="border border-edge bg-elevated">
         <table className="w-full text-body">
-          <thead className="border-b border-edge text-[10px] uppercase tracking-wider text-muted">
+          <thead className="border-b border-edge text-2xs uppercase tracking-wider text-muted">
             <tr>
               <th className="px-4 py-3 text-left">Title</th>
               <th className="px-4 py-3 text-left">Action</th>
@@ -148,7 +148,7 @@ export function PromotionsManager() {
                   <td className="px-4 py-2.5 text-center">
                     <button
                       onClick={() => toggleActive(p)}
-                      className={`text-[10px] font-bold uppercase ${p.isActive ? "text-success" : "text-subtle"}`}
+                      className={`text-2xs font-bold uppercase ${p.isActive ? "text-success" : "text-subtle"}`}
                     >
                       {p.isActive ? "Active" : "Inactive"}
                     </button>

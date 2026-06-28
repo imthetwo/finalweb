@@ -10,7 +10,7 @@ export function CartIcon({ count }: { count: number }) {
     >
       <ShoppingCart size={22} />
       {count > 0 && (
-        <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-brand text-[10px] font-black text-black">
+        <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-brand text-2xs font-black text-black">
           {count > 9 ? "9+" : count}
         </span>
       )}

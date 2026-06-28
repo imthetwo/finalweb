@@ -74,7 +74,7 @@ export default function NewsletterSection() {
           </button>
         </form>
 
-        <p className="mt-4 text-[10px] uppercase tracking-[0.15em] text-subtle">
+        <p className="mt-4 text-2xs uppercase tracking-[0.15em] text-subtle">
           By subscribing you agree to our Privacy Policy.
         </p>
       </div>

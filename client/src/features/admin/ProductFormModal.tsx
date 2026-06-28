@@ -199,7 +199,7 @@ export default function ProductFormModal({
                 ) : editing?.thumbnailUrl ? (
                   <Image src={editing.thumbnailUrl} alt="current" width={80} height={80} className="h-full w-full object-contain p-1" />
                 ) : (
-                  <span className="text-[9px] text-subtle">No image</span>
+                  <span className="text-3xs text-subtle">No image</span>
                 )}
               </div>
               <input ref={fileRef} type="file" accept="image/*" onChange={onUpload} className="hidden" />

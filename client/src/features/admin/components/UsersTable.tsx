@@ -28,7 +28,7 @@ export function UsersTable() {
 
       <div className="border border-edge bg-elevated">
         <table className="w-full text-body">
-          <thead className="border-b border-edge text-[10px] uppercase tracking-wider text-muted">
+          <thead className="border-b border-edge text-2xs uppercase tracking-wider text-muted">
             <tr>
               <th className="px-4 py-3 text-left">Name</th>
               <th className="px-4 py-3 text-left">Email</th>
@@ -48,7 +48,7 @@ export function UsersTable() {
                   <td className="px-4 py-3 font-semibold text-fg">{u.fullName}</td>
                   <td className="px-4 py-3 text-secondary">{u.email}</td>
                   <td className="px-4 py-3 text-center">
-                    <span className={`text-[10px] font-bold uppercase ${u.role === "ADMIN" ? "text-brand" : "text-muted"}`}>{u.role}</span>
+                    <span className={`text-2xs font-bold uppercase ${u.role === "ADMIN" ? "text-brand" : "text-muted"}`}>{u.role}</span>
                   </td>
                   <td className="px-4 py-3 text-center text-secondary">{u._count.orders}</td>
                   <td className="px-4 py-3 text-muted">{new Date(u.createdAt).toLocaleDateString("en-GB")}</td>

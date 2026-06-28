@@ -83,7 +83,7 @@ export function CartView() {
           <>
             {[...buildMap.entries()].map(([buildId, items]) => (
               <div key={buildId} className="mb-6 border border-brand/30 bg-brand/5 p-4">
-                <p className="mb-3 text-[11px] font-black uppercase tracking-wider text-brand">
+                <p className="mb-3 text-xs font-black uppercase tracking-wider text-brand">
                   Custom PC Build — {formatVnd(items.reduce((s, i) => s + i.lineTotal, 0))}
                 </p>
                 <ul className="space-y-3">{items.map((i) => <Item key={i.id} item={i} />)}</ul>
