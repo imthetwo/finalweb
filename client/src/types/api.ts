@@ -21,7 +21,7 @@ export type ProductListItem = {
 };
 
 // ProductDetail — đầy đủ hơn ProductListItem, dùng cho trang /product/[id]
-export type ProductDetail = ProductListItem & {
+export type ProductDetail = ProductListItem & ProductSpecs & {
   description: string | null;
 };
 

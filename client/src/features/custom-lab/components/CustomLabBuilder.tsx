@@ -82,7 +82,7 @@ export default function CustomLabBuilder() {
                           </div>
                         </TableCell>
                         <TableCell className="py-5">
-                          <p className="text-body font-bold uppercase tracking-wider text-secondary">{cfg.shortLabel}</p>
+                          <p className="text-body font-bold uppercase tracking-wider text-fg">{cfg.shortLabel}</p>
                         </TableCell>
                         <TableCell className="py-5">
                           {part ? (
@@ -149,13 +149,13 @@ export default function CustomLabBuilder() {
                 {compat.errors.map((e, i) => (
                   <div key={i} className="flex gap-2.5 border border-red-800/40 bg-red-950/20 px-4 py-2.5">
                     <AlertCircle size={13} className="mt-0.5 shrink-0 text-destructive" />
-                    <p className="text-body text-red-300">{e}</p>
+                    <p className="text-body text-destructive">{e}</p>
                   </div>
                 ))}
                 {compat.warnings.map((w, i) => (
                   <div key={i} className="flex gap-2.5 border border-yellow-800/40 bg-yellow-950/20 px-4 py-2.5">
                     <AlertTriangle size={13} className="mt-0.5 shrink-0 text-warning" />
-                    <p className="text-body text-yellow-300">{w}</p>
+                    <p className="text-body text-warning">{w}</p>
                   </div>
                 ))}
               </div>

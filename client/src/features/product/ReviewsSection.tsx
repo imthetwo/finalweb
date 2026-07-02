@@ -43,7 +43,14 @@ export default function ReviewsSection({ productId }: { productId: string }) {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!getToken()) {
-      toast.error("Please sign in to write a review");
+      toast("Sign in to write a review", {
+        description: "You need an account to share your experience.",
+        action: {
+          label: "Sign In",
+          onClick: () => { window.location.href = "/login"; },
+        },
+        duration: 4000,
+      });
       return;
     }
     setSubmitting(true);

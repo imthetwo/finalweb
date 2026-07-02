@@ -314,3 +314,14 @@ model SiteSetting {
   value     String   @db.Text
   updatedAt DateTime @updatedAt
 }
+
+// ─── NEWSLETTER ───────────────────────────────────────────────────────────────
+
+model NewsletterSubscriber {
+  id               String   @id @default(uuid())
+  email            String   @unique
+  unsubscribeToken String   @unique @default(uuid())
+  source           String?
+  isActive         Boolean  @default(true)
+  subscribedAt     DateTime @default(now())
+}

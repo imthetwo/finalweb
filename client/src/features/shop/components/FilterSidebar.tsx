@@ -34,27 +34,13 @@ function CollapsibleFilter({
 }
 
 type Props = {
-  inStockOnly: boolean;
-  specialOnly: boolean;
-  brands: Set<string>;
   maxPrice: number | null;
-  allBrands: string[];
   priceMax: number;
-  inStockCount: number;
-  specialCount: number;
-  onInStockChange: (v: boolean) => void;
-  onSpecialChange: (v: boolean) => void;
-  onBrandToggle: (b: string) => void;
   onMaxPriceChange: (v: number | null) => void;
 };
 
-export function FilterSidebar({
-  inStockOnly, specialOnly, brands, maxPrice,
-  allBrands, priceMax, inStockCount, specialCount,
-  onInStockChange, onSpecialChange, onBrandToggle, onMaxPriceChange,
-}: Props) {
+export function FilterSidebar({ maxPrice, priceMax, onMaxPriceChange }: Props) {
   const pathname = usePathname();
-  const checkbox = "h-3.5 w-3.5 accent-brand";
 
   return (
     <aside className="w-full shrink-0 lg:w-64">
@@ -80,32 +66,6 @@ export function FilterSidebar({
           })}
         </nav>
       </div>
-
-      {/* Availability */}
-      <CollapsibleFilter title="Features & Availability" defaultOpen>
-        <label className="mb-2 flex cursor-pointer items-center gap-2 text-body text-secondary">
-          <input type="checkbox" className={checkbox} checked={inStockOnly} onChange={(e) => onInStockChange(e.target.checked)} />
-          Show In Stock Only <span className="text-subtle">({inStockCount})</span>
-        </label>
-        <label className="flex cursor-pointer items-center gap-2 text-body text-secondary">
-          <input type="checkbox" className={checkbox} checked={specialOnly} onChange={(e) => onSpecialChange(e.target.checked)} />
-          Special Price <span className="text-subtle">({specialCount})</span>
-        </label>
-      </CollapsibleFilter>
-
-      {/* Brand */}
-      {allBrands.length > 1 && (
-        <CollapsibleFilter title="Brand" defaultOpen>
-          <div className="flex flex-col gap-2">
-            {allBrands.map((b) => (
-              <label key={b} className="flex cursor-pointer items-center gap-2 text-body text-secondary">
-                <input type="checkbox" className={checkbox} checked={brands.has(b)} onChange={() => onBrandToggle(b)} />
-                {b}
-              </label>
-            ))}
-          </div>
-        </CollapsibleFilter>
-      )}
 
       {/* Price */}
       {priceMax > 0 && (

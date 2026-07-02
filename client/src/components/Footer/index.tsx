@@ -43,7 +43,7 @@ export default function Footer() {
           {/* Brand column */}
           <div className="lg:col-span-1">
             <p className="text-xl font-black uppercase tracking-tight text-fg">PECIFY</p>
-            <p className="mt-3 text-sm leading-relaxed text-muted">
+            <p className="mt-3 text-body leading-relaxed text-secondary">
               Premium PC components & gaming gear. Engineered for those who demand
               the edge.
             </p>
@@ -60,7 +60,7 @@ export default function Footer() {
                   <li key={label}>
                     <Link
                       href={href}
-                      className="text-sm text-muted transition-colors hover:text-fg"
+                      className="text-body text-fg transition-colors hover:text-brand"
                     >
                       {label}
                     </Link>

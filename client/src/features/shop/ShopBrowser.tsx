@@ -20,47 +20,25 @@ export default function ShopBrowser({
   page?: number;
   totalPages?: number;
 }) {
-  const [inStockOnly, setInStockOnly] = useState(false);
-  const [specialOnly, setSpecialOnly] = useState(false);
-  const [brands, setBrands] = useState<Set<string>>(new Set());
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [sort, setSort] = useState<SortKey>("featured");
 
-  const allBrands = useMemo(() => [...new Set(items.map((p) => p.brand))].sort(), [items]);
-  const priceMax  = useMemo(() => Math.max(0, ...items.map((p) => p.displayPrice)), [items]);
-  const inStockCount = useMemo(() => items.filter((p) => p.stock > 0).length, [items]);
-  const specialCount = useMemo(() => items.filter((p) => p.salePrice && p.salePrice < p.price).length, [items]);
-
-  const toggleBrand = (b: string) =>
-    setBrands((prev) => {
-      const n = new Set(prev);
-      if (n.has(b)) n.delete(b);
-      else n.add(b);
-      return n;
-    });
+  const priceMax = useMemo(() => Math.max(0, ...items.map((p) => p.displayPrice)), [items]);
 
   const filtered = useMemo(() => {
     let list = [...items];
-    if (inStockOnly) list = list.filter((p) => p.stock > 0);
-    if (specialOnly) list = list.filter((p) => p.salePrice && p.salePrice < p.price);
-    if (brands.size) list = list.filter((p) => brands.has(p.brand));
     if (maxPrice !== null) list = list.filter((p) => p.displayPrice <= maxPrice);
     if (sort === "price-asc") list.sort((a, b) => a.displayPrice - b.displayPrice);
     if (sort === "price-desc") list.sort((a, b) => b.displayPrice - a.displayPrice);
     if (sort === "name") list.sort((a, b) => a.name.localeCompare(b.name));
     return list;
-  }, [items, inStockOnly, specialOnly, brands, maxPrice, sort]);
+  }, [items, maxPrice, sort]);
 
-  const clearFilters = () => {
-    setInStockOnly(false);
-    setSpecialOnly(false);
-    setBrands(new Set());
-    setMaxPrice(null);
-  };
+  const clearFilters = () => setMaxPrice(null);
 
   return (
     <main className="min-h-screen bg-base text-fg">
-      <div className="mx-auto max-w-[1400px] px-4 py-8 md:px-8">
+      <div className="mx-auto max-w-350 px-4 py-8 md:px-8">
         {/* Header */}
         <p className="text-xs uppercase tracking-wider text-muted">Home / Shop / {title}</p>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-4 border-b border-edge pb-5">
@@ -82,17 +60,8 @@ export default function ShopBrowser({
 
         <div className="mt-6 flex flex-col gap-8 lg:flex-row">
           <FilterSidebar
-            inStockOnly={inStockOnly}
-            specialOnly={specialOnly}
-            brands={brands}
             maxPrice={maxPrice}
-            allBrands={allBrands}
             priceMax={priceMax}
-            inStockCount={inStockCount}
-            specialCount={specialCount}
-            onInStockChange={setInStockOnly}
-            onSpecialChange={setSpecialOnly}
-            onBrandToggle={toggleBrand}
             onMaxPriceChange={setMaxPrice}
           />
 

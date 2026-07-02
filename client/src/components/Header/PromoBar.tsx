@@ -62,7 +62,7 @@ export default function PromoBar() {
   }, [next]);
 
   return (
-    <div className="h-9 w-full select-none border-b border-edge bg-elevated">
+    <div className="h-9 w-full select-none bg-elevated">
       <div
         className="mx-auto flex h-full w-full items-center justify-center px-4 md:px-6"
         style={{ maxWidth: "1920px" }}

@@ -10,14 +10,19 @@ import type { ApiPart } from "../types";
 import { BUILD_SLOTS } from "../constants";
 
 const SLOT_TO_CATEGORY: Record<string, string> = {
-  CPU:          "Processors (CPU)",
-  CPU_COOLER:   "CPU Coolers",
   MOTHERBOARD:  "Motherboards",
+  CPU:          "Processors (CPU)",
   MEMORY:       "RAM",
-  STORAGE:      "Storage (SSD/HDD)",
+  SSD_STORAGE:  "Storage (SSD/HDD)",
+  HDD_STORAGE:  "Storage (SSD/HDD)",
+  POWER_SUPPLY: "Power Supplies",
   GPU:          "Graphics Cards (GPU)",
   CASE:         "PC Cases",
-  POWER_SUPPLY: "Power Supplies",
+  MONITOR:      "Gaming Monitors",
+  CPU_COOLER:   "CPU Coolers",
+  KEYBOARD:     "Mechanical Keyboards",
+  MOUSE:        "Gaming Mice",
+  HEADSET:      "Gaming Headsets",
   CASE_FAN:     "Case Fans",
 };
 

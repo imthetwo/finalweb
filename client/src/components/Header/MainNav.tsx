@@ -20,11 +20,11 @@ import { LoginOverlay } from "@/features/auth/LoginOverlay";
 import { Search } from "lucide-react";
 
 const MOBILE_LINKS = [
-  { label: "Laptops",          href: "/laptops" },
-  { label: "Prebuilt PCs",     href: "/pcs" },
-  { label: "Components",       href: "/components/processors" },
-  { label: "Gaming Gear",      href: "/gaming-gear/input-devices/mechanical-keyboards" },
-  { label: "Gaming Furniture", href: "/gaming-furniture/seating/ergonomic-chairs" },
+  { label: "Laptops",          href: "/shop/laptops/laptops" },
+  { label: "Prebuilt PCs",     href: "/shop/pcs" },
+  { label: "Components",       href: "/shop/components/processors" },
+  { label: "Gaming Gear",      href: "/shop/gaming-gear/mechanical-keyboards" },
+  { label: "Gaming Furniture", href: "/shop/gaming-furniture" },
   { label: "PC Builder",       href: "/custom-lab" },
 ];
 
@@ -34,7 +34,7 @@ export default function MainNav() {
   const { user, loaded } = useAuthState();
 
   return (
-    <nav className="w-full select-none border-b border-edge bg-base">
+    <nav className="w-full select-none bg-base">
 
       {/* ── MOBILE (< lg) ─────────────────────────────────────────────────── */}
       <div className="relative flex h-20 items-center justify-between px-4 lg:hidden">

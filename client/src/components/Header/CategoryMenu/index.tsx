@@ -29,23 +29,23 @@ const NAV: NavSection[] = [
   {
     key: "PCS_LAPTOPS",
     label: "PCs & Laptops",
-    href: "/pcs",
+    href: "/shop/pcs",
     image: cdn("PCs", "h7-flow-rgb-hero-white.png"),
     columns: [
       {
         title: "PREBUILT PCS",
         links: [
-          { label: "PC Gaming Esport", href: "/pcs" },
-          { label: "PC Workstation", href: "/pcs" },
-          { label: "PC Mini (SFF)", href: "/pcs" },
+          { label: "PC Gaming Esport", href: "/shop/pcs" },
+          { label: "PC Workstation", href: "/shop/pcs" },
+          { label: "PC Mini (SFF)", href: "/shop/pcs" },
         ],
       },
       {
         title: "LAPTOP",
         links: [
-          { label: "Gaming Laptops", href: "/laptops" },
-          { label: "Office Laptops", href: "/laptops" },
-          { label: "Laptop Accessories", href: "/laptops/accessories" },
+          { label: "Gaming Laptops", href: "/shop/laptops/laptops" },
+          { label: "Office Laptops", href: "/shop/laptops/laptops" },
+          { label: "Laptop Accessories", href: "/shop/laptops/accessories" },
         ],
       },
     ],
@@ -53,33 +53,33 @@ const NAV: NavSection[] = [
   {
     key: "COMPONENTS",
     label: "PC Components",
-    href: "/components/processors",
+    href: "/shop/components/processors",
     image: cdn("gpu", "nvidia_rtx-4090-fe.png"),
     columns: [
       {
         title: "CORE PERFORMANCE",
         links: [
-          { label: "CPU (Processors)", href: "/components/processors" },
-          { label: "VGA (Graphics Cards)", href: "/components/graphics-cards" },
-          { label: "Mainboard", href: "/components/motherboards" },
-          { label: "RAM", href: "/components/memory-storage/ram" },
+          { label: "CPU (Processors)", href: "/shop/components/processors" },
+          { label: "VGA (Graphics Cards)", href: "/shop/components/gpu" },
+          { label: "Mainboard", href: "/shop/components/motherboards" },
+          { label: "RAM", href: "/shop/components/ram" },
         ],
       },
       {
         title: "STORAGE & POWER",
         links: [
-          { label: "NVMe SSD", href: "/components/memory-storage/nvme-ssds" },
-          { label: "HDD Storage", href: "/components/memory-storage/hdd" },
-          { label: "PSU Power Supply", href: "/components/power-cooling/psu" },
-          { label: "PC Cases", href: "/components/chassis-modding/pc-cases" },
+          { label: "NVMe SSD", href: "/shop/components/storage" },
+          { label: "HDD Storage", href: "/shop/components/storage" },
+          { label: "PSU Power Supply", href: "/shop/components/power-supplies" },
+          { label: "PC Cases", href: "/shop/components/pc-cases" },
         ],
       },
       {
         title: "COOLING",
         links: [
-          { label: "AIO Liquid Coolers", href: "/components/power-cooling/aio-liquid-coolers" },
-          { label: "CPU Air Coolers", href: "/components/power-cooling/air-coolers" },
-          { label: "Case Fans", href: "/components/power-cooling/case-fans" },
+          { label: "AIO Liquid Coolers", href: "/shop/components/cpu-coolers" },
+          { label: "CPU Air Coolers", href: "/shop/components/cpu-coolers" },
+          { label: "Case Fans", href: "/shop/components/case-fans" },
         ],
       },
     ],
@@ -87,23 +87,23 @@ const NAV: NavSection[] = [
   {
     key: "GEAR",
     label: "Gear & Peripherals",
-    href: "/gaming-gear/input-devices/mechanical-keyboards",
+    href: "/shop/gaming-gear/mechanical-keyboards",
     image: cdn("keyboard", "MAKR75_Hero_Shot_Front.png"),
     columns: [
       {
         title: "INPUT DEVICES",
         links: [
-          { label: "Mechanical Keyboards", href: "/gaming-gear/input-devices/mechanical-keyboards" },
-          { label: "Gaming Mice", href: "/gaming-gear/input-devices/wireless-mice" },
-          { label: "Mousepads", href: "/gaming-gear/surfaces-atmosphere/premium-mousepads" },
+          { label: "Mechanical Keyboards", href: "/shop/gaming-gear/mechanical-keyboards" },
+          { label: "Gaming Mice", href: "/shop/gaming-gear/gaming-mice" },
+          { label: "Mousepads", href: "/shop/gaming-gear/gaming-mice" },
         ],
       },
       {
         title: "AUDIO & DISPLAY",
         links: [
-          { label: "Gaming Headsets", href: "/gaming-gear/audio/gaming-headsets" },
-          { label: "Gaming Speakers", href: "/gaming-gear/audio/in-ear-monitors" },
-          { label: "Gaming Monitors", href: "/gaming-gear/audio/gaming-headsets" },
+          { label: "Gaming Headsets", href: "/shop/gaming-gear/gaming-headsets" },
+          { label: "Gaming Speakers", href: "/shop/gaming-gear/gaming-headsets" },
+          { label: "Gaming Monitors", href: "/shop/gaming-gear/gaming-monitors" },
         ],
       },
     ],
@@ -111,23 +111,23 @@ const NAV: NavSection[] = [
   {
     key: "BUNDLES",
     label: "Bundles",
-    href: "/components/chassis-modding/pc-cases",
+    href: "/shop/components/pc-cases",
     image: cdn("case", "Etail_H3Flow_WH_Carousel_Hero_EN.png"),
     columns: [
       {
         title: "BY THEME",
         links: [
-          { label: "White Theme Setup", href: "/components/chassis-modding/pc-cases" },
-          { label: "Minimalist Setup", href: "/components/chassis-modding/pc-cases" },
-          { label: "RGB Gaming Setup", href: "/components/memory-storage/ram" },
+          { label: "White Theme Setup", href: "/shop/components/pc-cases" },
+          { label: "Minimalist Setup", href: "/shop/components/pc-cases" },
+          { label: "RGB Gaming Setup", href: "/shop/components/ram" },
         ],
       },
       {
         title: "BRAND ECOSYSTEMS",
         links: [
-          { label: "Corsair iCUE", href: "/components/memory-storage/ram" },
-          { label: "ROG Aura Sync", href: "/components/motherboards" },
-          { label: "Logitech G Series", href: "/gaming-gear/input-devices/mechanical-keyboards" },
+          { label: "Corsair iCUE", href: "/shop/components/ram" },
+          { label: "ROG Aura Sync", href: "/shop/components/motherboards" },
+          { label: "Logitech G Series", href: "/shop/gaming-gear/mechanical-keyboards" },
         ],
       },
     ],
@@ -135,24 +135,24 @@ const NAV: NavSection[] = [
   {
     key: "FURNITURE",
     label: "Furniture",
-    href: "/gaming-furniture/seating/ergonomic-chairs",
+    href: "/shop/gaming-furniture",
     // Cloudinary: TechStore/funiture/ (folder typo intentional — matches upload)
     image: cdn("funiture", "ChairPro.webp"),
     columns: [
       {
         title: "GAMING CHAIRS",
         links: [
-          { label: "Ergonomic Chairs", href: "/gaming-furniture/seating/ergonomic-chairs" },
-          { label: "Racing Style Chairs", href: "/gaming-furniture/seating/racing-style-chairs" },
-          { label: "Pro Gaming Chairs", href: "/gaming-furniture/seating/ergonomic-chairs" },
+          { label: "Ergonomic Chairs", href: "/shop/gaming-furniture" },
+          { label: "Racing Style Chairs", href: "/shop/gaming-furniture" },
+          { label: "Pro Gaming Chairs", href: "/shop/gaming-furniture" },
         ],
       },
       {
         title: "DESKS & ACCESSORIES",
         links: [
-          { label: "Standing Desks", href: "/gaming-furniture/desks/motorized-standing-desks" },
-          { label: "Fixed Gaming Desks", href: "/gaming-furniture/desks/fixed-gaming-desks" },
-          { label: "Monitor Arms", href: "/gaming-furniture/mounts-arms/monitor-arms" },
+          { label: "Standing Desks", href: "/shop/gaming-furniture" },
+          { label: "Fixed Gaming Desks", href: "/shop/gaming-furniture" },
+          { label: "Monitor Arms", href: "/shop/gaming-furniture" },
         ],
       },
     ],
@@ -162,7 +162,7 @@ const NAV: NavSection[] = [
 
 // ─── Trigger class ─────────────────────────────────────────────────────
 const TRIGGER_CLS =
-  "relative bg-transparent px-3 py-2 text-body font-bold uppercase tracking-wide text-secondary transition-colors hover:bg-transparent hover:text-fg focus:bg-transparent data-[state=open]:bg-transparent data-[state=open]:text-fg after:absolute after:bottom-0 after:left-1/2 after:h-[2px] after:w-0 after:-translate-x-1/2 after:bg-brand after:transition-all after:duration-300 hover:after:w-3/4 data-[state=open]:after:w-3/4";
+  "relative bg-transparent px-3 py-2 text-body font-bold uppercase tracking-wide text-fg transition-colors hover:bg-transparent hover:text-brand focus:bg-transparent data-[state=open]:bg-transparent data-[state=open]:text-brand after:absolute after:bottom-0 after:left-1/2 after:h-[2px] after:w-0 after:-translate-x-1/2 after:bg-brand after:transition-all after:duration-300 hover:after:w-3/4 data-[state=open]:after:w-3/4";
 
 // ─── Link item ─────────────────────────────────────────────────────────
 function MegaLink({ label, href }: { label: string; href: string }) {

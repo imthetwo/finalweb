@@ -1,7 +1,9 @@
+const VND_TO_USD = 25000;
+
 export function formatVnd(amount: number) {
-  return new Intl.NumberFormat("vi-VN", {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "VND",
+    currency: "USD",
     maximumFractionDigits: 0,
-  }).format(amount);
+  }).format(amount / VND_TO_USD);
 }

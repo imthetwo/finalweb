@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import AddToCartButton from "@/components/shop/AddToCartButton";
 import { WishlistButton } from "@/features/product/WishlistButton";
 import ReviewsSection from "@/features/product/ReviewsSection";
+import { SpecsTable } from "@/features/product/components/SpecsTable";
 import { apiFetch } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
 import type { ProductDetail as ProductDetailType } from "@/types/api";
@@ -17,7 +18,6 @@ export async function ProductDetail({ id }: { id: string }) {
   }
 
   const hasSale = product.salePrice !== null && product.salePrice < product.price;
-  const specEntries = product.specs ? Object.entries(product.specs) : [];
 
   return (
     <main className="min-h-screen bg-base px-4 py-10 text-fg md:px-8">
@@ -65,27 +65,31 @@ export async function ProductDetail({ id }: { id: string }) {
           </p>
 
           {product.description && (
-            <p className="mt-6 text-sm leading-relaxed text-secondary">{product.description}</p>
-          )}
-
-          {specEntries.length > 0 && (
-            <div className="mt-6 grid grid-cols-2 gap-2 border-y border-edge py-4">
-              {specEntries.map(([key, val]) => (
-                <div key={key} className="flex justify-between gap-2 text-body">
-                  <span className="capitalize text-muted">{key.replace(/([A-Z])/g, " $1").trim()}</span>
-                  <span className="font-semibold text-fg">{String(val)}</span>
-                </div>
-              ))}
-            </div>
+            <p className="mt-4 text-body leading-relaxed text-secondary">{product.description}</p>
           )}
 
           <div className="mt-8 flex items-stretch gap-3">
             <div className="flex-1">
-              <AddToCartButton productId={product.id} />
+              <AddToCartButton productId={product.id} label="Buy Now" />
             </div>
             <WishlistButton productId={product.id} />
           </div>
         </div>
+      </div>
+
+      <div className="mx-auto max-w-6xl px-0">
+        <SpecsTable
+          cpuSpec={product.cpuSpec}
+          gpuSpec={product.gpuSpec}
+          ramSpec={product.ramSpec}
+          motherboardSpec={product.motherboardSpec}
+          psuSpec={product.psuSpec}
+          caseSpec={product.caseSpec}
+          coolerSpec={product.coolerSpec}
+          monitorSpec={product.monitorSpec}
+          storageSpec={product.storageSpec}
+          laptopSpec={product.laptopSpec}
+        />
       </div>
 
       <ReviewsSection productId={product.id} />

@@ -4,43 +4,49 @@
 
 :root {
   /* ── Brand ─────────────────────────────── */
-  --primary: #00ffff;          /* cyan accent — buttons, highlights */
-  --primary-hover: #00cccc;    /* darker cyan for hover state */
+  --primary: #00ffff; /* cyan accent — buttons, highlights */
+  --primary-hover: #00cccc; /* darker cyan for hover state */
   --primary-dim: rgba(0, 255, 255, 0.15); /* subtle cyan tint */
   --primary-foreground: #000000;
 
   /* ── Brand glow shadows (dùng thay rgba hardcode) ── */
-  --glow-xs:  0 0 10px color-mix(in srgb, var(--primary) 60%, transparent);
-  --glow-sm:  0 0 16px color-mix(in srgb, var(--primary)  7%, transparent);
-  --glow-md:  0 0 24px color-mix(in srgb, var(--primary) 45%, transparent);
-  --glow-lg:  0 0 36px color-mix(in srgb, var(--primary) 70%, transparent);
+  --glow-xs: 0 0 10px color-mix(in srgb, var(--primary) 60%, transparent);
+  --glow-sm: 0 0 16px color-mix(in srgb, var(--primary) 7%, transparent);
+  --glow-md: 0 0 24px color-mix(in srgb, var(--primary) 45%, transparent);
+  --glow-lg: 0 0 36px color-mix(in srgb, var(--primary) 70%, transparent);
   --glow-btn: 0 0 40px color-mix(in srgb, var(--primary) 35%, transparent);
   --glow-btn-hover: 0 0 40px color-mix(in srgb, var(--primary) 45%, transparent);
 
   /* ── Text shadows ── */
-  --text-shadow-brand: 0 0 60px color-mix(in srgb, var(--primary) 45%, transparent),
-                       0 0 120px color-mix(in srgb, var(--primary) 20%, transparent);
+  --text-shadow-brand:
+    0 0 60px color-mix(in srgb, var(--primary) 45%, transparent),
+    0 0 120px color-mix(in srgb, var(--primary) 20%, transparent);
 
   /* ── Gradient bg helpers ── */
-  --gradient-shimmer-brand: linear-gradient(90deg, transparent, color-mix(in srgb, var(--primary) 20%, transparent), transparent);
+  --gradient-shimmer-brand: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--primary) 20%, transparent),
+    transparent
+  );
 
   /* ── Backgrounds ────────────────────────── */
-  --background: #0a0a0a;       /* root page background */
-  --surface: #0d0d0d;          /* sidebar, panels */
+  --background: #0a0a0a; /* root page background */
+  --surface: #0d0d0d; /* sidebar, panels */
   --surface-elevated: #111111; /* cards, product tiles */
-  --surface-overlay: #141414;  /* modals, dropdowns */
+  --surface-overlay: #141414; /* modals, dropdowns */
   --surface-glass: rgba(10, 10, 10, 0.85);
 
   /* ── Borders ────────────────────────────── */
-  --border: rgba(255, 255, 255, 0.08);        /* zinc-800 equivalent */
-  --border-muted: rgba(255, 255, 255, 0.04);  /* faint dividers */
-  --border-primary: rgba(0, 255, 255, 0.3);   /* cyan border */
+  --border: rgba(255, 255, 255, 0.08); /* zinc-800 equivalent */
+  --border-muted: rgba(255, 255, 255, 0.04); /* faint dividers */
+  --border-primary: rgba(0, 255, 255, 0.3); /* cyan border */
 
   /* ── Text ───────────────────────────────── */
   --foreground: #ffffff;
-  --foreground-secondary: #a1a1aa;   /* zinc-400 */
-  --foreground-muted: #71717a;       /* zinc-500 */
-  --foreground-subtle: #52525b;      /* zinc-600 */
+  --foreground-secondary: #a1a1aa; /* zinc-400 */
+  --foreground-muted: #71717a; /* zinc-500 */
+  --foreground-subtle: #52525b; /* zinc-600 */
 
   /* ── Shadcn compat (used by ui components) */
   --card: var(--surface-elevated);
@@ -55,11 +61,11 @@
   --accent-foreground: var(--foreground);
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --success: #34d399;       /* emerald-400 */
+  --success: #34d399; /* emerald-400 */
   --success-foreground: #000000;
-  --warning: #facc15;       /* yellow-400 */
+  --warning: #facc15; /* yellow-400 */
   --warning-foreground: #000000;
-  --info: #60a5fa;          /* blue-400 */
+  --info: #60a5fa; /* blue-400 */
   --info-foreground: #000000;
   --input: rgba(255, 255, 255, 0.08);
   --ring: var(--primary);
@@ -74,17 +80,17 @@
   --neon-800: #136d6d;
   --neon-900: #0f5358;
   /* ── Typography scale ───────────────────── */
-  --text-3xs:       0.5625rem;  /* 9px  — micro labels, eyebrow */
-  --text-2xs:       0.625rem;   /* 10px — badges, table headers */
-  --text-xs:        0.6875rem;  /* 11px — labels, badges */
-  --text-sm:        0.75rem;    /* 12px — captions, meta */
-  --text-body:      0.8125rem;  /* 13px — body copy */
-  --text-base:      0.9375rem;  /* 15px — menu links, UI text */
-  --text-md:        1rem;       /* 16px — subheadings */
-  --text-lg:        1.125rem;   /* 18px — section titles */
-  --text-xl:        1.25rem;    /* 20px — headings */
-  --text-2xl:       1.5rem;     /* 24px — page titles */
-  --text-3xl:       2rem;       /* 32px — hero */
+  --text-3xs: 0.5625rem; /* 9px  — micro labels, eyebrow */
+  --text-2xs: 0.625rem; /* 10px — badges, table headers */
+  --text-xs: 0.6875rem; /* 11px — labels, badges */
+  --text-sm: 0.75rem; /* 12px — captions, meta */
+  --text-body: 0.8125rem; /* 13px — body copy */
+  --text-base: 0.9375rem; /* 15px — menu links, UI text */
+  --text-md: 1rem; /* 16px — subheadings */
+  --text-lg: 1.125rem; /* 18px — section titles */
+  --text-xl: 1.25rem; /* 20px — headings */
+  --text-2xl: 1.5rem; /* 24px — page titles */
+  --text-3xl: 2rem; /* 32px — hero */
 
   --spacing-shell: 2.5rem;
   --spacing-gutter: 1rem;
@@ -96,8 +102,12 @@
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 @theme {
@@ -167,11 +177,11 @@
   --radius-card: var(--radius-card);
 
   /* Shadow glow utilities → shadow-glow-xs, shadow-glow-sm, etc. */
-  --shadow-glow-xs:   var(--glow-xs);
-  --shadow-glow-sm:   var(--glow-sm);
-  --shadow-glow-md:   var(--glow-md);
-  --shadow-glow-lg:   var(--glow-lg);
-  --shadow-glow-btn:  var(--glow-btn);
+  --shadow-glow-xs: var(--glow-xs);
+  --shadow-glow-sm: var(--glow-sm);
+  --shadow-glow-md: var(--glow-md);
+  --shadow-glow-lg: var(--glow-lg);
+  --shadow-glow-btn: var(--glow-btn);
 }
 
 @keyframes marquee {
@@ -185,11 +195,19 @@
 }
 
 @utility brand-radial-left {
-  background-image: radial-gradient(ellipse 80% 60% at 20% 60%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 55%);
+  background-image: radial-gradient(
+    ellipse 80% 60% at 20% 60%,
+    color-mix(in srgb, var(--primary) 10%, transparent),
+    transparent 55%
+  );
 }
 
 @utility brand-radial-right {
-  background-image: radial-gradient(ellipse 60% 80% at 80% 50%, color-mix(in srgb, var(--primary) 5%, transparent), transparent 70%);
+  background-image: radial-gradient(
+    ellipse 60% 80% at 80% 50%,
+    color-mix(in srgb, var(--primary) 5%, transparent),
+    transparent 70%
+  );
 }
 
 @utility glass-card {
@@ -199,14 +217,19 @@
 }
 
 @utility neon-glow-text {
-  text-shadow: 0 0 16px rgba(103, 246, 240, 0.56), 0 0 36px rgba(103, 246, 240, 0.18);
+  text-shadow:
+    0 0 16px rgba(103, 246, 240, 0.56),
+    0 0 36px rgba(103, 246, 240, 0.18);
 }
 
 @utility technical-grid {
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 32px 32px, 32px 32px, 100% 100%;
+  background-size:
+    32px 32px,
+    32px 32px,
+    100% 100%;
 }
 
 @utility layout-shell {

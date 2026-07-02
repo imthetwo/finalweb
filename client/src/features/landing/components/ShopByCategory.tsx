@@ -4,72 +4,103 @@ import { ArrowRight } from "lucide-react";
 import { cdn } from "@/lib/cloudinary";
 import { serverApiUrl } from "@/lib/api";
 
-// key phải khớp đúng với category name trong DB
+// key phải khớp đúng với category name trong DB — ảnh verified HTTP 200 trên Cloudinary
 const CATEGORIES = [
   {
-    key: "PC Cases",
-    label: "Cases",
-    href: "/components/pc-cases",
-    // white H9 Flow case — clean product shot
-    img: cdn("case", "Case_H9_Flow_RGB__WH_Carousel_Hero_EN_d5c60367-c559-4b2e-9fc1-2fefda287bed.png"),
+    key: "Processors (CPU)",
+    label: "Processors",
+    href: "/shop/components/processors",
+    img: cdn("cpu", "cpu-intel-core-ultra-9-285k-up-to-5-7ghz-20-cores-20-threads-36mb-01.jpg"),
   },
   {
-    key: "Prebuilt PCs",
-    label: "Gaming PCs",
-    href: "/pcs",
-    img: cdn("PCs", "h7-flow-rgb-hero-white.png"),
+    key: "Graphics Cards (GPU)",
+    label: "Graphics Cards",
+    href: "/shop/components/gpu",
+    img: cdn("gpu", "asus-rog-strix-rtx4080-super"),
+  },
+  {
+    key: "Motherboards",
+    label: "Motherboards",
+    href: "/shop/components/motherboards",
+    img: cdn("motherboard", "47874.png"),
   },
   {
     key: "RAM",
     label: "Memory",
-    href: "/components/ram",
-    // Vengeance RGB DDR5 — colourful, looks great on dark bg
-    img: cdn("memory", "Vengeance-RGB-DDR5-2UP-32GB-GRAY_01.webp"),
+    href: "/shop/components/ram",
+    img: cdn("memory", "corsair-dominator-titanium-ddr5"),
   },
   {
-    key: "Mechanical Keyboards",
-    label: "Keyboards",
-    href: "/gaming-gear/mechanical-keyboards",
-    img: cdn("keyboard", "MAKR75_Hero_Shot_Front.png"),
+    key: "Storage (SSD/HDD)",
+    label: "Storage",
+    href: "/shop/components/storage",
+    img: cdn("memory", "30120.png"),
   },
   {
-    key: "Gaming Headsets",
-    label: "Headsets",
-    href: "/gaming-gear/gaming-headsets",
-    img: cdn("headphones", "g535-wireless-gallery-1.png"),
+    key: "PC Cases",
+    label: "Cases",
+    href: "/shop/components/pc-cases",
+    img: cdn("case", "Case_H9_Flow_RGB__WH_Carousel_Hero_EN_d5c60367-c559-4b2e-9fc1-2fefda287bed.png"),
   },
   {
     key: "Power Supplies",
     label: "Power Supplies",
-    href: "/components/power-supplies",
-    img: cdn("power-supply", "100-GD-0600-V1_MD_1.png"),
+    href: "/shop/components/power-supplies",
+    img: cdn("power-supply", "Etail_C1000GoldCore_Carousel_Hero_EN.png"),
   },
   {
     key: "CPU Coolers",
     label: "Coolers",
-    href: "/components/cpu-coolers",
-    // NZXT Kraken AIO — iconic product shot
+    href: "/shop/components/cpu-coolers",
     img: cdn("cpu-cooler", "01_Kraken_Plus_RGB_240_white_7cf2ef28-fe55-4788-ba1e-c7c8dfd187e4.png"),
+  },
+  {
+    key: "Gaming Monitors",
+    label: "Monitors",
+    href: "/shop/gaming-gear/gaming-monitors",
+    img: cdn("monitor", "46207.png"),
+  },
+  {
+    key: "Mechanical Keyboards",
+    label: "Keyboards",
+    href: "/shop/gaming-gear/mechanical-keyboards",
+    img: cdn("keyboard", "g515-lightspeed-tkl-top-angle-gallery-1-en-fr.png"),
   },
   {
     key: "Gaming Mice",
     label: "Gaming Mice",
-    href: "/gaming-gear/gaming-mice",
-    // White wireless mouse — pops on dark bg
+    href: "/shop/gaming-gear/gaming-mice",
     img: cdn("mouse", "g309-lightspeed-wireless-mouse-white-gallery-1.png"),
+  },
+  {
+    key: "Gaming Headsets",
+    label: "Headsets",
+    href: "/shop/gaming-gear/gaming-headsets",
+    img: cdn("headphones", "g535-wireless-gallery-1.png"),
   },
   {
     key: "Case Fans",
     label: "Fans",
-    href: "/components/case-fans",
+    href: "/shop/components/case-fans",
     img: cdn("case-fan", "Etail_F120X_White_Carousel_Hero_EN.png"),
+  },
+  {
+    key: "Prebuilt PCs",
+    label: "Gaming PCs",
+    href: "/shop/pcs",
+    img: cdn("PCs", "h7-flow-rgb-hero-white.png"),
+  },
+  {
+    key: "Laptops",
+    label: "Laptops",
+    href: "/shop/laptops/laptops",
+    img: cdn("PCs", "h6-flow-rgb-hero-white.png"),
   },
   {
     key: "Gaming Furniture",
     label: "Furniture",
-    href: "/gaming-furniture",
-    // Cloudinary: TechStore/funiture/ — white Corsair gaming chair
-    img: cdn("funiture", "CF-9010068-WW_01.webp"),
+    href: "/shop/gaming-furniture",
+    img: cdn("funiture", "ChairPro.webp"),
   },
 ];
 
@@ -98,7 +129,7 @@ export default async function ShopByCategory() {
         </h2>
 
         {/* ── 5×2 grid ── */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {CATEGORIES.map((cat) => {
             const count = counts[cat.key] ?? 0;
 
