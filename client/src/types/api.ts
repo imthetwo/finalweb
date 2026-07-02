@@ -113,7 +113,7 @@ export type OrderItem = {
   id: string;
   quantity: number;
   priceAtBuy: number;
-  product: { name: string };
+  product: { name: string; imageUrl?: string | null };
 };
 
 export type Order = {
@@ -122,27 +122,18 @@ export type Order = {
   discount: number;
   shippingFee: number;
   totalAmount: number;
+  couponCode: string | null;
   status: string;
   paymentMethod: string;
   isPaid: boolean;
   createdAt: string;
+  shippingInfo: Record<string, string>;
   items: OrderItem[];
 };
 
-// ─── Wishlist & Reviews ───────────────────────────────────────────────────────
+// ─── Wishlist ─────────────────────────────────────────────────────────────────
 
 export type WishlistEntry = { id: string; addedAt: string; product: ProductListItem };
-
-export type Review = {
-  id: string;
-  rating: number;
-  title: string | null;
-  text: string | null;
-  isVerifiedBuy: boolean;
-  createdAt: string;
-  user: { fullName: string; avatarUrl: string | null };
-};
-export type ReviewSummary = { reviews: Review[]; average: number; count: number };
 
 // ─── Admin ────────────────────────────────────────────────────────────────────
 

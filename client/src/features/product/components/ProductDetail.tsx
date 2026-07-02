@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 
 import AddToCartButton from "@/components/shop/AddToCartButton";
 import { WishlistButton } from "@/features/product/WishlistButton";
-import ReviewsSection from "@/features/product/ReviewsSection";
 import { SpecsTable } from "@/features/product/components/SpecsTable";
 import { apiFetch } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
@@ -92,7 +91,6 @@ export async function ProductDetail({ id }: { id: string }) {
         />
       </div>
 
-      <ReviewsSection productId={product.id} />
     </main>
   );
 }

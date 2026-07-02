@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import { ArrowUpDown, Box, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ import type { ApiPart, SlotCfg, SortKey } from "../types";
 type Props = {
   slotCfg: SlotCfg;
   parts: ApiPart[];
+  selected: Record<string, ApiPart | null | undefined>;
   currentId?: string;
   loading: boolean;
   buildSummary: { count: number; total: number; watts: number };
@@ -17,7 +18,49 @@ type Props = {
   onClose: () => void;
 };
 
-export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSummary, onAdd, onClose }: Props) {
+const FF_SIZE: Record<string, number> = { miniitx: 0, matx: 1, microatx: 1, atx: 2, eatx: 3 };
+const normFF = (s: string) => s.toLowerCase().replace(/[-\s]/g, '');
+
+function isCompatible(part: ApiPart, slot: string, sel: Record<string, ApiPart | null | undefined>): boolean {
+  const cpu    = sel['CPU'];
+  const mb     = sel['MOTHERBOARD'];
+  const ram    = sel['MEMORY'];
+  const gpu    = sel['GPU'];
+  const pcCase = sel['CASE'];
+  switch (slot) {
+    case 'CPU':
+      if (mb?.socket && part.socket && part.socket !== mb.socket) return false;
+      break;
+    case 'MOTHERBOARD':
+      if (cpu?.socket && part.socket && part.socket !== cpu.socket) return false;
+      if (ram?.ramGen && part.ramGen && part.ramGen !== ram.ramGen) return false;
+      break;
+    case 'MEMORY':
+      if (mb?.ramGen && part.ramGen && part.ramGen !== mb.ramGen) return false;
+      break;
+    case 'GPU':
+      if (pcCase?.maxGpuLengthMm && part.gpuLengthMm && part.gpuLengthMm > pcCase.maxGpuLengthMm) return false;
+      break;
+    case 'CASE': {
+      if (mb?.formFactor && part.formFactor) {
+        const mbIdx   = FF_SIZE[normFF(mb.formFactor)]     ?? -1;
+        const caseIdx = FF_SIZE[normFF(part.formFactor)]   ?? -1;
+        if (mbIdx !== -1 && caseIdx !== -1 && mbIdx > caseIdx) return false;
+      }
+      if (gpu?.gpuLengthMm && part.maxGpuLengthMm && gpu.gpuLengthMm > part.maxGpuLengthMm) return false;
+      break;
+    }
+    case 'CPU_COOLER':
+      if (cpu?.socket && part.socketSupport) {
+        const supported = part.socketSupport.split(',').map((s) => s.trim());
+        if (!supported.includes(cpu.socket)) return false;
+      }
+      break;
+  }
+  return true;
+}
+
+export function PartPickerOverlay({ slotCfg, parts, selected, currentId, loading, buildSummary, onAdd, onClose }: Props) {
   const [query,      setQuery]      = useState("");
   const [sort,       setSort]       = useState<SortKey>("price-asc");
   const [brands,     setBrands]     = useState<Set<string>>(new Set());
@@ -29,11 +72,8 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
     return { min: Math.min(...prices), max: Math.max(...prices) };
   }, [parts]);
 
+  // Parts are fully loaded before overlay mounts, so priceBounds.max is stable at init
   const [maxPrice, setMaxPrice] = useState<number>(priceBounds.max);
-
-  useEffect(() => {
-    setMaxPrice(priceBounds.max);
-  }, [priceBounds.max]);
 
   const allBrands = useMemo(() => [...new Set(parts.map((p) => p.brand))].sort(), [parts]);
 
@@ -47,6 +87,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
 
   const filtered = useMemo(() => {
     let list = [...parts];
+    if (compatOnly) list = list.filter((p) => isCompatible(p, slotCfg.slot, selected));
     if (query.trim()) {
       const q = query.toLowerCase();
       list = list.filter((p) => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q));
@@ -57,7 +98,7 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
     if (sort === "price-desc") list.sort((a, b) => b.displayPrice - a.displayPrice);
     if (sort === "name-asc")   list.sort((a, b) => a.name.localeCompare(b.name));
     return list;
-  }, [parts, query, brands, maxPrice, sort]);
+  }, [parts, compatOnly, selected, slotCfg.slot, query, brands, maxPrice, sort]);
 
   const effectiveMax = maxPrice || priceBounds.max;
 
@@ -136,7 +177,10 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
         <div className="flex flex-1 flex-col overflow-hidden">
           <div className="flex shrink-0 flex-col gap-3 border-b border-edge bg-surface px-4 py-3 lg:flex-row lg:items-center lg:justify-between md:px-6">
             <h3 className="text-base font-black text-fg">
-              {filtered.length} <span className="font-medium text-muted">Compatible Products</span>
+              {filtered.length}{" "}
+              <span className="font-medium text-muted">
+                {compatOnly ? "Compatible Products" : "Products"}
+              </span>
             </h3>
             <div className="flex items-center gap-3">
               <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)}

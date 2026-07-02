@@ -1,4 +1,4 @@
-import type { UserProfile, WishlistEntry, Review, ReviewSummary } from "@/types/api";
+import type { UserProfile, WishlistEntry } from "@/types/api";
 import { apiFetch } from "./client";
 
 // ── Profile ───────────────────────────────────────────────────────────────────
@@ -26,10 +26,3 @@ export const addToWishlist = (productId: string) =>
 export const removeFromWishlist = (productId: string) =>
   apiFetch<{ ok: boolean }>(`/wishlist/${productId}`, { method: "DELETE" });
 
-// ── Reviews ───────────────────────────────────────────────────────────────────
-
-export const fetchProductReviews = (productId: string) =>
-  apiFetch<ReviewSummary>(`/reviews/product/${productId}`);
-
-export const createReview = (data: { productId: string; rating: number; title?: string; text?: string }) =>
-  apiFetch<Review>("/reviews", { method: "POST", body: JSON.stringify(data) });

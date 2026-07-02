@@ -830,6 +830,44 @@
       }
     },
     {
+      "category": "PC Cases",
+      "name": "Cooler Master MasterBox Q300L",
+      "brand": "Cooler Master",
+      "imageUrl": null,
+      "price": 1290000,
+      "costPrice": 980000,
+      "salePrice": null,
+      "stock": 15,
+      "isPublished": true,
+      "description": "Cooler Master MasterBox Q300L Micro-ATX PC case, mATX motherboard support, GPU clearance up to 360 mm, 240mm radiator support, 2 drive bays. Compact form factor with magnetic dust filter and transparent side panel.",
+      "spec": {
+        "type": "caseSpec",
+        "formFactor": "mATX",
+        "maxGpuLengthMm": 360,
+        "radiatorSupport": "240mm",
+        "driveBays": 2
+      }
+    },
+    {
+      "category": "PC Cases",
+      "name": "NZXT H5 Flow mATX",
+      "brand": "NZXT",
+      "imageUrl": null,
+      "price": 1990000,
+      "costPrice": 1500000,
+      "salePrice": 1790000,
+      "stock": 10,
+      "isPublished": true,
+      "description": "NZXT H5 Flow mATX PC case, Micro-ATX motherboard support, GPU clearance up to 355 mm, 280mm radiator support, 2 drive bays. Perforated front panel for excellent airflow.",
+      "spec": {
+        "type": "caseSpec",
+        "formFactor": "mATX",
+        "maxGpuLengthMm": 355,
+        "radiatorSupport": "280mm",
+        "driveBays": 2
+      }
+    },
+    {
       "category": "CPU Coolers",
       "name": "NZXT Kraken 360 RGB White AIO",
       "brand": "NZXT",
@@ -2036,13 +2074,14 @@
       "costPrice": 5700000,
       "salePrice": null,
       "stock": 12,
-      "description": "Gigabyte GeForce RTX 3060 Gaming OC 8G graphics card by Gigabyte, 8GB GDDR6 VRAM, 1837 MHz boost clock, PCIe 4, 170W TDP.",
+      "description": "Gigabyte GeForce RTX 3060 Gaming OC 8G graphics card by Gigabyte, 8GB GDDR6 VRAM, 1837 MHz boost clock, PCIe 4, 282 mm card length, 170W TDP.",
       "spec": {
         "type": "gpuSpec",
         "vramGb": 8,
         "memType": "GDDR6",
         "boostClockMhz": 1837,
         "tdp": 170,
+        "lengthMm": 282,
         "pcieGen": 4
       },
       "isPublished": true
@@ -2056,13 +2095,14 @@
       "costPrice": 6500000,
       "salePrice": null,
       "stock": 10,
-      "description": "Gigabyte GeForce RTX 3060 Windforce OC 12G graphics card by Gigabyte, 12GB GDDR6 VRAM, 1837 MHz boost clock, PCIe 4, 170W TDP.",
+      "description": "Gigabyte GeForce RTX 3060 Windforce OC 12G graphics card by Gigabyte, 12GB GDDR6 VRAM, 1837 MHz boost clock, PCIe 4, 272 mm card length, 170W TDP.",
       "spec": {
         "type": "gpuSpec",
         "vramGb": 12,
         "memType": "GDDR6",
         "boostClockMhz": 1837,
         "tdp": 170,
+        "lengthMm": 272,
         "pcieGen": 4
       },
       "isPublished": true
@@ -2076,13 +2116,14 @@
       "costPrice": 11500000,
       "salePrice": 13490000,
       "stock": 5,
-      "description": "Inno3D GeForce RTX 3080 iChill X4 LHR graphics card by Inno3D, 10GB GDDR6X VRAM, 1755 MHz boost clock, PCIe 4, 350W TDP.",
+      "description": "Inno3D GeForce RTX 3080 iChill X4 LHR graphics card by Inno3D, 10GB GDDR6X VRAM, 1755 MHz boost clock, PCIe 4, 323 mm card length, 350W TDP.",
       "spec": {
         "type": "gpuSpec",
         "vramGb": 10,
         "memType": "GDDR6X",
         "boostClockMhz": 1755,
         "tdp": 350,
+        "lengthMm": 323,
         "pcieGen": 4
       },
       "isPublished": true
@@ -2096,13 +2137,14 @@
       "costPrice": 13800000,
       "salePrice": null,
       "stock": 4,
-      "description": "ASRock Radeon RX 7900 XTX Taichi White 24GB OC graphics card by ASRock, 24GB GDDR6 VRAM, 2565 MHz boost clock, PCIe 4, 355W TDP.",
+      "description": "ASRock Radeon RX 7900 XTX Taichi White 24GB OC graphics card by ASRock, 24GB GDDR6 VRAM, 2565 MHz boost clock, PCIe 4, 343 mm card length, 355W TDP.",
       "spec": {
         "type": "gpuSpec",
         "vramGb": 24,
         "memType": "GDDR6",
         "boostClockMhz": 2565,
         "tdp": 355,
+        "lengthMm": 343,
         "pcieGen": 4
       },
       "isPublished": true
@@ -2116,13 +2158,14 @@
       "costPrice": 8800000,
       "salePrice": null,
       "stock": 8,
-      "description": "ASRock Radeon RX 9070 XT Challenger 16GB graphics card by ASRock, 16GB GDDR6 VRAM, 2970 MHz boost clock, PCIe 5, 304W TDP.",
+      "description": "ASRock Radeon RX 9070 XT Challenger 16GB graphics card by ASRock, 16GB GDDR6 VRAM, 2970 MHz boost clock, PCIe 5, 285 mm card length, 304W TDP.",
       "spec": {
         "type": "gpuSpec",
         "vramGb": 16,
         "memType": "GDDR6",
         "boostClockMhz": 2970,
         "tdp": 304,
+        "lengthMm": 285,
         "pcieGen": 5
       },
       "isPublished": true
@@ -2136,13 +2179,14 @@
       "costPrice": 9200000,
       "salePrice": null,
       "stock": 7,
-      "description": "ASRock Radeon RX 9070 XT Steel Legend Dark 16GB graphics card by ASRock, 16GB GDDR6 VRAM, 2970 MHz boost clock, PCIe 5, 304W TDP.",
+      "description": "ASRock Radeon RX 9070 XT Steel Legend Dark 16GB graphics card by ASRock, 16GB GDDR6 VRAM, 2970 MHz boost clock, PCIe 5, 305 mm card length, 304W TDP.",
       "spec": {
         "type": "gpuSpec",
         "vramGb": 16,
         "memType": "GDDR6",
         "boostClockMhz": 2970,
         "tdp": 304,
+        "lengthMm": 305,
         "pcieGen": 5
       },
       "isPublished": true

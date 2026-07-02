@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Package } from "lucide-react";
+import Image from "next/image";
+import { Package, X, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
 
-import { fetchOrders, type Order } from "@/lib/api";
+import { fetchOrders, cancelOrder, type Order } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
 
 const STATUS_STYLE: Record<string, string> = {
@@ -22,13 +24,202 @@ const STATUS_LABEL: Record<string, string> = {
   CANCELLED: "Cancelled", RETURNED: "Returned",
 };
 
+function canCancel(o: Order) {
+  return !o.isPaid && (o.status === "PENDING" || o.status === "PROCESSING");
+}
+
+/* ─── Order Detail Drawer ─────────────────────────────────────────────────── */
+
+function OrderDrawer({
+  order,
+  onClose,
+  onCancel,
+  cancelling,
+}: {
+  order: Order;
+  onClose: () => void;
+  onCancel: (id: string) => void;
+  cancelling: string | null;
+}) {
+  const si = order.shippingInfo ?? {};
+
+  return (
+    <>
+      {/* backdrop */}
+      <div
+        className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      {/* panel */}
+      <div className="fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col border-l border-edge bg-elevated shadow-2xl">
+
+        {/* header */}
+        <div className="flex items-center justify-between border-b border-edge px-5 py-4">
+          <div>
+            <p className="text-2xs font-bold uppercase tracking-widest text-muted">Order Detail</p>
+            <p className="font-mono text-sm font-black text-fg">#{order.id.slice(0, 8).toUpperCase()}</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className={`border px-2.5 py-0.5 text-2xs font-black uppercase tracking-wider ${STATUS_STYLE[order.status] ?? STATUS_STYLE.PENDING}`}>
+              {STATUS_LABEL[order.status] ?? order.status}
+            </span>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex h-8 w-8 items-center justify-center border border-edge text-muted transition-colors hover:border-fg/30 hover:text-fg"
+              aria-label="Close order detail"
+            >
+              <X size={15} />
+            </button>
+          </div>
+        </div>
+
+        {/* scrollable body */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-5">
+
+          {/* Shipping info */}
+          <section>
+            <p className="mb-2 text-2xs font-bold uppercase tracking-widest text-muted">Shipping Info</p>
+            <div className="border border-edge bg-surface p-4 space-y-1 text-body">
+              {si.fullName && <p className="font-semibold text-fg">{si.fullName}</p>}
+              {si.phone && <p className="text-secondary">{si.phone}</p>}
+              {si.address && <p className="text-secondary">{si.address}</p>}
+              {si.city && <p className="text-secondary">{si.city}</p>}
+              {!si.fullName && !si.phone && !si.address && (
+                <p className="text-muted italic">No shipping info available.</p>
+              )}
+            </div>
+          </section>
+
+          {/* Items */}
+          <section>
+            <p className="mb-2 text-2xs font-bold uppercase tracking-widest text-muted">
+              Items ({order.items.length})
+            </p>
+            <div className="space-y-2">
+              {order.items.map((it) => (
+                <div key={it.id} className="flex gap-3 border border-edge bg-surface p-3">
+                  <div className="relative h-14 w-14 shrink-0 border border-edge bg-base">
+                    {it.product.imageUrl ? (
+                      <Image
+                        src={it.product.imageUrl}
+                        alt={it.product.name}
+                        fill
+                        sizes="56px"
+                        className="object-contain p-1"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center">
+                        <Package size={18} className="text-subtle" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-1 items-center justify-between gap-2 min-w-0">
+                    <p className="text-body text-secondary line-clamp-2 leading-snug">{it.product.name}</p>
+                    <div className="shrink-0 text-right">
+                      <p className="text-body font-semibold text-fg">{formatVnd(it.priceAtBuy * it.quantity)}</p>
+                      <p className="text-2xs text-muted">×{it.quantity}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Price breakdown */}
+          <section>
+            <p className="mb-2 text-2xs font-bold uppercase tracking-widest text-muted">Summary</p>
+            <div className="border border-edge bg-surface p-4 space-y-2 text-body">
+              <div className="flex justify-between text-secondary">
+                <span>Subtotal</span>
+                <span>{formatVnd(order.subTotal)}</span>
+              </div>
+              {order.discount > 0 && (
+                <div className="flex justify-between text-success">
+                  <span>
+                    Discount
+                    {order.couponCode && (
+                      <span className="ml-1.5 border border-success/40 bg-success/10 px-1.5 py-0.5 text-2xs font-bold uppercase tracking-wider">
+                        {order.couponCode}
+                      </span>
+                    )}
+                  </span>
+                  <span>−{formatVnd(order.discount)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-secondary">
+                <span>Shipping</span>
+                <span>{order.shippingFee > 0 ? formatVnd(order.shippingFee) : "Free"}</span>
+              </div>
+              <div className="flex justify-between border-t border-edge pt-2 font-black text-fg">
+                <span>Total</span>
+                <span className="text-md text-brand">{formatVnd(order.totalAmount)}</span>
+              </div>
+            </div>
+          </section>
+
+          {/* Payment info */}
+          <section>
+            <p className="mb-2 text-2xs font-bold uppercase tracking-widest text-muted">Payment</p>
+            <div className="border border-edge bg-surface p-4 flex items-center justify-between text-body">
+              <span className="text-secondary uppercase tracking-wide font-semibold">{order.paymentMethod}</span>
+              <span className={order.isPaid ? "text-success font-bold" : "text-warning font-bold"}>
+                {order.isPaid ? "Paid" : "Unpaid"}
+              </span>
+            </div>
+          </section>
+
+          <p className="text-2xs text-muted">
+            Placed on {new Date(order.createdAt).toLocaleString("en-GB")}
+          </p>
+        </div>
+
+        {/* footer */}
+        {canCancel(order) && (
+          <div className="border-t border-edge px-5 py-4">
+            <button
+              type="button"
+              onClick={() => onCancel(order.id)}
+              disabled={cancelling === order.id}
+              className="w-full border border-destructive/50 py-2.5 text-sm font-bold uppercase tracking-wider text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-40"
+            >
+              {cancelling === order.id ? "Cancelling…" : "Cancel Order"}
+            </button>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+/* ─── OrdersTab ───────────────────────────────────────────────────────────── */
+
 export default function OrdersTab() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cancelling, setCancelling] = useState<string | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     fetchOrders().then(setOrders).catch(() => setOrders([])).finally(() => setLoading(false));
   }, []);
+
+  async function handleCancel(orderId: string) {
+    if (!confirm("Cancel this order? Stock will be restored.")) return;
+    setCancelling(orderId);
+    try {
+      const updated = await cancelOrder(orderId);
+      setOrders((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
+      if (selectedOrder?.id === updated.id) setSelectedOrder(updated);
+      toast.success("Order cancelled.");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to cancel order.");
+    } finally {
+      setCancelling(null);
+    }
+  }
 
   if (loading) return <p className="py-12 text-center text-sm text-muted">Loading orders…</p>;
 
@@ -42,36 +233,49 @@ export default function OrdersTab() {
   }
 
   return (
-    <div className="space-y-4">
-      {orders.map((o) => (
-        <div key={o.id} className="border border-edge bg-elevated p-5">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-edge pb-3">
-            <div>
-              <p className="text-xs uppercase tracking-wider text-muted">Order</p>
-              <p className="font-mono text-sm font-bold text-fg">#{o.id.slice(0, 8).toUpperCase()}</p>
-            </div>
-            <span className={`border px-3 py-1 text-2xs font-black uppercase tracking-wider ${STATUS_STYLE[o.status] ?? STATUS_STYLE.PENDING}`}>
-              {STATUS_LABEL[o.status] ?? o.status}
-            </span>
-          </div>
-
-          <div className="space-y-1.5 py-3">
-            {o.items.map((it) => (
-              <div key={it.id} className="flex justify-between text-body">
-                <span className="text-secondary">{it.product.name} <span className="text-subtle">×{it.quantity}</span></span>
-                <span className="text-secondary">{formatVnd(it.priceAtBuy * it.quantity)}</span>
+    <>
+      <div className="space-y-3">
+        {orders.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            onClick={() => setSelectedOrder(o)}
+            className="w-full border border-edge bg-elevated p-5 text-left transition-colors hover:border-fg/20 hover:bg-surface"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div>
+                  <p className="text-2xs uppercase tracking-wider text-muted">Order</p>
+                  <p className="font-mono text-sm font-black text-fg">#{o.id.slice(0, 8).toUpperCase()}</p>
+                </div>
+                <span className={`border px-2.5 py-0.5 text-2xs font-black uppercase tracking-wider ${STATUS_STYLE[o.status] ?? STATUS_STYLE.PENDING}`}>
+                  {STATUS_LABEL[o.status] ?? o.status}
+                </span>
               </div>
-            ))}
-          </div>
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <p className="text-md font-black text-brand">{formatVnd(o.totalAmount)}</p>
+                  <p className="text-2xs text-muted">{new Date(o.createdAt).toLocaleDateString("en-GB")}</p>
+                </div>
+                <ChevronRight size={15} className="text-subtle" />
+              </div>
+            </div>
 
-          <div className="flex items-center justify-between border-t border-edge pt-3">
-            <span className="text-xs text-muted">
-              {new Date(o.createdAt).toLocaleDateString("en-GB")} · {o.paymentMethod} · {o.isPaid ? "Paid" : "Unpaid"}
-            </span>
-            <span className="text-base font-black text-brand">{formatVnd(o.totalAmount)}</span>
-          </div>
-        </div>
-      ))}
-    </div>
+            <p className="mt-2 text-body text-secondary line-clamp-1">
+              {o.items.map((it) => it.product.name).join(", ")}
+            </p>
+          </button>
+        ))}
+      </div>
+
+      {selectedOrder && (
+        <OrderDrawer
+          order={selectedOrder}
+          onClose={() => setSelectedOrder(null)}
+          onCancel={handleCancel}
+          cancelling={cancelling}
+        />
+      )}
+    </>
   );
 }

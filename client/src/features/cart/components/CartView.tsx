@@ -35,13 +35,22 @@ type GuestDisplayItem = { productId: string; quantity: number; product: ProductL
 function getMaxQty(categoryName: string | undefined | null, stock: number): number {
   const cat = categoryName?.toLowerCase() ?? "";
   let cap: number;
-  if (cat.includes("cpu") || cat.includes("processor") || cat.includes("chip") ||
-      cat.includes("ram") || cat.includes("memory") ||
-      cat.includes("motherboard") || cat.includes("mainboard")) {
+  if (
+    cat.includes("processor") || cat.includes("cpu") ||
+    cat.includes("graphics") || cat.includes("gpu") ||
+    cat.includes("ram") || cat.includes("memory") ||
+    cat.includes("motherboard") || cat.includes("mainboard") ||
+    cat.includes("laptop") || cat.includes("notebook") ||
+    cat.includes("furniture") ||
+    cat.includes("speaker")
+  ) {
     cap = 2;
-  } else if (cat.includes("speaker")) {
-    cap = 1;
-  } else if (cat.includes("mouse") || cat.includes("mice") || cat.includes("keyboard")) {
+  } else if (
+    cat.includes("monitor") ||
+    cat.includes("keyboard") ||
+    cat.includes("mice") || cat.includes("mouse") ||
+    cat.includes("headset") || cat.includes("headphone")
+  ) {
     cap = 5;
   } else {
     cap = 10;

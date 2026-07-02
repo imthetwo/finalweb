@@ -4,6 +4,10 @@ import { apiFetch } from "./client";
 export const fetchOrders = () =>
   apiFetch<Order[]>("/orders");
 
+// GET /orders/:id
+export const fetchOrder = (id: string) =>
+  apiFetch<Order>(`/orders/${id}`);
+
 export const createOrder = (data: {
   shippingInfo: Record<string, string>;
   paymentMethod: string;

@@ -14,6 +14,6 @@ export type {
   CaseSpec, CoolerSpec, MonitorSpec, StorageSpec, LaptopSpec,
   ProductSpecs, AdminProduct, ProductInput,
   UserProfile, Order, OrderItem, WishlistEntry,
-  Review, ReviewSummary, AdminStats, AdminOrder,
+  AdminStats, AdminOrder,
   Promotion, PromotionInput,
 } from "@/types/api";

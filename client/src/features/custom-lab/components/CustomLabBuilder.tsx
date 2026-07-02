@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback, useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { AlertCircle, AlertTriangle, Plus, Save, ShoppingCart, Trash2, Zap } from "lucide-react";
@@ -17,13 +19,40 @@ import { StatusBar } from "./StatusBar";
 import { PartPickerOverlay } from "./PartPickerOverlay";
 
 export default function CustomLabBuilder() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pickingParam = searchParams.get("picking");
+
   const {
     selected, parts, loading, pickerSlot, compat,
     validating, saving, addingCart,
     totalPrice, estimatedWatts, selectedCount,
-    openPicker, closePicker, selectPart, removePart,
+    openPicker: rawOpenPicker,
+    closePicker: storeClosePicker,
+    selectPart, removePart,
     validateBuild, addAllToCart, saveBuild,
   } = useBuild();
+
+  // When browser back removes ?picking from URL, close the overlay in store
+  const prevPickingParam = useRef(pickingParam);
+  useEffect(() => {
+    if (prevPickingParam.current !== null && pickingParam === null) {
+      storeClosePicker();
+    }
+    prevPickingParam.current = pickingParam;
+  }, [pickingParam, storeClosePicker]);
+
+  // Push URL when opening so browser back returns to /custom-lab (not home)
+  const openPicker = useCallback(async (slot: string) => {
+    await rawOpenPicker(slot);
+    router.push(`/custom-lab?picking=${slot}`);
+  }, [rawOpenPicker, router]);
+
+  // Close overlay immediately + navigate back to remove ?picking from URL
+  const closePicker = useCallback(() => {
+    storeClosePicker();
+    router.back();
+  }, [storeClosePicker, router]);
 
   const pickerCfg = BUILD_SLOTS.find((s) => s.slot === pickerSlot);
 
@@ -63,11 +92,11 @@ export default function CustomLabBuilder() {
               <Table>
                 <TableHeader>
                   <TableRow className="border-edge hover:bg-transparent">
-                    <TableHead className="w-12 pl-6 pr-0" />
-                    <TableHead className="w-44 text-body">Component</TableHead>
-                    <TableHead className="text-body">Selection</TableHead>
-                    <TableHead className="text-right text-body">Price</TableHead>
-                    <TableHead className="w-12" />
+                    <TableHead className="w-24 pl-8 pr-0" />
+                    <TableHead className="w-56 text-md font-black uppercase tracking-widest">Component</TableHead>
+                    <TableHead className="text-md font-black uppercase tracking-widest">Selection</TableHead>
+                    <TableHead className="text-right text-md font-black uppercase tracking-widest">Price</TableHead>
+                    <TableHead className="w-20" />
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -76,45 +105,45 @@ export default function CustomLabBuilder() {
                     const isLoading = loading[cfg.slot];
                     return (
                       <TableRow key={cfg.slot} className="border-edge/50">
-                        <TableCell className="py-5 pl-6 pr-2">
-                          <div className="flex h-11 w-11 items-center justify-center border border-edge bg-surface/60">
-                            <cfg.Icon size={18} className={part ? "text-brand" : "text-subtle"} />
+                        <TableCell className="py-7 pl-8 pr-3">
+                          <div className="flex h-16 w-16 items-center justify-center border border-edge bg-surface/60">
+                            <cfg.Icon size={26} className={part ? "text-brand" : "text-secondary"} />
                           </div>
                         </TableCell>
-                        <TableCell className="py-5">
-                          <p className="text-body font-bold uppercase tracking-wider text-fg">{cfg.shortLabel}</p>
+                        <TableCell className="py-7">
+                          <p className="text-lg font-black uppercase tracking-wider text-fg">{cfg.shortLabel}</p>
                         </TableCell>
-                        <TableCell className="py-5">
+                        <TableCell className="py-7">
                           {part ? (
-                            <div className="flex items-center gap-4">
-                              <div className="h-14 w-14 shrink-0 border border-edge bg-surface">
+                            <div className="flex items-center gap-5">
+                              <div className="h-20 w-20 shrink-0 border border-edge bg-surface">
                                 {part.thumbnailUrl
-                                  ? <Image src={part.thumbnailUrl} alt={part.name} width={56} height={56} className="h-full w-full object-contain p-1" />
-                                  : <div className="flex h-full items-center justify-center"><cfg.Icon size={18} className="text-subtle" /></div>}
+                                  ? <Image src={part.thumbnailUrl} alt={part.name} width={80} height={80} className="h-full w-full object-contain p-1.5" />
+                                  : <div className="flex h-full items-center justify-center"><cfg.Icon size={24} className="text-subtle" /></div>}
                               </div>
                               <div className="min-w-0">
-                                <p className="truncate text-base font-semibold text-fg">{part.name}</p>
-                                <p className="text-xs text-muted">{part.brand}</p>
+                                <p className="truncate text-lg font-semibold text-fg">{part.name}</p>
+                                <p className="mt-0.5 text-sm text-muted">{part.brand}</p>
                               </div>
                             </div>
                           ) : (
                             <Button variant="ghost" onClick={() => openPicker(cfg.slot)} disabled={isLoading}
-                              className="h-12 gap-2 border border-dashed border-edge bg-transparent px-6 text-body font-bold uppercase tracking-wider text-muted hover:border-brand/40 hover:bg-brand/5 hover:text-brand">
-                              <Plus size={15} />
+                              className="h-16 gap-2.5 border border-dashed border-edge bg-transparent px-8 text-lg font-bold uppercase tracking-wider text-fg hover:border-brand/40 hover:bg-brand/5 hover:text-brand">
+                              <Plus size={18} />
                               {isLoading ? "Loading…" : `Choose A ${cfg.shortLabel}`}
                             </Button>
                           )}
                         </TableCell>
-                        <TableCell className="py-5 text-right">
+                        <TableCell className="py-7 text-right">
                           {part
-                            ? <span className="text-md font-black text-fg">{formatVnd(part.displayPrice)}</span>
-                            : <span className="text-base text-subtle">—</span>}
+                            ? <span className="text-xl font-black text-fg">{formatVnd(part.displayPrice)}</span>
+                            : <span className="text-lg text-secondary">—</span>}
                         </TableCell>
-                        <TableCell className="py-5 pr-6">
+                        <TableCell className="py-7 pr-8">
                           {part && (
                             <button type="button" onClick={() => removePart(cfg.slot)}
-                              className="flex h-9 w-9 items-center justify-center border border-red-800/40 bg-red-950/20 text-destructive hover:border-destructive hover:bg-red-950/50">
-                              <Trash2 size={15} />
+                              className="flex h-12 w-12 items-center justify-center border border-red-800/40 bg-red-950/20 text-destructive hover:border-destructive hover:bg-red-950/50">
+                              <Trash2 size={18} />
                             </button>
                           )}
                         </TableCell>
@@ -124,18 +153,18 @@ export default function CustomLabBuilder() {
                 </TableBody>
                 <TableFooter>
                   <TableRow className="border-t border-edge bg-elevated hover:bg-elevated">
-                    <TableCell colSpan={3} className="py-5 pl-6">
-                      <div className="flex items-center gap-3">
-                        <span className="text-base font-black uppercase tracking-wider text-fg">Total ({selectedCount} parts)</span>
+                    <TableCell colSpan={3} className="py-7 pl-8">
+                      <div className="flex items-center gap-4">
+                        <span className="text-lg font-black uppercase tracking-wider text-fg">Total ({selectedCount} parts)</span>
                         {estimatedWatts > 0 && (
-                          <Badge variant="outline" className="border-edge text-xs text-muted">
-                            <Zap size={11} className="mr-1" />~{estimatedWatts}W
+                          <Badge variant="outline" className="border-edge text-sm text-muted">
+                            <Zap size={13} className="mr-1" />~{estimatedWatts}W
                           </Badge>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="py-5 text-right">
-                      <span className="text-xl font-black text-brand">{totalPrice > 0 ? formatVnd(totalPrice) : "—"}</span>
+                    <TableCell className="py-7 text-right">
+                      <span className="text-2xl font-black text-brand">{totalPrice > 0 ? formatVnd(totalPrice) : "—"}</span>
                     </TableCell>
                     <TableCell />
                   </TableRow>
@@ -180,6 +209,7 @@ export default function CustomLabBuilder() {
         <PartPickerOverlay
           slotCfg={pickerCfg}
           parts={parts[pickerSlot] ?? []}
+          selected={selected}
           currentId={selected[pickerSlot]?.id}
           loading={loading[pickerSlot] ?? false}
           buildSummary={{ count: selectedCount, total: totalPrice, watts: estimatedWatts }}

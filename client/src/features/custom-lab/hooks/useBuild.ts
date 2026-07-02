@@ -81,26 +81,30 @@ export function useBuild() {
         items: Array<{
           id: string; name: string; brand: string;
           displayPrice: number; thumbnailUrl: string | null;
-          cpuSpec?: { tdp?: number; socket?: string } | null;
-          gpuSpec?: { tdp?: number } | null;
-          motherboardSpec?: { socket?: string; ramGen?: string; formFactor?: string } | null;
-          ramSpec?: { generation?: string } | null;
-          psuSpec?: { wattage?: number } | null;
-          caseSpec?: { formFactor?: string } | null;
-          coolerSpec?: { coolerType?: string; tdpRating?: number } | null;
-          storageSpec?: { interfaceType?: string } | null;
+          cpuSpec?:         { socket?: string; tdp?: number } | null;
+          gpuSpec?:         { tdp?: number; lengthMm?: number | null } | null;
+          ramSpec?:         { generation?: string; speedMhz?: number } | null;
+          motherboardSpec?: { socket?: string; ramGen?: string; formFactor?: string; ramSlots?: number; maxRamGb?: number | null } | null;
+          psuSpec?:         { wattage?: number } | null;
+          caseSpec?:        { formFactor?: string; maxGpuLengthMm?: number | null } | null;
+          coolerSpec?:      { socketSupport?: string | null; tdpRating?: number | null } | null;
         }>;
       }>(`/products?categoryId=${encodeURIComponent(categoryId)}&limit=50`);
 
       const mapped: ApiPart[] = data.items.map((p) => ({
         id: p.id, name: p.name, brand: p.brand,
         displayPrice: p.displayPrice, thumbnailUrl: p.thumbnailUrl,
-        tdp:        p.cpuSpec?.tdp ?? p.gpuSpec?.tdp ?? p.coolerSpec?.tdpRating,
-        wattage:    p.psuSpec?.wattage,
-        socket:     p.cpuSpec?.socket ?? p.motherboardSpec?.socket,
-        ramGen:     p.motherboardSpec?.ramGen ?? p.ramSpec?.generation,
-        formFactor: p.motherboardSpec?.formFactor ?? p.caseSpec?.formFactor
-                      ?? p.storageSpec?.interfaceType ?? p.coolerSpec?.coolerType,
+        tdp:            p.cpuSpec?.tdp ?? p.gpuSpec?.tdp ?? p.coolerSpec?.tdpRating,
+        wattage:        p.psuSpec?.wattage,
+        socket:         p.cpuSpec?.socket ?? p.motherboardSpec?.socket,
+        ramGen:         p.motherboardSpec?.ramGen ?? p.ramSpec?.generation,
+        ramSpeedMhz:    p.ramSpec?.speedMhz,
+        formFactor:     p.motherboardSpec?.formFactor ?? p.caseSpec?.formFactor,
+        gpuLengthMm:    p.gpuSpec?.lengthMm,
+        maxGpuLengthMm: p.caseSpec?.maxGpuLengthMm,
+        socketSupport:  p.coolerSpec?.socketSupport,
+        ramSlots:       p.motherboardSpec?.ramSlots,
+        maxRamGb:       p.motherboardSpec?.maxRamGb,
       }));
       setParts(slot, mapped);
     } catch {
@@ -123,26 +127,61 @@ export function useBuild() {
 
     const errors: string[] = [];
     const warnings: string[] = [];
-    const cpu = selected["CPU"];
-    const mb  = selected["MOTHERBOARD"];
-    const ram = selected["MEMORY"];
-    const psu = selected["POWER_SUPPLY"];
 
+    const cpu    = selected["CPU"];
+    const mb     = selected["MOTHERBOARD"];
+    const ram    = selected["MEMORY"];
+    const psu    = selected["POWER_SUPPLY"];
+    const gpu    = selected["GPU"];
+    const pcCase = selected["CASE"];
+    const cooler = selected["CPU_COOLER"];
+
+    // ── Rule 1: CPU socket ↔ Motherboard socket ──────────────────
     if (cpu && mb && cpu.socket && mb.socket && cpu.socket !== mb.socket)
-      errors.push(`CPU socket (${cpu.socket}) không khớp Motherboard (${mb.socket})`);
-    if (mb && ram && mb.ramGen && ram.ramGen && mb.ramGen !== ram.ramGen)
-      errors.push(`RAM (${ram.ramGen}) không khớp Motherboard (${mb.ramGen})`);
+      errors.push(`CPU socket ${cpu.socket} does not fit Motherboard socket ${mb.socket}`);
 
+    // ── Rule 2: RAM generation ↔ Motherboard RAM gen ─────────────
+    if (mb && ram && mb.ramGen && ram.ramGen && mb.ramGen !== ram.ramGen)
+      errors.push(`RAM is ${ram.ramGen} but Motherboard only supports ${mb.ramGen}`);
+
+    // ── Rule 3: GPU physical length ↔ Case max GPU length ────────
+    if (gpu && pcCase && gpu.gpuLengthMm && pcCase.maxGpuLengthMm) {
+      if (gpu.gpuLengthMm > pcCase.maxGpuLengthMm)
+        errors.push(`GPU is ${gpu.gpuLengthMm}mm long — Case only fits up to ${pcCase.maxGpuLengthMm}mm`);
+    }
+
+    // ── Rule 4: Motherboard form factor ↔ Case form factor ───────
+    if (mb && pcCase && mb.formFactor && pcCase.formFactor) {
+      const FF: Record<string, number> = { 'mini-itx': 0, 'miniitx': 0, 'matx': 1, 'microatx': 1, 'atx': 2, 'eatx': 3, 'e-atx': 3 };
+      const norm = (s: string) => s.toLowerCase().replace(/[-\s]/g, '');
+      const mbIdx   = FF[norm(mb.formFactor)] ?? -1;
+      const caseIdx = FF[norm(pcCase.formFactor)] ?? -1;
+      if (mbIdx !== -1 && caseIdx !== -1 && mbIdx > caseIdx)
+        errors.push(`Motherboard (${mb.formFactor}) is too large for Case (${pcCase.formFactor})`);
+    }
+
+    // ── Rule 5: CPU Cooler socket support ↔ CPU socket ───────────
+    if (cpu && cooler && cpu.socket && cooler.socketSupport) {
+      const supported = cooler.socketSupport.split(',').map((s) => s.trim());
+      if (!supported.includes(cpu.socket))
+        errors.push(`Cooler does not support ${cpu.socket} (supports: ${cooler.socketSupport})`);
+    }
+
+    // ── Rule 6: PSU wattage vs total system TDP ──────────────────
     const totalWatts = BUILD_SLOTS.reduce((s, cfg) => {
       const p = selected[cfg.slot];
       return s + (p ? (p.tdp ?? cfg.defaultWatts) : 0);
     }, 0);
-    if (psu?.wattage && totalWatts > psu.wattage * 0.8)
-      warnings.push(`TDP ~${totalWatts}W gần giới hạn PSU ${psu.wattage}W (nên <80%)`);
+    if (psu?.wattage) {
+      if (totalWatts > psu.wattage)
+        errors.push(`System needs ~${totalWatts}W but PSU is only ${psu.wattage}W — not enough power`);
+      else if (totalWatts > psu.wattage * 0.8)
+        warnings.push(`System uses ~${totalWatts}W which is over 80% of PSU capacity (${psu.wattage}W) — consider a larger PSU`);
+    }
 
-    setCompat({ valid: errors.length === 0, errors, warnings });
-    if (errors.length === 0) toast.success(warnings.length ? "Build OK (có cảnh báo)" : "Build hoàn toàn tương thích!");
-    else toast.error(`${errors.length} lỗi không tương thích`);
+    setCompat({ valid: errors.length === 0, errors, warnings, requiredWatts: totalWatts });
+    if (errors.length === 0) toast.success(warnings.length ? "Build compatible (with warnings)" : "Build fully compatible!");
+    else toast.error(`${errors.length} compatibility issue${errors.length > 1 ? "s" : ""} found`);
     setValidating(false);
   }, [selected, setCompat, setValidating]);
 

@@ -53,8 +53,13 @@ export function ResetPasswordForm() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-base px-4 py-16">
         <div className="w-full max-w-sm border border-edge bg-elevated p-8 text-center">
-          <p className="text-sm text-destructive">Invalid or missing reset token.</p>
-          <Link href="/forgot-password" className="mt-4 block text-sm text-brand hover:underline">
+          <p className="text-sm text-destructive">
+            Invalid or missing reset token.
+          </p>
+          <Link
+            href="/forgot-password"
+            className="mt-4 block text-sm text-brand hover:underline"
+          >
             Request a new link →
           </Link>
         </div>
@@ -72,11 +77,20 @@ export function ResetPasswordForm() {
         {step === "done" ? (
           <div className="border border-edge bg-elevated p-8 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-950/40 text-success">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <h1 className="text-lg font-black uppercase tracking-wide text-fg">Password updated!</h1>
+            <h1 className="text-lg font-black uppercase tracking-wide text-fg">
+              Password updated!
+            </h1>
             <p className="mt-3 text-body text-secondary">
               Your password has been reset successfully. Redirecting to sign in…
             </p>
@@ -90,8 +104,12 @@ export function ResetPasswordForm() {
         ) : (
           <div className="border border-edge bg-elevated">
             <div className="border-b border-edge px-6 py-5">
-              <h1 className="text-lg font-black uppercase tracking-wide text-fg">Set new password</h1>
-              <p className="mt-1 text-sm text-muted">Must be at least 6 characters.</p>
+              <h1 className="text-lg font-black uppercase tracking-wide text-fg">
+                Set new password
+              </h1>
+              <p className="mt-1 text-sm text-muted">
+                Must be at least 6 characters.
+              </p>
             </div>
 
             <form onSubmit={submit} className="space-y-4 p-6">
