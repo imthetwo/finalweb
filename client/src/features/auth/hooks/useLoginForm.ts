@@ -7,6 +7,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { getApiUrl } from "@/lib/api/client";
 import { saveToken } from "@/lib/auth";
+import { getGuestCart, clearGuestCart } from "@/lib/guestCart";
 import { readBackendError } from "../utils/readBackendError";
 
 export const loginSchema = z.object({
@@ -36,6 +37,24 @@ export function useLoginForm(onSuccess: () => void) {
       const data = (await res.json()) as { access_token?: string };
       if (!data?.access_token) { setSubmitError("No access token returned."); return; }
       saveToken(data.access_token);
+      // Merge guest cart items into the server cart
+      const guestItems = getGuestCart();
+      if (guestItems.length > 0) {
+        await Promise.allSettled(
+          guestItems.map((item) =>
+            fetch(getApiUrl("/cart/items"), {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${data.access_token}`,
+              },
+              body: JSON.stringify({ productId: item.productId, quantity: item.quantity }),
+            })
+          )
+        );
+        clearGuestCart();
+        window.dispatchEvent(new Event("cart-updated"));
+      }
       toast.success("Signed in successfully.");
       form.reset();
       onSuccess();

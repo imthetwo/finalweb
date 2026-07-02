@@ -14,6 +14,7 @@ import {
   type ProductInput,
   type Category,
 } from "@/lib/api";
+import { useAuthState } from "@/hooks/useAuthState";
 import {
   ProductSpecFields,
   Field,
@@ -39,6 +40,8 @@ export default function ProductFormModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  const { user } = useAuthState();
+  const isAdmin = user?.role === "ADMIN";
   const [categories, setCategories] = useState<Category[]>([]);
   // Initialize the form straight from the `editing` prop. The modal is mounted
   // fresh each time it opens (parent renders it behind `{modalOpen && …}`), so a
@@ -236,15 +239,21 @@ export default function ProductFormModal({
           {/* Spec section */}
           <ProductSpecFields specKey={specKey} specFields={specFields} setSpec={setSpec} />
 
-          <label className="flex items-center gap-2 text-sm text-secondary">
-            <input type="checkbox" className="accent-brand" checked={form.isPublished ?? true} onChange={(e) => set("isPublished", e.target.checked)} />
-            Published
-          </label>
+          {isAdmin ? (
+            <label className="flex items-center gap-2 text-sm text-secondary">
+              <input type="checkbox" className="accent-brand" checked={form.isPublished ?? true} onChange={(e) => set("isPublished", e.target.checked)} />
+              Published
+            </label>
+          ) : (
+            <p className="rounded border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning">
+              Product will be saved as draft and requires admin approval before going live.
+            </p>
+          )}
 
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={onClose} className="border border-edge px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-secondary hover:border-fg hover:text-fg">Cancel</button>
             <button type="submit" disabled={saving} className="bg-brand px-6 py-2.5 text-sm font-black uppercase tracking-wider text-black hover:bg-brand/85 disabled:opacity-50">
-              {saving ? "Saving…" : editing ? "Update" : "Create"}
+              {saving ? "Saving…" : editing ? "Update" : isAdmin ? "Create" : "Submit for Review"}
             </button>
           </div>
         </form>

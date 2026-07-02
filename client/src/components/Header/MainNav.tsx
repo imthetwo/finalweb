@@ -34,7 +34,7 @@ export default function MainNav() {
   const { user, loaded } = useAuthState();
 
   return (
-    <nav className="w-full select-none bg-base">
+    <nav className="w-full select-none bg-base border-b border-edge">
 
       {/* ── MOBILE (< lg) ─────────────────────────────────────────────────── */}
       <div className="relative flex h-20 items-center justify-between px-4 lg:hidden">

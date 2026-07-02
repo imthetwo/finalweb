@@ -184,14 +184,14 @@ export class PaymentsService {
       return { resultCode: 0, message: 'ok' }; // always 200 to MoMo
     }
 
-    if (order.isPaid) return { resultCode: 0, message: 'already paid' };
-
     if (body.resultCode === 0) {
-      // Payment success
-      await this.prisma.order.update({
-        where: { id: order.id },
+      // Atomic check-and-set: only succeeds if isPaid is still false (prevents double processing)
+      const updated = await this.prisma.order.updateMany({
+        where: { id: order.id, isPaid: false },
         data: { isPaid: true, status: OrderStatus.PROCESSING },
       });
+      if (updated.count === 0) return { resultCode: 0, message: 'already paid' };
+
       this.logger.log(`Order ${order.id} marked PAID via MoMo IPN (transId=${body.transId})`);
 
       if (order.user?.email) {

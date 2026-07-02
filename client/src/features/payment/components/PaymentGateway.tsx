@@ -35,10 +35,10 @@ export function PaymentGateway() {
   const amount   = Number(search.get("amount") ?? 0);
   const isMomo   = method?.toLowerCase() === "momo";
 
-  const [payment, setPayment]     = useState<InitiateResponse | null>(null);
-  const [loading, setLoading]     = useState(Boolean(orderId));
+  const [payment, setPayment]       = useState<InitiateResponse | null>(null);
+  const [loading, setLoading]       = useState(Boolean(orderId));
   const [processing, setProcessing] = useState(false);
-  const [expired, setExpired]     = useState(false);
+  const [expired, setExpired]       = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // ── 1. Call /payments/initiate on mount ──────────────────────────────────
@@ -56,11 +56,11 @@ export function PaymentGateway() {
       });
   }, [orderId]);
 
-  // ── 2. Poll payment status when QR is visible ────────────────────────────
+  // ── 2. Poll IPN status when real MoMo QR is visible ─────────────────────
   useEffect(() => {
     if (!payment?.qrCodeUrl || payment.source !== "momo") return;
 
-    // Start polling
+    // Poll for real IPN (works when backend is publicly reachable via ngrok/deploy)
     pollRef.current = setInterval(async () => {
       try {
         const status = await apiFetch<PaymentStatus>(`/payments/status/${orderId}`);
@@ -84,9 +84,10 @@ export function PaymentGateway() {
       clearInterval(pollRef.current!);
       clearTimeout(expireTimer);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [payment, orderId, router]);
 
-  // ── Manual confirm (simulated / fallback) ────────────────────────────────
+  // ── Confirm payment (manual or auto) ─────────────────────────────────────
   async function pay(success: boolean) {
     if (!orderId) { toast.error("Missing order ID"); return; }
     setProcessing(true);
@@ -151,7 +152,7 @@ export function PaymentGateway() {
             </p>
           </div>
 
-          {/* ── Real MoMo QR from API ── */}
+          {/* ── Real MoMo QR ── */}
           {isMomo && payment?.qrCodeUrl && !expired && (
             <div className="flex flex-col items-center gap-3">
               <div className="border border-edge bg-white p-4">
@@ -164,7 +165,10 @@ export function PaymentGateway() {
               </div>
               <p className="text-center text-xs leading-relaxed text-muted">
                 Open <span className="font-bold text-pink-400">MoMo app</span> → scan QR to pay.
-                <br />Waiting for payment confirmation…
+                <br />
+                {processing
+                  ? <span className="font-bold text-pink-400">Processing payment…</span>
+                  : "Waiting for payment confirmation…"}
               </p>
               <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-elevated">
                 <div className="h-full animate-[shrink_600s_linear_forwards] bg-brand" />

@@ -25,6 +25,9 @@ export const updateAdminProduct = (id: string, data: Partial<ProductInput>) =>
 export const deleteAdminProduct = (id: string) =>
   apiFetch<{ ok: boolean }>(`/admin/products/${id}`, { method: "DELETE" });
 
+export const approveAdminProduct = (id: string) =>
+  apiFetch<{ id: string }>(`/admin/products/${id}/approve`, { method: "PATCH" });
+
 export async function uploadProductImage(file: File): Promise<{ url: string }> {
   const token = getToken();
   const fd = new FormData();
@@ -94,6 +97,13 @@ export async function downloadOrdersExcel() {
 export const fetchAdminUsers = (page = 1) =>
   apiFetch<{ id: string; email: string; fullName: string; role: string; createdAt: string }[]>(
     `/admin/users?page=${page}`,
+  );
+
+// PATCH /admin/users/:id/role — ADMIN ONLY
+export const updateAdminUserRole = (id: string, role: "USER" | "STAFF" | "ADMIN") =>
+  apiFetch<{ id: string; email: string; fullName: string; role: string }>(
+    `/admin/users/${id}/role`,
+    { method: "PATCH", body: JSON.stringify({ role }) },
   );
 
 // ── Promotions ────────────────────────────────────────────────────────────────

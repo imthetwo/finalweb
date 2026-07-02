@@ -5,6 +5,7 @@ export type AuthUser = {
   email: string;
   fullName: string;
   role: "USER" | "STAFF" | "ADMIN";
+  avatarUrl?: string | null;
 };
 
 type AuthState = {

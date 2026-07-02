@@ -1,37 +1,34 @@
-// GET /products + /categories — dùng cho (shop)/[...slug]/page.tsx
+// GET /products + /categories — dùng cho (shop)/shop/[...slug]/page.tsx
 import { fetchCategories, fetchProducts } from "@/lib/api";
 import { CATEGORY_NAV } from "@/lib/category-nav";
 
-// Build từ CATEGORY_NAV: last URL segment → category label
-const URL_TO_LABEL: Record<string, string> = Object.fromEntries(
+// last URL segment → { display label, DB category name }
+const URL_LOOKUP = Object.fromEntries(
   CATEGORY_NAV
     .filter((c) => c.href !== "/shop")
-    .map((c) => [c.href.split("/").at(-1)!, c.label])
+    .map((c) => [c.href.split("/").at(-1)!, { label: c.label, dbName: c.dbName ?? c.label }])
 );
 
-// Nhận raw searchParams từ page.tsx, tự parse
 export async function getShopPage(
   slug: string[],
   searchParams: { page?: string; search?: string },
 ) {
   const page = Math.max(1, Number(searchParams.page) || 1);
   const search = searchParams.search?.trim() || undefined;
-  const isAllProducts = slug.length === 1 && slug[0] === "shop";
+  // slug=[] → /shop root page; slug=['shop'] → legacy compat
+  const isAllProducts = slug.length === 0 || (slug.length === 1 && slug[0] === "shop");
 
-  const segments = [...slug].reverse();
-  let targetCategoryName: string | undefined;
-  for (const seg of segments) {
-    if (URL_TO_LABEL[seg]) { targetCategoryName = URL_TO_LABEL[seg]; break; }
-  }
+  const matchedSeg = [...slug].reverse().find((seg) => URL_LOOKUP[seg]);
+  const entry = matchedSeg ? URL_LOOKUP[matchedSeg] : undefined;
 
   let categoryId: string | undefined;
-  let categoryName = isAllProducts ? "All Products" : (targetCategoryName ?? slug[slug.length - 1] ?? "Products");
+  const categoryName = isAllProducts ? "All Products" : (entry?.label ?? slug[slug.length - 1] ?? "Products");
 
   if (!isAllProducts) {
     try {
       const categories = await fetchCategories();
-      const matched = categories.find((c) => c.name === targetCategoryName);
-      if (matched) { categoryId = matched.id; categoryName = matched.name; }
+      const matched = categories.find((c) => c.name === entry?.dbName);
+      if (matched) { categoryId = matched.id; }
     } catch { /* fallback */ }
   }
 

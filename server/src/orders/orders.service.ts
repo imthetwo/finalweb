@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { OrderStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CartService } from '../cart/cart.service';
@@ -8,6 +8,8 @@ const SHIPPING_FEE = 30000;
 
 @Injectable()
 export class OrdersService {
+  private readonly logger = new Logger(OrdersService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly cartService: CartService,
@@ -72,12 +74,18 @@ export class OrdersService {
       const userCart = await tx.cart.findUnique({ where: { userId } });
       if (userCart) await tx.cartItem.deleteMany({ where: { cartId: userCart.id } });
 
+      // Mark coupon used inside transaction so it rolls back if order creation fails
+      if (appliedCoupon) {
+        await tx.coupon.updateMany({
+          where: { code: appliedCoupon.trim().toUpperCase() },
+          data: { usedCount: { increment: 1 } },
+        });
+      }
+
       return created;
     });
 
-    // Đánh dấu coupon đã dùng
-    if (appliedCoupon) await this.coupons.markUsed(appliedCoupon);
-
+    this.logger.log(`Order ${order.id} created for user ${userId} — total ${order.totalAmount} — method ${body.paymentMethod}`);
     return order;
   }
 
@@ -106,6 +114,7 @@ export class OrdersService {
       include: { items: true },
     });
     if (!order) throw new NotFoundException('Order not found');
+    if (order.isPaid) throw new BadRequestException('Cannot cancel a paid order');
     if (!['PENDING', 'PROCESSING'].includes(order.status))
       throw new BadRequestException('Cannot cancel this order');
 
@@ -116,10 +125,12 @@ export class OrdersService {
           data: { stock: { increment: item.quantity } },
         });
       }
-      return tx.order.update({
+      const cancelled = await tx.order.update({
         where: { id: orderId },
         data: { status: OrderStatus.CANCELLED },
       });
+      this.logger.log(`Order ${orderId} cancelled by user ${userId}`);
+      return cancelled;
     });
   }
 }

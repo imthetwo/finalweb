@@ -29,7 +29,7 @@ export class CouponsService {
       };
 
     const discount = coupon.discountFixed
-      ? coupon.discountFixed
+      ? Math.min(coupon.discountFixed, subtotal)
       : Math.round((subtotal * (coupon.discountPct ?? 0)) / 100);
 
     return { valid: true, discount, message: 'Coupon applied!', code: coupon.code };

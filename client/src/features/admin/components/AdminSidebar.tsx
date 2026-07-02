@@ -7,6 +7,7 @@ import { LayoutDashboard, Package, ShoppingBag, Users, ArrowLeft, ChevronDown, V
 
 import { useAuthState } from "@/hooks/useAuthState";
 import { fetchCategories, type Category } from "@/lib/api";
+import { toast } from "sonner";
 
 const TOP_NAV = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -37,7 +38,9 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
     if (!loaded) return;
     if (!user) { router.replace("/login"); return; }
     if (user.role !== "ADMIN" && user.role !== "STAFF") { router.replace("/"); return; }
-    fetchCategories().then(setCategories).catch(() => {});
+    fetchCategories()
+      .then(setCategories)
+      .catch(() => toast.error("Failed to load categories — please refresh the page"));
   }, [loaded, user, router]);
 
   if (!allowed) {

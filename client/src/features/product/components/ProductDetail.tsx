@@ -70,7 +70,7 @@ export async function ProductDetail({ id }: { id: string }) {
 
           <div className="mt-8 flex items-stretch gap-3">
             <div className="flex-1">
-              <AddToCartButton productId={product.id} label="Buy Now" />
+              <AddToCartButton productId={product.id} />
             </div>
             <WishlistButton productId={product.id} />
           </div>

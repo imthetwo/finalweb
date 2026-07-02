@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { ArrowUpDown, Box, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -30,6 +30,10 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
   }, [parts]);
 
   const [maxPrice, setMaxPrice] = useState<number>(priceBounds.max);
+
+  useEffect(() => {
+    setMaxPrice(priceBounds.max);
+  }, [priceBounds.max]);
 
   const allBrands = useMemo(() => [...new Set(parts.map((p) => p.brand))].sort(), [parts]);
 
@@ -165,7 +169,6 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
               <table className="w-full border-collapse text-body">
                 <thead className="sticky top-0 z-10 border-b border-edge bg-elevated">
                   <tr>
-                    <th className="w-9 px-2 py-2.5" />
                     <th className="w-14 px-3 py-2.5" />
                     <th className="px-3 py-2.5 text-left text-2xs font-bold uppercase tracking-wider text-muted">
                       <button type="button" onClick={() => setSort("name-asc")} className="flex items-center gap-1 hover:text-fg">
@@ -191,7 +194,6 @@ export function PartPickerOverlay({ slotCfg, parts, currentId, loading, buildSum
                         isSelected && "bg-brand/5 border-l-2 border-l-brand",
                         idx % 2 === 0 ? "bg-surface" : "bg-base",
                       )}>
-                        <td className="w-9 px-2 py-2"><input type="checkbox" readOnly checked={isSelected} className="h-3.5 w-3.5 accent-brand" /></td>
                         <td className="w-14 px-3 py-2">
                           <div className="flex h-11 w-11 items-center justify-center border border-edge bg-surface">
                             {part.thumbnailUrl

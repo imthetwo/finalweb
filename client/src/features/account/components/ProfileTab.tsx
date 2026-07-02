@@ -32,6 +32,7 @@ export function ProfileTab({ profile, onUpdated }: { profile: UserProfile; onUpd
 
   async function savePassword(e: React.FormEvent) {
     e.preventDefault();
+    if (!pwd.current) { toast.error("Current password is required"); return; }
     if (pwd.next.length < 6) { toast.error("New password must be at least 6 characters"); return; }
     setSavingPwd(true);
     try {
@@ -75,25 +76,40 @@ export function ProfileTab({ profile, onUpdated }: { profile: UserProfile; onUpd
         </button>
       </form>
 
-      {/* Change password */}
-      <form onSubmit={savePassword} className="space-y-4 border border-edge bg-elevated p-6">
-        <h3 className="text-sm font-black uppercase tracking-wider text-fg">Change Password</h3>
-        <div>
-          <label className={labelCls}>Current password</label>
-          <input type="password" className={inputCls} value={pwd.current} onChange={(e) => setPwd({ ...pwd, current: e.target.value })} />
+      {/* Change password — hidden for Google-authenticated users */}
+      {profile.isGoogleUser ? (
+        <div className="flex flex-col items-start justify-center space-y-3 border border-edge bg-elevated p-6">
+          <h3 className="text-sm font-black uppercase tracking-wider text-fg">Change Password</h3>
+          <div className="flex items-center gap-3 rounded-none border border-brand/20 bg-brand/5 px-4 py-3">
+            <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-brand" fill="none" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 11c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm-6 0c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2z" />
+              <circle cx="12" cy="12" r="10" />
+            </svg>
+            <p className="text-body text-secondary">
+              Your account uses <span className="font-bold text-fg">Google Sign-In</span> — no password required.
+            </p>
+          </div>
         </div>
-        <div>
-          <label className={labelCls}>New password</label>
-          <input type="password" className={inputCls} value={pwd.next} onChange={(e) => setPwd({ ...pwd, next: e.target.value })} />
-        </div>
-        <button
-          type="submit"
-          disabled={savingPwd}
-          className="inline-flex items-center gap-2 border border-edge px-5 py-2.5 text-sm font-black uppercase tracking-wider text-secondary transition hover:border-fg hover:text-fg disabled:opacity-50"
-        >
-          <KeyRound size={13} /> {savingPwd ? "Changing…" : "Change password"}
-        </button>
-      </form>
+      ) : (
+        <form onSubmit={savePassword} className="space-y-4 border border-edge bg-elevated p-6">
+          <h3 className="text-sm font-black uppercase tracking-wider text-fg">Change Password</h3>
+          <div>
+            <label className={labelCls}>Current password</label>
+            <input type="password" className={inputCls} value={pwd.current} onChange={(e) => setPwd({ ...pwd, current: e.target.value })} />
+          </div>
+          <div>
+            <label className={labelCls}>New password</label>
+            <input type="password" className={inputCls} value={pwd.next} onChange={(e) => setPwd({ ...pwd, next: e.target.value })} />
+          </div>
+          <button
+            type="submit"
+            disabled={savingPwd}
+            className="inline-flex items-center gap-2 border border-edge px-5 py-2.5 text-sm font-black uppercase tracking-wider text-secondary transition hover:border-fg hover:text-fg disabled:opacity-50"
+          >
+            <KeyRound size={13} /> {savingPwd ? "Changing…" : "Change password"}
+          </button>
+        </form>
+      )}
     </div>
   );
 }

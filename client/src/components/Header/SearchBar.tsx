@@ -35,7 +35,7 @@ export function SearchBar({ onClose }: { onClose: () => void }) {
   function goToResults() {
     const q = query.trim();
     if (!q) return;
-    router.push(`/components/processors?search=${encodeURIComponent(q)}`);
+    router.push(`/shop?search=${encodeURIComponent(q)}`);
     onClose();
   }
 

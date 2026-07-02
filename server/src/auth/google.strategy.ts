@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-google-oauth20';
 
 type GoogleProfile = {
+  id?: string;
   emails?: Array<{ value?: string }>;
   name?: {
     givenName?: string;
@@ -40,6 +41,7 @@ export class GoogleStrategy extends PassportStrategy(
     const picture = profile.photos?.[0]?.value ?? '';
 
     return {
+      id: profile.id ?? '',
       email,
       firstName,
       lastName,

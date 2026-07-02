@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { OrderStatus, Prisma } from '@prisma/client';
+import { OrderStatus, Prisma, Role } from '@prisma/client';
 import * as ExcelJS from 'exceljs';
 import { PrismaService } from '../../prisma/prisma.service';
 import { EmailService } from '../../email/email.service';
@@ -71,6 +71,17 @@ export class AdminOrdersService {
         role: true, isActive: true, createdAt: true,
         _count: { select: { orders: true } },
       },
+    });
+  }
+
+  async updateUserRole(userId: string, role: Role, requesterId: string) {
+    if (userId === requesterId) throw new BadRequestException('Cannot change your own role');
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { role },
+      select: { id: true, email: true, fullName: true, role: true },
     });
   }
 

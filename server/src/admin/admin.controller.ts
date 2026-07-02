@@ -11,8 +11,9 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import {
-  CreateProductDto, UpdateOrderStatusDto, UpdateProductDto,
+  CreateProductDto, UpdateOrderStatusDto, UpdateProductDto, UpdateUserRoleDto,
 } from './dto/admin-product.dto';
+import { CurrentUser } from '../auth/current-user.decorator';
 
 type UploadedFileType = { buffer: Buffer; mimetype: string; size: number };
 
@@ -51,11 +52,22 @@ export class AdminController {
     });
   }
 
-  // ADMIN ONLY — tạo sản phẩm trực tiếp (published)
+  // ADMIN → published ngay; STAFF → draft (isPublished: false), chờ admin duyệt
   @Post('products')
+  @Roles(Role.ADMIN, Role.STAFF)
+  createProduct(
+    @Body() dto: CreateProductDto,
+    @Req() req: Request & { user?: { role?: Role } },
+  ) {
+    const asDraft = getRole(req) === Role.STAFF;
+    return this.admin.createProduct(dto, asDraft);
+  }
+
+  // ADMIN ONLY — duyệt sản phẩm (set isPublished: true)
+  @Patch('products/:id/approve')
   @Roles(Role.ADMIN)
-  createProduct(@Body() dto: CreateProductDto) {
-    return this.admin.createProduct(dto);
+  approveProduct(@Param('id') id: string) {
+    return this.admin.approveProduct(id);
   }
 
   // ADMIN ONLY — chỉnh sửa sản phẩm
@@ -170,5 +182,15 @@ export class AdminController {
       page: page ? Number(page) : undefined,
       limit: limit ? Number(limit) : undefined,
     });
+  }
+
+  @Patch('users/:id/role')
+  @Roles(Role.ADMIN)
+  updateUserRole(
+    @Param('id') id: string,
+    @Body() dto: UpdateUserRoleDto,
+    @CurrentUser('userId') requesterId: string,
+  ) {
+    return this.admin.updateUserRole(id, dto.role, requesterId);
   }
 }

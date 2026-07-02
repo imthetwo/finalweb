@@ -1,6 +1,7 @@
 import {
   IsBoolean,
   IsDateString,
+  IsEnum,
   IsInt,
   IsNumber,
   IsOptional,
@@ -9,6 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { OrderStatus, Role } from '@prisma/client';
 
 // ── Spec sub-DTOs ─────────────────────────────────────────────────────────────
 
@@ -147,7 +149,11 @@ export class UpdateProductDto {
 }
 
 export class UpdateOrderStatusDto {
-  @IsString() status!: string;
+  @IsEnum(OrderStatus) status!: OrderStatus;
+}
+
+export class UpdateUserRoleDto {
+  @IsEnum(Role) role!: Role;
 }
 
 export class CreatePromotionDto {

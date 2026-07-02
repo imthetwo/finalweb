@@ -17,11 +17,11 @@ export class CloudinaryService {
     }
   }
 
-  private upload(buffer: Buffer, folder: string, resourceType: 'image' | 'video'): Promise<string> {
+  private upload(buffer: Buffer, folder: string, resourceType: 'image' | 'video', publicId?: string): Promise<string> {
     if (!this.configured) return Promise.reject(new Error('Cloudinary is not configured'));
     return new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
-        { folder, resource_type: resourceType },
+        { folder, resource_type: resourceType, ...(publicId ? { public_id: publicId, overwrite: true } : {}) },
         (err, result) => {
           if (err || !result) {
             this.logger.error(`Cloudinary upload failed: ${err?.message}`);
@@ -35,11 +35,9 @@ export class CloudinaryService {
   }
 
   /** Upload an image buffer to Cloudinary, return the secure URL. */
-  uploadImage(buffer: Buffer, folder = 'TechStore/uploads'): Promise<string> {
-    if (!this.configured) {
-      return Promise.reject(new Error('Cloudinary is not configured'));
-    }
-    return this.upload(buffer, folder, 'image');
+  uploadImage(buffer: Buffer, folder = 'TechStore/uploads', publicId?: string): Promise<string> {
+    if (!this.configured) return Promise.reject(new Error('Cloudinary is not configured'));
+    return this.upload(buffer, folder, 'image', publicId);
   }
 
   /** Upload a video buffer to Cloudinary, return the secure URL. */

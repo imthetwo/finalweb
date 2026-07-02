@@ -34,7 +34,7 @@ export default function WishlistTab() {
       <div className="flex flex-col items-center gap-3 border border-dashed border-edge py-16 text-muted">
         <Heart size={32} className="opacity-30" />
         <p className="text-sm">Your wishlist is empty.</p>
-        <Link href="/components/processors" className="text-sm text-brand underline">Explore products →</Link>
+        <Link href="/shop/components/processors" className="text-sm text-brand underline">Explore products →</Link>
       </div>
     );
   }

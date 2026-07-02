@@ -103,6 +103,7 @@ export type UserProfile = {
   avatarUrl: string | null;
   role: "USER" | "ADMIN";
   createdAt: string;
+  isGoogleUser: boolean;
   _count: { orders: number; wishlists: number };
 };
 

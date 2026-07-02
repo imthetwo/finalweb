@@ -137,7 +137,7 @@ export default async function FeaturedProducts() {
             </h2>
           </div>
           <Link
-            href="/components/processors"
+            href="/shop/components/processors"
             className="group flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-muted transition-colors hover:text-brand"
           >
             View All

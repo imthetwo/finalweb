@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart } from "lucide-react";
 
 import type { ProductListItem } from "@/types/api";
 import { formatVnd } from "@/lib/format";
@@ -11,13 +10,8 @@ export function ProductCard({ p }: { p: ProductListItem }) {
   const save = hasSale ? p.price - p.salePrice! : 0;
 
   return (
-    <div className="group flex flex-col bg-elevated">
+    <div className="group flex flex-col border border-edge bg-elevated transition-colors hover:border-brand/30">
       <Link href={`/product/${p.id}`} className="relative aspect-square overflow-hidden bg-elevated">
-        {hasSale && (
-          <span className="absolute left-3 top-3 z-10 bg-brand px-2 py-0.5 text-2xs font-black uppercase tracking-wider text-brand-fg">
-            Sale
-          </span>
-        )}
         {p.thumbnailUrl ? (
           <Image
             src={p.thumbnailUrl}
@@ -33,7 +27,6 @@ export function ProductCard({ p }: { p: ProductListItem }) {
       </Link>
 
       <div className="flex flex-1 flex-col p-4">
-        <p className="text-2xs font-bold uppercase tracking-wider text-brand/60">{p.brand}</p>
         <Link
           href={`/product/${p.id}`}
           className="mt-1 line-clamp-2 text-body font-semibold leading-snug text-fg hover:text-brand"
@@ -42,7 +35,7 @@ export function ProductCard({ p }: { p: ProductListItem }) {
         </Link>
 
         <div className="mt-3 flex flex-wrap items-baseline gap-x-2">
-          <span className="text-base font-black text-fg">
+          <span className="text-md font-black text-brand">
             {formatVnd(hasSale ? p.salePrice! : p.price)}
           </span>
           {hasSale && (
@@ -53,15 +46,14 @@ export function ProductCard({ p }: { p: ProductListItem }) {
           )}
         </div>
 
-        <p className={`mt-1 text-xs ${p.stock > 0 ? "text-muted" : "text-destructive"}`}>
+        <p className={`mt-1 text-xs ${p.stock > 0 ? "text-success" : "text-destructive"}`}>
           {p.stock > 0 ? "In stock" : "Out of stock"}
         </p>
 
-        <div className="mt-3">
+        <div className="mt-auto pt-3">
           <AddToCartButton
             productId={p.id}
             className="flex w-full items-center justify-center gap-2 border border-brand/40 bg-transparent py-2 text-xs font-black uppercase tracking-wider text-brand transition hover:bg-brand hover:text-brand-fg"
-            label={<><ShoppingCart size={13} /> Add to Cart</>}
           />
         </div>
       </div>

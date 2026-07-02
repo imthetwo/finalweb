@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { ShoppingCart } from "lucide-react";
 
 import { apiFetch } from "@/lib/api";
-import { LoginOverlay } from "@/features/auth/LoginOverlay";
+import { addToGuestCart } from "@/lib/guestCart";
+import { useAuthStore } from "@/store/authStore";
 
 const DEFAULT_CLASS =
   "w-full bg-brand px-8 py-3 text-sm font-black uppercase tracking-wider text-black transition hover:bg-white disabled:cursor-not-allowed";
@@ -43,22 +44,23 @@ export default function AddToCartButton({
   className?: string;
   label?: React.ReactNode;
 }) {
-  const [authed, setAuthed] = useState(false);
+  const authed = useAuthStore((s) => !!s.user);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    setAuthed(!!localStorage.getItem("access_token"));
-  }, []);
 
   async function add() {
     setLoading(true);
     try {
-      await apiFetch("/cart/items", {
-        method: "POST",
-        body: JSON.stringify({ productId, quantity: 1 }),
-      });
+      if (authed) {
+        await apiFetch("/cart/items", {
+          method: "POST",
+          body: JSON.stringify({ productId, quantity: 1 }),
+        });
+      } else {
+        addToGuestCart(productId);
+      }
       toast.success("Added to cart");
+      window.dispatchEvent(new Event("cart-updated"));
       setDone(true);
       setTimeout(() => setDone(false), 1500);
     } catch (e) {
@@ -66,21 +68,6 @@ export default function AddToCartButton({
     } finally {
       setLoading(false);
     }
-  }
-
-  if (!authed) {
-    return (
-      <LoginOverlay
-        triggerButton={
-          <button type="button" className={className}>
-            <span className="flex items-center justify-center gap-2">
-              <ShoppingCart size={15} />
-              {label}
-            </span>
-          </button>
-        }
-      />
-    );
   }
 
   return (
@@ -109,7 +96,6 @@ export default function AddToCartButton({
         )}
       </span>
 
-      {/* Spinner overlay */}
       {loading && (
         <span className="absolute inset-0 flex items-center justify-center">
           <Spinner />

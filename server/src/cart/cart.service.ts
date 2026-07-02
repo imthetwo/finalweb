@@ -1,9 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ProductsService } from '../products/products.service';
 
 @Injectable()
 export class CartService {
+  private readonly logger = new Logger(CartService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly productsService: ProductsService,
@@ -40,10 +42,12 @@ export class CartService {
       where: { id: productId, isPublished: true },
     });
     if (!product) throw new NotFoundException('Product not found');
-    if (product.stock < quantity) throw new BadRequestException('Insufficient stock');
 
     const cart = await this.getOrCreateCart(userId);
     const existing = cart.items.find((i) => i.productId === productId);
+
+    if (product.stock < (existing?.quantity ?? 0) + quantity)
+      throw new BadRequestException('Insufficient stock');
 
     if (existing) {
       await this.prisma.cartItem.update({

@@ -7,7 +7,17 @@ const MAX_AGE = 60 * 60; // 1 hour — khớp với JWT expiry
 
 function parseJwt(token: string) {
   try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
+    // JWT uses Base64url (- and _ instead of + and /). atob() needs standard Base64.
+    // Then re-encode each byte as %XX so decodeURIComponent can reconstruct UTF-8
+    // correctly — plain atob() returns Latin-1 which mangles multi-byte chars (e.g. Vietnamese).
+    const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    const json = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join(""),
+    );
+    const payload = JSON.parse(json);
     return {
       id: payload.sub ?? "",
       email: payload.email ?? "",

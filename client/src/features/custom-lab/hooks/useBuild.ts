@@ -66,7 +66,7 @@ export function useBuild() {
         for (const cat of cats) map[cat.name] = cat.id;
         setCatMap(map);
       })
-      .catch(() => {});
+      .catch(() => toast.error("Failed to load part categories — please refresh"));
   }, [catMap, setCatMap]);
 
   // ── Async: load parts từ DB theo slot ───────────────────────────

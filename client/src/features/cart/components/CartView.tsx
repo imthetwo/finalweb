@@ -2,13 +2,16 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 
 import { apiFetch } from "@/lib/api";
-import { formatVnd } from "@/lib/format";
 import { getToken } from "@/lib/auth";
+import { formatVnd } from "@/lib/format";
+import { LoginOverlay } from "@/features/auth/LoginOverlay";
+import { getGuestCart, updateGuestCartQty, addToGuestCart } from "@/lib/guestCart";
+import { useAuthState } from "@/hooks/useAuthState";
 import type { ProductListItem } from "@/types/api";
 
 type CartItem = {
@@ -16,27 +19,117 @@ type CartItem = {
   quantity: number;
   lineTotal: number;
   customBuildId: string | null;
-  product: { id: string; name: string; thumbnailUrl: string | null; displayPrice: number };
+  product: {
+    id: string;
+    name: string;
+    thumbnailUrl: string | null;
+    displayPrice: number;
+    stock: number;
+    category?: { id: string; name: string } | null;
+  };
 };
 type Cart = { items: CartItem[]; subTotal: number };
+type GuestDisplayItem = { productId: string; quantity: number; product: ProductListItem };
+
+// Returns the maximum allowed quantity based on product category
+function getMaxQty(categoryName: string | undefined | null, stock: number): number {
+  const cat = categoryName?.toLowerCase() ?? "";
+  let cap: number;
+  if (cat.includes("cpu") || cat.includes("processor") || cat.includes("chip") ||
+      cat.includes("ram") || cat.includes("memory") ||
+      cat.includes("motherboard") || cat.includes("mainboard")) {
+    cap = 2;
+  } else if (cat.includes("speaker")) {
+    cap = 1;
+  } else if (cat.includes("mouse") || cat.includes("mice") || cat.includes("keyboard")) {
+    cap = 5;
+  } else {
+    cap = 10;
+  }
+  return Math.min(cap, stock);
+}
 
 export function CartView() {
-  const isLoggedIn = !!getToken();
+  const { user, loaded } = useAuthState();
+  const isLoggedIn = loaded && !!user;
 
-  const [cart, setCart] = useState<Cart | null>(() =>
-    isLoggedIn ? null : { items: [], subTotal: 0 },
-  );
+  const [cart, setCart] = useState<Cart | null>(null);
+  const [guestItems, setGuestItems] = useState<GuestDisplayItem[]>([]);
+  const [guestLoading, setGuestLoading] = useState(false);
   const [trending, setTrending] = useState<ProductListItem[]>([]);
 
+  // Cache product details so we don't re-fetch on every cart-updated event
+  const productCacheRef = useRef(new Map<string, ProductListItem>());
+
+  const loadGuestItems = useCallback(async () => {
+    const raw = getGuestCart();
+    if (raw.length === 0) {
+      setGuestItems([]);
+      return;
+    }
+    const result = await Promise.all(
+      raw.map(async (item) => {
+        let product = productCacheRef.current.get(item.productId);
+        if (!product) {
+          product = await apiFetch<ProductListItem>(`/products/${item.productId}`);
+          productCacheRef.current.set(item.productId, product);
+        }
+        return { ...item, product };
+      })
+    ).catch(() => [] as GuestDisplayItem[]);
+    setGuestItems(result);
+  }, []);
+
+  // Initial data load
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!loaded) return;
+    if (isLoggedIn) {
+      apiFetch<Cart>("/cart")
+        .then(setCart)
+        .catch(() => setCart({ items: [], subTotal: 0 }));
+      return;
+    }
+    const raw = getGuestCart();
+    if (raw.length === 0) {
       apiFetch<{ items: ProductListItem[] }>("/products?limit=4")
         .then((d) => setTrending(d.items))
         .catch(() => {});
-      return;
+    } else {
+      setGuestLoading(true);
+      loadGuestItems().finally(() => setGuestLoading(false));
     }
-    apiFetch<Cart>("/cart").then(setCart).catch(() => setCart(null));
-  }, [isLoggedIn]);
+  }, [loaded, isLoggedIn, loadGuestItems]);
+
+  // Listen for cart-updated events
+  useEffect(() => {
+    if (!loaded) return;
+    const handler = async () => {
+      if (isLoggedIn) {
+        apiFetch<Cart>("/cart").then(setCart).catch(() => toast.error("Failed to refresh cart"));
+      } else {
+        await loadGuestItems();
+        if (getGuestCart().length === 0) {
+          apiFetch<{ items: ProductListItem[] }>("/products?limit=4")
+            .then((d) => setTrending(d.items))
+            .catch(() => {});
+        }
+      }
+    };
+    window.addEventListener("cart-updated", handler);
+    return () => window.removeEventListener("cart-updated", handler);
+  }, [loaded, isLoggedIn, loadGuestItems]);
+
+  function updateGuestQty(productId: string, quantity: number) {
+    updateGuestCartQty(productId, quantity);
+    if (quantity <= 0) {
+      setGuestItems((prev) => prev.filter((i) => i.productId !== productId));
+      window.dispatchEvent(new Event("cart-updated")); // update header badge
+    } else {
+      setGuestItems((prev) =>
+        prev.map((i) => i.productId === productId ? { ...i, quantity } : i)
+      );
+    }
+  }
 
   async function updateQty(itemId: string, quantity: number) {
     try {
@@ -51,8 +144,8 @@ export function CartView() {
     }
   }
 
-  // Loading state (logged-in users only, waiting for fetch)
-  if (cart === null) {
+  // Show loading while auth or guest product details are being fetched
+  if (!loaded || (isLoggedIn && cart === null) || (!isLoggedIn && guestLoading)) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-base">
         <p className="text-body text-muted">Loading cart…</p>
@@ -60,46 +153,129 @@ export function CartView() {
     );
   }
 
-  const standalone = cart.items.filter((i) => !i.customBuildId);
-  const buildMap = new Map<string, CartItem[]>();
-  for (const item of cart.items) {
-    if (!item.customBuildId) continue;
-    buildMap.set(item.customBuildId, [
-      ...(buildMap.get(item.customBuildId) ?? []),
-      item,
-    ]);
+  // ── Logged-in user ────────────────────────────────────────────────────────
+  if (isLoggedIn && cart) {
+    const standalone = cart.items.filter((i) => !i.customBuildId);
+    const buildMap = new Map<string, CartItem[]>();
+    for (const item of cart.items) {
+      if (!item.customBuildId) continue;
+      buildMap.set(item.customBuildId, [
+        ...(buildMap.get(item.customBuildId) ?? []),
+        item,
+      ]);
+    }
+    const isEmpty = cart.items.length === 0;
+
+    return (
+      <main className="min-h-screen bg-base text-fg">
+        <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
+          <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
+
+            <div>
+              {isEmpty ? (
+                <h1 className="text-3xl font-black uppercase tracking-tight text-fg md:text-4xl">
+                  Your Cart Is Empty
+                </h1>
+              ) : (
+                <>
+                  <h1 className="mb-6 text-2xl font-black uppercase tracking-tight text-fg">
+                    Your Cart
+                  </h1>
+                  {[...buildMap.entries()].map(([buildId, items]) => (
+                    <div key={buildId} className="mb-6 border border-brand/30 bg-brand/5 p-4">
+                      <p className="mb-3 text-xs font-black uppercase tracking-wider text-brand">
+                        Custom PC Build —{" "}
+                        {formatVnd(items.reduce((s, i) => s + i.lineTotal, 0))}
+                      </p>
+                      <ul className="space-y-3">
+                        {items.map((i) => (
+                          <CartItemRow key={i.id} item={i} onUpdate={updateQty} />
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                  {standalone.length > 0 && (
+                    <ul className="space-y-4">
+                      {standalone.map((i) => (
+                        <CartItemRow key={i.id} item={i} onUpdate={updateQty} />
+                      ))}
+                    </ul>
+                  )}
+                </>
+              )}
+            </div>
+
+            <div className="h-fit border border-edge bg-surface p-6">
+              <h2 className="text-lg font-black uppercase tracking-[0.15em] text-fg">
+                Order Summary
+              </h2>
+              <div className="mt-4 border-t border-edge pt-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-body font-bold text-secondary">Total</span>
+                  <span className="text-md font-black text-fg">{formatVnd(cart.subTotal)}</span>
+                </div>
+              </div>
+              <div className="mt-6 space-y-3">
+                {!isEmpty ? (
+                  <>
+                    <Link
+                      href="/checkout"
+                      className="flex w-full items-center justify-center gap-2 bg-brand py-3.5 text-sm font-black uppercase tracking-wider text-black transition-colors hover:bg-brand-hover"
+                    >
+                      <ShoppingBag size={14} />
+                      Checkout
+                    </Link>
+                    <Link
+                      href="/shop"
+                      className="flex w-full items-center justify-center border border-edge py-3.5 text-sm font-bold uppercase tracking-wider text-secondary transition-colors hover:border-fg hover:text-fg"
+                    >
+                      Continue Shopping
+                    </Link>
+                  </>
+                ) : (
+                  <Link
+                    href="/shop"
+                    className="flex w-full items-center justify-center gap-2 bg-brand py-3.5 text-sm font-black uppercase tracking-wider text-black transition-colors hover:bg-brand-hover"
+                  >
+                    Continue Shopping
+                    <ArrowRight size={14} />
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
   }
 
-  const isEmpty = cart.items.length === 0;
+  // ── Guest view ────────────────────────────────────────────────────────────
+  const guestEmpty = guestItems.length === 0;
+  const guestTotal = guestItems.reduce((s, i) => s + i.product.displayPrice * i.quantity, 0);
 
   return (
     <main className="min-h-screen bg-base text-fg">
       <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
         <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
 
-          {/* ── LEFT: items or empty state ─────────────────────────── */}
+          {/* LEFT */}
           <div>
-            {isEmpty ? (
+            {guestEmpty ? (
               <>
                 <h1 className="text-3xl font-black uppercase tracking-tight text-fg md:text-4xl">
                   Your Cart Is Empty
                 </h1>
-
-                {!isLoggedIn && (
-                  <p className="mt-4 text-body text-secondary">
-                    Have an account?{" "}
-                    <Link
-                      href="/login"
-                      className="text-brand underline decoration-brand/40 hover:decoration-brand"
-                    >
-                      Log in to see your cart
-                    </Link>
-                  </p>
-                )}
-
+                <p className="mt-4 text-body text-secondary">
+                  Have an account?{" "}
+                  <LoginOverlay
+                    triggerButton={
+                      <button type="button" className="text-brand underline decoration-brand/40 hover:decoration-brand">
+                        Log in to see your cart
+                      </button>
+                    }
+                  />
+                </p>
                 <div className="mt-8 border-t border-edge" />
-
-                {/* Trending products */}
                 {trending.length > 0 && (
                   <div className="mt-8">
                     <p className="mb-5 text-xs font-black uppercase tracking-[0.2em] text-muted">
@@ -141,35 +317,16 @@ export function CartView() {
                 <h1 className="mb-6 text-2xl font-black uppercase tracking-tight text-fg">
                   Your Cart
                 </h1>
-
-                {/* Custom PC builds */}
-                {[...buildMap.entries()].map(([buildId, items]) => (
-                  <div key={buildId} className="mb-6 border border-brand/30 bg-brand/5 p-4">
-                    <p className="mb-3 text-xs font-black uppercase tracking-wider text-brand">
-                      Custom PC Build —{" "}
-                      {formatVnd(items.reduce((s, i) => s + i.lineTotal, 0))}
-                    </p>
-                    <ul className="space-y-3">
-                      {items.map((i) => (
-                        <CartItemRow key={i.id} item={i} onUpdate={updateQty} />
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-
-                {/* Standalone items */}
-                {standalone.length > 0 && (
-                  <ul className="space-y-4">
-                    {standalone.map((i) => (
-                      <CartItemRow key={i.id} item={i} onUpdate={updateQty} />
-                    ))}
-                  </ul>
-                )}
+                <ul className="space-y-4">
+                  {guestItems.map((item) => (
+                    <GuestCartItemRow key={item.productId} item={item} onUpdate={updateGuestQty} />
+                  ))}
+                </ul>
               </>
             )}
           </div>
 
-          {/* ── RIGHT: Order summary ────────────────────────────────── */}
+          {/* RIGHT: Order Summary */}
           <div className="h-fit border border-edge bg-surface p-6">
             <h2 className="text-lg font-black uppercase tracking-[0.15em] text-fg">
               Order Summary
@@ -177,22 +334,23 @@ export function CartView() {
             <div className="mt-4 border-t border-edge pt-4 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-body font-bold text-secondary">Total</span>
-                <span className="text-md font-black text-fg">
-                  {formatVnd(cart.subTotal)}
-                </span>
+                <span className="text-md font-black text-fg">{formatVnd(guestTotal)}</span>
               </div>
             </div>
-
             <div className="mt-6 space-y-3">
-              {!isEmpty && isLoggedIn ? (
+              {!guestEmpty ? (
                 <>
-                  <Link
-                    href="/checkout"
-                    className="flex w-full items-center justify-center gap-2 bg-brand py-3.5 text-sm font-black uppercase tracking-wider text-black transition-colors hover:bg-brand-hover"
-                  >
-                    <ShoppingBag size={14} />
-                    Checkout
-                  </Link>
+                  <LoginOverlay
+                    triggerButton={
+                      <button
+                        type="button"
+                        className="flex w-full items-center justify-center gap-2 bg-brand py-3.5 text-sm font-black uppercase tracking-wider text-black transition-colors hover:bg-brand-hover"
+                      >
+                        <ShoppingBag size={14} />
+                        Checkout
+                      </button>
+                    }
+                  />
                   <Link
                     href="/shop"
                     className="flex w-full items-center justify-center border border-edge py-3.5 text-sm font-bold uppercase tracking-wider text-secondary transition-colors hover:border-fg hover:text-fg"
@@ -217,6 +375,56 @@ export function CartView() {
   );
 }
 
+// ── Guest cart item with qty dropdown ─────────────────────────────────────
+function GuestCartItemRow({
+  item,
+  onUpdate,
+}: {
+  item: GuestDisplayItem;
+  onUpdate: (productId: string, qty: number) => void;
+}) {
+  const lineTotal = item.product.displayPrice * item.quantity;
+  const maxQty = Math.max(getMaxQty(item.product.category?.name, item.product.stock), item.quantity);
+  return (
+    <li className="flex gap-4 border border-edge p-4">
+      <div className="relative h-20 w-20 shrink-0 border border-edge bg-elevated">
+        {(item.product.thumbnailUrl ?? item.product.imageUrl) && (
+          <Image
+            src={(item.product.thumbnailUrl ?? item.product.imageUrl)!}
+            alt=""
+            fill
+            className="object-contain p-1"
+            unoptimized
+          />
+        )}
+      </div>
+      <div className="flex-1">
+        <p className="text-body font-semibold text-fg">{item.product.name}</p>
+        <p className="mt-1 text-body text-brand">{formatVnd(lineTotal)}</p>
+        <div className="mt-3 flex items-center gap-3">
+          <select
+            value={item.quantity}
+            onChange={(e) => onUpdate(item.productId, Number(e.target.value))}
+            className="border border-edge bg-surface px-2 py-1 text-body text-fg outline-none focus:border-brand/50"
+          >
+            {Array.from({ length: maxQty }, (_, i) => i + 1).map((n) => (
+              <option key={n} value={n}>Qty {n}</option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={() => onUpdate(item.productId, 0)}
+            className="text-xs text-subtle underline hover:text-destructive"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+    </li>
+  );
+}
+
+// ── Trending product buy button (guest-aware) ─────────────────────────────
 function TrendingBuyButton({ productId }: { productId: string }) {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
@@ -224,10 +432,14 @@ function TrendingBuyButton({ productId }: { productId: string }) {
   async function handleClick() {
     setLoading(true);
     try {
-      await apiFetch("/cart/items", {
-        method: "POST",
-        body: JSON.stringify({ productId, quantity: 1 }),
-      });
+      if (getToken()) {
+        await apiFetch("/cart/items", {
+          method: "POST",
+          body: JSON.stringify({ productId, quantity: 1 }),
+        });
+      } else {
+        addToGuestCart(productId);
+      }
       toast.success("Added to cart");
       window.dispatchEvent(new Event("cart-updated"));
       setDone(true);
@@ -251,6 +463,7 @@ function TrendingBuyButton({ productId }: { productId: string }) {
   );
 }
 
+// ── Server cart item row ──────────────────────────────────────────────────
 function CartItemRow({
   item,
   onUpdate,
@@ -258,6 +471,7 @@ function CartItemRow({
   item: CartItem;
   onUpdate: (id: string, qty: number) => void;
 }) {
+  const maxQty = Math.max(getMaxQty(item.product.category?.name, item.product.stock), item.quantity);
   return (
     <li className="flex gap-4 border border-edge p-4">
       <div className="relative h-20 w-20 shrink-0 border border-edge bg-elevated">
@@ -275,22 +489,22 @@ function CartItemRow({
         <p className="text-body font-semibold text-fg">{item.product.name}</p>
         <p className="mt-1 text-body text-brand">{formatVnd(item.lineTotal)}</p>
         {!item.customBuildId && (
-          <div className="mt-3 flex items-center gap-2">
+          <div className="mt-3 flex items-center gap-3">
+            <select
+              value={item.quantity}
+              onChange={(e) => onUpdate(item.id, Number(e.target.value))}
+              className="border border-edge bg-surface px-2 py-1 text-body text-fg outline-none focus:border-brand/50"
+            >
+              {Array.from({ length: maxQty }, (_, i) => i + 1).map((n) => (
+                <option key={n} value={n}>Qty {n}</option>
+              ))}
+            </select>
             <button
               type="button"
-              onClick={() => onUpdate(item.id, item.quantity - 1)}
-              disabled={item.quantity <= 1}
-              className="flex h-7 w-7 items-center justify-center border border-edge text-fg transition-colors hover:border-brand/50 disabled:opacity-30"
+              onClick={() => onUpdate(item.id, 0)}
+              className="text-xs text-subtle underline hover:text-destructive"
             >
-              −
-            </button>
-            <span className="w-6 text-center text-body text-fg">{item.quantity}</span>
-            <button
-              type="button"
-              onClick={() => onUpdate(item.id, item.quantity + 1)}
-              className="flex h-7 w-7 items-center justify-center border border-edge text-fg transition-colors hover:border-brand/50"
-            >
-              +
+              Remove
             </button>
           </div>
         )}

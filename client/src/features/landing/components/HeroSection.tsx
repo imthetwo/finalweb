@@ -17,16 +17,17 @@ export default function HeroSection({
   function toggleVideo() {
     const v = videoRef.current;
     if (!v) return;
-    if (v.paused) { v.play(); setPlaying(true); }
-    else { v.pause(); setPlaying(false); }
+    if (v.paused) {
+      v.play();
+      setPlaying(true);
+    } else {
+      v.pause();
+      setPlaying(false);
+    }
   }
 
   return (
     <section className="relative flex min-h-[92vh] w-full items-center justify-center overflow-hidden bg-base">
-      {/* ── Background VIDEO ──────────────────────────────────────────
-          Drop your video at: client/public/hero.mp4
-          (optional poster: client/public/hero-poster.jpg)
-          Change src/poster below if the filename differs. */}
       <video
         ref={videoRef}
         className="absolute inset-0 z-0 h-full w-full object-cover"
@@ -63,7 +64,7 @@ export default function HeroSection({
         {/* CTAs */}
         <div className="mt-12 flex flex-col gap-4 sm:flex-row">
           <Link
-            href="/components/processors"
+            href="/shop"
             className="inline-flex items-center justify-center bg-brand px-9 py-4 text-sm font-black uppercase tracking-[0.25em] text-black transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow-btn"
           >
             Shop Now
@@ -78,10 +79,16 @@ export default function HeroSection({
       <button
         type="button"
         onClick={toggleVideo}
-        aria-label={playing ? "Pause background video" : "Play background video"}
+        aria-label={
+          playing ? "Pause background video" : "Play background video"
+        }
         className="absolute bottom-6 right-6 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-base/40 text-fg backdrop-blur-sm transition-all duration-200 hover:border-brand/50 hover:bg-base/60 hover:text-brand"
       >
-        {playing ? <Pause size={16} /> : <Play size={16} className="translate-x-0.5" />}
+        {playing ? (
+          <Pause size={16} />
+        ) : (
+          <Play size={16} className="translate-x-0.5" />
+        )}
       </button>
     </section>
   );

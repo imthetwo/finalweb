@@ -185,6 +185,7 @@ model User {
   phone              String?
   avatarUrl          String?
   role               Role      @default(USER)
+  googleId           String?   @unique
   resetToken         String?   @unique
   resetTokenExpiry   DateTime?
 

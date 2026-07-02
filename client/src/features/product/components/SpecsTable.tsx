@@ -142,7 +142,7 @@ export function SpecsTable(props: Props) {
 
   return (
     <section className="mt-12">
-      <h2 className="mb-4 text-sm font-black uppercase tracking-[0.18em] text-muted">
+      <h2 className="mb-4 text-sm font-black uppercase tracking-[0.18em] text-fg">
         <span className="mr-1.5 font-bold opacity-40">{"//"}</span>
         Specifications
       </h2>

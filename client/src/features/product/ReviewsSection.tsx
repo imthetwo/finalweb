@@ -26,6 +26,7 @@ export default function ReviewsSection({ productId }: { productId: string }) {
   const [average, setAverage] = useState(0);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   // Write-review form state
   const [rating, setRating] = useState(5);
@@ -33,9 +34,11 @@ export default function ReviewsSection({ productId }: { productId: string }) {
   const [submitting, setSubmitting] = useState(false);
 
   function load() {
+    setLoading(true);
+    setFetchError(false);
     fetchProductReviews(productId)
       .then((d) => { setReviews(d.reviews); setAverage(d.average); setCount(d.count); })
-      .catch(() => {})
+      .catch(() => setFetchError(true))
       .finally(() => setLoading(false));
   }
   useEffect(load, [productId]);
@@ -83,8 +86,19 @@ export default function ReviewsSection({ productId }: { productId: string }) {
         <div className="space-y-4">
           {loading ? (
             <p className="text-sm text-muted">Loading reviews…</p>
+          ) : fetchError ? (
+            <div className="border border-destructive/30 bg-destructive/5 px-4 py-3">
+              <p className="text-sm font-semibold text-destructive">Failed to load reviews.</p>
+              <button
+                type="button"
+                onClick={load}
+                className="mt-1 text-sm text-secondary underline hover:text-fg"
+              >
+                Try again
+              </button>
+            </div>
           ) : reviews.length === 0 ? (
-            <p className="text-sm text-muted">No reviews yet. Be the first to review this product!</p>
+            <p className="text-sm text-secondary">No reviews yet. Be the first to review this product!</p>
           ) : (
             reviews.map((r) => (
               <div key={r.id} className="border border-edge bg-elevated p-5">

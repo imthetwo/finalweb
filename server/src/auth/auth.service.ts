@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import * as bcrypt from 'bcrypt';
@@ -25,7 +25,7 @@ export class AuthService {
 	async register(dto: { email: string; password: string; fullName: string }) {
 		const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
 		if (existing) {
-			throw new UnauthorizedException('Email already registered');
+			throw new ConflictException('Email already registered');
 		}
 		const password = await bcrypt.hash(dto.password, 10);
 		const user = await this.prisma.user.create({
@@ -54,13 +54,14 @@ export class AuthService {
 		return { access_token, user: safeUser };
 	}
 
-	async googleLogin(user: { email: string; firstName?: string; lastName?: string; picture?: string }) {
+	async googleLogin(user: { id: string; email: string; firstName?: string; lastName?: string; picture?: string }) {
 		if (!user?.email) {
 			throw new UnauthorizedException('Google account email is required');
 		}
 
 		const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || user.email.split('@')[0];
 		const avatarUrl = user.picture || null;
+		const googleId = user.id;
 		const existingUser = await this.prisma.user.findUnique({ where: { email: user.email } });
 
 		let account = existingUser;
@@ -73,6 +74,7 @@ export class AuthService {
 					password: dummyPassword,
 					fullName,
 					avatarUrl,
+					googleId,
 				},
 			});
 		} else {
@@ -81,6 +83,7 @@ export class AuthService {
 				data: {
 					fullName: account.fullName || fullName,
 					avatarUrl: account.avatarUrl || avatarUrl,
+					googleId: account.googleId || googleId,
 				},
 			});
 		}

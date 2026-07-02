@@ -100,11 +100,12 @@ export class AdminProductsService {
     return { items: items.map((p) => this.products.formatProduct(p)), total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  async create(dto: CreateProductDto) {
+  async create(dto: CreateProductDto, asDraft = false) {
     const { cpuSpec, gpuSpec, ramSpec, motherboardSpec, psuSpec, caseSpec, coolerSpec, monitorSpec, storageSpec, laptopSpec, ...base } = dto;
     return this.prisma.product.create({
       data: {
         ...base,
+        ...(asDraft ? { isPublished: false } : {}),
         ...(cpuSpec ? { cpuSpec: { create: cpuSpec } } : {}),
         ...(gpuSpec ? { gpuSpec: { create: gpuSpec } } : {}),
         ...(ramSpec ? { ramSpec: { create: ramSpec } } : {}),
@@ -140,6 +141,11 @@ export class AdminProductsService {
       },
       include: { category: { select: { id: true, name: true } }, ...SPEC_INCLUDE },
     });
+  }
+
+  async approve(id: string) {
+    await this.assertExists(id);
+    return this.prisma.product.update({ where: { id }, data: { isPublished: true } });
   }
 
   async remove(id: string) {

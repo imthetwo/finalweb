@@ -3,6 +3,7 @@ import type { MomoIpnBody } from './payments.service';
 import { PaymentsService } from './payments.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
+import { ConfirmPaymentDto } from './dto/confirm-payment.dto';
 
 @Controller('payments')
 export class PaymentsController {
@@ -39,8 +40,8 @@ export class PaymentsController {
   @UseGuards(JwtAuthGuard)
   confirm(
     @CurrentUser('userId') userId: string,
-    @Body() body: { orderId: string; success?: boolean },
+    @Body() body: ConfirmPaymentDto,
   ) {
-    return this.payments.confirm(userId, body.orderId, body.success !== false);
+    return this.payments.confirm(userId, body.orderId, body.success);
   }
 }
