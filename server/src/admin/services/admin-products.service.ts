@@ -35,8 +35,16 @@ export class AdminProductsService {
 
     const header: Record<string, number> = {};
     ws.getRow(1).eachCell((cell, col) => { header[String(cell.value).trim().toLowerCase()] = col; });
-    for (const h of ['name', 'brand', 'categoryname', 'price']) {
-      if (!header[h]) throw new BadRequestException(`Missing column: ${h}`);
+
+    // Accept "category" as an alias for "categoryname" so either header works.
+    if (!header['categoryname'] && header['category']) header['categoryname'] = header['category'];
+
+    // Only name, category and price are truly required — brand is optional (defaults below).
+    for (const h of ['name', 'categoryname', 'price']) {
+      if (!header[h]) {
+        const label = h === 'categoryname' ? 'category' : h;
+        throw new BadRequestException(`Missing required column: ${label}`);
+      }
     }
 
     const categories = await this.prisma.category.findMany({ select: { id: true, name: true } });
@@ -46,14 +54,21 @@ export class AdminProductsService {
     for (let r = 2; r <= ws.rowCount; r++) {
       const row = ws.getRow(r);
       const get = (k: string) => (header[k] ? row.getCell(header[k]).value : undefined);
+
+      // Skip fully-empty rows silently; report rows that have data but no name.
+      const scanned = ['name', 'brand', 'categoryname', 'price', 'stock', 'description'].map((k) => get(k));
+      const isEmptyRow = scanned.every((v) => v == null || String(v).trim() === '');
+      if (isEmptyRow) { result.skipped++; continue; }
+
       const name = get('name')?.toString().trim();
-      if (!name) { result.skipped++; continue; }
+      if (!name) { result.errors.push(`Row ${r}: missing product name`); continue; }
 
-      const categoryId = catByName.get(get('categoryname')?.toString().trim().toLowerCase() ?? '');
-      if (!categoryId) { result.errors.push(`Row ${r}: unknown category`); continue; }
+      const categoryName = get('categoryname')?.toString().trim() ?? '';
+      const categoryId = catByName.get(categoryName.toLowerCase());
+      if (!categoryId) { result.errors.push(`Row ${r}: category "${categoryName}" does not exist`); continue; }
 
-      const price = Number(get('price')) || 0;
-      if (price <= 0) { result.errors.push(`Row ${r}: invalid price`); continue; }
+      const price = Number(get('price'));
+      if (!Number.isFinite(price) || price <= 0) { result.errors.push(`Row ${r}: invalid or negative price`); continue; }
 
       const data = {
         categoryId, name,
@@ -284,6 +299,66 @@ export class AdminProductsService {
     sheet('Other', baseCols([]),
       all.filter((p) => !p.cpuSpec && !p.gpuSpec && !p.ramSpec && !p.motherboardSpec && !p.psuSpec &&
         !p.caseSpec && !p.coolerSpec && !p.monitorSpec && !p.storageSpec && !p.laptopSpec).map(base));
+
+    return wb.xlsx.writeBuffer();
+  }
+
+  // ── Inventory Report — simple stock overview with low-stock highlighting ──
+  async exportInventoryReport(): Promise<ExcelJS.Buffer> {
+    const products = await this.prisma.product.findMany({
+      orderBy: { name: 'asc' },
+      select: { name: true, price: true, stock: true },
+    });
+
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Inventory Report');
+    const thin: Partial<ExcelJS.Borders> = {
+      top: { style: 'thin' }, left: { style: 'thin' },
+      bottom: { style: 'thin' }, right: { style: 'thin' },
+    };
+
+    // Column widths — 4 columns: No. | Product Name | Price | Stock
+    ws.columns = [
+      { key: 'no', width: 8 }, { key: 'name', width: 48 },
+      { key: 'price', width: 18 }, { key: 'stock', width: 12 },
+    ] as ExcelJS.Column[];
+
+    // Row 1 — merged title cell "INVENTORY REPORT" + export date
+    ws.mergeCells('A1:D1');
+    const title = ws.getCell('A1');
+    const today = new Date().toLocaleDateString('en-GB'); // dd/mm/yyyy — matches app convention
+    title.value = `INVENTORY REPORT  —  ${today}`;
+    title.font = { bold: true, size: 16, color: { argb: 'FFFFFFFF' } };
+    title.alignment = { horizontal: 'center', vertical: 'middle' };
+    title.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1A1A2E' } };
+    ws.getRow(1).height = 28;
+
+    // Row 2 — bold, bordered column headers
+    const head = ws.getRow(2);
+    head.values = ['No.', 'Product Name', 'Price (VND)', 'Stock'];
+    head.font = { bold: true };
+    head.alignment = { horizontal: 'center', vertical: 'middle' };
+    head.eachCell((cell) => {
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9D9D9' } };
+      cell.border = thin;
+    });
+
+    const LOW_STOCK = 10;
+    products.forEach((p, i) => {
+      const row = ws.addRow([i + 1, p.name, p.price, p.stock]);
+      row.getCell(1).alignment = { horizontal: 'center' };
+      row.getCell(3).numFmt = '#,##0';
+      row.getCell(4).alignment = { horizontal: 'center' };
+      row.eachCell((cell) => { cell.border = thin; });
+
+      // Conditional formatting — low stock rows highlighted red/orange
+      if (p.stock < LOW_STOCK) {
+        row.eachCell((cell) => {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC7CE' } };
+          cell.font = { color: { argb: 'FF9C0006' }, bold: true };
+        });
+      }
+    });
 
     return wb.xlsx.writeBuffer();
   }

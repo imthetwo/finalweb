@@ -27,6 +27,8 @@ export function PromotionsManager() {
   const [editing, setEditing] = useState<Promotion | null>(null);
   const [form, setForm] = useState<PromotionInput>(EMPTY);
   const [saving, setSaving] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null);
 
   // `load` just bumps a key; the effect below does the actual fetch so all
   // setState happens inside async callbacks (avoids the set-state-in-effect lint).
@@ -93,22 +95,28 @@ export function PromotionsManager() {
   }
 
   async function toggleActive(p: Promotion) {
+    setTogglingId(p.id);
     try {
       await updateAdminPromotion(p.id, { isActive: !p.isActive });
       load();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Update failed");
+    } finally {
+      setTogglingId(null);
     }
   }
 
   async function remove(p: Promotion) {
     if (!confirm(`Delete banner "${p.title}"?`)) return;
+    setRemovingId(p.id);
     try {
       await deleteAdminPromotion(p.id);
       toast.success("Banner deleted");
       load();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Delete failed");
+    } finally {
+      setRemovingId(null);
     }
   }
 
@@ -148,15 +156,16 @@ export function PromotionsManager() {
                   <td className="px-4 py-2.5 text-center">
                     <button
                       onClick={() => toggleActive(p)}
-                      className={`text-2xs font-bold uppercase ${p.isActive ? "text-success" : "text-subtle"}`}
+                      disabled={togglingId === p.id}
+                      className={`text-2xs font-bold uppercase disabled:opacity-40 ${p.isActive ? "text-success" : "text-subtle"}`}
                     >
-                      {p.isActive ? "Active" : "Inactive"}
+                      {togglingId === p.id ? "…" : p.isActive ? "Active" : "Inactive"}
                     </button>
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="flex items-center justify-end gap-1.5">
                       <button onClick={() => openEdit(p)} className="flex h-7 w-7 items-center justify-center border border-edge text-secondary hover:border-brand/50 hover:text-brand" aria-label="Edit"><Pencil size={12} /></button>
-                      <button onClick={() => remove(p)} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-destructive hover:border-destructive" aria-label="Delete"><Trash2 size={12} /></button>
+                      <button onClick={() => remove(p)} disabled={removingId === p.id} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-destructive hover:border-destructive disabled:opacity-40" aria-label="Delete"><Trash2 size={12} /></button>
                     </div>
                   </td>
                 </tr>

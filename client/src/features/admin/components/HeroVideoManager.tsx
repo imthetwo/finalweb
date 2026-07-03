@@ -1,104 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+import { useRef, useState } from "react";
 import { Save, Video, RefreshCw, Upload, Loader2 } from "lucide-react";
-import { apiFetch, getApiUrl } from "@/lib/api/client";
-import { getToken } from "@/lib/auth";
-
-const DEFAULT_VIDEO  = "/hero.mp4";
-const DEFAULT_POSTER = "/hero-poster.jpg";
-
-async function loadSetting(key: string): Promise<string> {
-  try {
-    const r = await apiFetch<{ key: string; value: string | null }>(`/settings/${key}`);
-    return r.value ?? "";
-  } catch { return ""; }
-}
-
-async function saveSetting(key: string, value: string) {
-  return apiFetch(`/settings/${key}`, { method: "PATCH", body: JSON.stringify({ value }) });
-}
-
-async function uploadVideoToCloudinary(file: File): Promise<string> {
-  const fd = new FormData();
-  fd.append("file", file);
-  const res = await fetch(getApiUrl("/admin/upload-video"), {
-    method: "POST",
-    headers: { Authorization: `Bearer ${getToken()}` },
-    body: fd,
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({})) as { message?: string };
-    throw new Error(err.message ?? "Upload failed");
-  }
-  const data = await res.json() as { url: string };
-  return data.url;
-}
+import { useHeroVideoSettings, DEFAULT_VIDEO, DEFAULT_POSTER } from "@/features/admin/hooks/useHeroVideoSettings";
 
 export function HeroVideoManager() {
-  const [videoUrl,   setVideoUrl]   = useState("");
-  const [posterUrl,  setPosterUrl]  = useState("");
-  const [saving,     setSaving]     = useState(false);
-  const [uploading,  setUploading]  = useState(false);
+  const {
+    videoUrl, posterUrl, saving, uploading, uploadProgress,
+    setVideoUrl, setPosterUrl, handleVideoUpload, save, reset,
+  } = useHeroVideoSettings();
   const [previewing, setPreviewing] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<string>("");
   const fileRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    Promise.all([loadSetting("hero_video_url"), loadSetting("hero_poster_url")])
-      .then(([v, p]) => { setVideoUrl(v); setPosterUrl(p); });
-  }, []);
-
-  async function handleVideoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith("video/")) { toast.error("Chỉ chấp nhận file video"); return; }
-    if (file.size > 200 * 1024 * 1024) { toast.error("Video phải nhỏ hơn 200MB"); return; }
-
-    setUploading(true);
-    setUploadProgress(`Đang upload ${(file.size / 1024 / 1024).toFixed(1)}MB lên Cloudinary…`);
-    try {
-      const url = await uploadVideoToCloudinary(file);
-      setVideoUrl(url);
-      setUploadProgress("");
-      toast.success("Upload thành công! Nhớ nhấn Lưu để áp dụng.");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upload thất bại");
-      setUploadProgress("");
-    } finally {
-      setUploading(false);
-      if (fileRef.current) fileRef.current.value = "";
-    }
-  }
-
-  async function save() {
-    setSaving(true);
-    try {
-      await Promise.all([
-        saveSetting("hero_video_url",  videoUrl.trim()  || DEFAULT_VIDEO),
-        saveSetting("hero_poster_url", posterUrl.trim() || DEFAULT_POSTER),
-      ]);
-      toast.success("Đã lưu — trang chủ cập nhật trong ~60 giây");
-    } catch {
-      toast.error("Lưu thất bại");
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function reset() {
-    setVideoUrl(DEFAULT_VIDEO);
-    setPosterUrl(DEFAULT_POSTER);
-    setSaving(true);
-    try {
-      await Promise.all([
-        saveSetting("hero_video_url",  DEFAULT_VIDEO),
-        saveSetting("hero_poster_url", DEFAULT_POSTER),
-      ]);
-      toast.success("Đã reset về mặc định");
-    } catch { toast.error("Lưu thất bại"); }
-    finally { setSaving(false); }
+    await handleVideoUpload(file);
+    if (fileRef.current) fileRef.current.value = "";
   }
 
   const inputCls = "w-full border border-edge bg-surface px-4 py-2.5 text-body text-fg outline-none transition-colors focus:border-brand/50 placeholder:text-subtle";
@@ -121,7 +39,7 @@ export function HeroVideoManager() {
             ref={fileRef}
             type="file"
             accept="video/*"
-            onChange={handleVideoUpload}
+            onChange={onFileChange}
             className="hidden"
           />
           <button

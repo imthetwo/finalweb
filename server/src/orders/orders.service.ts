@@ -3,6 +3,7 @@ import { OrderStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CartService } from '../cart/cart.service';
 import { CouponsService } from '../coupons/coupons.service';
+import { GuestCheckoutDto } from './dto/guest-checkout.dto';
 
 const SHIPPING_FEE = 30000;
 
@@ -86,6 +87,81 @@ export class OrdersService {
     });
 
     this.logger.log(`Order ${order.id} created for user ${userId} — total ${order.totalAmount} — method ${body.paymentMethod}`);
+    return order;
+  }
+
+  // ── Guest checkout (cart lives in localStorage, sent in body) ────────────────
+  async createFromGuestItems(body: GuestCheckoutDto) {
+    if (!body.items.length) throw new BadRequestException('Cart is empty');
+
+    const products = await this.prisma.product.findMany({
+      where: { id: { in: body.items.map((i) => i.productId) }, isPublished: true },
+    });
+
+    const cartItems = body.items.map((item) => {
+      const product = products.find((p) => p.id === item.productId);
+      if (!product) throw new BadRequestException(`Product not found: ${item.productId}`);
+      return { product, quantity: item.quantity, price: product.salePrice ?? product.price };
+    });
+
+    const subTotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
+
+    let discount = 0;
+    let appliedCoupon: string | null = null;
+    if (body.couponCode) {
+      const result = await this.coupons.validate(body.couponCode, subTotal);
+      if (result.valid) {
+        discount = result.discount;
+        appliedCoupon = result.code ?? body.couponCode;
+      }
+    }
+
+    const totalAmount = subTotal - discount + SHIPPING_FEE;
+
+    const order = await this.prisma.$transaction(async (tx) => {
+      for (const item of cartItems) {
+        const updated = await tx.product.updateMany({
+          where: { id: item.product.id, stock: { gte: item.quantity } },
+          data: { stock: { decrement: item.quantity } },
+        });
+        if (updated.count === 0)
+          throw new BadRequestException(`Out of stock: ${item.product.name}`);
+      }
+
+      const created = await tx.order.create({
+        data: {
+          guestEmail: body.guestEmail ?? undefined,
+          subTotal,
+          discount,
+          shippingFee: SHIPPING_FEE,
+          totalAmount,
+          couponCode: appliedCoupon,
+          paymentMethod: body.paymentMethod,
+          shippingInfo: body.shippingInfo,
+          status: body.paymentMethod === 'COD' ? OrderStatus.PROCESSING : OrderStatus.PENDING,
+          isPaid: body.paymentMethod === 'COD',
+          items: {
+            create: cartItems.map((item) => ({
+              productId: item.product.id,
+              quantity: item.quantity,
+              priceAtBuy: item.price,
+            })),
+          },
+        },
+        include: { items: { include: { product: true } } },
+      });
+
+      if (appliedCoupon) {
+        await tx.coupon.updateMany({
+          where: { code: appliedCoupon.trim().toUpperCase() },
+          data: { usedCount: { increment: 1 } },
+        });
+      }
+
+      return created;
+    });
+
+    this.logger.log(`Guest order ${order.id} — total ${order.totalAmount} — method ${body.paymentMethod}`);
     return order;
   }
 

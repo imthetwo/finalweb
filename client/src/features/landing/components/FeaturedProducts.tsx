@@ -2,39 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ShoppingCart } from "lucide-react";
 import { formatVnd } from "@/lib/format";
-import { serverApiUrl } from "@/lib/api";
+import { getFeaturedProducts, type FeaturedProduct } from "@/features/landing/data/getFeaturedProducts";
 
-type ProductItem = {
-  id: string;
-  name: string;
-  brand: string;
-  price: number;
-  salePrice: number | null;
-  displayPrice: number;
-  thumbnailUrl: string | null;
-  stock: number;
-  category?: { id: string; name: string };
-};
-
-type ProductListResponse = {
-  items: ProductItem[];
-  total: number;
-};
-
-async function getProducts(limit = 8): Promise<ProductItem[]> {
-  try {
-    const res = await fetch(`${serverApiUrl}/products?limit=${limit}&page=1`, {
-      next: { revalidate: 120 },
-    });
-    if (!res.ok) return [];
-    const data: ProductListResponse = await res.json();
-    return data.items ?? [];
-  } catch {
-    return [];
-  }
-}
-
-function ProductCard({ product }: { product: ProductItem }) {
+function ProductCard({ product }: { product: FeaturedProduct }) {
   const hasSale =
     product.salePrice !== null && product.salePrice < product.price;
   const discountPct = hasSale
@@ -119,7 +89,7 @@ function ProductCard({ product }: { product: ProductItem }) {
 }
 
 export default async function FeaturedProducts() {
-  const products = await getProducts(8);
+  const products = await getFeaturedProducts(8);
 
   if (products.length === 0) return null;
 

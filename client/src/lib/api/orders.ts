@@ -4,6 +4,21 @@ import { apiFetch } from "./client";
 export const fetchOrders = () =>
   apiFetch<Order[]>("/orders");
 
+// POST /orders/guest-checkout — no auth required.
+// Client "session" = localStorage["guest_cart"]; items are sent in body.
+// Backend validates stock, runs $transaction(Order + OrderItem), returns order id.
+export const guestCheckout = (data: {
+  items: { productId: string; quantity: number }[];
+  shippingInfo: Record<string, string>;
+  paymentMethod: string;
+  couponCode?: string;
+  guestEmail?: string;
+}) =>
+  apiFetch<{ id: string }>("/orders/guest-checkout", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+
 // GET /orders/:id
 export const fetchOrder = (id: string) =>
   apiFetch<Order>(`/orders/${id}`);

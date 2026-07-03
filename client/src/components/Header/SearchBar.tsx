@@ -16,11 +16,17 @@ export function SearchBar({ onClose }: { onClose: () => void }) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
-  useEffect(() => { inputRef.current?.focus(); }, []);
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   useEffect(() => {
     const q = query.trim();
-    if (q.length < 2) { setResults([]); setOpen(false); return; }
+    if (q.length < 2) {
+      setResults([]);
+      setOpen(false);
+      return;
+    }
     setLoading(true);
     setOpen(true);
     const t = setTimeout(() => {
@@ -42,7 +48,10 @@ export function SearchBar({ onClose }: { onClose: () => void }) {
   return (
     <div className="relative mx-auto w-full" style={{ maxWidth: "1400px" }}>
       <form
-        onSubmit={(e) => { e.preventDefault(); goToResults(); }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          goToResults();
+        }}
         className="flex h-14 w-full items-center bg-surface px-4"
       >
         <Search size={20} className="flex-none text-muted" />
@@ -55,7 +64,11 @@ export function SearchBar({ onClose }: { onClose: () => void }) {
           className="flex-1 border-none bg-transparent px-4 text-base text-fg outline-none placeholder:text-subtle"
         />
         {query && (
-          <button type="button" onClick={() => setQuery("")} className="mr-2 text-muted hover:text-fg">
+          <button
+            type="button"
+            onClick={() => setQuery("")}
+            className="mr-2 text-muted hover:text-fg"
+          >
             <X size={16} />
           </button>
         )}
@@ -78,7 +91,9 @@ export function SearchBar({ onClose }: { onClose: () => void }) {
       {open && (
         <div className="absolute left-0 right-0 top-full z-50 max-h-[70vh] overflow-y-auto border border-edge bg-surface shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
           {loading ? (
-            <div className="px-4 py-6 text-center text-body text-muted">Searching…</div>
+            <div className="px-4 py-6 text-center text-body text-muted">
+              Searching…
+            </div>
           ) : results.length === 0 ? (
             <div className="px-4 py-6 text-center text-body text-muted">
               No results for &ldquo;{query}&rdquo;
@@ -92,23 +107,37 @@ export function SearchBar({ onClose }: { onClose: () => void }) {
                     key={p.id}
                     type="button"
                     onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => { router.push(`/product/${p.id}`); onClose(); }}
+                    onClick={() => {
+                      router.push(`/product/${p.id}`);
+                      onClose();
+                    }}
                     className="flex w-full items-center gap-3 border-b border-edge/60 px-4 py-3 text-left transition-colors hover:bg-white/4"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="line-clamp-2 text-body font-semibold text-fg">{p.name}</p>
+                      <p className="line-clamp-2 text-body font-semibold text-fg">
+                        {p.name}
+                      </p>
                       <div className="mt-1 flex items-center gap-2">
                         <span className="text-body font-black text-brand">
                           {formatVnd(hasSale ? p.salePrice! : p.price)}
                         </span>
                         {hasSale && (
-                          <span className="text-xs text-subtle line-through">{formatVnd(p.price)}</span>
+                          <span className="text-xs text-subtle line-through">
+                            {formatVnd(p.price)}
+                          </span>
                         )}
                       </div>
                     </div>
                     <div className="h-12 w-12 shrink-0 border border-edge bg-elevated">
                       {p.thumbnailUrl && (
-                        <Image src={p.thumbnailUrl} alt={p.name} width={48} height={48} className="h-full w-full object-contain p-1" unoptimized />
+                        <Image
+                          src={p.thumbnailUrl}
+                          alt={p.name}
+                          width={48}
+                          height={48}
+                          className="h-full w-full object-contain p-1"
+                          unoptimized
+                        />
                       )}
                     </div>
                   </button>

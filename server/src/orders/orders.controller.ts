@@ -1,42 +1,45 @@
 import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { GuestCheckoutDto } from './dto/guest-checkout.dto';
 import type { Request } from 'express';
 
+type AuthedRequest = Request & { user: { userId: string } };
+
 @Controller('orders')
-@UseGuards(JwtAuthGuard)
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  private uid(req: Request & { user: { userId: string } }) {
-    return req.user.userId;
+  // ── Guest checkout — no auth required ────────────────────────────────────────
+  // Cart lives in localStorage (client "session"), items sent in request body.
+  // Backend: validate stock → $transaction(Order + OrderItem) → clear handled by client.
+  @Post('guest-checkout')
+  guestCheckout(@Body() dto: GuestCheckoutDto) {
+    return this.ordersService.createFromGuestItems(dto);
   }
 
+  // ── Authenticated routes ──────────────────────────────────────────────────────
   @Post()
-  create(
-    @Req() req: Request & { user: { userId: string } },
-    @Body()
-    body: {
-      shippingInfo: Record<string, string>;
-      paymentMethod: string;
-      couponCode?: string;
-    },
-  ) {
-    return this.ordersService.createFromCart(this.uid(req), body);
+  @UseGuards(JwtAuthGuard)
+  create(@Req() req: AuthedRequest, @Body() body: { shippingInfo: Record<string, string>; paymentMethod: string; couponCode?: string }) {
+    return this.ordersService.createFromCart(req.user.userId, body);
   }
 
   @Get()
-  list(@Req() req: Request & { user: { userId: string } }) {
-    return this.ordersService.listForUser(this.uid(req));
+  @UseGuards(JwtAuthGuard)
+  list(@Req() req: AuthedRequest) {
+    return this.ordersService.listForUser(req.user.userId);
   }
 
   @Get(':id')
-  one(@Req() req: Request & { user: { userId: string } }, @Param('id') id: string) {
-    return this.ordersService.getOne(this.uid(req), id);
+  @UseGuards(JwtAuthGuard)
+  one(@Req() req: AuthedRequest, @Param('id') id: string) {
+    return this.ordersService.getOne(req.user.userId, id);
   }
 
   @Post(':id/cancel')
-  cancel(@Req() req: Request & { user: { userId: string } }, @Param('id') id: string) {
-    return this.ordersService.cancel(this.uid(req), id);
+  @UseGuards(JwtAuthGuard)
+  cancel(@Req() req: AuthedRequest, @Param('id') id: string) {
+    return this.ordersService.cancel(req.user.userId, id);
   }
 }

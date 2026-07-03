@@ -1,5 +1,5 @@
 // GET /settings/:key  — public, dùng trong Server Components
-import { serverApiUrl } from "./client";
+import { apiFetch, serverApiUrl } from "./client";
 
 export async function getSetting(key: string): Promise<string | null> {
   try {
@@ -11,3 +11,17 @@ export async function getSetting(key: string): Promise<string | null> {
     return null;
   }
 }
+
+// GET /settings/:key — client-authenticated read, used by admin settings forms
+export async function fetchSettingValue(key: string): Promise<string> {
+  try {
+    const r = await apiFetch<{ key: string; value: string | null }>(`/settings/${key}`);
+    return r.value ?? "";
+  } catch {
+    return "";
+  }
+}
+
+// PATCH /settings/:key — ADMIN ONLY
+export const updateSettingValue = (key: string, value: string) =>
+  apiFetch(`/settings/${key}`, { method: "PATCH", body: JSON.stringify({ value }) });

@@ -1,5 +1,3 @@
-// Legacy catch-all — kept for backward-compatibility redirects.
-// New shop routes live under (shop)/shop/[...slug].
 import { redirect } from "next/navigation";
 import { ProductDetail } from "@/features/product/components/ProductDetail";
 

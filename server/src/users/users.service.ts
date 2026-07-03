@@ -29,7 +29,7 @@ export class UsersService {
       });
       if (taken) throw new BadRequestException('Email is already in use');
     }
-    return this.prisma.user.update({
+    await this.prisma.user.update({
       where: { id: userId },
       data: {
         fullName: dto.fullName,
@@ -37,8 +37,10 @@ export class UsersService {
         phone: dto.phone,
         avatarUrl: dto.avatarUrl,
       },
-      select: { id: true, email: true, fullName: true, phone: true, avatarUrl: true, role: true },
     });
+    // Return the full profile (isGoogleUser + _count) so the response matches
+    // GET /users/me — callers replace their whole user state with this.
+    return this.getProfile(userId);
   }
 
   async changePassword(userId: string, dto: ChangePasswordDto) {

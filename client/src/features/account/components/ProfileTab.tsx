@@ -51,46 +51,37 @@ export function ProfileTab({ profile, onUpdated }: { profile: UserProfile; onUpd
   const labelCls = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted";
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      {/* Profile info */}
-      <form onSubmit={saveProfile} className="space-y-4 border border-edge bg-elevated p-6">
-        <h3 className="text-sm font-black uppercase tracking-wider text-fg">Personal Information</h3>
-        <div>
-          <label className={labelCls}>Full name</label>
-          <input className={inputCls} value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} />
+    <div className={`grid gap-6 ${profile.isGoogleUser ? "" : "lg:grid-cols-2"}`}>
+      {/* Profile info — when it's the only card (Google users), the card fills the
+          full row while its fields stay centered/constrained rather than stretching. */}
+      <form onSubmit={saveProfile} className="border border-edge bg-elevated p-6">
+        <div className={`space-y-4 ${profile.isGoogleUser ? "mx-auto max-w-lg" : ""}`}>
+          <h3 className="text-sm font-black uppercase tracking-wider text-fg">Personal Information</h3>
+          <div>
+            <label className={labelCls}>Full name</label>
+            <input className={inputCls} value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} />
+          </div>
+          <div>
+            <label className={labelCls}>Email</label>
+            <input type="email" className={inputCls} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          </div>
+          <div>
+            <label className={labelCls}>Phone number</label>
+            <input className={inputCls} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Not set" />
+          </div>
+          <button
+            type="submit"
+            disabled={savingProfile}
+            className="inline-flex items-center gap-2 bg-brand px-5 py-2.5 text-sm font-black uppercase tracking-wider text-black transition hover:bg-brand/85 disabled:opacity-50"
+          >
+            <Save size={13} /> {savingProfile ? "Saving…" : "Save changes"}
+          </button>
         </div>
-        <div>
-          <label className={labelCls}>Email</label>
-          <input type="email" className={inputCls} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-        </div>
-        <div>
-          <label className={labelCls}>Phone number</label>
-          <input className={inputCls} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Not set" />
-        </div>
-        <button
-          type="submit"
-          disabled={savingProfile}
-          className="inline-flex items-center gap-2 bg-brand px-5 py-2.5 text-sm font-black uppercase tracking-wider text-black transition hover:bg-brand/85 disabled:opacity-50"
-        >
-          <Save size={13} /> {savingProfile ? "Saving…" : "Save changes"}
-        </button>
       </form>
 
-      {/* Change password — hidden for Google-authenticated users */}
-      {profile.isGoogleUser ? (
-        <div className="flex flex-col items-start justify-center space-y-3 border border-edge bg-elevated p-6">
-          <h3 className="text-sm font-black uppercase tracking-wider text-fg">Change Password</h3>
-          <div className="flex items-center gap-3 rounded-none border border-brand/20 bg-brand/5 px-4 py-3">
-            <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-brand" fill="none" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 11c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm-6 0c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2z" />
-              <circle cx="12" cy="12" r="10" />
-            </svg>
-            <p className="text-body text-secondary">
-              Your account uses <span className="font-bold text-fg">Google Sign-In</span> — no password required.
-            </p>
-          </div>
-        </div>
-      ) : (
+      {/* Change password — only for local (email/password) accounts.
+          Google accounts have no password, so the panel is omitted entirely. */}
+      {!profile.isGoogleUser && (
         <form onSubmit={savePassword} className="space-y-4 border border-edge bg-elevated p-6">
           <h3 className="text-sm font-black uppercase tracking-wider text-fg">Change Password</h3>
           <div>

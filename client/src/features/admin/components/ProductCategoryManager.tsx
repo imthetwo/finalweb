@@ -24,6 +24,7 @@ export function ProductCategoryManager() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<AdminProduct | null>(null);
   const [category, setCategory] = useState<Category | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCategories()
@@ -40,12 +41,15 @@ export function ProductCategoryManager() {
 
   async function remove(p: AdminProduct) {
     if (!confirm(`Delete "${p.name}"?`)) return;
+    setRemovingId(p.id);
     try {
       await deleteAdminProduct(p.id);
       toast.success("Deleted");
       reload();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Delete failed");
+    } finally {
+      setRemovingId(null);
     }
   }
 
@@ -128,7 +132,7 @@ export function ProductCategoryManager() {
                       <button onClick={() => { setEditing(p); setModalOpen(true); }} className="flex h-7 w-7 items-center justify-center border border-edge text-secondary hover:border-brand/50 hover:text-brand" aria-label="Edit">
                         <Pencil size={12} />
                       </button>
-                      <button onClick={() => remove(p)} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-destructive hover:border-destructive" aria-label="Delete">
+                      <button onClick={() => remove(p)} disabled={removingId === p.id} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-destructive hover:border-destructive disabled:opacity-40" aria-label="Delete">
                         <Trash2 size={12} />
                       </button>
                     </div>

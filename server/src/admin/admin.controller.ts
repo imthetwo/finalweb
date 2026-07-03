@@ -173,6 +173,16 @@ export class AdminController {
     res.send(buffer);
   }
 
+  // Inventory Report — No./Name/Price/Stock with low-stock highlighting
+  @Get('products/inventory-report')
+  @Roles(Role.ADMIN)
+  async exportInventoryReport(@Res() res: Response) {
+    const buffer = await this.admin.exportInventoryReport();
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="inventory-report-${Date.now()}.xlsx"`);
+    res.send(buffer);
+  }
+
   // ── Users — ADMIN ONLY ────────────────────────────────────────────────────
 
   @Get('users')

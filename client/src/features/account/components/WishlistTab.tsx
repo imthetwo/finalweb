@@ -12,18 +12,22 @@ import { formatVnd } from "@/lib/format";
 export default function WishlistTab() {
   const [items, setItems] = useState<WishlistEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [removingId, setRemovingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchWishlist().then(setItems).catch(() => setItems([])).finally(() => setLoading(false));
   }, []);
 
   async function remove(productId: string) {
+    setRemovingId(productId);
     try {
       await removeFromWishlist(productId);
       setItems((prev) => prev.filter((i) => i.product.id !== productId));
       toast.success("Removed from wishlist");
     } catch {
       toast.error("Failed to remove");
+    } finally {
+      setRemovingId(null);
     }
   }
 
@@ -60,7 +64,8 @@ export default function WishlistTab() {
               <button
                 type="button"
                 onClick={() => remove(product.id)}
-                className="flex h-8 w-8 items-center justify-center border border-red-800/40 bg-red-950/20 text-destructive transition hover:border-destructive"
+                disabled={removingId === product.id}
+                className="flex h-8 w-8 items-center justify-center border border-red-800/40 bg-red-950/20 text-destructive transition hover:border-destructive disabled:opacity-40"
                 aria-label="Remove"
               >
                 <Trash2 size={13} />

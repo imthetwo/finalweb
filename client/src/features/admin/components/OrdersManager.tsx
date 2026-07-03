@@ -22,6 +22,7 @@ const STATUS_COLOR: Record<string, string> = {
 
 export function OrdersManager() {
   const [exporting, setExporting] = useState(false);
+  const [changingId, setChangingId] = useState<string | null>(null);
 
   const { data, search: filter, page, loading, reload, setPage, handleSearch: setFilter } =
     useCRUDManager<AdminOrder>(useCallback(
@@ -30,12 +31,15 @@ export function OrdersManager() {
     ));
 
   async function changeStatus(id: string, status: string) {
+    setChangingId(id);
     try {
       await updateOrderStatus(id, status);
       toast.success("Order status updated");
       reload();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Update failed");
+    } finally {
+      setChangingId(null);
     }
   }
 
@@ -96,7 +100,8 @@ export function OrdersManager() {
                 </td>
                 <td className="px-4 py-3">
                   <select value={o.status} onChange={(e) => changeStatus(o.id, e.target.value)}
-                    className={`border border-edge bg-surface px-2 py-1 text-sm font-bold outline-none ${STATUS_COLOR[o.status] ?? "text-secondary"}`}>
+                    disabled={changingId === o.id}
+                    className={`border border-edge bg-surface px-2 py-1 text-sm font-bold outline-none disabled:opacity-50 ${STATUS_COLOR[o.status] ?? "text-secondary"}`}>
                     {STATUSES.map((s) => <option key={s} value={s} className="text-fg">{s}</option>)}
                   </select>
                 </td>

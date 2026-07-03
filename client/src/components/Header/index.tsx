@@ -9,9 +9,7 @@ import PromoBar from "./PromoBar";
 export default function Header() {
   const pathname = usePathname();
 
-  useEffect(() => {
-    // Remount the interactive header tier on route changes so stale UI state cannot survive Back/Forward navigation.
-  }, [pathname]);
+  useEffect(() => {}, [pathname]);
 
   if (pathname.startsWith("/custom-lab")) {
     return null;

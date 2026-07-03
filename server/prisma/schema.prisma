@@ -231,7 +231,8 @@ enum OrderStatus {
 
 model Order {
   id            String      @id @default(uuid())
-  userId        String
+  userId        String?
+  guestEmail    String?
   subTotal      Float       @default(0)
   discount      Float       @default(0)
   shippingFee   Float       @default(30000)
@@ -243,7 +244,7 @@ model Order {
   shippingInfo  Json
   momoOrderId   String?     @unique
 
-  user  User        @relation(fields: [userId], references: [id])
+  user  User?       @relation(fields: [userId], references: [id])
   items OrderItem[]
 
   createdAt DateTime @default(now())

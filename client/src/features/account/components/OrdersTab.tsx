@@ -28,9 +28,12 @@ function canCancel(o: Order) {
   return !o.isPaid && (o.status === "PENDING" || o.status === "PROCESSING");
 }
 
-/* ─── Order Detail Drawer ─────────────────────────────────────────────────── */
+/* ─── Order Detail Modal ──────────────────────────────────────────────────── */
+// Centered modal — follows the same overlay pattern as ProductFormModal /
+// PromotionsManager (fixed inset-0 + flex centering + bg-base/70 backdrop)
+// so it looks and behaves consistently with the rest of the admin/account UI.
 
-function OrderDrawer({
+function OrderDetailModal({
   order,
   onClose,
   onCancel,
@@ -43,45 +46,52 @@ function OrderDrawer({
 }) {
   const si = order.shippingInfo ?? {};
 
-  return (
-    <>
-      {/* backdrop */}
-      <div
-        className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
 
-      {/* panel */}
-      <div className="fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col border-l border-edge bg-elevated shadow-2xl">
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-base/70 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden border border-edge bg-elevated shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
 
         {/* header */}
-        <div className="flex items-center justify-between border-b border-edge px-5 py-4">
+        <div className="flex items-center justify-between border-b border-edge px-10 py-6">
           <div>
-            <p className="text-2xs font-bold uppercase tracking-widest text-muted">Order Detail</p>
-            <p className="font-mono text-sm font-black text-fg">#{order.id.slice(0, 8).toUpperCase()}</p>
+            <p className="text-sm font-bold uppercase tracking-widest text-muted">Order Detail</p>
+            <p className="font-mono text-2xl font-black text-fg">#{order.id.slice(0, 8).toUpperCase()}</p>
           </div>
-          <div className="flex items-center gap-3">
-            <span className={`border px-2.5 py-0.5 text-2xs font-black uppercase tracking-wider ${STATUS_STYLE[order.status] ?? STATUS_STYLE.PENDING}`}>
+          <div className="flex items-center gap-4">
+            <span className={`border px-4 py-1.5 text-sm font-black uppercase tracking-wider ${STATUS_STYLE[order.status] ?? STATUS_STYLE.PENDING}`}>
               {STATUS_LABEL[order.status] ?? order.status}
             </span>
             <button
               type="button"
               onClick={onClose}
-              className="flex h-8 w-8 items-center justify-center border border-edge text-muted transition-colors hover:border-fg/30 hover:text-fg"
+              className="flex h-11 w-11 items-center justify-center border border-edge text-muted transition-colors hover:border-fg/30 hover:text-fg"
               aria-label="Close order detail"
             >
-              <X size={15} />
+              <X size={20} />
             </button>
           </div>
         </div>
 
         {/* scrollable body */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-5">
+        <div className="flex-1 overflow-y-auto p-10 space-y-8">
 
           {/* Shipping info */}
           <section>
-            <p className="mb-2 text-2xs font-bold uppercase tracking-widest text-muted">Shipping Info</p>
-            <div className="border border-edge bg-surface p-4 space-y-1 text-body">
+            <p className="mb-3 text-sm font-bold uppercase tracking-widest text-muted">Shipping Info</p>
+            <div className="border border-edge bg-surface p-6 space-y-2 text-lg">
               {si.fullName && <p className="font-semibold text-fg">{si.fullName}</p>}
               {si.phone && <p className="text-secondary">{si.phone}</p>}
               {si.address && <p className="text-secondary">{si.address}</p>}
@@ -94,33 +104,33 @@ function OrderDrawer({
 
           {/* Items */}
           <section>
-            <p className="mb-2 text-2xs font-bold uppercase tracking-widest text-muted">
+            <p className="mb-3 text-sm font-bold uppercase tracking-widest text-muted">
               Items ({order.items.length})
             </p>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {order.items.map((it) => (
-                <div key={it.id} className="flex gap-3 border border-edge bg-surface p-3">
-                  <div className="relative h-14 w-14 shrink-0 border border-edge bg-base">
+                <div key={it.id} className="flex gap-5 border border-edge bg-surface p-5">
+                  <div className="relative h-28 w-28 shrink-0 border border-edge bg-base">
                     {it.product.imageUrl ? (
                       <Image
                         src={it.product.imageUrl}
                         alt={it.product.name}
                         fill
-                        sizes="56px"
-                        className="object-contain p-1"
+                        sizes="112px"
+                        className="object-contain p-2"
                         unoptimized
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center">
-                        <Package size={18} className="text-subtle" />
+                        <Package size={32} className="text-subtle" />
                       </div>
                     )}
                   </div>
-                  <div className="flex flex-1 items-center justify-between gap-2 min-w-0">
-                    <p className="text-body text-secondary line-clamp-2 leading-snug">{it.product.name}</p>
+                  <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
+                    <p className="text-lg text-secondary line-clamp-2 leading-snug">{it.product.name}</p>
                     <div className="shrink-0 text-right">
-                      <p className="text-body font-semibold text-fg">{formatVnd(it.priceAtBuy * it.quantity)}</p>
-                      <p className="text-2xs text-muted">×{it.quantity}</p>
+                      <p className="text-lg font-semibold text-fg">{formatVnd(it.priceAtBuy * it.quantity)}</p>
+                      <p className="text-sm text-muted">×{it.quantity}</p>
                     </div>
                   </div>
                 </div>
@@ -130,8 +140,8 @@ function OrderDrawer({
 
           {/* Price breakdown */}
           <section>
-            <p className="mb-2 text-2xs font-bold uppercase tracking-widest text-muted">Summary</p>
-            <div className="border border-edge bg-surface p-4 space-y-2 text-body">
+            <p className="mb-3 text-sm font-bold uppercase tracking-widest text-muted">Summary</p>
+            <div className="border border-edge bg-surface p-6 space-y-3 text-lg">
               <div className="flex justify-between text-secondary">
                 <span>Subtotal</span>
                 <span>{formatVnd(order.subTotal)}</span>
@@ -141,7 +151,7 @@ function OrderDrawer({
                   <span>
                     Discount
                     {order.couponCode && (
-                      <span className="ml-1.5 border border-success/40 bg-success/10 px-1.5 py-0.5 text-2xs font-bold uppercase tracking-wider">
+                      <span className="ml-1.5 border border-success/40 bg-success/10 px-2 py-0.5 text-sm font-bold uppercase tracking-wider">
                         {order.couponCode}
                       </span>
                     )}
@@ -153,17 +163,17 @@ function OrderDrawer({
                 <span>Shipping</span>
                 <span>{order.shippingFee > 0 ? formatVnd(order.shippingFee) : "Free"}</span>
               </div>
-              <div className="flex justify-between border-t border-edge pt-2 font-black text-fg">
+              <div className="flex justify-between border-t border-edge pt-4 font-black text-fg">
                 <span>Total</span>
-                <span className="text-md text-brand">{formatVnd(order.totalAmount)}</span>
+                <span className="text-2xl text-brand">{formatVnd(order.totalAmount)}</span>
               </div>
             </div>
           </section>
 
           {/* Payment info */}
           <section>
-            <p className="mb-2 text-2xs font-bold uppercase tracking-widest text-muted">Payment</p>
-            <div className="border border-edge bg-surface p-4 flex items-center justify-between text-body">
+            <p className="mb-3 text-sm font-bold uppercase tracking-widest text-muted">Payment</p>
+            <div className="border border-edge bg-surface p-6 flex items-center justify-between text-lg">
               <span className="text-secondary uppercase tracking-wide font-semibold">{order.paymentMethod}</span>
               <span className={order.isPaid ? "text-success font-bold" : "text-warning font-bold"}>
                 {order.isPaid ? "Paid" : "Unpaid"}
@@ -171,26 +181,26 @@ function OrderDrawer({
             </div>
           </section>
 
-          <p className="text-2xs text-muted">
+          <p className="text-sm text-muted">
             Placed on {new Date(order.createdAt).toLocaleString("en-GB")}
           </p>
         </div>
 
         {/* footer */}
         {canCancel(order) && (
-          <div className="border-t border-edge px-5 py-4">
+          <div className="border-t border-edge px-10 py-6">
             <button
               type="button"
               onClick={() => onCancel(order.id)}
               disabled={cancelling === order.id}
-              className="w-full border border-destructive/50 py-2.5 text-sm font-bold uppercase tracking-wider text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-40"
+              className="w-full border border-destructive/50 py-3.5 text-md font-bold uppercase tracking-wider text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-40"
             >
               {cancelling === order.id ? "Cancelling…" : "Cancel Order"}
             </button>
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
 
@@ -269,7 +279,7 @@ export default function OrdersTab() {
       </div>
 
       {selectedOrder && (
-        <OrderDrawer
+        <OrderDetailModal
           order={selectedOrder}
           onClose={() => setSelectedOrder(null)}
           onCancel={handleCancel}

@@ -25,7 +25,8 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
 
   const isGet = !init?.method || init.method === "GET";
   const nextOptions = isGet && !token ? { next: { revalidate: 30 } } : {};
-  const res = await fetch(getApiUrl(path), { ...init, ...nextOptions, headers });
+  // credentials: 'include' sends session cookies (architecture requirement)
+  const res = await fetch(getApiUrl(path), { credentials: "include", ...init, ...nextOptions, headers });
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: res.statusText }));

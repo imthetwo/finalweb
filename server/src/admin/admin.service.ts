@@ -29,6 +29,7 @@ export class AdminService {
   approveProduct(id: string) { return this.productsService.approve(id); }
   deleteProduct(id: string) { return this.productsService.remove(id); }
   exportProductsExcel() { return this.productsService.exportExcel(); }
+  exportInventoryReport() { return this.productsService.exportInventoryReport(); }
 
   // ── Orders & Users ────────────────────────────────────────
   listOrders(p: { status?: string; page?: number; limit?: number }) { return this.ordersService.listOrders(p); }

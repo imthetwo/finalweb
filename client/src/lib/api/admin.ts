@@ -41,6 +41,23 @@ export async function uploadProductImage(file: File): Promise<{ url: string }> {
   return res.json();
 }
 
+// POST /admin/upload-video — Cloudinary hero video upload, ADMIN only
+export async function uploadHeroVideo(file: File): Promise<{ url: string }> {
+  const token = getToken();
+  const fd = new FormData();
+  fd.append("file", file);
+  const res = await fetch(getApiUrl("/admin/upload-video"), {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    body: fd,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({})) as { message?: string };
+    throw new Error(err.message ?? "Upload failed");
+  }
+  return res.json();
+}
+
 export async function downloadProductTemplate() {
   const token = getToken();
   const res = await fetch(getApiUrl("/admin/products/template"), {
@@ -52,6 +69,22 @@ export async function downloadProductTemplate() {
   const a = document.createElement("a");
   a.href = url;
   a.download = "product-import-template.xlsx";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// GET /admin/products/inventory-report — downloads the Inventory Report .xlsx (ADMIN only)
+export async function downloadInventoryReport() {
+  const token = getToken();
+  const res = await fetch(getApiUrl("/admin/products/inventory-report"), {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+  if (!res.ok) throw new Error("Export failed");
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `inventory-report-${Date.now()}.xlsx`;
   a.click();
   URL.revokeObjectURL(url);
 }

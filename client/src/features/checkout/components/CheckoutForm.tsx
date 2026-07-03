@@ -6,9 +6,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Tag, X } from "lucide-react";
 
-import { apiFetch, validateCoupon } from "@/lib/api";
+import { apiFetch, validateCoupon, guestCheckout } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
 import { getToken } from "@/lib/auth";
+import { getGuestCart, clearGuestCart } from "@/lib/guestCart";
 
 const FIELDS: { key: "recipient" | "phone" | "street" | "district" | "city"; label: string; placeholder: string }[] = [
   { key: "recipient", label: "Full name", placeholder: "Nguyen Van A" },
@@ -24,8 +25,10 @@ const labelCls = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-m
 
 export function CheckoutForm() {
   const router = useRouter();
+  const isLoggedIn = !!getToken();
 
   const [form, setForm] = useState({ recipient: "", phone: "", street: "", district: "", city: "" });
+  const [guestEmail, setGuestEmail] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [submitting, setSubmitting] = useState(false);
 
@@ -63,26 +66,42 @@ export function CheckoutForm() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!getToken()) {
-      toast.error("Please sign in first");
-      return;
-    }
     setSubmitting(true);
-    try {
-      const order = await apiFetch<{ id: string }>("/orders", {
-        method: "POST",
-        body: JSON.stringify({
-          paymentMethod,
-          shippingInfo: form,
-          ...(couponCode ? { couponCode } : {}),
-        }),
-      });
 
-      if (paymentMethod === "COD") {
-        toast.success("Order placed successfully!");
-        router.push(`/order-success?orderId=${order.id}`);
+    const shippingInfo = { ...form };
+
+    try {
+      if (isLoggedIn) {
+        // ── Logged-in: read from DB cart ──────────────────────────────────────
+        const order = await apiFetch<{ id: string }>("/orders", {
+          method: "POST",
+          body: JSON.stringify({
+            paymentMethod,
+            shippingInfo,
+            ...(couponCode ? { couponCode } : {}),
+          }),
+        });
+        redirect(order.id);
       } else {
-        router.push(`/payment/${paymentMethod.toLowerCase()}?orderId=${order.id}`);
+        // ── Guest: localStorage is the "session cart" ─────────────────────────
+        // Read items from localStorage → POST /orders/guest-checkout
+        // Backend: $transaction(Order + OrderItem) → stock decrement
+        // Frontend: clear localStorage after success (= "xóa session")
+        const guestItems = getGuestCart();
+        if (!guestItems.length) {
+          toast.error("Your cart is empty.");
+          return;
+        }
+        const order = await guestCheckout({
+          items: guestItems,
+          shippingInfo,
+          paymentMethod,
+          ...(couponCode ? { couponCode } : {}),
+          ...(guestEmail.trim() ? { guestEmail: guestEmail.trim() } : {}),
+        });
+        clearGuestCart();
+        window.dispatchEvent(new Event("cart-updated"));
+        redirect(order.id);
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to place order");
@@ -91,10 +110,33 @@ export function CheckoutForm() {
     }
   }
 
+  function redirect(orderId: string) {
+    if (paymentMethod === "COD") {
+      toast.success("Order placed successfully!");
+      router.push(`/order-success?orderId=${orderId}`);
+    } else {
+      router.push(`/payment/${paymentMethod.toLowerCase()}?orderId=${orderId}`);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-base px-4 py-10 text-fg md:px-8">
       <div className="mx-auto max-w-lg">
         <h1 className="mb-8 text-2xl font-black uppercase tracking-wide text-fg">Checkout</h1>
+
+        {!isLoggedIn && (
+          <div className="mb-6 border border-edge bg-elevated px-4 py-3 text-xs text-secondary">
+            Bạn đang thanh toán với tư cách khách. Đơn hàng sẽ được lưu vĩnh viễn trong hệ thống.{" "}
+            <button
+              type="button"
+              onClick={() => router.push("/login?redirect=/checkout")}
+              className="text-brand underline decoration-brand/40 hover:decoration-brand"
+            >
+              Đăng nhập
+            </button>{" "}
+            để theo dõi đơn hàng sau này.
+          </div>
+        )}
 
         <form onSubmit={submit} className="space-y-6">
           {/* Shipping info */}
@@ -115,6 +157,19 @@ export function CheckoutForm() {
                   />
                 </div>
               ))}
+              {/* Email for guest — optional but useful for order tracking */}
+              {!isLoggedIn && (
+                <div>
+                  <label className={labelCls}>Email (optional — for order tracking)</label>
+                  <input
+                    type="email"
+                    placeholder="your@email.com"
+                    className={inputCls}
+                    value={guestEmail}
+                    onChange={(e) => setGuestEmail(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
@@ -152,9 +207,8 @@ export function CheckoutForm() {
             <h2 className="mb-4 text-xs font-black uppercase tracking-wider text-secondary">
               Coupon code
             </h2>
-
             {couponCode ? (
-              <div className="flex items-center justify-between rounded border border-emerald-700/50 bg-emerald-950/20 px-4 py-2.5">
+              <div className="flex items-center justify-between border border-success/30 bg-success/5 px-4 py-2.5">
                 <div className="flex items-center gap-2 text-success">
                   <Tag size={14} />
                   <span className="text-body font-bold">{couponCode}</span>

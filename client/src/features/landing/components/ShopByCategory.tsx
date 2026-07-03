@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { cdn } from "@/lib/cloudinary";
-import { serverApiUrl } from "@/lib/api";
+import { getCategoryCounts } from "@/features/landing/data/getCategoryCounts";
 
 // key phải khớp đúng với category name trong DB — ảnh verified HTTP 200 trên Cloudinary
 const CATEGORIES = [
@@ -104,20 +104,8 @@ const CATEGORIES = [
   },
 ];
 
-// ─── Fetch product counts ──────────────────────────────────────────────
-async function getCounts(): Promise<Record<string, number>> {
-  try {
-    const res = await fetch(`${serverApiUrl}/categories/menu`, { next: { revalidate: 300 } });
-    if (!res.ok) return {};
-    const data = await res.json();
-    return (data.categoryCounts as Record<string, number>) ?? {};
-  } catch {
-    return {};
-  }
-}
-
 export default async function ShopByCategory() {
-  const counts = await getCounts();
+  const counts = await getCategoryCounts();
 
   return (
     <section className="bg-surface py-20">

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 
@@ -10,26 +10,9 @@ import { apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { formatVnd } from "@/lib/format";
 import { LoginOverlay } from "@/features/auth/LoginOverlay";
-import { getGuestCart, updateGuestCartQty, addToGuestCart } from "@/lib/guestCart";
-import { useAuthState } from "@/hooks/useAuthState";
-import type { ProductListItem } from "@/types/api";
-
-type CartItem = {
-  id: string;
-  quantity: number;
-  lineTotal: number;
-  customBuildId: string | null;
-  product: {
-    id: string;
-    name: string;
-    thumbnailUrl: string | null;
-    displayPrice: number;
-    stock: number;
-    category?: { id: string; name: string } | null;
-  };
-};
-type Cart = { items: CartItem[]; subTotal: number };
-type GuestDisplayItem = { productId: string; quantity: number; product: ProductListItem };
+import { addToGuestCart } from "@/lib/guestCart";
+import { useCartView } from "../hooks/useCartView";
+import type { CartItem, GuestDisplayItem } from "../types";
 
 // Returns the maximum allowed quantity based on product category
 function getMaxQty(categoryName: string | undefined | null, stock: number): number {
@@ -59,102 +42,10 @@ function getMaxQty(categoryName: string | undefined | null, stock: number): numb
 }
 
 export function CartView() {
-  const { user, loaded } = useAuthState();
-  const isLoggedIn = loaded && !!user;
-
-  const [cart, setCart] = useState<Cart | null>(null);
-  const [guestItems, setGuestItems] = useState<GuestDisplayItem[]>([]);
-  const [guestLoading, setGuestLoading] = useState(false);
-  const [trending, setTrending] = useState<ProductListItem[]>([]);
-
-  // Cache product details so we don't re-fetch on every cart-updated event
-  const productCacheRef = useRef(new Map<string, ProductListItem>());
-
-  const loadGuestItems = useCallback(async () => {
-    const raw = getGuestCart();
-    if (raw.length === 0) {
-      setGuestItems([]);
-      return;
-    }
-    const result = await Promise.all(
-      raw.map(async (item) => {
-        let product = productCacheRef.current.get(item.productId);
-        if (!product) {
-          product = await apiFetch<ProductListItem>(`/products/${item.productId}`);
-          productCacheRef.current.set(item.productId, product);
-        }
-        return { ...item, product };
-      })
-    ).catch(() => [] as GuestDisplayItem[]);
-    setGuestItems(result);
-  }, []);
-
-  // Initial data load
-  useEffect(() => {
-    if (!loaded) return;
-    if (isLoggedIn) {
-      apiFetch<Cart>("/cart")
-        .then(setCart)
-        .catch(() => setCart({ items: [], subTotal: 0 }));
-      return;
-    }
-    const raw = getGuestCart();
-    if (raw.length === 0) {
-      apiFetch<{ items: ProductListItem[] }>("/products?limit=4")
-        .then((d) => setTrending(d.items))
-        .catch(() => {});
-    } else {
-      setGuestLoading(true);
-      loadGuestItems().finally(() => setGuestLoading(false));
-    }
-  }, [loaded, isLoggedIn, loadGuestItems]);
-
-  // Listen for cart-updated events
-  useEffect(() => {
-    if (!loaded) return;
-    const handler = async () => {
-      if (isLoggedIn) {
-        apiFetch<Cart>("/cart").then(setCart).catch(() => toast.error("Failed to refresh cart"));
-      } else {
-        await loadGuestItems();
-        if (getGuestCart().length === 0) {
-          apiFetch<{ items: ProductListItem[] }>("/products?limit=4")
-            .then((d) => setTrending(d.items))
-            .catch(() => {});
-        }
-      }
-    };
-    window.addEventListener("cart-updated", handler);
-    return () => window.removeEventListener("cart-updated", handler);
-  }, [loaded, isLoggedIn, loadGuestItems]);
-
-  function updateGuestQty(productId: string, quantity: number) {
-    updateGuestCartQty(productId, quantity);
-    if (quantity <= 0) {
-      setGuestItems((prev) => prev.filter((i) => i.productId !== productId));
-      window.dispatchEvent(new Event("cart-updated")); // update header badge
-    } else {
-      setGuestItems((prev) =>
-        prev.map((i) => i.productId === productId ? { ...i, quantity } : i)
-      );
-    }
-  }
-
-  async function updateQty(itemId: string, quantity: number) {
-    try {
-      setCart(
-        await apiFetch<Cart>(`/cart/items/${itemId}`, {
-          method: "PATCH",
-          body: JSON.stringify({ quantity }),
-        }),
-      );
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Error");
-    }
-  }
+  const view = useCartView();
 
   // Show loading while auth or guest product details are being fetched
-  if (!loaded || (isLoggedIn && cart === null) || (!isLoggedIn && guestLoading)) {
+  if (view.status === "loading") {
     return (
       <main className="flex min-h-screen items-center justify-center bg-base">
         <p className="text-body text-muted">Loading cart…</p>
@@ -163,17 +54,8 @@ export function CartView() {
   }
 
   // ── Logged-in user ────────────────────────────────────────────────────────
-  if (isLoggedIn && cart) {
-    const standalone = cart.items.filter((i) => !i.customBuildId);
-    const buildMap = new Map<string, CartItem[]>();
-    for (const item of cart.items) {
-      if (!item.customBuildId) continue;
-      buildMap.set(item.customBuildId, [
-        ...(buildMap.get(item.customBuildId) ?? []),
-        item,
-      ]);
-    }
-    const isEmpty = cart.items.length === 0;
+  if (view.status === "authed") {
+    const { cart, standalone, buildGroups, isEmpty, updatingId, updateQty } = view;
 
     return (
       <main className="min-h-screen bg-base text-fg">
@@ -190,7 +72,7 @@ export function CartView() {
                   <h1 className="mb-6 text-2xl font-black uppercase tracking-tight text-fg">
                     Your Cart
                   </h1>
-                  {[...buildMap.entries()].map(([buildId, items]) => (
+                  {buildGroups.map(([buildId, items]) => (
                     <div key={buildId} className="mb-6 border border-brand/30 bg-brand/5 p-4">
                       <p className="mb-3 text-xs font-black uppercase tracking-wider text-brand">
                         Custom PC Build —{" "}
@@ -198,7 +80,7 @@ export function CartView() {
                       </p>
                       <ul className="space-y-3">
                         {items.map((i) => (
-                          <CartItemRow key={i.id} item={i} onUpdate={updateQty} />
+                          <CartItemRow key={i.id} item={i} onUpdate={updateQty} updating={updatingId === i.id} />
                         ))}
                       </ul>
                     </div>
@@ -206,7 +88,7 @@ export function CartView() {
                   {standalone.length > 0 && (
                     <ul className="space-y-4">
                       {standalone.map((i) => (
-                        <CartItemRow key={i.id} item={i} onUpdate={updateQty} />
+                        <CartItemRow key={i.id} item={i} onUpdate={updateQty} updating={updatingId === i.id} />
                       ))}
                     </ul>
                   )}
@@ -259,8 +141,7 @@ export function CartView() {
   }
 
   // ── Guest view ────────────────────────────────────────────────────────────
-  const guestEmpty = guestItems.length === 0;
-  const guestTotal = guestItems.reduce((s, i) => s + i.product.displayPrice * i.quantity, 0);
+  const { guestItems, guestTotal, guestEmpty, trending, updateGuestQty } = view;
 
   return (
     <main className="min-h-screen bg-base text-fg">
@@ -349,17 +230,13 @@ export function CartView() {
             <div className="mt-6 space-y-3">
               {!guestEmpty ? (
                 <>
-                  <LoginOverlay
-                    triggerButton={
-                      <button
-                        type="button"
-                        className="flex w-full items-center justify-center gap-2 bg-brand py-3.5 text-sm font-black uppercase tracking-wider text-black transition-colors hover:bg-brand-hover"
-                      >
-                        <ShoppingBag size={14} />
-                        Checkout
-                      </button>
-                    }
-                  />
+                  <Link
+                    href="/checkout"
+                    className="flex w-full items-center justify-center gap-2 bg-brand py-3.5 text-sm font-black uppercase tracking-wider text-black transition-colors hover:bg-brand-hover"
+                  >
+                    <ShoppingBag size={14} />
+                    Checkout
+                  </Link>
                   <Link
                     href="/shop"
                     className="flex w-full items-center justify-center border border-edge py-3.5 text-sm font-bold uppercase tracking-wider text-secondary transition-colors hover:border-fg hover:text-fg"
@@ -476,9 +353,11 @@ function TrendingBuyButton({ productId }: { productId: string }) {
 function CartItemRow({
   item,
   onUpdate,
+  updating = false,
 }: {
   item: CartItem;
   onUpdate: (id: string, qty: number) => void;
+  updating?: boolean;
 }) {
   const maxQty = Math.max(getMaxQty(item.product.category?.name, item.product.stock), item.quantity);
   return (
@@ -501,8 +380,9 @@ function CartItemRow({
           <div className="mt-3 flex items-center gap-3">
             <select
               value={item.quantity}
+              disabled={updating}
               onChange={(e) => onUpdate(item.id, Number(e.target.value))}
-              className="border border-edge bg-surface px-2 py-1 text-body text-fg outline-none focus:border-brand/50"
+              className="border border-edge bg-surface px-2 py-1 text-body text-fg outline-none focus:border-brand/50 disabled:opacity-50"
             >
               {Array.from({ length: maxQty }, (_, i) => i + 1).map((n) => (
                 <option key={n} value={n}>Qty {n}</option>
@@ -510,10 +390,11 @@ function CartItemRow({
             </select>
             <button
               type="button"
+              disabled={updating}
               onClick={() => onUpdate(item.id, 0)}
-              className="text-xs text-subtle underline hover:text-destructive"
+              className="text-xs text-subtle underline hover:text-destructive disabled:opacity-40"
             >
-              Remove
+              {updating ? "Updating…" : "Remove"}
             </button>
           </div>
         )}

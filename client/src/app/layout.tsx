@@ -20,13 +20,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "PECIFY | Precision Instrumentation",
-  description: "Technical instrumentation for high-performance gaming ecosystems.",
+  description:
+    "Technical instrumentation for high-performance gaming ecosystems.",
 };
 
 export const viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5, 
+  maximumScale: 5,
 };
 
 export default function RootLayout({
@@ -35,7 +36,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
+    >
       <body className="min-h-screen flex flex-col bg-background text-foreground">
         <Header />
         <div className="flex-1">{children}</div>

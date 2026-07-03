@@ -3,11 +3,12 @@
 
 import { useCallback, useRef, useState } from "react";
 import Image from "next/image";
-import { Plus, Pencil, Trash2, Search, Upload, Download, CheckCircle } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Upload, Download, CheckCircle, FileSpreadsheet } from "lucide-react";
 import { toast } from "sonner";
 
 import {
   fetchAdminProducts, deleteAdminProduct, approveAdminProduct, importProductsExcel, downloadProductTemplate,
+  downloadInventoryReport,
   type AdminProduct, type Paginated,
 } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
@@ -20,6 +21,10 @@ export function ProductsManager() {
   const isAdmin = user?.role === "ADMIN";
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<AdminProduct | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null);
+  const [approvingId, setApprovingId] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [exportingReport, setExportingReport] = useState(false);
   const importRef = useRef<HTMLInputElement>(null);
 
   const { data, search, page, loading, reload, setPage, handleSearch } =
@@ -31,6 +36,7 @@ export function ProductsManager() {
   async function onImport(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    setImporting(true);
     try {
       const res = await importProductsExcel(file);
       toast.success(`Imported: ${res.created} created, ${res.updated} updated`);
@@ -39,18 +45,22 @@ export function ProductsManager() {
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Import failed");
     } finally {
+      setImporting(false);
       if (importRef.current) importRef.current.value = "";
     }
   }
 
   async function remove(p: AdminProduct) {
     if (!confirm(`Delete "${p.name}"?`)) return;
+    setRemovingId(p.id);
     try {
       await deleteAdminProduct(p.id);
       toast.success("Product deleted");
       reload();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Delete failed");
+    } finally {
+      setRemovingId(null);
     }
   }
 
@@ -58,12 +68,27 @@ export function ProductsManager() {
   function openEdit(p: AdminProduct) { setEditing(p); setModalOpen(true); }
 
   async function approve(p: AdminProduct) {
+    setApprovingId(p.id);
     try {
       await approveAdminProduct(p.id);
       toast.success(`"${p.name}" approved and published`);
       reload();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Approve failed");
+    } finally {
+      setApprovingId(null);
+    }
+  }
+
+  async function exportInventory() {
+    setExportingReport(true);
+    try {
+      await downloadInventoryReport();
+      toast.success("Inventory report downloaded");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Export failed");
+    } finally {
+      setExportingReport(false);
     }
   }
 
@@ -80,9 +105,14 @@ export function ProductsManager() {
           >
             <Download size={14} /> Template
           </button>
-          <button onClick={() => importRef.current?.click()} className="inline-flex items-center gap-2 border border-emerald-700/50 bg-emerald-950/30 px-4 py-2.5 text-sm font-black uppercase tracking-wider text-success hover:bg-emerald-950/50">
+          {isAdmin && (
+            <button onClick={exportInventory} disabled={exportingReport} className="inline-flex items-center gap-2 border border-emerald-700/50 bg-emerald-950/30 px-4 py-2.5 text-sm font-black uppercase tracking-wider text-success hover:bg-emerald-950/50 disabled:opacity-50">
+              <FileSpreadsheet size={14} /> {exportingReport ? "Exporting…" : "Inventory Report"}
+            </button>
+          )}
+          <button onClick={() => importRef.current?.click()} disabled={importing} className="inline-flex items-center gap-2 border border-emerald-700/50 bg-emerald-950/30 px-4 py-2.5 text-sm font-black uppercase tracking-wider text-success hover:bg-emerald-950/50 disabled:opacity-50">
             <Upload size={14} />
-            {isAdmin ? "Import Excel" : "Import Excel (Draft)"}
+            {importing ? "Importing…" : isAdmin ? "Import Excel" : "Import Excel (Draft)"}
           </button>
           <button onClick={openCreate} className="inline-flex items-center gap-2 bg-brand px-4 py-2.5 text-sm font-black uppercase tracking-wider text-black hover:bg-brand/85">
             <Plus size={14} /> {isAdmin ? "Add Product" : "Submit for Review"}
@@ -162,12 +192,12 @@ export function ProductsManager() {
                     {isAdmin ? (
                       <div className="flex items-center justify-end gap-1.5">
                         {!p.isPublished && (
-                          <button onClick={() => approve(p)} className="flex h-7 items-center gap-1 border border-emerald-700/50 bg-emerald-950/30 px-2 text-2xs font-black uppercase text-success hover:bg-emerald-950/60" aria-label="Approve">
-                            <CheckCircle size={11} /> Approve
+                          <button onClick={() => approve(p)} disabled={approvingId === p.id} className="flex h-7 items-center gap-1 border border-emerald-700/50 bg-emerald-950/30 px-2 text-2xs font-black uppercase text-success hover:bg-emerald-950/60 disabled:opacity-40" aria-label="Approve">
+                            <CheckCircle size={11} /> {approvingId === p.id ? "…" : "Approve"}
                           </button>
                         )}
                         <button onClick={() => openEdit(p)} className="flex h-7 w-7 items-center justify-center border border-edge text-secondary hover:border-brand/50 hover:text-brand" aria-label="Edit"><Pencil size={12} /></button>
-                        <button onClick={() => remove(p)} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-destructive hover:border-destructive" aria-label="Delete"><Trash2 size={12} /></button>
+                        <button onClick={() => remove(p)} disabled={removingId === p.id} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-destructive hover:border-destructive disabled:opacity-40" aria-label="Delete"><Trash2 size={12} /></button>
                       </div>
                     ) : (
                       <span className="text-2xs text-subtle">View only</span>

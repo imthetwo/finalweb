@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useAuthState } from "@/hooks/useAuthState";
 import { LoginOverlay } from "@/features/auth/LoginOverlay";
 import { RegisterOverlay } from "@/features/auth/RegisterOverlay";
-import { apiFetch, getApiUrl, getToken } from "@/lib/api";
+import { uploadAvatar } from "@/lib/api";
 
 function getInitials(name: string) {
   return name
@@ -41,15 +41,7 @@ export function UserMenu() {
     if (!file) return;
     setUploading(true);
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const token = getToken();
-      const res = await fetch(getApiUrl("/users/me/avatar"), {
-        method: "POST",
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        body: fd,
-      });
-      if (!res.ok) throw new Error("Upload failed");
+      await uploadAvatar(file);
       await refresh();
       toast.success("Avatar updated");
     } catch {

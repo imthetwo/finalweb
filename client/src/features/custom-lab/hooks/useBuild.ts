@@ -107,8 +107,9 @@ export function useBuild() {
         maxRamGb:       p.motherboardSpec?.maxRamGb,
       }));
       setParts(slot, mapped);
-    } catch {
+    } catch (e) {
       setParts(slot, []);
+      toast.error(e instanceof Error ? e.message : "Failed to load parts — please refresh");
     } finally {
       setLoading(slot, false);
     }
