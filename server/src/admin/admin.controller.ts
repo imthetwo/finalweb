@@ -11,7 +11,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import {
-  CreateProductDto, UpdateOrderStatusDto, UpdateProductDto, UpdateUserRoleDto,
+  CancelOrderDto, CreateProductDto, UpdateOrderStatusDto, UpdateProductDto, UpdateUserRoleDto,
 } from './dto/admin-product.dto';
 import { CurrentUser } from '../auth/current-user.decorator';
 
@@ -130,7 +130,7 @@ export class AdminController {
     return this.admin.importProductsExcel(file.buffer, asDraft);
   }
 
-  // ── Orders: STAFF xem, ADMIN cập nhật trạng thái ─────────────────────────
+  // ── Orders: STAFF xem + cập nhật tiến trình giao hàng, ADMIN toàn quyền ───
 
   @Get('orders')
   @Roles(Role.ADMIN, Role.STAFF)
@@ -146,11 +146,67 @@ export class AdminController {
     });
   }
 
-  // ADMIN ONLY — đổi trạng thái đơn hàng
+  // STAFF + ADMIN — routine shipping progress only (PENDING/PROCESSING/
+  // SHIPPED/DELIVERED). CANCELLED is rejected here — see cancelOrder below.
   @Patch('orders/:id/status')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.STAFF)
   updateOrderStatus(@Param('id') id: string, @Body() dto: UpdateOrderStatusDto) {
     return this.admin.updateOrderStatus(id, dto.status);
+  }
+
+  // STAFF + ADMIN — accepts an order awaiting confirmation into the normal
+  // fulfillment pipeline (purely operational, like routine status progress).
+  @Patch('orders/:id/accept')
+  @Roles(Role.ADMIN, Role.STAFF)
+  acceptOrder(
+    @Param('id') id: string,
+    @CurrentUser('userId') actorId: string,
+  ) {
+    return this.admin.acceptOrder(id, actorId);
+  }
+
+  // ADMIN ONLY — rejects an order awaiting confirmation (e.g. real stock
+  // doesn't match); refunds through MoMo first if it was actually paid.
+  @Post('orders/:id/reject')
+  @Roles(Role.ADMIN)
+  rejectOrder(
+    @Param('id') id: string,
+    @Body() dto: CancelOrderDto,
+    @CurrentUser('userId') actorId: string,
+  ) {
+    return this.admin.rejectOrder(id, dto.reason, actorId);
+  }
+
+  // ADMIN ONLY — cancel + restock, requires a reason (financial action)
+  @Post('orders/:id/cancel')
+  @Roles(Role.ADMIN)
+  cancelOrder(
+    @Param('id') id: string,
+    @Body() dto: CancelOrderDto,
+    @CurrentUser('userId') actorId: string,
+  ) {
+    return this.admin.cancelOrder(id, dto.reason, actorId);
+  }
+
+  // ADMIN ONLY — force-recheck payment status directly against MoMo's query
+  // API, for when the IPN webhook is delayed or lost (fixes the "customer
+  // paid but order still shows Unpaid" desync without any auto-cancellation).
+  @Post('orders/:id/recheck-payment')
+  @Roles(Role.ADMIN)
+  recheckPayment(@Param('id') id: string) {
+    return this.admin.forcePollPayment(id);
+  }
+
+  // ADMIN ONLY — real MoMo refund for a paid order; only cancels + restocks
+  // on a confirmed MoMo success (see PaymentsService.refundPayment)
+  @Post('orders/:id/refund')
+  @Roles(Role.ADMIN)
+  refundOrder(
+    @Param('id') id: string,
+    @Body() dto: CancelOrderDto,
+    @CurrentUser('userId') actorId: string,
+  ) {
+    return this.admin.refundOrder(id, dto.reason, actorId);
   }
 
   // ── Exports — ADMIN ONLY ──────────────────────────────────────────────────

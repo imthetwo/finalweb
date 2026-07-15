@@ -6,7 +6,7 @@ export class AdminStatsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getDashboardStats() {
-    const [revenueAgg, orderCount, userCount, productCount, recentOrders, lowStock] =
+    const [revenueAgg, orderCount, userCount, productCount, recentOrders] =
       await Promise.all([
         this.prisma.order.aggregate({ where: { isPaid: true }, _sum: { totalAmount: true } }),
         this.prisma.order.count(),
@@ -17,7 +17,6 @@ export class AdminStatsService {
           take: 8,
           include: { user: { select: { fullName: true, email: true } } },
         }),
-        this.prisma.product.count({ where: { stock: { lte: 5 }, isPublished: true } }),
       ]);
 
     return {
@@ -25,7 +24,6 @@ export class AdminStatsService {
       orderCount,
       userCount,
       productCount,
-      lowStockCount: lowStock,
       recentOrders,
     };
   }

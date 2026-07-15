@@ -26,7 +26,7 @@ const LINKS = {
   ],
   Support: [
     { label: "My Account", href: "/account" },
-    { label: "Track Order", href: "/account" },
+    { label: "Track Order", href: "/track-order" },
     { label: "Warranty Policy", href: "/warranty" },
     { label: "Contact Us", href: "/support" },
     { label: "Privacy Policy", href: "/privacy" },
@@ -74,16 +74,10 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-white/5">
-        <div className="mx-auto flex max-w-350 flex-col items-center justify-between gap-3 px-4 py-5 md:flex-row md:px-8">
+        <div className="mx-auto flex max-w-350 items-center justify-center px-4 py-5 md:px-8">
           <p className="text-2xs uppercase tracking-widest text-subtle">
             © 2025 Pecify. All rights reserved.
           </p>
-          <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
-            <p className="text-2xs uppercase tracking-[0.2em] text-brand/50">
-              All Systems Online
-            </p>
-          </div>
         </div>
       </div>
     </footer>

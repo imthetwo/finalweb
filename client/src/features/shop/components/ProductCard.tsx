@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import type { ProductListItem } from "@/types/api";
 import { formatVnd } from "@/lib/format";
 import AddToCartButton from "@/components/shop/AddToCartButton";
+import { ProductImage } from "@/components/ui/ProductImage";
 
 export function ProductCard({ p }: { p: ProductListItem }) {
   const hasSale = p.salePrice !== null && p.salePrice < p.price;
@@ -13,10 +13,9 @@ export function ProductCard({ p }: { p: ProductListItem }) {
     <div className="group flex flex-col border border-edge bg-elevated transition-colors hover:border-brand/30">
       <Link href={`/product/${p.id}`} className="relative aspect-square overflow-hidden bg-elevated">
         {p.thumbnailUrl ? (
-          <Image
+          <ProductImage
             src={p.thumbnailUrl}
             alt={p.name}
-            fill
             className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width:768px) 50vw, 33vw"
             unoptimized

@@ -1,123 +1,32 @@
 "use client";
 // "use client" vì: useState, useEffect, event handlers (form submit, API calls)
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
 import { Tag, X } from "lucide-react";
 
-import { apiFetch, validateCoupon, guestCheckout } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
-import { getToken } from "@/lib/auth";
-import { getGuestCart, clearGuestCart } from "@/lib/guestCart";
-
-const FIELDS: { key: "recipient" | "phone" | "street" | "district" | "city"; label: string; placeholder: string }[] = [
-  { key: "recipient", label: "Full name", placeholder: "Nguyen Van A" },
-  { key: "phone", label: "Phone number", placeholder: "0901 234 567" },
-  { key: "street", label: "Street address", placeholder: "123 Nguyen Hue, Ward 1" },
-  { key: "district", label: "District", placeholder: "District 1" },
-  { key: "city", label: "City / Province", placeholder: "Ho Chi Minh City" },
-];
+import { LoginOverlay } from "@/features/auth";
+import { AddressFields } from "@/components/ui/AddressFields";
+import { useCheckoutForm } from "../hooks/useCheckoutForm";
 
 const inputCls =
   "w-full border border-edge bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors focus:border-brand/50 placeholder:text-subtle";
 const labelCls = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted";
 
 export function CheckoutForm() {
-  const router = useRouter();
-  const isLoggedIn = !!getToken();
-
-  const [form, setForm] = useState({ recipient: "", phone: "", street: "", district: "", city: "" });
-  const [guestEmail, setGuestEmail] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("COD");
-  const [submitting, setSubmitting] = useState(false);
-
-  // Coupon state
-  const [couponInput, setCouponInput] = useState("");
-  const [couponCode, setCouponCode] = useState<string | null>(null);
-  const [discount, setDiscount] = useState(0);
-  const [couponLoading, setCouponLoading] = useState(false);
-
-  async function applyCoupon() {
-    const code = couponInput.trim().toUpperCase();
-    if (!code) return;
-    setCouponLoading(true);
-    try {
-      const res = await validateCoupon(code, 0);
-      if (res.valid) {
-        setCouponCode(code);
-        setDiscount(res.discount);
-        toast.success(`Coupon applied — discount: ${formatVnd(res.discount)}`);
-      } else {
-        toast.error(res.message || "Invalid coupon");
-      }
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not apply coupon");
-    } finally {
-      setCouponLoading(false);
-    }
-  }
-
-  function removeCoupon() {
-    setCouponCode(null);
-    setCouponInput("");
-    setDiscount(0);
-  }
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-
-    const shippingInfo = { ...form };
-
-    try {
-      if (isLoggedIn) {
-        // ── Logged-in: read from DB cart ──────────────────────────────────────
-        const order = await apiFetch<{ id: string }>("/orders", {
-          method: "POST",
-          body: JSON.stringify({
-            paymentMethod,
-            shippingInfo,
-            ...(couponCode ? { couponCode } : {}),
-          }),
-        });
-        redirect(order.id);
-      } else {
-        // ── Guest: localStorage is the "session cart" ─────────────────────────
-        // Read items from localStorage → POST /orders/guest-checkout
-        // Backend: $transaction(Order + OrderItem) → stock decrement
-        // Frontend: clear localStorage after success (= "xóa session")
-        const guestItems = getGuestCart();
-        if (!guestItems.length) {
-          toast.error("Your cart is empty.");
-          return;
-        }
-        const order = await guestCheckout({
-          items: guestItems,
-          shippingInfo,
-          paymentMethod,
-          ...(couponCode ? { couponCode } : {}),
-          ...(guestEmail.trim() ? { guestEmail: guestEmail.trim() } : {}),
-        });
-        clearGuestCart();
-        window.dispatchEvent(new Event("cart-updated"));
-        redirect(order.id);
-      }
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to place order");
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  function redirect(orderId: string) {
-    if (paymentMethod === "COD") {
-      toast.success("Order placed successfully!");
-      router.push(`/order-success?orderId=${orderId}`);
-    } else {
-      router.push(`/payment/${paymentMethod.toLowerCase()}?orderId=${orderId}`);
-    }
-  }
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const {
+    isLoggedIn,
+    showLogin, setShowLogin,
+    form, setForm,
+    savedAddresses, selectedAddressId, selectAddress,
+    offerSaveAddress, saveAddress, setSaveAddress,
+    guestEmail, setGuestEmail,
+    paymentMethod, setPaymentMethod,
+    submitting,
+    couponInput, setCouponInput,
+    couponCode, discount, couponLoading,
+    applyCoupon, removeCoupon, submit,
+  } = useCheckoutForm();
 
   return (
     <main className="min-h-screen bg-base px-4 py-10 text-fg md:px-8">
@@ -126,17 +35,19 @@ export function CheckoutForm() {
 
         {!isLoggedIn && (
           <div className="mb-6 border border-edge bg-elevated px-4 py-3 text-xs text-secondary">
-            Bạn đang thanh toán với tư cách khách. Đơn hàng sẽ được lưu vĩnh viễn trong hệ thống.{" "}
+            You are checking out as a guest. Your order will be saved permanently in our system.{" "}
             <button
               type="button"
-              onClick={() => router.push("/login?redirect=/checkout")}
+              onClick={() => setShowLogin(true)}
               className="text-brand underline decoration-brand/40 hover:decoration-brand"
             >
-              Đăng nhập
+              Sign in
             </button>{" "}
-            để theo dõi đơn hàng sau này.
+            to track your orders later.
           </div>
         )}
+
+        <LoginOverlay open={showLogin} onOpenChange={setShowLogin} />
 
         <form onSubmit={submit} className="space-y-6">
           {/* Shipping info */}
@@ -145,22 +56,54 @@ export function CheckoutForm() {
               Shipping information
             </h2>
             <div className="space-y-4">
-              {FIELDS.map(({ key, label, placeholder }) => (
-                <div key={key}>
-                  <label className={labelCls}>{label}</label>
-                  <input
-                    required
-                    placeholder={placeholder}
-                    className={inputCls}
-                    value={form[key]}
-                    onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                  />
+              {isLoggedIn && savedAddresses.length > 0 && (
+                <div>
+                  <label className={labelCls}>Use a saved address</label>
+                  <div className="flex flex-wrap gap-2">
+                    {savedAddresses.map((a) => (
+                      <button
+                        key={a.id}
+                        type="button"
+                        onClick={() => selectAddress(a.id)}
+                        className={`border px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition ${
+                          selectedAddressId === a.id
+                            ? "border-brand bg-brand/10 text-brand"
+                            : "border-edge text-secondary hover:border-secondary"
+                        }`}
+                      >
+                        {a.label || a.recipient}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => selectAddress("new")}
+                      className={`border px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition ${
+                        selectedAddressId === "new"
+                          ? "border-brand bg-brand/10 text-brand"
+                          : "border-edge text-secondary hover:border-secondary"
+                      }`}
+                    >
+                      New address
+                    </button>
+                  </div>
                 </div>
-              ))}
+              )}
+              <AddressFields value={form} onChange={setForm} />
+              {offerSaveAddress && (
+                <label className="flex cursor-pointer items-center gap-2.5 text-body text-secondary">
+                  <input
+                    type="checkbox"
+                    checked={saveAddress}
+                    onChange={(e) => setSaveAddress(e.target.checked)}
+                    className="accent-brand"
+                  />
+                  Save this address to my address book
+                </label>
+              )}
               {/* Email for guest — optional but useful for order tracking */}
               {!isLoggedIn && (
                 <div>
-                  <label className={labelCls}>Email (optional — for order tracking)</label>
+                  <label className={labelCls}>Email (optional)</label>
                   <input
                     type="email"
                     placeholder="your@email.com"
@@ -168,6 +111,9 @@ export function CheckoutForm() {
                     value={guestEmail}
                     onChange={(e) => setGuestEmail(e.target.value)}
                   />
+                  <p className="mt-1.5 text-xs text-subtle">
+                    We'll send your order ID here — without it, you'll need your phone number and the ID to track your order later.
+                  </p>
                 </div>
               )}
             </div>

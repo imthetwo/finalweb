@@ -79,6 +79,10 @@ export type LaptopSpec = {
   cpu: string; gpu?: string; ramGb: number; storageGb: number;
   displaySizeIn: number; displayResolution?: string; os?: string;
 };
+export type PcBuildType = "GAMING_ESPORT" | "WORKSTATION" | "MINI_SFF";
+export type PcBuildSpec = { buildType: PcBuildType };
+export type FurnitureType = "CHAIR" | "DESK";
+export type FurnitureSpec = { furnitureType: FurnitureType };
 
 export type ProductSpecs = {
   cpuSpec?: CpuSpec;
@@ -91,6 +95,8 @@ export type ProductSpecs = {
   monitorSpec?: MonitorSpec;
   storageSpec?: StorageSpec;
   laptopSpec?: LaptopSpec;
+  pcBuildSpec?: PcBuildSpec;
+  furnitureSpec?: FurnitureSpec;
 };
 
 // ─── User ─────────────────────────────────────────────────────────────────────
@@ -113,7 +119,7 @@ export type OrderItem = {
   id: string;
   quantity: number;
   priceAtBuy: number;
-  product: { name: string; imageUrl?: string | null };
+  product: { id: string; name: string; imageUrl?: string | null };
 };
 
 export type Order = {
@@ -131,6 +137,30 @@ export type Order = {
   items: OrderItem[];
 };
 
+// ─── Address book ─────────────────────────────────────────────────────────────
+
+export type Address = {
+  id: string;
+  label: string | null;
+  recipient: string;
+  phone: string;
+  street: string;
+  ward: string;
+  city: string;
+  isDefault: boolean;
+  createdAt: string;
+};
+
+export type AddressInput = {
+  label?: string;
+  recipient: string;
+  phone: string;
+  street: string;
+  ward: string;
+  city: string;
+  isDefault?: boolean;
+};
+
 // ─── Wishlist ─────────────────────────────────────────────────────────────────
 
 export type WishlistEntry = { id: string; addedAt: string; product: ProductListItem };
@@ -142,7 +172,6 @@ export type AdminStats = {
   orderCount: number;
   userCount: number;
   productCount: number;
-  lowStockCount: number;
   recentOrders: Array<{
     id: string;
     totalAmount: number;
@@ -188,6 +217,9 @@ export type AdminOrder = {
   isPaid: boolean;
   createdAt: string;
   user: { fullName: string; email: string } | null;
+  guestEmail: string | null;
+  refundedAt: string | null;
+  shippingInfo: { recipient: string; phone: string; street: string; ward: string; city: string };
   items: Array<{ id: string; quantity: number; product: { name: string } }>;
 };
 

@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { cdn } from "@/lib/cloudinary";
-import { getCategoryCounts } from "@/features/landing/data/getCategoryCounts";
 
 // key phải khớp đúng với category name trong DB — ảnh verified HTTP 200 trên Cloudinary
 const CATEGORIES = [
@@ -104,11 +103,9 @@ const CATEGORIES = [
   },
 ];
 
-export default async function ShopByCategory() {
-  const counts = await getCategoryCounts();
-
+export default function ShopByCategory() {
   return (
-    <section className="bg-surface py-20">
+    <section className="bg-base py-20">
       <div className="mx-auto max-w-350 px-4 md:px-8">
 
         {/* ── Title ── */}
@@ -118,10 +115,7 @@ export default async function ShopByCategory() {
 
         {/* ── 5×2 grid ── */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {CATEGORIES.map((cat) => {
-            const count = counts[cat.key] ?? 0;
-
-            return (
+          {CATEGORIES.map((cat) => (
               <Link
                 key={cat.key}
                 href={cat.href}
@@ -147,11 +141,6 @@ export default async function ShopByCategory() {
                   <span className="text-xs font-black uppercase tracking-[0.12em] text-fg">
                     <span className="mr-1 font-bold opacity-50">{"//"}</span>
                     {cat.label}
-                    {count > 0 && (
-                      <span className="ml-1.5 text-3xs font-semibold text-muted">
-                        ({count})
-                      </span>
-                    )}
                   </span>
 
                   <ArrowRight
@@ -160,8 +149,7 @@ export default async function ShopByCategory() {
                   />
                 </div>
               </Link>
-            );
-          })}
+          ))}
         </div>
 
       </div>

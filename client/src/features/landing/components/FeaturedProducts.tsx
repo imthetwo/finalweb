@@ -1,15 +1,12 @@
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowRight, ShoppingCart } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { formatVnd } from "@/lib/format";
 import { getFeaturedProducts, type FeaturedProduct } from "@/features/landing/data/getFeaturedProducts";
+import { ProductImage } from "@/components/ui/ProductImage";
 
 function ProductCard({ product }: { product: FeaturedProduct }) {
   const hasSale =
     product.salePrice !== null && product.salePrice < product.price;
-  const discountPct = hasSale
-    ? Math.round((1 - product.salePrice! / product.price) * 100)
-    : 0;
 
   return (
     <div className="group relative flex flex-col overflow-hidden border border-white/5 bg-elevated transition-all duration-300 hover:border-brand/20 hover:shadow-glow-sm">
@@ -19,10 +16,9 @@ function ProductCard({ product }: { product: FeaturedProduct }) {
       {/* Thumbnail */}
       <div className="relative aspect-square overflow-hidden bg-surface">
         {product.thumbnailUrl ? (
-          <Image
+          <ProductImage
             src={product.thumbnailUrl}
             alt={product.name}
-            fill
             className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 640px) 50vw, (max-width: 1280px) 25vw, 20vw"
           />
@@ -30,12 +26,6 @@ function ProductCard({ product }: { product: FeaturedProduct }) {
           <div className="flex h-full items-center justify-center">
             <span className="text-2xs uppercase tracking-widest text-subtle">No Image</span>
           </div>
-        )}
-
-        {hasSale && (
-          <span className="absolute left-3 top-3 z-20 bg-brand px-2 py-0.5 text-2xs font-black uppercase tracking-wider text-black">
-            -{discountPct}%
-          </span>
         )}
 
         {product.stock === 0 && (
@@ -54,34 +44,21 @@ function ProductCard({ product }: { product: FeaturedProduct }) {
           {product.name}
         </h3>
 
-        <div className="mt-auto flex items-end justify-between pt-3">
-          {/* Price */}
-          <div className="flex flex-col">
-            {hasSale ? (
-              <>
-                <span className="text-2xs text-subtle line-through">
-                  {formatVnd(product.price)}
-                </span>
-                <span className="text-base font-black text-brand">
-                  {formatVnd(product.salePrice!)}
-                </span>
-              </>
-            ) : (
-              <span className="text-base font-black text-fg">
+        <div className="mt-auto flex flex-col pt-3">
+          {hasSale ? (
+            <>
+              <span className="text-2xs text-subtle line-through">
                 {formatVnd(product.price)}
               </span>
-            )}
-          </div>
-
-          {/* Cart button — z-20 to be above link overlay */}
-          <button
-            type="button"
-            data-product-id={product.id}
-            className="relative z-20 flex items-center justify-center border border-white/10 bg-white/4 p-2.5 text-muted transition-all duration-200 hover:border-brand/40 hover:bg-brand/10 hover:text-brand"
-            aria-label={`Add ${product.name} to cart`}
-          >
-            <ShoppingCart size={14} />
-          </button>
+              <span className="text-base font-black text-brand">
+                {formatVnd(product.salePrice!)}
+              </span>
+            </>
+          ) : (
+            <span className="text-base font-black text-fg">
+              {formatVnd(product.price)}
+            </span>
+          )}
         </div>
       </div>
     </div>

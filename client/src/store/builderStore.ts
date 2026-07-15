@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { ApiPart, CompatibilityResult } from "@/features/custom-lab/types";
+import type { ApiPart, CompatibilityResult } from "@/features/custom-lab";
 
 type BuilderState = {
   // ── Data ──────────────────────────────────────────────────────

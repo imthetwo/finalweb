@@ -3,7 +3,8 @@
 // Map category name → spec key
 export type SpecKey =
   | "cpuSpec" | "gpuSpec" | "ramSpec" | "motherboardSpec" | "psuSpec"
-  | "caseSpec" | "coolerSpec" | "monitorSpec" | "storageSpec" | "laptopSpec";
+  | "caseSpec" | "coolerSpec" | "monitorSpec" | "storageSpec" | "laptopSpec"
+  | "pcBuildSpec" | "furnitureSpec";
 
 export const NAME_TO_SPEC: Record<string, SpecKey> = {
   "processors (cpu)": "cpuSpec",
@@ -21,13 +22,16 @@ export const NAME_TO_SPEC: Record<string, SpecKey> = {
   "storage (ssd/hdd)": "storageSpec",
   "storage": "storageSpec",
   "laptops": "laptopSpec",
+  "prebuilt pcs": "pcBuildSpec",
+  "gaming furniture": "furnitureSpec",
 };
 
 const SPEC_LABELS: Record<SpecKey, string> = {
   cpuSpec: "CPU Specs", gpuSpec: "GPU Specs", ramSpec: "RAM Specs",
   motherboardSpec: "Motherboard Specs", psuSpec: "PSU Specs", caseSpec: "Case Specs",
   coolerSpec: "Cooler Specs", monitorSpec: "Monitor Specs", storageSpec: "Storage Specs",
-  laptopSpec: "Laptop Specs",
+  laptopSpec: "Laptop Specs", pcBuildSpec: "Prebuilt PC Build Type",
+  furnitureSpec: "Furniture Type",
 };
 
 // Shared field styling — exported so the parent form reuses the same look.
@@ -37,8 +41,6 @@ export const labelCls =
   "mb-1 block text-2xs font-bold uppercase tracking-wider text-muted";
 const rowCls = "grid grid-cols-2 gap-4";
 
-// Defined at module scope (not inside a component) so its identity is stable
-// across renders — avoids remounting inputs and losing focus while typing.
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return <div><label className={labelCls}>{label}</label>{children}</div>;
 }
@@ -181,6 +183,20 @@ export function ProductSpecFields({
         <Field label="Display size (in) *">{i("displaySizeIn", "15.6", "number")}</Field>
         <Field label="Resolution">{i("displayResolution", "1920x1080")}</Field>
         <Field label="OS">{i("os", "Windows 11")}</Field>
+      </div>
+    ),
+    pcBuildSpec: (
+      <div className={rowCls}>
+        <Field label="Build type *">
+          {sel("buildType", ["GAMING_ESPORT", "WORKSTATION", "MINI_SFF"])}
+        </Field>
+      </div>
+    ),
+    furnitureSpec: (
+      <div className={rowCls}>
+        <Field label="Furniture type *">
+          {sel("furnitureType", ["CHAIR", "DESK"])}
+        </Field>
       </div>
     ),
   };

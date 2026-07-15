@@ -110,6 +110,29 @@ export const fetchAdminOrders = (status = "", page = 1) =>
 export const updateOrderStatus = (id: string, status: string) =>
   apiFetch<AdminOrder>(`/admin/orders/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) });
 
+// PATCH /admin/orders/:id/accept — STAFF + ADMIN, moves AWAITING_CONFIRMATION → PROCESSING
+export const acceptOrder = (id: string) =>
+  apiFetch<AdminOrder>(`/admin/orders/${id}/accept`, { method: "PATCH" });
+
+// POST /admin/orders/:id/reject — ADMIN only, refunds via MoMo first if paid
+export const rejectOrder = (id: string, reason: string) =>
+  apiFetch<AdminOrder>(`/admin/orders/${id}/reject`, { method: "POST", body: JSON.stringify({ reason }) });
+
+// POST /admin/orders/:id/cancel — ADMIN only, restocks inventory, requires a reason
+export const adminCancelOrder = (id: string, reason: string) =>
+  apiFetch<AdminOrder>(`/admin/orders/${id}/cancel`, { method: "POST", body: JSON.stringify({ reason }) });
+
+// POST /admin/orders/:id/recheck-payment — ADMIN only, force-recheck against MoMo directly
+export const recheckPayment = (id: string) =>
+  apiFetch<{ orderId: string; isPaid: boolean; status: string; momoResultCode: number; momoMessage: string }>(
+    `/admin/orders/${id}/recheck-payment`,
+    { method: "POST" },
+  );
+
+// POST /admin/orders/:id/refund — ADMIN only, real MoMo refund + restock on success
+export const refundOrder = (id: string, reason: string) =>
+  apiFetch<AdminOrder>(`/admin/orders/${id}/refund`, { method: "POST", body: JSON.stringify({ reason }) });
+
 export async function downloadOrdersExcel() {
   const token = getToken();
   const res = await fetch(getApiUrl("/admin/orders/export"), {

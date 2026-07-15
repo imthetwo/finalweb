@@ -1,35 +1,13 @@
 "use client";
 // "use client" vì: useState, useEffect, useRouter — OAuth callback xử lý hash fragment
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { saveToken } from "@/lib/auth";
+
+import { useAuthCallback } from "../hooks/useAuthCallback";
 
 export function AuthCallback() {
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Token is delivered via URL fragment to avoid server-side logging
-    const hash = window.location.hash; // e.g. "#token=eyJ..."
-    const params = new URLSearchParams(hash.replace(/^#/, ""));
-    const token = params.get("token");
-
-    if (!token) {
-      // The OAuth token lives in the URL fragment, only readable after mount,
-      // so this one-shot setState in the effect is intentional.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setError("No token received from Google. Please try again.");
-      return;
-    }
-
-    saveToken(token);
-
-    // Clean the fragment from the URL, then redirect home
-    window.history.replaceState(null, "", window.location.pathname);
-    router.replace("/");
-  }, [router]);
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { error } = useAuthCallback();
 
   if (error) {
     return (

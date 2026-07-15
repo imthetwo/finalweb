@@ -1,9 +1,9 @@
-import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import AddToCartButton from "@/components/shop/AddToCartButton";
 import { WishlistButton } from "@/features/product/WishlistButton";
 import { SpecsTable } from "@/features/product/components/SpecsTable";
+import { ProductImage } from "@/components/ui/ProductImage";
 import { apiFetch } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
 import type { ProductDetail as ProductDetailType } from "@/types/api";
@@ -25,18 +25,12 @@ export async function ProductDetail({ id }: { id: string }) {
         {/* Image */}
         <div className="relative aspect-square border border-edge bg-surface">
           {(product.thumbnailUrl ?? product.imageUrl) && (
-            <Image
+            <ProductImage
               src={(product.thumbnailUrl ?? product.imageUrl)!}
               alt={product.name}
-              fill
               className="object-contain p-8"
               unoptimized
             />
-          )}
-          {hasSale && (
-            <span className="absolute left-4 top-4 bg-brand px-2.5 py-1 text-xs font-black uppercase tracking-wider text-black">
-              -{Math.round((1 - product.salePrice! / product.price) * 100)}%
-            </span>
           )}
         </div>
 
@@ -60,7 +54,7 @@ export async function ProductDetail({ id }: { id: string }) {
           </div>
 
           <p className={`mt-2 text-sm ${product.stock > 0 ? "text-success" : "text-destructive"}`}>
-            {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
+            {product.stock > 0 ? "In stock" : "Out of stock"}
           </p>
 
           {product.description && (
@@ -88,6 +82,8 @@ export async function ProductDetail({ id }: { id: string }) {
           monitorSpec={product.monitorSpec}
           storageSpec={product.storageSpec}
           laptopSpec={product.laptopSpec}
+          pcBuildSpec={product.pcBuildSpec}
+          furnitureSpec={product.furnitureSpec}
         />
       </div>
 

@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { ArrowUpDown, Box, Search, X } from "lucide-react";
+import { toast } from "sonner";
+import { ArrowUpDown, Box, Loader2, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatVnd } from "@/lib/format";
 import type { ApiPart, SlotCfg, SortKey } from "../types";
+import { FORM_FACTOR_SIZE, normalizeFormFactor } from "../utils/checkCompatibility";
 
 type Props = {
   slotCfg: SlotCfg;
@@ -18,46 +20,76 @@ type Props = {
   onClose: () => void;
 };
 
-const FF_SIZE: Record<string, number> = { miniitx: 0, matx: 1, microatx: 1, atx: 2, eatx: 3 };
-const normFF = (s: string) => s.toLowerCase().replace(/[-\s]/g, '');
+type CompatCheck = { ok: boolean; label: string; detail: string };
+const NO_CHECK: CompatCheck = { ok: true, label: "", detail: "" };
 
-function isCompatible(part: ApiPart, slot: string, sel: Record<string, ApiPart | null | undefined>): boolean {
+// Real check against whatever else is already in the build — same rules the
+// Compatibility Filter uses, but returns a human-readable reason so the "Add"
+// button can show what was actually checked, not just filter silently.
+function checkPartCompatibility(part: ApiPart, slot: string, sel: Record<string, ApiPart | null | undefined>): CompatCheck {
   const cpu    = sel['CPU'];
   const mb     = sel['MOTHERBOARD'];
   const ram    = sel['MEMORY'];
   const gpu    = sel['GPU'];
   const pcCase = sel['CASE'];
+
   switch (slot) {
     case 'CPU':
-      if (mb?.socket && part.socket && part.socket !== mb.socket) return false;
+      if (mb?.socket && part.socket) {
+        return part.socket !== mb.socket
+          ? { ok: false, label: "Socket compatibility", detail: `${part.socket} does not match your motherboard's ${mb.socket} socket` }
+          : { ok: true, label: "Socket compatibility", detail: `${part.socket} matches your motherboard` };
+      }
       break;
     case 'MOTHERBOARD':
-      if (cpu?.socket && part.socket && part.socket !== cpu.socket) return false;
-      if (ram?.ramGen && part.ramGen && part.ramGen !== ram.ramGen) return false;
+      if (cpu?.socket && part.socket && part.socket !== cpu.socket)
+        return { ok: false, label: "Socket compatibility", detail: `${part.socket} does not match your CPU's ${cpu.socket} socket` };
+      if (ram?.ramGen && part.ramGen && part.ramGen !== ram.ramGen)
+        return { ok: false, label: "RAM generation compatibility", detail: `Board supports ${part.ramGen}, but your RAM is ${ram.ramGen}` };
+      if (cpu?.socket || ram?.ramGen)
+        return { ok: true, label: "Socket compatibility", detail: "Matches your current build" };
       break;
     case 'MEMORY':
-      if (mb?.ramGen && part.ramGen && part.ramGen !== mb.ramGen) return false;
+      if (mb?.ramGen && part.ramGen) {
+        return part.ramGen !== mb.ramGen
+          ? { ok: false, label: "RAM generation compatibility", detail: `${part.ramGen} does not match your motherboard's ${mb.ramGen} slots` }
+          : { ok: true, label: "RAM generation compatibility", detail: `${part.ramGen} matches your motherboard` };
+      }
       break;
     case 'GPU':
-      if (pcCase?.maxGpuLengthMm && part.gpuLengthMm && part.gpuLengthMm > pcCase.maxGpuLengthMm) return false;
+      if (pcCase?.maxGpuLengthMm && part.gpuLengthMm) {
+        return part.gpuLengthMm > pcCase.maxGpuLengthMm
+          ? { ok: false, label: "Case clearance", detail: `${part.gpuLengthMm}mm is too long for your case (max ${pcCase.maxGpuLengthMm}mm)` }
+          : { ok: true, label: "Case clearance", detail: `${part.gpuLengthMm}mm fits your case` };
+      }
       break;
     case 'CASE': {
       if (mb?.formFactor && part.formFactor) {
-        const mbIdx   = FF_SIZE[normFF(mb.formFactor)]     ?? -1;
-        const caseIdx = FF_SIZE[normFF(part.formFactor)]   ?? -1;
-        if (mbIdx !== -1 && caseIdx !== -1 && mbIdx > caseIdx) return false;
+        const mbIdx   = FORM_FACTOR_SIZE[normalizeFormFactor(mb.formFactor)]   ?? -1;
+        const caseIdx = FORM_FACTOR_SIZE[normalizeFormFactor(part.formFactor)] ?? -1;
+        if (mbIdx !== -1 && caseIdx !== -1 && mbIdx > caseIdx)
+          return { ok: false, label: "Form factor compatibility", detail: `Your ${mb.formFactor} motherboard doesn't fit this ${part.formFactor} case` };
       }
-      if (gpu?.gpuLengthMm && part.maxGpuLengthMm && gpu.gpuLengthMm > part.maxGpuLengthMm) return false;
+      if (gpu?.gpuLengthMm && part.maxGpuLengthMm && gpu.gpuLengthMm > part.maxGpuLengthMm)
+        return { ok: false, label: "GPU clearance", detail: `Your GPU (${gpu.gpuLengthMm}mm) is too long for this case (max ${part.maxGpuLengthMm}mm)` };
+      if (mb?.formFactor || gpu?.gpuLengthMm)
+        return { ok: true, label: "Form factor compatibility", detail: "Fits your current build" };
       break;
     }
     case 'CPU_COOLER':
       if (cpu?.socket && part.socketSupport) {
         const supported = part.socketSupport.split(',').map((s) => s.trim());
-        if (!supported.includes(cpu.socket)) return false;
+        return !supported.includes(cpu.socket)
+          ? { ok: false, label: "Socket compatibility", detail: `Cooler does not support your CPU's ${cpu.socket} socket` }
+          : { ok: true, label: "Socket compatibility", detail: `Supports your CPU's ${cpu.socket} socket` };
       }
       break;
   }
-  return true;
+  return NO_CHECK; // nothing to check yet — no relevant part selected in the build so far
+}
+
+function isCompatible(part: ApiPart, slot: string, sel: Record<string, ApiPart | null | undefined>): boolean {
+  return checkPartCompatibility(part, slot, sel).ok;
 }
 
 export function PartPickerOverlay({ slotCfg, parts, selected, currentId, loading, buildSummary, onAdd, onClose }: Props) {
@@ -65,6 +97,23 @@ export function PartPickerOverlay({ slotCfg, parts, selected, currentId, loading
   const [sort,       setSort]       = useState<SortKey>("price-asc");
   const [brands,     setBrands]     = useState<Set<string>>(new Set());
   const [compatOnly, setCompatOnly] = useState(true);
+  const [checkingId, setCheckingId] = useState<string | null>(null);
+
+  // Runs the real compatibility check against whatever's already in the build
+  // and surfaces the result before confirming the add — so picking a part
+  // visibly goes through a check instead of silently just closing the picker.
+  async function handleAdd(part: ApiPart) {
+    setCheckingId(part.id);
+    const check = checkPartCompatibility(part, slotCfg.slot, selected);
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    if (check.label) {
+      if (check.ok) toast.success(`${check.label} — ${check.detail}`);
+      else toast.warning(`${check.label} issue — ${check.detail}`);
+    }
+    setCheckingId(null);
+    onAdd(part);
+    onClose();
+  }
 
   const priceBounds = useMemo(() => {
     if (!parts.length) return { min: 0, max: 0 };
@@ -256,10 +305,12 @@ export function PartPickerOverlay({ slotCfg, parts, selected, currentId, loading
                         })}
                         <td className="px-4 py-2 text-right"><span className="font-black text-fg">{formatVnd(part.displayPrice)}</span></td>
                         <td className="px-3 py-2">
-                          <button type="button" onClick={() => { onAdd(part); onClose(); }}
-                            className={cn("w-full px-4 py-2 text-xs font-black uppercase tracking-wider transition-all duration-150",
-                              isSelected ? "border border-brand/50 bg-brand/15 text-brand" : "bg-brand text-brand-fg hover:bg-brand-hover active:scale-95")}>
-                            {isSelected ? "✓ Added" : "Add"}
+                          <button type="button" onClick={() => handleAdd(part)} disabled={checkingId === part.id}
+                            className={cn("flex w-full items-center justify-center gap-1.5 px-4 py-2 text-xs font-black uppercase tracking-wider transition-all duration-150",
+                              isSelected ? "border border-brand/50 bg-brand/15 text-brand" : "bg-brand text-brand-fg hover:bg-brand-hover active:scale-95 disabled:opacity-60")}>
+                            {checkingId === part.id
+                              ? <><Loader2 size={12} className="animate-spin" /> Checking…</>
+                              : isSelected ? "✓ Added" : "Add"}
                           </button>
                         </td>
                       </tr>

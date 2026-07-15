@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ProductsService } from '../products/products.service';
+import { maxQtyFor } from '../common/quantity-caps';
 
 @Injectable()
 export class CartService {
@@ -40,25 +41,28 @@ export class CartService {
   async addItem(userId: string, productId: string, quantity = 1) {
     const product = await this.prisma.product.findFirst({
       where: { id: productId, isPublished: true },
+      include: { category: { select: { name: true } } },
     });
     if (!product) throw new NotFoundException('Product not found');
 
     const cart = await this.getOrCreateCart(userId);
     const existing = cart.items.find((i) => i.productId === productId);
 
-    if (product.stock < (existing?.quantity ?? 0) + quantity)
+    // Add-to-cart is one-shot: a product can be added only once — quantity is
+    // then adjusted from the cart page (updateQuantity), never by re-adding.
+    if (existing)
+      throw new BadRequestException('This product is already in your cart');
+
+    const cap = maxQtyFor(product.category?.name);
+    if (quantity > cap)
+      throw new BadRequestException(`Maximum ${cap} per order for ${product.category?.name ?? 'this product'}`);
+
+    if (product.stock < quantity)
       throw new BadRequestException('Insufficient stock');
 
-    if (existing) {
-      await this.prisma.cartItem.update({
-        where: { id: existing.id },
-        data: { quantity: existing.quantity + quantity },
-      });
-    } else {
-      await this.prisma.cartItem.create({
-        data: { cartId: cart.id, productId, quantity },
-      });
-    }
+    await this.prisma.cartItem.create({
+      data: { cartId: cart.id, productId, quantity },
+    });
 
     return this.getCart(userId);
   }
@@ -70,9 +74,51 @@ export class CartService {
     if (quantity <= 0) {
       await this.prisma.cartItem.delete({ where: { id: itemId } });
     } else {
+      const cap = maxQtyFor(item.product.category?.name);
+      if (quantity > cap)
+        throw new BadRequestException(`Maximum ${cap} per order for ${item.product.category?.name ?? 'this product'}`);
+      if (quantity > item.product.stock) throw new BadRequestException('Insufficient stock');
       await this.prisma.cartItem.update({ where: { id: itemId }, data: { quantity } });
     }
     return this.getCart(userId);
+  }
+
+  // Merge a guest (localStorage) cart into the account cart on login/register.
+  // Unlike addItem (one-shot: rejects a product already in the cart), a merge
+  // must be lossless — if the product is already there, the quantities are
+  // combined (clamped to the category cap and current stock) instead of the
+  // guest's item being discarded. Products that no longer exist/are unpublished
+  // are skipped and counted so the caller can inform the user.
+  async mergeGuestItems(userId: string, items: { productId: string; quantity: number }[]) {
+    const cart = await this.getOrCreateCart(userId);
+    let merged = 0;
+    let skipped = 0;
+
+    for (const { productId, quantity } of items) {
+      const product = await this.prisma.product.findFirst({
+        where: { id: productId, isPublished: true },
+        include: { category: { select: { name: true } } },
+      });
+      if (!product) { skipped++; continue; }
+
+      const existing = cart.items.find((i) => i.productId === productId);
+      const cap = Math.min(maxQtyFor(product.category?.name), product.stock);
+      const finalQty = Math.min((existing?.quantity ?? 0) + quantity, cap);
+
+      if (finalQty < 1) { skipped++; continue; } // out of stock entirely
+
+      if (existing) {
+        if (finalQty !== existing.quantity) {
+          await this.prisma.cartItem.update({ where: { id: existing.id }, data: { quantity: finalQty } });
+        }
+      } else {
+        await this.prisma.cartItem.create({ data: { cartId: cart.id, productId, quantity: finalQty } });
+      }
+      merged++;
+    }
+
+    const result = await this.getCart(userId);
+    return { ...result, merged, skipped };
   }
 
   async removeItem(userId: string, itemId: string) {

@@ -9,7 +9,7 @@ import { CreateProductDto, UpdateProductDto } from '../dto/admin-product.dto';
 const SPEC_INCLUDE = {
   cpuSpec: true, gpuSpec: true, ramSpec: true, motherboardSpec: true,
   psuSpec: true, caseSpec: true, coolerSpec: true, monitorSpec: true,
-  storageSpec: true, laptopSpec: true,
+  storageSpec: true, laptopSpec: true, pcBuildSpec: true, furnitureSpec: true,
 } as const;
 
 @Injectable()
@@ -116,7 +116,7 @@ export class AdminProductsService {
   }
 
   async create(dto: CreateProductDto, asDraft = false) {
-    const { cpuSpec, gpuSpec, ramSpec, motherboardSpec, psuSpec, caseSpec, coolerSpec, monitorSpec, storageSpec, laptopSpec, ...base } = dto;
+    const { cpuSpec, gpuSpec, ramSpec, motherboardSpec, psuSpec, caseSpec, coolerSpec, monitorSpec, storageSpec, laptopSpec, pcBuildSpec, furnitureSpec, ...base } = dto;
     return this.prisma.product.create({
       data: {
         ...base,
@@ -131,6 +131,8 @@ export class AdminProductsService {
         ...(monitorSpec ? { monitorSpec: { create: monitorSpec } } : {}),
         ...(storageSpec ? { storageSpec: { create: storageSpec } } : {}),
         ...(laptopSpec ? { laptopSpec: { create: laptopSpec } } : {}),
+        ...(pcBuildSpec ? { pcBuildSpec: { create: pcBuildSpec } } : {}),
+        ...(furnitureSpec ? { furnitureSpec: { create: furnitureSpec } } : {}),
       },
       include: { category: { select: { id: true, name: true } }, ...SPEC_INCLUDE },
     });
@@ -138,7 +140,7 @@ export class AdminProductsService {
 
   async update(id: string, dto: UpdateProductDto) {
     await this.assertExists(id);
-    const { cpuSpec, gpuSpec, ramSpec, motherboardSpec, psuSpec, caseSpec, coolerSpec, monitorSpec, storageSpec, laptopSpec, ...base } = dto;
+    const { cpuSpec, gpuSpec, ramSpec, motherboardSpec, psuSpec, caseSpec, coolerSpec, monitorSpec, storageSpec, laptopSpec, pcBuildSpec, furnitureSpec, ...base } = dto;
     return this.prisma.product.update({
       where: { id },
       data: {
@@ -153,6 +155,8 @@ export class AdminProductsService {
         ...(monitorSpec ? { monitorSpec: { upsert: { create: monitorSpec, update: monitorSpec } } } : {}),
         ...(storageSpec ? { storageSpec: { upsert: { create: storageSpec, update: storageSpec } } } : {}),
         ...(laptopSpec ? { laptopSpec: { upsert: { create: laptopSpec, update: laptopSpec } } } : {}),
+        ...(pcBuildSpec ? { pcBuildSpec: { upsert: { create: pcBuildSpec, update: pcBuildSpec } } } : {}),
+        ...(furnitureSpec ? { furnitureSpec: { upsert: { create: furnitureSpec, update: furnitureSpec } } } : {}),
       },
       include: { category: { select: { id: true, name: true } }, ...SPEC_INCLUDE },
     });
@@ -200,8 +204,8 @@ export class AdminProductsService {
     hRow.getCell(1).font = { bold: true, color: { argb: 'FF00FFFF' } };
 
     // 2 dòng ví dụ
-    ws.addRow({ name: 'Intel Core i9-14900K', brand: 'Intel', categoryname: 'Processors (CPU)', costprice: 12000000, price: 15990000, saleprice: 14990000, stock: 10, description: 'CPU Intel thế hệ 14, 24 nhân...', imageurl: '', published: 'Yes' });
-    ws.addRow({ name: 'ASUS ROG RTX 4080', brand: 'ASUS', categoryname: 'Graphics Cards (GPU)', costprice: 24000000, price: 28990000, saleprice: '', stock: 5, description: 'GPU RTX 4080 SUPER 16GB...', imageurl: '', published: 'Yes' });
+    ws.addRow({ name: 'Intel Core i9-14900K', brand: 'Intel', categoryname: 'Processors (CPU)', costprice: 12000000, price: 16000000, saleprice: 15000000, stock: 10, description: 'CPU Intel thế hệ 14, 24 nhân...', imageurl: '', published: 'Yes' });
+    ws.addRow({ name: 'ASUS ROG RTX 4080', brand: 'ASUS', categoryname: 'Graphics Cards (GPU)', costprice: 24000000, price: 29000000, saleprice: '', stock: 5, description: 'GPU RTX 4080 SUPER 16GB...', imageurl: '', published: 'Yes' });
     ws.getRow(2).font = { italic: true, color: { argb: 'FF888888' } };
     ws.getRow(3).font = { italic: true, color: { argb: 'FF888888' } };
 
@@ -296,9 +300,17 @@ export class AdminProductsService {
       { header: 'RAM (GB)', key: 'ramGb', width: 10 }, { header: 'Storage (GB)', key: 'storageGb', width: 12 },
     ]), all.filter((p) => p.laptopSpec).map((p) => ({ ...base(p), ...p.laptopSpec! })));
 
+    sheet('Prebuilt PC', baseCols([
+      { header: 'Build Type', key: 'buildType', width: 18 },
+    ]), all.filter((p) => p.pcBuildSpec).map((p) => ({ ...base(p), ...p.pcBuildSpec! })));
+
+    sheet('Furniture', baseCols([
+      { header: 'Furniture Type', key: 'furnitureType', width: 18 },
+    ]), all.filter((p) => p.furnitureSpec).map((p) => ({ ...base(p), ...p.furnitureSpec! })));
+
     sheet('Other', baseCols([]),
       all.filter((p) => !p.cpuSpec && !p.gpuSpec && !p.ramSpec && !p.motherboardSpec && !p.psuSpec &&
-        !p.caseSpec && !p.coolerSpec && !p.monitorSpec && !p.storageSpec && !p.laptopSpec).map(base));
+        !p.caseSpec && !p.coolerSpec && !p.monitorSpec && !p.storageSpec && !p.laptopSpec && !p.pcBuildSpec && !p.furnitureSpec).map(base));
 
     return wb.xlsx.writeBuffer();
   }

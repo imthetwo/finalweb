@@ -1,5 +1,5 @@
 // Server Component — hiển thị stats, không có interaction
-import { AlertTriangle, DollarSign, Package, ShoppingBag, Users } from "lucide-react";
+import { DollarSign, Package, ShoppingBag, Users } from "lucide-react";
 import type { AdminStats } from "@/types/api";
 import { formatVnd } from "@/lib/format";
 
@@ -30,12 +30,6 @@ export function DashboardView({ stats }: { stats: AdminStats }) {
           </div>
         ))}
       </div>
-
-      {stats.lowStockCount > 0 && (
-        <div className="mb-6 flex items-center gap-2 border border-yellow-800/40 bg-yellow-950/20 px-4 py-3 text-body text-yellow-300">
-          <AlertTriangle size={15} /> {stats.lowStockCount} product(s) low on stock (≤5).
-        </div>
-      )}
 
       <div className="border border-edge bg-elevated">
         <div className="border-b border-edge px-5 py-3">

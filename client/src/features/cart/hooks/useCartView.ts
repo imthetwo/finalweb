@@ -57,7 +57,9 @@ export function useCartView(): CartViewState {
       setGuestItems([]);
       return;
     }
-    const result = await Promise.all(
+    // Each item is fetched independently so one missing/deleted product can't
+    // fail the whole cart — it's just pruned from localStorage instead.
+    const settled = await Promise.allSettled(
       raw.map(async (item) => {
         let product = productCacheRef.current.get(item.productId);
         if (!product) {
@@ -66,10 +68,28 @@ export function useCartView(): CartViewState {
         }
         return { ...item, product };
       })
-    ).catch((e) => {
-      toast.error(e instanceof Error ? e.message : "Failed to load cart items");
-      return [] as GuestDisplayItem[];
+    );
+
+    const result: GuestDisplayItem[] = [];
+    let removed = 0;
+    settled.forEach((r, i) => {
+      if (r.status === "fulfilled") {
+        result.push(r.value);
+      } else {
+        updateGuestCartQty(raw[i].productId, 0); // prune from localStorage
+        removed++;
+      }
     });
+
+    if (removed > 0) {
+      toast.message(
+        removed === 1
+          ? "A product in your cart is no longer available and was removed."
+          : `${removed} products in your cart are no longer available and were removed.`,
+      );
+      window.dispatchEvent(new Event("cart-updated")); // refresh header badge
+    }
+
     setGuestItems(result);
   }, []);
 

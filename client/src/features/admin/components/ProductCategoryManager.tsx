@@ -1,59 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { useCRUDManager } from "@/features/admin/hooks/useCRUDManager";
-import { useParams } from "next/navigation";
 import Image from "next/image";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
-import { toast } from "sonner";
 
-import {
-  fetchAdminProducts,
-  deleteAdminProduct,
-  fetchCategories,
-  type AdminProduct,
-  type Category,
-} from "@/lib/api";
 import { formatVnd } from "@/lib/format";
-import ProductFormModal from "@/features/admin/ProductFormModal";
+import ProductFormModal from "./ProductFormModal";
+import { useProductCategoryManager } from "../hooks/useProductCategoryManager";
 
 export function ProductCategoryManager() {
-  const params = useParams();
-  const categoryId = params.categoryId as string;
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<AdminProduct | null>(null);
-  const [category, setCategory] = useState<Category | null>(null);
-  const [removingId, setRemovingId] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchCategories()
-      .then((cats) => { const cat = cats.find((c) => c.id === categoryId); if (cat) setCategory(cat); })
-      .catch(() => {});
-  }, [categoryId]);
-
-  // fetchFn captures categoryId — useCRUDManager re-runs when categoryId changes
-  const { data, search, page, loading, reload, setPage, handleSearch } =
-    useCRUDManager<AdminProduct>(useCallback(
-      (s, p) => fetchAdminProducts(s, p, categoryId),
-      [categoryId],
-    ));
-
-  async function remove(p: AdminProduct) {
-    if (!confirm(`Delete "${p.name}"?`)) return;
-    setRemovingId(p.id);
-    try {
-      await deleteAdminProduct(p.id);
-      toast.success("Deleted");
-      reload();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Delete failed");
-    } finally {
-      setRemovingId(null);
-    }
-  }
-
-  const title = category?.name ?? "Products";
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const {
+    categoryId, title,
+    data, search, page, loading, reload, setPage, handleSearch,
+    modalOpen, setModalOpen, editing, setEditing, removingId, remove,
+  } = useProductCategoryManager();
 
   return (
     <div className="p-8">

@@ -25,12 +25,12 @@ export class CouponsService {
       return {
         valid: false,
         discount: 0,
-        message: `Minimum order value is ${coupon.minOrderValue.toLocaleString('vi-VN')}₫`,
+        message: `Minimum order value is ${coupon.minOrderValue.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}`,
       };
 
     const discount = coupon.discountFixed
       ? Math.min(coupon.discountFixed, subtotal)
-      : Math.round((subtotal * (coupon.discountPct ?? 0)) / 100);
+      : Math.round((subtotal * (coupon.discountPct ?? 0)) / 100 * 100) / 100;
 
     return { valid: true, discount, message: 'Coupon applied!', code: coupon.code };
   }

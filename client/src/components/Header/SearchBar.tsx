@@ -1,49 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
 
-import { fetchProducts, type ProductListItem } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
+import { useSearch } from "@/features/shop";
 
 export function SearchBar({ onClose }: { onClose: () => void }) {
-  const router = useRouter();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<ProductListItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    const q = query.trim();
-    if (q.length < 2) {
-      setResults([]);
-      setOpen(false);
-      return;
-    }
-    setLoading(true);
-    setOpen(true);
-    const t = setTimeout(() => {
-      fetchProducts({ search: q, limit: 6 })
-        .then((d) => setResults(d.items))
-        .catch(() => setResults([]))
-        .finally(() => setLoading(false));
-    }, 250);
-    return () => clearTimeout(t);
-  }, [query]);
-
-  function goToResults() {
-    const q = query.trim();
-    if (!q) return;
-    router.push(`/shop?search=${encodeURIComponent(q)}`);
-    onClose();
-  }
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { inputRef, query, setQuery, results, loading, open, goToResults, goToProduct } = useSearch(onClose);
 
   return (
     <div className="relative mx-auto w-full" style={{ maxWidth: "1400px" }}>
@@ -73,12 +38,6 @@ export function SearchBar({ onClose }: { onClose: () => void }) {
           </button>
         )}
         <button
-          type="submit"
-          className="flex-none border border-brand/30 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-brand transition-colors hover:bg-brand hover:text-black"
-        >
-          Search
-        </button>
-        <button
           type="button"
           onClick={onClose}
           className="ml-4 text-muted transition-colors hover:text-fg"
@@ -107,10 +66,7 @@ export function SearchBar({ onClose }: { onClose: () => void }) {
                     key={p.id}
                     type="button"
                     onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => {
-                      router.push(`/product/${p.id}`);
-                      onClose();
-                    }}
+                    onClick={() => goToProduct(p.id)}
                     className="flex w-full items-center gap-3 border-b border-edge/60 px-4 py-3 text-left transition-colors hover:bg-white/4"
                   >
                     <div className="min-w-0 flex-1">

@@ -1,35 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, Trash2 } from "lucide-react";
-import { toast } from "sonner";
 
-import { fetchWishlist, removeFromWishlist, type WishlistEntry } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
+import { useWishlistTab } from "../hooks/useWishlistTab";
 
 export default function WishlistTab() {
-  const [items, setItems] = useState<WishlistEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [removingId, setRemovingId] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchWishlist().then(setItems).catch(() => setItems([])).finally(() => setLoading(false));
-  }, []);
-
-  async function remove(productId: string) {
-    setRemovingId(productId);
-    try {
-      await removeFromWishlist(productId);
-      setItems((prev) => prev.filter((i) => i.product.id !== productId));
-      toast.success("Removed from wishlist");
-    } catch {
-      toast.error("Failed to remove");
-    } finally {
-      setRemovingId(null);
-    }
-  }
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { items, loading, removingId, remove } = useWishlistTab();
 
   if (loading) return <p className="py-12 text-center text-sm text-muted">Loading…</p>;
 

@@ -31,10 +31,10 @@ export function HeroVideoManager() {
 
       <div className="space-y-6 border border-edge bg-elevated p-6">
 
-        {/* Upload trực tiếp */}
+        {/* Direct upload */}
         <div className="border border-dashed border-edge/60 bg-base p-5 text-center">
-          <p className="text-sm font-bold text-fg mb-1">Upload video lên Cloudinary</p>
-          <p className="text-xs text-muted mb-4">MP4 / WebM / MOV · Tối đa 200MB</p>
+          <p className="text-sm font-bold text-fg mb-1">Upload video to Cloudinary</p>
+          <p className="text-xs text-muted mb-4">MP4 / WebM / MOV · Max 200MB</p>
           <input
             ref={fileRef}
             type="file"
@@ -49,21 +49,21 @@ export function HeroVideoManager() {
             className="inline-flex items-center gap-2 border border-brand/40 px-5 py-2.5 text-sm font-black uppercase tracking-wider text-brand transition hover:bg-brand hover:text-black disabled:opacity-50"
           >
             {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
-            {uploading ? "Đang upload…" : "Chọn video"}
+            {uploading ? "Uploading…" : "Choose Video"}
           </button>
           {uploadProgress && (
             <p className="mt-3 text-xs text-muted animate-pulse">{uploadProgress}</p>
           )}
           {videoUrl && videoUrl !== DEFAULT_VIDEO && videoUrl.startsWith("http") && (
             <p className="mt-3 text-xs text-success break-all">
-              ✅ Đã upload: {videoUrl.slice(0, 60)}…
+              ✅ Uploaded: {videoUrl.slice(0, 60)}…
             </p>
           )}
         </div>
 
-        {/* Hoặc nhập URL thủ công */}
+        {/* Or enter URL manually */}
         <div>
-          <label className={labelCls}>Hoặc nhập URL video thủ công</label>
+          <label className={labelCls}>Or enter video URL manually</label>
           <input
             className={inputCls}
             value={videoUrl}
@@ -73,7 +73,7 @@ export function HeroVideoManager() {
         </div>
 
         <div>
-          <label className={labelCls}>URL Poster (ảnh thumbnail trước khi video load)</label>
+          <label className={labelCls}>Poster URL (thumbnail shown before the video loads)</label>
           <input
             className={inputCls}
             value={posterUrl}
@@ -89,7 +89,7 @@ export function HeroVideoManager() {
             onClick={() => setPreviewing((v) => !v)}
             className="mb-3 text-xs text-brand underline hover:text-brand/80"
           >
-            {previewing ? "Ẩn preview" : "Xem preview video"}
+            {previewing ? "Hide preview" : "Preview video"}
           </button>
           {previewing && (
             <div className="relative aspect-video w-full overflow-hidden border border-edge bg-base">
@@ -111,7 +111,7 @@ export function HeroVideoManager() {
             disabled={saving || uploading}
             className="inline-flex items-center gap-2 bg-brand px-5 py-2.5 text-sm font-black uppercase tracking-wider text-black transition hover:bg-brand/85 disabled:opacity-50"
           >
-            <Save size={14} /> {saving ? "Đang lưu…" : "Lưu & Áp dụng"}
+            <Save size={14} /> {saving ? "Saving…" : "Save & Apply"}
           </button>
           <button
             type="button"
@@ -119,7 +119,7 @@ export function HeroVideoManager() {
             disabled={saving}
             className="inline-flex items-center gap-2 border border-edge px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-muted transition hover:border-fg hover:text-fg disabled:opacity-40"
           >
-            <RefreshCw size={14} /> Reset mặc định
+            <RefreshCw size={14} /> Reset to Default
           </button>
         </div>
       </div>

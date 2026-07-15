@@ -2,6 +2,7 @@ import HeroSection from "./components/HeroSection";
 import ShopByCategory from "./components/ShopByCategory";
 import FeaturedProducts from "./components/FeaturedProducts";
 import CustomLabPromo from "./components/CustomLabPromo";
+import TrackOrderPromo from "./components/TrackOrderPromo";
 import BrandFeatures from "./components/BrandFeatures";
 import NewsletterSection from "./components/NewsletterSection";
 import { getSetting } from "@/lib/api/settings";
@@ -22,6 +23,7 @@ export default async function LandingPage() {
       <ShopByCategory />
       <FeaturedProducts />
       <CustomLabPromo />
+      <TrackOrderPromo />
       <NewsletterSection />
     </main>
   );

@@ -3,8 +3,7 @@
 import { useAuthStore } from "@/store/authStore";
 
 const KEY = "access_token";
-const MAX_AGE = 60 * 60; // 1 hour — khớp với JWT expiry
-
+const MAX_AGE = 60 * 60; 
 function parseJwt(token: string) {
   try {
     // JWT uses Base64url (- and _ instead of + and /). atob() needs standard Base64.

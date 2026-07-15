@@ -1,23 +1,7 @@
 "use client";
 // "use client" vì: useState, useEffect, event handlers
 
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { apiFetch } from "@/lib/api";
-import { updateAdminUserRole } from "@/lib/api/admin";
-import { useAuthState } from "@/hooks/useAuthState";
-
-type UserRole = "USER" | "STAFF" | "ADMIN";
-
-type AdminUser = {
-  id: string;
-  email: string;
-  fullName: string;
-  role: UserRole;
-  isActive: boolean;
-  createdAt: string;
-  _count: { orders: number };
-};
+import { useUsersTable, type UserRole } from "../hooks/useUsersTable";
 
 const ROLE_STYLES: Record<UserRole, string> = {
   ADMIN: "text-brand",
@@ -26,34 +10,8 @@ const ROLE_STYLES: Record<UserRole, string> = {
 };
 
 export function UsersTable() {
-  const { user: me } = useAuthState();
-  const [users, setUsers] = useState<AdminUser[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [changing, setChanging] = useState<string | null>(null);
-
-  useEffect(() => {
-    apiFetch<AdminUser[]>("/admin/users")
-      .then(setUsers)
-      .catch(() => toast.error("Failed to load users"))
-      .finally(() => setLoading(false));
-  }, []);
-
-  async function handleRoleChange(u: AdminUser, newRole: UserRole) {
-    if (newRole === u.role) return;
-    const label = newRole === "STAFF" ? "promote to Staff" : newRole === "ADMIN" ? "promote to Admin" : "demote to User";
-    if (!confirm(`${label} "${u.fullName}"?`)) return;
-
-    setChanging(u.id);
-    try {
-      const updated = await updateAdminUserRole(u.id, newRole);
-      setUsers((prev) => prev.map((x) => x.id === u.id ? { ...x, role: updated.role as UserRole } : x));
-      toast.success(`${u.fullName} is now ${updated.role}`);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to update role");
-    } finally {
-      setChanging(null);
-    }
-  }
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { me, users, loading, changing, handleRoleChange } = useUsersTable();
 
   return (
     <div className="p-8">

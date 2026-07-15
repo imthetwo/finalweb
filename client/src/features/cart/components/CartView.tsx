@@ -2,42 +2,35 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { toast } from "sonner";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 
-import { apiFetch } from "@/lib/api";
-import { getToken } from "@/lib/auth";
 import { formatVnd } from "@/lib/format";
-import { LoginOverlay } from "@/features/auth/LoginOverlay";
-import { addToGuestCart } from "@/lib/guestCart";
+import { LoginOverlay } from "@/features/auth";
 import { useCartView } from "../hooks/useCartView";
+import { useAddToCart } from "../hooks/useAddToCart";
 import type { CartItem, GuestDisplayItem } from "../types";
 
-// Returns the maximum allowed quantity based on product category
+// Shipping — mirrors the backend (orders.service): flat fee, free over the threshold.
+// Coupon discounts are applied later at checkout.
+const SHIPPING_FEE = 30000;
+const FREE_SHIPPING_OVER = 2000000;
+const shippingFor = (subTotal: number) => (subTotal >= FREE_SHIPPING_OVER ? 0 : SHIPPING_FEE);
+
+// Per-order quantity cap by category — mirrors the backend rule
+// (server/src/common/quantity-caps.ts): expensive/core build parts max 2,
+// cheap accessories & furniture max 5.
+const MAX_TWO_CATEGORIES = new Set([
+  "Processors (CPU)",
+  "Graphics Cards (GPU)",
+  "Motherboards",
+  "RAM",
+  "PC Cases",
+  "Laptops",
+  "Prebuilt PCs",
+]);
+
 function getMaxQty(categoryName: string | undefined | null, stock: number): number {
-  const cat = categoryName?.toLowerCase() ?? "";
-  let cap: number;
-  if (
-    cat.includes("processor") || cat.includes("cpu") ||
-    cat.includes("graphics") || cat.includes("gpu") ||
-    cat.includes("ram") || cat.includes("memory") ||
-    cat.includes("motherboard") || cat.includes("mainboard") ||
-    cat.includes("laptop") || cat.includes("notebook") ||
-    cat.includes("furniture") ||
-    cat.includes("speaker")
-  ) {
-    cap = 2;
-  } else if (
-    cat.includes("monitor") ||
-    cat.includes("keyboard") ||
-    cat.includes("mice") || cat.includes("mouse") ||
-    cat.includes("headset") || cat.includes("headphone")
-  ) {
-    cap = 5;
-  } else {
-    cap = 10;
-  }
+  const cap = categoryName && MAX_TWO_CATEGORIES.has(categoryName) ? 2 : 5;
   return Math.min(cap, stock);
 }
 
@@ -56,6 +49,7 @@ export function CartView() {
   // ── Logged-in user ────────────────────────────────────────────────────────
   if (view.status === "authed") {
     const { cart, standalone, buildGroups, isEmpty, updatingId, updateQty } = view;
+    const shipping = isEmpty ? 0 : shippingFor(cart.subTotal);
 
     return (
       <main className="min-h-screen bg-base text-fg">
@@ -101,9 +95,17 @@ export function CartView() {
                 Order Summary
               </h2>
               <div className="mt-4 border-t border-edge pt-4 space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between text-secondary">
+                  <span className="text-body">Subtotal</span>
+                  <span className="text-body">{formatVnd(cart.subTotal)}</span>
+                </div>
+                <div className="flex items-center justify-between text-secondary">
+                  <span className="text-body">Shipping</span>
+                  <span className="text-body">{shipping > 0 ? formatVnd(shipping) : "Free"}</span>
+                </div>
+                <div className="mt-2 flex items-center justify-between border-t border-edge pt-3">
                   <span className="text-body font-bold text-secondary">Total</span>
-                  <span className="text-md font-black text-fg">{formatVnd(cart.subTotal)}</span>
+                  <span className="text-md font-black text-fg">{formatVnd(cart.subTotal + shipping)}</span>
                 </div>
               </div>
               <div className="mt-6 space-y-3">
@@ -142,6 +144,7 @@ export function CartView() {
 
   // ── Guest view ────────────────────────────────────────────────────────────
   const { guestItems, guestTotal, guestEmpty, trending, updateGuestQty } = view;
+  const guestShipping = guestEmpty ? 0 : shippingFor(guestTotal);
 
   return (
     <main className="min-h-screen bg-base text-fg">
@@ -222,9 +225,17 @@ export function CartView() {
               Order Summary
             </h2>
             <div className="mt-4 border-t border-edge pt-4 space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between text-secondary">
+                <span className="text-body">Subtotal</span>
+                <span className="text-body">{formatVnd(guestTotal)}</span>
+              </div>
+              <div className="flex items-center justify-between text-secondary">
+                <span className="text-body">Shipping</span>
+                <span className="text-body">{guestShipping > 0 ? formatVnd(guestShipping) : "Free"}</span>
+              </div>
+              <div className="mt-2 flex items-center justify-between border-t border-edge pt-3">
                 <span className="text-body font-bold text-secondary">Total</span>
-                <span className="text-md font-black text-fg">{formatVnd(guestTotal)}</span>
+                <span className="text-md font-black text-fg">{formatVnd(guestTotal + guestShipping)}</span>
               </div>
             </div>
             <div className="mt-6 space-y-3">
@@ -310,37 +321,14 @@ function GuestCartItemRow({
   );
 }
 
-// ── Trending product buy button (guest-aware) ─────────────────────────────
+// ── Trending product buy button — reuses the shared one-shot add-to-cart hook ──
 function TrendingBuyButton({ productId }: { productId: string }) {
-  const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
-
-  async function handleClick() {
-    setLoading(true);
-    try {
-      if (getToken()) {
-        await apiFetch("/cart/items", {
-          method: "POST",
-          body: JSON.stringify({ productId, quantity: 1 }),
-        });
-      } else {
-        addToGuestCart(productId);
-      }
-      toast.success("Added to cart");
-      window.dispatchEvent(new Event("cart-updated"));
-      setDone(true);
-      setTimeout(() => setDone(false), 1500);
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to add to cart");
-    } finally {
-      setLoading(false);
-    }
-  }
+  const { loading, done, add } = useAddToCart(productId);
 
   return (
     <button
       type="button"
-      onClick={handleClick}
+      onClick={add}
       disabled={loading}
       className="w-full bg-brand py-2 text-xs font-black uppercase tracking-wider text-black transition hover:bg-brand-hover disabled:opacity-60"
     >

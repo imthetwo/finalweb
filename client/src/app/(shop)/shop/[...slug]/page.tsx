@@ -3,7 +3,10 @@ import { getShopPage } from "@/features/shop/data/getShopPage";
 
 type Props = {
   params: Promise<{ slug: string[] }>;
-  searchParams: Promise<{ page?: string; search?: string }>;
+  searchParams: Promise<{
+    page?: string; search?: string; type?: string;
+    storageType?: string; coolerType?: string; furnitureType?: string;
+  }>;
 };
 
 export default async function ShopCategoryPage({

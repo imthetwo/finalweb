@@ -1,6 +1,7 @@
 import type {
   CpuSpec, GpuSpec, RamSpec, MotherboardSpec,
   PsuSpec, CaseSpec, CoolerSpec, MonitorSpec, StorageSpec, LaptopSpec,
+  PcBuildSpec, FurnitureSpec,
 } from "@/types/api";
 
 type Row = { label: string; value: string };
@@ -111,6 +112,25 @@ function laptopRows(s: LaptopSpec): Row[] {
   ]);
 }
 
+const BUILD_TYPE_LABEL: Record<PcBuildSpec["buildType"], string> = {
+  GAMING_ESPORT: "Gaming Esport",
+  WORKSTATION: "Workstation",
+  MINI_SFF: "Mini (SFF)",
+};
+
+function pcBuildRows(s: PcBuildSpec): Row[] {
+  return rows([{ label: "Build Type", value: BUILD_TYPE_LABEL[s.buildType] }]);
+}
+
+const FURNITURE_TYPE_LABEL: Record<FurnitureSpec["furnitureType"], string> = {
+  CHAIR: "Gaming Chair",
+  DESK: "Gaming Desk",
+};
+
+function furnitureRows(s: FurnitureSpec): Row[] {
+  return rows([{ label: "Furniture Type", value: FURNITURE_TYPE_LABEL[s.furnitureType] }]);
+}
+
 type Props = {
   cpuSpec?: CpuSpec | null;
   gpuSpec?: GpuSpec | null;
@@ -122,21 +142,29 @@ type Props = {
   monitorSpec?: MonitorSpec | null;
   storageSpec?: StorageSpec | null;
   laptopSpec?: LaptopSpec | null;
+  pcBuildSpec?: PcBuildSpec | null;
+  furnitureSpec?: FurnitureSpec | null;
 };
 
+// A single product can carry multiple spec relations at once (e.g. a Prebuilt
+// PC has pcBuildSpec + cpuSpec + gpuSpec + ramSpec + storageSpec together) —
+// combine every section that's present into one table instead of only
+// showing the first match.
 export function SpecsTable(props: Props) {
-  const specRows: Row[] =
-    props.cpuSpec        ? cpuRows(props.cpuSpec) :
-    props.gpuSpec        ? gpuRows(props.gpuSpec) :
-    props.ramSpec        ? ramRows(props.ramSpec) :
-    props.motherboardSpec? motherboardRows(props.motherboardSpec) :
-    props.psuSpec        ? psuRows(props.psuSpec) :
-    props.caseSpec       ? caseRows(props.caseSpec) :
-    props.coolerSpec     ? coolerRows(props.coolerSpec) :
-    props.monitorSpec    ? monitorRows(props.monitorSpec) :
-    props.storageSpec    ? storageRows(props.storageSpec) :
-    props.laptopSpec     ? laptopRows(props.laptopSpec) :
-    [];
+  const specRows: Row[] = [
+    ...(props.pcBuildSpec ? pcBuildRows(props.pcBuildSpec) : []),
+    ...(props.cpuSpec ? cpuRows(props.cpuSpec) : []),
+    ...(props.gpuSpec ? gpuRows(props.gpuSpec) : []),
+    ...(props.ramSpec ? ramRows(props.ramSpec) : []),
+    ...(props.storageSpec ? storageRows(props.storageSpec) : []),
+    ...(props.motherboardSpec ? motherboardRows(props.motherboardSpec) : []),
+    ...(props.psuSpec ? psuRows(props.psuSpec) : []),
+    ...(props.caseSpec ? caseRows(props.caseSpec) : []),
+    ...(props.coolerSpec ? coolerRows(props.coolerSpec) : []),
+    ...(props.monitorSpec ? monitorRows(props.monitorSpec) : []),
+    ...(props.laptopSpec ? laptopRows(props.laptopSpec) : []),
+    ...(props.furnitureSpec ? furnitureRows(props.furnitureSpec) : []),
+  ];
 
   if (specRows.length === 0) return null;
 
@@ -160,7 +188,7 @@ export function SpecsTable(props: Props) {
           </thead>
           <tbody>
             {specRows.map((row, i) => (
-              <tr key={row.label} className={i % 2 === 0 ? "bg-surface" : "bg-elevated"}>
+              <tr key={`${row.label}-${i}`} className={i % 2 === 0 ? "bg-surface" : "bg-elevated"}>
                 <td className="border-r border-edge px-4 py-3 font-semibold text-secondary">
                   {row.label}
                 </td>

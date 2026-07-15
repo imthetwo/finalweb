@@ -3,6 +3,7 @@ import { CartService } from './cart.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AddCartItemDto } from './dto/add-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
+import { MergeCartDto } from './dto/merge-cart.dto';
 import type { Request } from 'express';
 
 @Controller('cart')
@@ -25,6 +26,17 @@ export class CartController {
     @Body() dto: AddCartItemDto,
   ) {
     return this.cartService.addItem(this.uid(req), dto.productId, dto.quantity ?? 1);
+  }
+
+  // Merge a guest (localStorage) cart into this account on login/register —
+  // lossless: quantities for products already in the cart are combined rather
+  // than rejected. See CartService.mergeGuestItems.
+  @Post('merge')
+  merge(
+    @Req() req: Request & { user: { userId: string } },
+    @Body() dto: MergeCartDto,
+  ) {
+    return this.cartService.mergeGuestItems(this.uid(req), dto.items);
   }
 
   @Patch('items/:id')

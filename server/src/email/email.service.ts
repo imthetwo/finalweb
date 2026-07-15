@@ -39,7 +39,7 @@ export class EmailService {
   }
 
   async sendOrderConfirmation(to: string, orderId: string, totalAmount: number) {
-    const fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'VND' });
+    const fmt = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
     await this.send(
       to,
       `Order confirmation #${orderId.slice(0, 8).toUpperCase()}`,
@@ -47,7 +47,7 @@ export class EmailService {
        <p>Order ID: <strong>${orderId.slice(0, 8).toUpperCase()}</strong></p>
        <p>Total: <strong>${fmt.format(totalAmount)}</strong></p>
        <p>We'll process your order as soon as possible.</p>
-       <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/account">View order</a>`,
+       <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/account?tab=orders">View order</a>`,
     );
   }
 
@@ -65,7 +65,8 @@ export class EmailService {
 
   async sendOrderStatusUpdate(to: string, orderId: string, status: string) {
     const statusMap: Record<string, string> = {
-      PROCESSING: 'Processing',
+      AWAITING_CONFIRMATION: 'Confirming your order',
+      PROCESSING: 'Preparing',
       SHIPPED: 'Shipped',
       DELIVERED: 'Delivered',
       CANCELLED: 'Cancelled',
@@ -75,7 +76,7 @@ export class EmailService {
       `Order update #${orderId.slice(0, 8).toUpperCase()}`,
       `<h2>Your order has been updated</h2>
        <p>New status: <strong>${statusMap[status] || status}</strong></p>
-       <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/account">View details</a>`,
+       <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/account?tab=orders">View details</a>`,
     );
   }
 

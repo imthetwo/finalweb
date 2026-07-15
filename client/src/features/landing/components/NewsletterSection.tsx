@@ -1,45 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { toast } from "sonner";
 import { Send } from "lucide-react";
 
-import { apiFetch } from "@/lib/api";
-
-type SubscribeResponse = {
-  ok: boolean;
-  message?: string;
-  alreadySubscribed?: boolean;
-};
+import { useNewsletter } from "../hooks/useNewsletter";
 
 export default function NewsletterSection() {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email.includes("@")) {
-      toast.error("Please enter a valid email address");
-      return;
-    }
-    setLoading(true);
-    try {
-      const res = await apiFetch<SubscribeResponse>("/newsletter/subscribe", {
-        method: "POST",
-        body: JSON.stringify({ email: email.trim(), source: "landing-page" }),
-      });
-      if (res.alreadySubscribed) {
-        toast.message("This email is already subscribed.");
-      } else {
-        toast.success("You're subscribed! Watch your inbox for exclusive deals.");
-        setEmail("");
-      }
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Subscription failed, please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { email, setEmail, loading, handleSubmit } = useNewsletter();
 
   return (
     <section className="bg-base py-20">

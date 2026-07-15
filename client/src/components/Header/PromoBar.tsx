@@ -8,7 +8,7 @@ import { fetchPromotions } from "@/lib/api";
 
 const FALLBACK_PROMOS = [
   {
-    text: "FREE SHIPPING ON ORDERS OVER 2,000,000 VND",
+    text: "FREE SHIPPING ON ORDERS OVER 2.000.000₫",
     action: "SHOP NOW",
     href: "/components/processors",
   },

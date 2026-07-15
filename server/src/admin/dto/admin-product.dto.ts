@@ -6,11 +6,12 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Length,
   Min,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { OrderStatus, Role } from '@prisma/client';
+import { FurnitureType, OrderStatus, PcBuildType, Role } from '@prisma/client';
 
 // ── Spec sub-DTOs ─────────────────────────────────────────────────────────────
 
@@ -98,6 +99,14 @@ export class LaptopSpecDto {
   @IsOptional() @IsString() os?: string;
 }
 
+export class PcBuildSpecDto {
+  @IsEnum(PcBuildType) buildType!: PcBuildType;
+}
+
+export class FurnitureSpecDto {
+  @IsEnum(FurnitureType) furnitureType!: FurnitureType;
+}
+
 // ── Product DTOs ──────────────────────────────────────────────────────────────
 
 export class CreateProductDto {
@@ -115,13 +124,39 @@ export class CreateProductDto {
   @IsOptional() @ValidateNested() @Type(() => CpuSpecDto) cpuSpec?: CpuSpecDto;
   @IsOptional() @ValidateNested() @Type(() => GpuSpecDto) gpuSpec?: GpuSpecDto;
   @IsOptional() @ValidateNested() @Type(() => RamSpecDto) ramSpec?: RamSpecDto;
-  @IsOptional() @ValidateNested() @Type(() => MotherboardSpecDto) motherboardSpec?: MotherboardSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => MotherboardSpecDto)
+  motherboardSpec?: MotherboardSpecDto;
   @IsOptional() @ValidateNested() @Type(() => PsuSpecDto) psuSpec?: PsuSpecDto;
-  @IsOptional() @ValidateNested() @Type(() => CaseSpecDto) caseSpec?: CaseSpecDto;
-  @IsOptional() @ValidateNested() @Type(() => CoolerSpecDto) coolerSpec?: CoolerSpecDto;
-  @IsOptional() @ValidateNested() @Type(() => MonitorSpecDto) monitorSpec?: MonitorSpecDto;
-  @IsOptional() @ValidateNested() @Type(() => StorageSpecDto) storageSpec?: StorageSpecDto;
-  @IsOptional() @ValidateNested() @Type(() => LaptopSpecDto) laptopSpec?: LaptopSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CaseSpecDto)
+  caseSpec?: CaseSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CoolerSpecDto)
+  coolerSpec?: CoolerSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => MonitorSpecDto)
+  monitorSpec?: MonitorSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => StorageSpecDto)
+  storageSpec?: StorageSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LaptopSpecDto)
+  laptopSpec?: LaptopSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PcBuildSpecDto)
+  pcBuildSpec?: PcBuildSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => FurnitureSpecDto)
+  furnitureSpec?: FurnitureSpecDto;
 }
 
 export class UpdateProductDto {
@@ -139,17 +174,49 @@ export class UpdateProductDto {
   @IsOptional() @ValidateNested() @Type(() => CpuSpecDto) cpuSpec?: CpuSpecDto;
   @IsOptional() @ValidateNested() @Type(() => GpuSpecDto) gpuSpec?: GpuSpecDto;
   @IsOptional() @ValidateNested() @Type(() => RamSpecDto) ramSpec?: RamSpecDto;
-  @IsOptional() @ValidateNested() @Type(() => MotherboardSpecDto) motherboardSpec?: MotherboardSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => MotherboardSpecDto)
+  motherboardSpec?: MotherboardSpecDto;
   @IsOptional() @ValidateNested() @Type(() => PsuSpecDto) psuSpec?: PsuSpecDto;
-  @IsOptional() @ValidateNested() @Type(() => CaseSpecDto) caseSpec?: CaseSpecDto;
-  @IsOptional() @ValidateNested() @Type(() => CoolerSpecDto) coolerSpec?: CoolerSpecDto;
-  @IsOptional() @ValidateNested() @Type(() => MonitorSpecDto) monitorSpec?: MonitorSpecDto;
-  @IsOptional() @ValidateNested() @Type(() => StorageSpecDto) storageSpec?: StorageSpecDto;
-  @IsOptional() @ValidateNested() @Type(() => LaptopSpecDto) laptopSpec?: LaptopSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CaseSpecDto)
+  caseSpec?: CaseSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CoolerSpecDto)
+  coolerSpec?: CoolerSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => MonitorSpecDto)
+  monitorSpec?: MonitorSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => StorageSpecDto)
+  storageSpec?: StorageSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LaptopSpecDto)
+  laptopSpec?: LaptopSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PcBuildSpecDto)
+  pcBuildSpec?: PcBuildSpecDto;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => FurnitureSpecDto)
+  furnitureSpec?: FurnitureSpecDto;
 }
 
 export class UpdateOrderStatusDto {
   @IsEnum(OrderStatus) status!: OrderStatus;
+}
+
+export class CancelOrderDto {
+  @IsString()
+  @Length(3, 300)
+  reason!: string;
 }
 
 export class UpdateUserRoleDto {

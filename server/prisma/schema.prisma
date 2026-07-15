@@ -40,6 +40,8 @@ model Product {
   monitorSpec     MonitorSpec?
   storageSpec     StorageSpec?
   laptopSpec      LaptopSpec?
+  pcBuildSpec     PcBuildSpec?
+  furnitureSpec   FurnitureSpec?
 
   category   Category    @relation(fields: [categoryId], references: [id])
   orderItems OrderItem[]
@@ -168,6 +170,31 @@ model LaptopSpec {
   os                String?
 }
 
+enum PcBuildType {
+  GAMING_ESPORT
+  WORKSTATION
+  MINI_SFF
+}
+
+model PcBuildSpec {
+  id        String      @id @default(uuid())
+  productId String      @unique
+  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  buildType PcBuildType
+}
+
+enum FurnitureType {
+  CHAIR
+  DESK
+}
+
+model FurnitureSpec {
+  id            String        @id @default(uuid())
+  productId     String        @unique
+  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  furnitureType FurnitureType
+}
+
 // ─── USER ─────────────────────────────────────────────────────────────────────
 
 enum Role {
@@ -187,13 +214,37 @@ model User {
   googleId           String?   @unique
   resetToken         String?   @unique
   resetTokenExpiry   DateTime?
+  isEmailVerified    Boolean   @default(false)
+  verifyToken        String?   @unique
+  verifyTokenExpiry  DateTime?
 
   orders    Order[]
   cart      Cart?
   wishlists Wishlist[]
+  addresses Address[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ─── ADDRESS BOOK ─────────────────────────────────────────────────────────────
+
+model Address {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String?
+  recipient String
+  phone     String
+  street    String
+  ward      String
+  city      String
+  isDefault Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 // ─── CART ─────────────────────────────────────────────────────────────────────
@@ -222,8 +273,9 @@ model CartItem {
 // ─── ORDER ────────────────────────────────────────────────────────────────────
 
 enum OrderStatus {
-  PENDING
-  PROCESSING
+  PENDING                 // MoMo only — awaiting payment
+  AWAITING_CONFIRMATION   // Paid (or COD) — staff must Accept or Reject before fulfillment
+  PROCESSING              // Accepted — being prepared
   SHIPPED
   DELIVERED
   CANCELLED
@@ -243,6 +295,8 @@ model Order {
   isPaid        Boolean     @default(false)
   shippingInfo  Json
   momoOrderId   String?     @unique
+  momoTransId   String?
+  refundedAt    DateTime?
 
   user  User?       @relation(fields: [userId], references: [id])
   items OrderItem[]

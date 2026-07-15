@@ -21,18 +21,18 @@ export function useHeroVideoSettings() {
   }, []);
 
   async function handleVideoUpload(file: File) {
-    if (!file.type.startsWith("video/")) { toast.error("Chỉ chấp nhận file video"); return; }
-    if (file.size > 200 * 1024 * 1024) { toast.error("Video phải nhỏ hơn 200MB"); return; }
+    if (!file.type.startsWith("video/")) { toast.error("Only video files are accepted"); return; }
+    if (file.size > 200 * 1024 * 1024) { toast.error("Video must be smaller than 200MB"); return; }
 
     setUploading(true);
-    setUploadProgress(`Đang upload ${(file.size / 1024 / 1024).toFixed(1)}MB lên Cloudinary…`);
+    setUploadProgress(`Uploading ${(file.size / 1024 / 1024).toFixed(1)}MB to Cloudinary…`);
     try {
       const { url } = await uploadHeroVideo(file);
       setVideoUrl(url);
       setUploadProgress("");
-      toast.success("Upload thành công! Nhớ nhấn Lưu để áp dụng.");
+      toast.success("Upload successful! Remember to click Save to apply.");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upload thất bại");
+      toast.error(err instanceof Error ? err.message : "Upload failed");
       setUploadProgress("");
     } finally {
       setUploading(false);
@@ -46,9 +46,9 @@ export function useHeroVideoSettings() {
         updateSettingValue("hero_video_url",  videoUrl.trim()  || DEFAULT_VIDEO),
         updateSettingValue("hero_poster_url", posterUrl.trim() || DEFAULT_POSTER),
       ]);
-      toast.success("Đã lưu — trang chủ cập nhật trong ~60 giây");
+      toast.success("Saved — the homepage updates within ~60 seconds");
     } catch {
-      toast.error("Lưu thất bại");
+      toast.error("Save failed");
     } finally {
       setSaving(false);
     }
@@ -63,9 +63,9 @@ export function useHeroVideoSettings() {
         updateSettingValue("hero_video_url",  DEFAULT_VIDEO),
         updateSettingValue("hero_poster_url", DEFAULT_POSTER),
       ]);
-      toast.success("Đã reset về mặc định");
+      toast.success("Reset to default");
     } catch {
-      toast.error("Lưu thất bại");
+      toast.error("Save failed");
     } finally {
       setSaving(false);
     }

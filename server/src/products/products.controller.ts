@@ -10,12 +10,20 @@ export class ProductsController {
   list(
     @Query('categoryId') categoryId?: string,
     @Query('search') search?: string,
+    @Query('buildType') buildType?: string,
+    @Query('storageType') storageType?: string,
+    @Query('coolerType') coolerType?: string,
+    @Query('furnitureType') furnitureType?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
     return this.productsService.findAll({
       categoryId,
       search,
+      buildType,
+      storageType,
+      coolerType,
+      furnitureType,
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 24,
     });

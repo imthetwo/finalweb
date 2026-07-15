@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 
 import type { ProductListItem } from "@/types/api";
 import { ProductCard } from "./components/ProductCard";
@@ -59,15 +59,19 @@ export default function ShopBrowser({
         </div>
 
         <div className="mt-6 flex flex-col gap-8 lg:flex-row">
-          <FilterSidebar
-            maxPrice={maxPrice}
-            priceMax={priceMax}
-            onMaxPriceChange={setMaxPrice}
-          />
+          {/* FilterSidebar uses useSearchParams(), which Next.js requires to be
+              wrapped in Suspense so it doesn't force the whole route to
+              client-side-only rendering. */}
+          <Suspense fallback={<aside className="w-full shrink-0 lg:w-64" />}>
+            <FilterSidebar
+              maxPrice={maxPrice}
+              priceMax={priceMax}
+              onMaxPriceChange={setMaxPrice}
+            />
+          </Suspense>
 
           {/* Product grid */}
           <div className="flex-1">
-            <p className="mb-4 text-sm text-muted">{filtered.length} products</p>
             {filtered.length === 0 ? (
               <div className="flex flex-col items-center gap-3 border border-dashed border-edge py-20 text-muted">
                 <p className="text-sm">No products match your filters.</p>

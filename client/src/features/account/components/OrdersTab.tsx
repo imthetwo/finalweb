@@ -1,31 +1,40 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Package, X, ChevronRight } from "lucide-react";
-import { toast } from "sonner";
 
-import { fetchOrders, cancelOrder, type Order } from "@/lib/api";
+import { type Order } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
+import { useOrdersTab } from "../hooks/useOrdersTab";
 
 const STATUS_STYLE: Record<string, string> = {
-  PENDING:        "border-yellow-700/50 bg-yellow-950/30 text-warning",
-  PAYMENT_FAILED: "border-red-700/50 bg-red-950/30 text-destructive",
-  PROCESSING:     "border-blue-700/50 bg-blue-950/30 text-info",
-  SHIPPED:        "border-cyan-700/50 bg-cyan-950/30 text-brand",
-  DELIVERED:      "border-emerald-700/50 bg-emerald-950/30 text-success",
-  CANCELLED:      "border-edge bg-surface text-muted",
-  RETURNED:       "border-orange-700/50 bg-orange-950/30 text-orange-400",
+  PENDING:               "border-yellow-700/50 bg-yellow-950/30 text-warning",
+  AWAITING_CONFIRMATION: "border-orange-700/50 bg-orange-950/30 text-orange-400",
+  PROCESSING:            "border-blue-700/50 bg-blue-950/30 text-info",
+  SHIPPED:               "border-cyan-700/50 bg-cyan-950/30 text-brand",
+  DELIVERED:             "border-emerald-700/50 bg-emerald-950/30 text-success",
+  CANCELLED:             "border-edge bg-surface text-muted",
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  PENDING: "Pending payment", PAYMENT_FAILED: "Payment failed",
-  PROCESSING: "Processing", SHIPPED: "Shipped", DELIVERED: "Delivered",
-  CANCELLED: "Cancelled", RETURNED: "Returned",
+  PENDING: "Pending payment", AWAITING_CONFIRMATION: "Confirming order",
+  PROCESSING: "Preparing", SHIPPED: "Shipped", DELIVERED: "Delivered",
+  CANCELLED: "Cancelled",
 };
 
+// COD's isPaid=true is set at creation (no gateway needed), not "cash has
+// changed hands" — that only happens on delivery — so it must stay
+// cancellable. Only a genuinely gateway-paid MoMo order is blocked.
 function canCancel(o: Order) {
-  return !o.isPaid && (o.status === "PENDING" || o.status === "PROCESSING");
+  const paidViaMomo = o.paymentMethod === "MOMO" && o.isPaid;
+  return !paidViaMomo && ["PENDING", "AWAITING_CONFIRMATION", "PROCESSING"].includes(o.status);
+}
+
+// An unpaid gateway order (e.g. MoMo) can still be paid — COD is paid on creation.
+function canPay(o: Order) {
+  return !o.isPaid && o.status === "PENDING" && o.paymentMethod !== "COD";
 }
 
 /* ─── Order Detail Modal ──────────────────────────────────────────────────── */
@@ -37,11 +46,13 @@ function OrderDetailModal({
   order,
   onClose,
   onCancel,
+  onPay,
   cancelling,
 }: {
   order: Order;
   onClose: () => void;
   onCancel: (id: string) => void;
+  onPay: (order: Order) => void;
   cancelling: string | null;
 }) {
   const si = order.shippingInfo ?? {};
@@ -92,11 +103,14 @@ function OrderDetailModal({
           <section>
             <p className="mb-3 text-sm font-bold uppercase tracking-widest text-muted">Shipping Info</p>
             <div className="border border-edge bg-surface p-6 space-y-2 text-lg">
-              {si.fullName && <p className="font-semibold text-fg">{si.fullName}</p>}
+              {si.recipient && <p className="font-semibold text-fg">{si.recipient}</p>}
               {si.phone && <p className="text-secondary">{si.phone}</p>}
-              {si.address && <p className="text-secondary">{si.address}</p>}
-              {si.city && <p className="text-secondary">{si.city}</p>}
-              {!si.fullName && !si.phone && !si.address && (
+              {(si.street || si.ward || si.city) && (
+                <p className="text-secondary">
+                  {[si.street, si.ward, si.city].filter(Boolean).join(", ")}
+                </p>
+              )}
+              {!si.recipient && !si.phone && !si.street && (
                 <p className="text-muted italic">No shipping info available.</p>
               )}
             </div>
@@ -109,7 +123,12 @@ function OrderDetailModal({
             </p>
             <div className="space-y-3">
               {order.items.map((it) => (
-                <div key={it.id} className="flex gap-5 border border-edge bg-surface p-5">
+                <Link
+                  key={it.id}
+                  href={`/product/${it.product.id}`}
+                  onClick={onClose}
+                  className="flex gap-5 border border-edge bg-surface p-5 transition-colors hover:border-brand/40"
+                >
                   <div className="relative h-28 w-28 shrink-0 border border-edge bg-base">
                     {it.product.imageUrl ? (
                       <Image
@@ -127,13 +146,13 @@ function OrderDetailModal({
                     )}
                   </div>
                   <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
-                    <p className="text-lg text-secondary line-clamp-2 leading-snug">{it.product.name}</p>
+                    <p className="text-lg text-secondary line-clamp-2 leading-snug hover:text-brand">{it.product.name}</p>
                     <div className="shrink-0 text-right">
                       <p className="text-lg font-semibold text-fg">{formatVnd(it.priceAtBuy * it.quantity)}</p>
                       <p className="text-sm text-muted">×{it.quantity}</p>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </section>
@@ -187,16 +206,27 @@ function OrderDetailModal({
         </div>
 
         {/* footer */}
-        {canCancel(order) && (
-          <div className="border-t border-edge px-10 py-6">
-            <button
-              type="button"
-              onClick={() => onCancel(order.id)}
-              disabled={cancelling === order.id}
-              className="w-full border border-destructive/50 py-3.5 text-md font-bold uppercase tracking-wider text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-40"
-            >
-              {cancelling === order.id ? "Cancelling…" : "Cancel Order"}
-            </button>
+        {(canPay(order) || canCancel(order)) && (
+          <div className="flex flex-col gap-3 border-t border-edge px-10 py-6">
+            {canPay(order) && (
+              <button
+                type="button"
+                onClick={() => onPay(order)}
+                className="w-full bg-brand py-3.5 text-md font-black uppercase tracking-wider text-black transition-colors hover:bg-brand/85"
+              >
+                Pay Now
+              </button>
+            )}
+            {canCancel(order) && (
+              <button
+                type="button"
+                onClick={() => onCancel(order.id)}
+                disabled={cancelling === order.id}
+                className="w-full border border-destructive/50 py-3.5 text-md font-bold uppercase tracking-wider text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-40"
+              >
+                {cancelling === order.id ? "Cancelling…" : "Cancel Order"}
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -207,29 +237,8 @@ function OrderDetailModal({
 /* ─── OrdersTab ───────────────────────────────────────────────────────────── */
 
 export default function OrdersTab() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [cancelling, setCancelling] = useState<string | null>(null);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-
-  useEffect(() => {
-    fetchOrders().then(setOrders).catch(() => setOrders([])).finally(() => setLoading(false));
-  }, []);
-
-  async function handleCancel(orderId: string) {
-    if (!confirm("Cancel this order? Stock will be restored.")) return;
-    setCancelling(orderId);
-    try {
-      const updated = await cancelOrder(orderId);
-      setOrders((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
-      if (selectedOrder?.id === updated.id) setSelectedOrder(updated);
-      toast.success("Order cancelled.");
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to cancel order.");
-    } finally {
-      setCancelling(null);
-    }
-  }
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { orders, loading, cancelling, selectedOrder, setSelectedOrder, handleCancel, payOrder } = useOrdersTab();
 
   if (loading) return <p className="py-12 text-center text-sm text-muted">Loading orders…</p>;
 
@@ -283,6 +292,7 @@ export default function OrdersTab() {
           order={selectedOrder}
           onClose={() => setSelectedOrder(null)}
           onCancel={handleCancel}
+          onPay={payOrder}
           cancelling={cancelling}
         />
       )}

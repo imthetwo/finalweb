@@ -33,19 +33,25 @@ const NAV: NavSection[] = [
     image: cdn("PCs", "h7-flow-rgb-hero-white.png"),
     columns: [
       {
+        // Each link filters by the product's real buildType (PcBuildSpec) —
+        // no more all-3-links-go-to-the-same-place. Workstation currently has
+        // 0 real products (none tagged yet) so it shows an honest empty state
+        // rather than a fake/duplicate list.
         title: "PREBUILT PCS",
         links: [
-          { label: "PC Gaming Esport", href: "/shop/pcs" },
-          { label: "PC Workstation", href: "/shop/pcs" },
-          { label: "PC Mini (SFF)", href: "/shop/pcs" },
+          { label: "PC Gaming Esport", href: "/shop/pcs?type=gaming-esport" },
+          { label: "PC Workstation", href: "/shop/pcs?type=workstation" },
+          { label: "PC Mini (SFF)", href: "/shop/pcs?type=mini-sff" },
         ],
       },
       {
+        // Every current laptop in the catalog is a gaming build (Predator/Nitro/
+        // TUF Gaming) — there's no real "Office Laptops" data yet and no
+        // "Laptop Accessories" category exists, so those were dropped instead
+        // of linking to fake/empty results.
         title: "LAPTOP",
         links: [
           { label: "Gaming Laptops", href: "/shop/laptops/laptops" },
-          { label: "Office Laptops", href: "/shop/laptops/laptops" },
-          { label: "Laptop Accessories", href: "/shop/laptops/accessories" },
         ],
       },
     ],
@@ -54,7 +60,7 @@ const NAV: NavSection[] = [
     key: "COMPONENTS",
     label: "PC Components",
     href: "/shop/components/processors",
-    image: cdn("gpu", "nvidia_rtx-4090-fe.png"),
+    image: cdn("gpu", "4090_iCHILL_BLACK_set_v2.png"),
     columns: [
       {
         title: "CORE PERFORMANCE",
@@ -66,19 +72,22 @@ const NAV: NavSection[] = [
         ],
       },
       {
+        // NVMe vs HDD now filters by the real StorageSpec.storageType field
+        // instead of both links showing the same unfiltered list.
         title: "STORAGE & POWER",
         links: [
-          { label: "NVMe SSD", href: "/shop/components/storage" },
-          { label: "HDD Storage", href: "/shop/components/storage" },
+          { label: "NVMe SSD", href: "/shop/components/storage?storageType=NVMe" },
+          { label: "HDD Storage", href: "/shop/components/storage?storageType=HDD" },
           { label: "PSU Power Supply", href: "/shop/components/power-supplies" },
           { label: "PC Cases", href: "/shop/components/pc-cases" },
         ],
       },
       {
+        // AIO vs Air now filters by the real CoolerSpec.coolerType field.
         title: "COOLING",
         links: [
-          { label: "AIO Liquid Coolers", href: "/shop/components/cpu-coolers" },
-          { label: "CPU Air Coolers", href: "/shop/components/cpu-coolers" },
+          { label: "AIO Liquid Coolers", href: "/shop/components/cpu-coolers?coolerType=AIO" },
+          { label: "CPU Air Coolers", href: "/shop/components/cpu-coolers?coolerType=Air" },
           { label: "Case Fans", href: "/shop/components/case-fans" },
         ],
       },
@@ -88,46 +97,24 @@ const NAV: NavSection[] = [
     key: "GEAR",
     label: "Gear & Peripherals",
     href: "/shop/gaming-gear/mechanical-keyboards",
-    image: cdn("keyboard", "MAKR75_Hero_Shot_Front.png"),
+    image: cdn("keyboard", "pro-x-tkl-rapid-black-gallery-1-us.png"),
     columns: [
       {
+        // "Mousepads" was dropped — no such category exists yet (it was
+        // silently reusing the Gaming Mice link/href, mislabeled).
         title: "INPUT DEVICES",
         links: [
           { label: "Mechanical Keyboards", href: "/shop/gaming-gear/mechanical-keyboards" },
           { label: "Gaming Mice", href: "/shop/gaming-gear/gaming-mice" },
-          { label: "Mousepads", href: "/shop/gaming-gear/gaming-mice" },
         ],
       },
       {
+        // "Gaming Speakers" was dropped — no such category exists yet (it was
+        // silently reusing the Gaming Headsets link/href, mislabeled).
         title: "AUDIO & DISPLAY",
         links: [
           { label: "Gaming Headsets", href: "/shop/gaming-gear/gaming-headsets" },
-          { label: "Gaming Speakers", href: "/shop/gaming-gear/gaming-headsets" },
           { label: "Gaming Monitors", href: "/shop/gaming-gear/gaming-monitors" },
-        ],
-      },
-    ],
-  },
-  {
-    key: "BUNDLES",
-    label: "Bundles",
-    href: "/shop/components/pc-cases",
-    image: cdn("case", "Etail_H3Flow_WH_Carousel_Hero_EN.png"),
-    columns: [
-      {
-        title: "BY THEME",
-        links: [
-          { label: "White Theme Setup", href: "/shop/components/pc-cases" },
-          { label: "Minimalist Setup", href: "/shop/components/pc-cases" },
-          { label: "RGB Gaming Setup", href: "/shop/components/ram" },
-        ],
-      },
-      {
-        title: "BRAND ECOSYSTEMS",
-        links: [
-          { label: "Corsair iCUE", href: "/shop/components/ram" },
-          { label: "ROG Aura Sync", href: "/shop/components/motherboards" },
-          { label: "Logitech G Series", href: "/shop/gaming-gear/mechanical-keyboards" },
         ],
       },
     ],
@@ -140,19 +127,19 @@ const NAV: NavSection[] = [
     image: cdn("funiture", "ChairPro.webp"),
     columns: [
       {
+        // Chairs vs Desks now filters by the real FurnitureSpec.furnitureType
+        // field — the previous 3-way "Ergonomic/Racing Style/Pro Gaming" split
+        // had no backing data (all 3 pointed at the same unfiltered list).
         title: "GAMING CHAIRS",
         links: [
-          { label: "Ergonomic Chairs", href: "/shop/gaming-furniture" },
-          { label: "Racing Style Chairs", href: "/shop/gaming-furniture" },
-          { label: "Pro Gaming Chairs", href: "/shop/gaming-furniture" },
+          { label: "Gaming Chairs", href: "/shop/gaming-furniture?furnitureType=CHAIR" },
         ],
       },
       {
-        title: "DESKS & ACCESSORIES",
+        // "Monitor Arms" was dropped — no such product exists yet.
+        title: "DESKS",
         links: [
-          { label: "Standing Desks", href: "/shop/gaming-furniture" },
-          { label: "Fixed Gaming Desks", href: "/shop/gaming-furniture" },
-          { label: "Monitor Arms", href: "/shop/gaming-furniture" },
+          { label: "Gaming Desks", href: "/shop/gaming-furniture?furnitureType=DESK" },
         ],
       },
     ],
@@ -170,12 +157,9 @@ function MegaLink({ label, href }: { label: string; href: string }) {
     <NavigationMenuLink asChild>
       <Link
         href={href}
-        className="group/l flex items-center justify-between gap-3 py-1.5 text-ui text-secondary transition-colors hover:text-fg"
+        className="flex items-center justify-between gap-3 py-1.5 text-ui text-secondary transition-colors hover:text-fg"
       >
-        <span className="flex items-center gap-2">
-          <span className="h-px w-3 shrink-0 bg-zinc-600 transition-all duration-200 group-hover/l:w-4 group-hover/l:bg-brand" />
-          {label}
-        </span>
+        {label}
       </Link>
     </NavigationMenuLink>
   );

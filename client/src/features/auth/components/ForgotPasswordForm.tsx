@@ -2,34 +2,12 @@
 // "use client" vì: useState, useEffect, event handlers (form submit, API calls)
 
 import Link from "next/link";
-import { useState } from "react";
-import { toast } from "sonner";
 
-import { apiFetch } from "@/lib/api";
-
-type Step = "form" | "sent";
+import { useForgotPasswordForm } from "../hooks/useForgotPasswordForm";
 
 export function ForgotPasswordForm() {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState<Step>("form");
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email.trim()) return;
-    setLoading(true);
-    try {
-      await apiFetch("/auth/forgot-password", {
-        method: "POST",
-        body: JSON.stringify({ email }),
-      });
-      setStep("sent");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  }
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { email, setEmail, loading, step, submit } = useForgotPasswordForm();
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-base px-4 py-16">

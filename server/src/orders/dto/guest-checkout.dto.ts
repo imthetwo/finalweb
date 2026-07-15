@@ -1,8 +1,9 @@
 import { Type } from 'class-transformer';
 import {
-  IsArray, IsEmail, IsInt, IsObject,
+  IsArray, IsEmail, IsIn, IsInt,
   IsOptional, IsString, Min, ValidateNested,
 } from 'class-validator';
+import { ShippingInfoDto } from './shipping-info.dto';
 
 export class GuestCartItemDto {
   @IsString() productId!: string;
@@ -15,10 +16,11 @@ export class GuestCheckoutDto {
   @Type(() => GuestCartItemDto)
   items!: GuestCartItemDto[];
 
-  @IsObject()
-  shippingInfo!: Record<string, string>;
+  @ValidateNested()
+  @Type(() => ShippingInfoDto)
+  shippingInfo!: ShippingInfoDto;
 
-  @IsString()
+  @IsIn(['COD', 'MOMO'])
   paymentMethod!: string;
 
   @IsString() @IsOptional()

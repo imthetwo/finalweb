@@ -22,6 +22,9 @@ export type ApiPart = {
   // Motherboard RAM capacity
   ramSlots?: number | null;
   maxRamGb?: number | null;
+  // Storage
+  capacityGb?: number | null;
+  interfaceType?: string | null;
 };
 
 export type CompatibilityResult = {

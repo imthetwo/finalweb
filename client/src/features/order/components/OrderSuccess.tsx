@@ -3,26 +3,15 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 
-import { getApiUrl } from "@/lib/api";
-
-type OrderQr = { dataUrl: string; status: string; total: number };
+import { useAuthState } from "@/hooks/useAuthState";
+import { useOrderSuccess } from "../hooks/useOrderSuccess";
 
 export function OrderSuccess() {
-  const params = useSearchParams();
-  const orderId = params.get("orderId");
-  const [qr, setQr] = useState<OrderQr | null>(null);
-
-  useEffect(() => {
-    if (!orderId) return;
-    fetch(getApiUrl(`/qr/order/${orderId}`))
-      .then((r) => (r.ok ? r.json() : null))
-      .then(setQr)
-      .catch(() => {});
-  }, [orderId]);
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { orderId, qr } = useOrderSuccess();
+  const { user } = useAuthState();
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-base px-4 py-16 text-center text-fg">
@@ -43,7 +32,10 @@ export function OrderSuccess() {
       )}
 
       <div className="mt-10 flex gap-3">
-        <Link href="/account?tab=orders" className="border border-edge px-6 py-3 text-sm font-bold uppercase tracking-wider text-secondary hover:border-fg hover:text-fg">
+        <Link
+          href={user ? "/account?tab=orders" : orderId ? `/track-order/${orderId}` : "/track-order"}
+          className="border border-edge px-6 py-3 text-sm font-bold uppercase tracking-wider text-secondary hover:border-fg hover:text-fg"
+        >
           View orders
         </Link>
         <Link href="/" className="bg-brand px-6 py-3 text-sm font-black uppercase tracking-wider text-black hover:bg-brand/85">

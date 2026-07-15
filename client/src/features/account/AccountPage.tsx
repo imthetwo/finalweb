@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { LogOut, Shield } from "lucide-react";
 
@@ -12,14 +12,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProfileTab } from "./components/ProfileTab";
 import OrdersTab from "./components/OrdersTab";
 import WishlistTab from "./components/WishlistTab";
+import { AddressBookTab } from "./components/AddressBookTab";
 
 function initials(name: string) {
   return name.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
+// The only tabs AccountPage actually renders — anything else (e.g. a future
+// "builds" tab requested via ?tab=builds before that feature exists) falls
+// back to Profile instead of silently rendering a blank tab area.
+const VALID_TABS = ["profile", "orders", "wishlist", "addresses"] as const;
+
 export default function AccountPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { logout } = useAuthState();
+
+  const requestedTab = searchParams.get("tab");
+  const initialTab = (VALID_TABS as readonly string[]).includes(requestedTab ?? "")
+    ? requestedTab!
+    : "profile";
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -81,16 +93,18 @@ export default function AccountPage() {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="mb-6 grid h-auto grid-cols-3 bg-surface p-1">
+        <Tabs defaultValue={initialTab} className="w-full">
+          <TabsList className="mb-6 grid h-auto grid-cols-4 bg-surface p-1">
             <TabsTrigger value="profile" className="text-sm font-bold uppercase tracking-wider data-[state=active]:bg-brand data-[state=active]:text-black">Profile</TabsTrigger>
             <TabsTrigger value="orders" className="text-sm font-bold uppercase tracking-wider data-[state=active]:bg-brand data-[state=active]:text-black">Orders</TabsTrigger>
             <TabsTrigger value="wishlist" className="text-sm font-bold uppercase tracking-wider data-[state=active]:bg-brand data-[state=active]:text-black">Wishlist</TabsTrigger>
+            <TabsTrigger value="addresses" className="text-sm font-bold uppercase tracking-wider data-[state=active]:bg-brand data-[state=active]:text-black">Addresses</TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile"><ProfileTab profile={profile} onUpdated={setProfile} /></TabsContent>
           <TabsContent value="orders"><OrdersTab /></TabsContent>
           <TabsContent value="wishlist"><WishlistTab /></TabsContent>
+          <TabsContent value="addresses"><AddressBookTab /></TabsContent>
         </Tabs>
       </div>
     </div>

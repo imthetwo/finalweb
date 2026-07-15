@@ -1,5 +1,5 @@
 import type { UserProfile, WishlistEntry } from "@/types/api";
-import { apiFetch, getApiUrl, getToken } from "./client";
+import { apiFetch } from "./client";
 
 // ── Profile ───────────────────────────────────────────────────────────────────
 
@@ -14,20 +14,6 @@ export const changePassword = (currentPassword: string, newPassword: string) =>
     method: "PATCH",
     body: JSON.stringify({ currentPassword, newPassword }),
   });
-
-// POST /users/me/avatar — multipart upload, returns the full updated profile
-export async function uploadAvatar(file: File): Promise<UserProfile> {
-  const fd = new FormData();
-  fd.append("file", file);
-  const token = getToken();
-  const res = await fetch(getApiUrl("/users/me/avatar"), {
-    method: "POST",
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    body: fd,
-  });
-  if (!res.ok) throw new Error("Upload failed");
-  return res.json();
-}
 
 // ── Wishlist ──────────────────────────────────────────────────────────────────
 

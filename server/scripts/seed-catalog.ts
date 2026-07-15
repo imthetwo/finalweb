@@ -72,7 +72,7 @@ async function main() {
       const base = file.replace(/\.[^.]+$/, '');
       const name = base.replace(/[-_]+/g, ' ').trim();
       const brand = guessBrand(base);
-      const price = DEFAULT_PRICES[folder] ?? 1990000;
+      const price = DEFAULT_PRICES[folder] ?? 2000000;
       const imageUrl = `/media/${folder}/${encodeURIComponent(file)}`;
 
       const existing = await prisma.product.findFirst({ where: { name, categoryId: category.id } });

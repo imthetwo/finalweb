@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import AIConsultantFab from "@/features/ai/AIConsultantFab";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/toaster";
 import NavigationProgress from "@/components/ui/NavigationProgress";
 
 import "./globals.css";
@@ -46,7 +46,7 @@ export default function RootLayout({
         <div className="flex-1">{children}</div>
         <Footer />
         <AIConsultantFab />
-        <Toaster richColors closeButton position="top-right" />
+        <Toaster />
         <NavigationProgress />
       </body>
     </html>

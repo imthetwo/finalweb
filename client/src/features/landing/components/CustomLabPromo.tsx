@@ -14,7 +14,6 @@ export default function CustomLabPromo() {
     <section className="relative overflow-x-hidden border-y border-white/5 bg-base py-16 md:py-24">
       {/* Background accent */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute right-0 top-0 h-full w-1/2 brand-radial-right" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] [background-size:40px_40px]" />
       </div>
 

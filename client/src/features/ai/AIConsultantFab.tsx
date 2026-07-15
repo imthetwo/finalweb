@@ -1,63 +1,48 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import { Bot, Send, X } from "lucide-react";
+import Link from "next/link";
+import { Phone, Send, X } from "lucide-react";
 
-import { apiFetch } from "@/lib/api";
-import logo from "@/assets/logo/Pecify.png";
-
-type ChatTurn = { role: "user" | "model"; text: string };
-
-type ChatResponse = { reply: string; source: "gemini" | "fallback" };
+import { useAIConsultant } from "./hooks/useAIConsultant";
 
 const QUICK_PROMPTS = [
-  "Budget 15M VND, build a PC for smooth Valorant",
-  "Workstation for design & video rendering ~30M VND",
-  "Streaming setup around 25M VND",
+  "Budget 15.000.000₫, build a PC for smooth Valorant",
+  "Workstation for design & video rendering ~30.000.000₫",
+  "Streaming setup around 25.000.000₫",
 ];
 
-const WELCOME: ChatTurn = {
-  role: "model",
-  text: "Hi! I'm Pecify's PC-build assistant 🤖\nTell me your **budget** and **needs** (gaming, work, rendering…) and I'll recommend a build from what's currently in stock!",
-};
+// Minimal markdown renderer for chat bubbles: **bold**, [label](/link) and
+// **[label](/link)** become real elements — product links navigate the shop.
+function MessageText({ text, onNavigate }: { text: string; onNavigate: () => void }) {
+  const re = /\*\*\[([^\]]+)\]\(([^\s)]+)\)\*\*|\[([^\]]+)\]\(([^\s)]+)\)|\*\*([^*]+)\*\*/g;
+  const nodes: React.ReactNode[] = [];
+  let last = 0;
+  let k = 0;
+  let m: RegExpExecArray | null;
+  const linkCls = "font-bold text-brand underline decoration-brand/40 hover:decoration-brand";
+  while ((m = re.exec(text))) {
+    if (m.index > last) nodes.push(text.slice(last, m.index));
+    const [label, href] = m[1] ? [m[1], m[2]] : m[3] ? [m[3], m[4]] : [null, null];
+    if (label && href) {
+      nodes.push(
+        href.startsWith("/") ? (
+          <Link key={k++} href={href} onClick={onNavigate} className={linkCls}>{label}</Link>
+        ) : (
+          <a key={k++} href={href} target="_blank" rel="noopener noreferrer" className={linkCls}>{label}</a>
+        ),
+      );
+    } else if (m[5]) {
+      nodes.push(<strong key={k++} className="font-bold text-fg">{m[5]}</strong>);
+    }
+    last = re.lastIndex;
+  }
+  nodes.push(text.slice(last));
+  return <>{nodes}</>;
+}
 
 export default function AIConsultantFab() {
-  const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatTurn[]>([WELCOME]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  // Auto-scroll xuống tin nhắn mới nhất
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, loading]);
-
-  async function send(text: string) {
-    const message = text.trim();
-    if (!message || loading) return;
-
-    const history = messages.filter((m) => m !== WELCOME);
-    setMessages((prev) => [...prev, { role: "user", text: message }]);
-    setInput("");
-    setLoading(true);
-
-    try {
-      const res = await apiFetch<ChatResponse>("/ai/chat", {
-        method: "POST",
-        body: JSON.stringify({ message, history }),
-      });
-      setMessages((prev) => [...prev, { role: "model", text: res.reply }]);
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "model", text: "Sorry, I'm having a connection issue. Please try again in a moment!" },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  }
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { open, setOpen, messages, input, setInput, loading, send, scrollRef } = useAIConsultant();
 
   return (
     <>
@@ -82,7 +67,7 @@ export default function AIConsultantFab() {
             aria-label="Open AI assistant"
             className="group relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand text-black shadow-glow-md transition-all duration-300 hover:scale-110 hover:shadow-glow-lg"
           >
-            <Bot size={24} />
+            <Phone size={26} />
             {/* online pulse dot */}
             <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
@@ -99,8 +84,8 @@ export default function AIConsultantFab() {
           {/* Header */}
           <div className="flex shrink-0 items-center justify-between border-b border-edge bg-[linear-gradient(180deg,#1a2730_0%,#0d0d0d_100%)] px-4 py-3">
             <div className="flex items-center gap-2.5">
-              <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-brand/10">
-                <Image src={logo} alt="Pecify" width={28} height={28} className="object-contain" />
+              <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-brand/10 text-brand">
+                <Phone size={18} />
               </div>
               <div>
                 <p className="text-body font-black uppercase tracking-wider text-fg">Pecify Assistant</p>
@@ -132,7 +117,7 @@ export default function AIConsultantFab() {
                       : "border border-edge bg-elevated text-secondary",
                   ].join(" ")}
                 >
-                  {m.text}
+                  <MessageText text={m.text} onNavigate={() => setOpen(false)} />
                 </div>
               </div>
             ))}

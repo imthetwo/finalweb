@@ -1,12 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { toast } from "sonner";
 import { ShoppingCart } from "lucide-react";
 
-import { apiFetch } from "@/lib/api";
-import { addToGuestCart } from "@/lib/guestCart";
-import { useAuthStore } from "@/store/authStore";
+import { useAddToCart } from "@/features/cart";
 
 const DEFAULT_CLASS =
   "w-full bg-brand px-8 py-3 text-sm font-black uppercase tracking-wider text-black transition hover:bg-white disabled:cursor-not-allowed";
@@ -46,31 +42,8 @@ export default function AddToCartButton({
   className?: string;
   label?: React.ReactNode;
 }) {
-  const authed = useAuthStore((s) => !!s.user);
-  const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
-
-  async function add() {
-    setLoading(true);
-    try {
-      if (authed) {
-        await apiFetch("/cart/items", {
-          method: "POST",
-          body: JSON.stringify({ productId, quantity: 1 }),
-        });
-      } else {
-        addToGuestCart(productId);
-      }
-      toast.success("Added to cart");
-      window.dispatchEvent(new Event("cart-updated"));
-      setDone(true);
-      setTimeout(() => setDone(false), 1500);
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to add to cart");
-    } finally {
-      setLoading(false);
-    }
-  }
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { loading, done, add } = useAddToCart(productId);
 
   return (
     <button

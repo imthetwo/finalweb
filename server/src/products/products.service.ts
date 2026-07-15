@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { FurnitureType, PcBuildType } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 const SPEC_INCLUDE = {
@@ -12,6 +13,8 @@ const SPEC_INCLUDE = {
   monitorSpec: true,
   storageSpec: true,
   laptopSpec: true,
+  pcBuildSpec: true,
+  furnitureSpec: true,
 } as const;
 
 @Injectable()
@@ -34,6 +37,10 @@ export class ProductsService {
   async findAll(params: {
     categoryId?: string;
     search?: string;
+    buildType?: string;
+    storageType?: string;
+    coolerType?: string;
+    furnitureType?: string;
     page?: number;
     limit?: number;
   }) {
@@ -43,6 +50,19 @@ export class ProductsService {
 
     const where: Record<string, unknown> = { isPublished: true };
     if (params.categoryId) where.categoryId = params.categoryId;
+    if (params.buildType && (Object.values(PcBuildType) as string[]).includes(params.buildType)) {
+      where.pcBuildSpec = { buildType: params.buildType as PcBuildType };
+    }
+    if (params.storageType) {
+      const types = params.storageType.split(',').map((t) => t.trim()).filter(Boolean);
+      where.storageSpec = types.length > 1
+        ? { storageType: { in: types } }
+        : { storageType: { equals: types[0], mode: 'insensitive' } };
+    }
+    if (params.coolerType) where.coolerSpec = { coolerType: { equals: params.coolerType, mode: 'insensitive' } };
+    if (params.furnitureType && (Object.values(FurnitureType) as string[]).includes(params.furnitureType)) {
+      where.furnitureSpec = { furnitureType: params.furnitureType as FurnitureType };
+    }
     const search = params.search?.slice(0, 100); // prevent ReDoS via overly long input
     if (search) { params.search = search; }
     if (params.search) {
@@ -73,6 +93,9 @@ export class ProductsService {
           psuSpec:         { select: { wattage: true } },
           caseSpec:        { select: { formFactor: true, maxGpuLengthMm: true } },
           coolerSpec:      { select: { socketSupport: true, tdpRating: true } },
+          storageSpec:     { select: { capacityGb: true, interfaceType: true } },
+          pcBuildSpec:     { select: { buildType: true } },
+          furnitureSpec:   { select: { furnitureType: true } },
         },
         orderBy: { name: 'asc' },
         skip,
@@ -98,7 +121,7 @@ export class ProductsService {
         // Only load specs that exist (Prisma skips nulls automatically)
         cpuSpec: true, gpuSpec: true, ramSpec: true, motherboardSpec: true,
         psuSpec: true, caseSpec: true, coolerSpec: true, monitorSpec: true,
-        storageSpec: true, laptopSpec: true,
+        storageSpec: true, laptopSpec: true, pcBuildSpec: true, furnitureSpec: true,
       },
     });
     if (!product) throw new NotFoundException('Product not found');

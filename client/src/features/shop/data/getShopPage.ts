@@ -9,9 +9,24 @@ const URL_LOOKUP = Object.fromEntries(
     .map((c) => [c.href.split("/").at(-1)!, { label: c.label, dbName: c.dbName ?? c.label }])
 );
 
+// ?type= query param (Prebuilt PCs sub-filter) → { display label, Prisma PcBuildType }
+const BUILD_TYPE_LOOKUP: Record<string, { label: string; buildType: string }> = {
+  "gaming-esport": { label: "PC Gaming Esport", buildType: "GAMING_ESPORT" },
+  "workstation":   { label: "PC Workstation",   buildType: "WORKSTATION" },
+  "mini-sff":      { label: "PC Mini (SFF)",    buildType: "MINI_SFF" },
+};
+
+// ?storageType= / ?coolerType= / ?furnitureType= → real spec fields, human label for the title
+const STORAGE_TYPE_LABEL: Record<string, string> = { NVMe: "NVMe SSD", HDD: "HDD Storage" };
+const COOLER_TYPE_LABEL: Record<string, string> = { AIO: "AIO Liquid Coolers", Air: "CPU Air Coolers" };
+const FURNITURE_TYPE_LABEL: Record<string, string> = { CHAIR: "Gaming Chairs", DESK: "Gaming Desks" };
+
 export async function getShopPage(
   slug: string[],
-  searchParams: { page?: string; search?: string },
+  searchParams: {
+    page?: string; search?: string; type?: string;
+    storageType?: string; coolerType?: string; furnitureType?: string;
+  },
 ) {
   const page = Math.max(1, Number(searchParams.page) || 1);
   const search = searchParams.search?.trim() || undefined;
@@ -20,6 +35,8 @@ export async function getShopPage(
 
   const matchedSeg = [...slug].reverse().find((seg) => URL_LOOKUP[seg]);
   const entry = matchedSeg ? URL_LOOKUP[matchedSeg] : undefined;
+  const buildEntry = searchParams.type ? BUILD_TYPE_LOOKUP[searchParams.type] : undefined;
+  const { storageType, coolerType, furnitureType } = searchParams;
 
   let categoryId: string | undefined;
   const categoryName = isAllProducts ? "All Products" : (entry?.label ?? slug[slug.length - 1] ?? "Products");
@@ -33,11 +50,19 @@ export async function getShopPage(
   }
 
   const data = await fetchProducts(
-    search ? { search, page, limit: 48 } : { categoryId, page, limit: 48 },
+    search
+      ? { search, page, limit: 48 }
+      : { categoryId, buildType: buildEntry?.buildType, storageType, coolerType, furnitureType, page, limit: 48 },
   ).catch(() => ({ items: [], total: 0, page: 1, totalPages: 0 }));
 
+  const subFilterLabel =
+    buildEntry?.label
+    ?? (storageType && STORAGE_TYPE_LABEL[storageType])
+    ?? (coolerType && COOLER_TYPE_LABEL[coolerType])
+    ?? (furnitureType && FURNITURE_TYPE_LABEL[furnitureType]);
+
   return {
-    title: search ? `Search: "${search}"` : categoryName,
+    title: search ? `Search: "${search}"` : (subFilterLabel ?? categoryName),
     items: data.items,
     page: data.page,
     totalPages: data.totalPages,

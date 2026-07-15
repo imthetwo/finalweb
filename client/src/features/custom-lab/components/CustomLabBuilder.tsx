@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { AlertCircle, AlertTriangle, Plus, Save, ShoppingCart, Trash2, Zap } from "lucide-react";
+import { AlertCircle, AlertTriangle, Plus, RotateCcw, Save, ShoppingCart, Trash2, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,9 +29,14 @@ export default function CustomLabBuilder() {
     totalPrice, estimatedWatts, selectedCount,
     openPicker: rawOpenPicker,
     closePicker: storeClosePicker,
-    selectPart, removePart,
+    selectPart, removePart, resetBuild,
     validateBuild, addAllToCart, saveBuild,
   } = useBuild();
+
+  const handleReset = useCallback(() => {
+    if (selectedCount === 0) return;
+    if (confirm("Reset the build? This removes every part you've added.")) resetBuild();
+  }, [selectedCount, resetBuild]);
 
   // When browser back removes ?picking from URL, close the overlay in store
   const prevPickingParam = useRef(pickingParam);
@@ -92,11 +97,11 @@ export default function CustomLabBuilder() {
               <Table>
                 <TableHeader>
                   <TableRow className="border-edge hover:bg-transparent">
-                    <TableHead className="w-24 pl-8 pr-0" />
-                    <TableHead className="w-56 text-md font-black uppercase tracking-widest">Component</TableHead>
-                    <TableHead className="text-md font-black uppercase tracking-widest">Selection</TableHead>
-                    <TableHead className="text-right text-md font-black uppercase tracking-widest">Price</TableHead>
-                    <TableHead className="w-20" />
+                    <TableHead className="w-16 pl-5 pr-0" />
+                    <TableHead className="w-40 text-xs font-black uppercase tracking-widest">Component</TableHead>
+                    <TableHead className="text-xs font-black uppercase tracking-widest">Selection</TableHead>
+                    <TableHead className="text-right text-xs font-black uppercase tracking-widest">Price</TableHead>
+                    <TableHead className="w-14" />
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -105,45 +110,45 @@ export default function CustomLabBuilder() {
                     const isLoading = loading[cfg.slot];
                     return (
                       <TableRow key={cfg.slot} className="border-edge/50">
-                        <TableCell className="py-7 pl-8 pr-3">
-                          <div className="flex h-16 w-16 items-center justify-center border border-edge bg-surface/60">
-                            <cfg.Icon size={26} className={part ? "text-brand" : "text-secondary"} />
+                        <TableCell className="py-4 pl-5 pr-2">
+                          <div className="flex h-11 w-11 items-center justify-center border border-edge bg-surface/60">
+                            <cfg.Icon size={18} className={part ? "text-brand" : "text-secondary"} />
                           </div>
                         </TableCell>
-                        <TableCell className="py-7">
-                          <p className="text-lg font-black uppercase tracking-wider text-fg">{cfg.shortLabel}</p>
+                        <TableCell className="py-4">
+                          <p className="text-sm font-black uppercase tracking-wider text-fg">{cfg.shortLabel}</p>
                         </TableCell>
-                        <TableCell className="py-7">
+                        <TableCell className="py-4">
                           {part ? (
-                            <div className="flex items-center gap-5">
-                              <div className="h-20 w-20 shrink-0 border border-edge bg-surface">
+                            <div className="flex items-center gap-3">
+                              <div className="h-14 w-14 shrink-0 border border-edge bg-surface">
                                 {part.thumbnailUrl
-                                  ? <Image src={part.thumbnailUrl} alt={part.name} width={80} height={80} className="h-full w-full object-contain p-1.5" />
-                                  : <div className="flex h-full items-center justify-center"><cfg.Icon size={24} className="text-subtle" /></div>}
+                                  ? <Image src={part.thumbnailUrl} alt={part.name} width={56} height={56} className="h-full w-full object-contain p-1" />
+                                  : <div className="flex h-full items-center justify-center"><cfg.Icon size={18} className="text-subtle" /></div>}
                               </div>
                               <div className="min-w-0">
-                                <p className="truncate text-lg font-semibold text-fg">{part.name}</p>
-                                <p className="mt-0.5 text-sm text-muted">{part.brand}</p>
+                                <p className="truncate text-body font-semibold text-fg">{part.name}</p>
+                                <p className="mt-0.5 text-xs text-muted">{part.brand}</p>
                               </div>
                             </div>
                           ) : (
                             <Button variant="ghost" onClick={() => openPicker(cfg.slot)} disabled={isLoading}
-                              className="h-16 gap-2.5 border border-dashed border-edge bg-transparent px-8 text-lg font-bold uppercase tracking-wider text-fg hover:border-brand/40 hover:bg-brand/5 hover:text-brand">
-                              <Plus size={18} />
+                              className="h-10 gap-2 border border-dashed border-edge bg-transparent px-5 text-sm font-bold uppercase tracking-wider text-fg hover:border-brand/40 hover:bg-brand/5 hover:text-brand">
+                              <Plus size={14} />
                               {isLoading ? "Loading…" : `Choose A ${cfg.shortLabel}`}
                             </Button>
                           )}
                         </TableCell>
-                        <TableCell className="py-7 text-right">
+                        <TableCell className="py-4 text-right">
                           {part
-                            ? <span className="text-xl font-black text-fg">{formatVnd(part.displayPrice)}</span>
-                            : <span className="text-lg text-secondary">—</span>}
+                            ? <span className="text-md font-black text-fg">{formatVnd(part.displayPrice)}</span>
+                            : <span className="text-body text-secondary">—</span>}
                         </TableCell>
-                        <TableCell className="py-7 pr-8">
+                        <TableCell className="py-4 pr-5">
                           {part && (
                             <button type="button" onClick={() => removePart(cfg.slot)}
-                              className="flex h-12 w-12 items-center justify-center border border-red-800/40 bg-red-950/20 text-destructive hover:border-destructive hover:bg-red-950/50">
-                              <Trash2 size={18} />
+                              className="flex h-9 w-9 items-center justify-center border border-red-800/40 bg-red-950/20 text-destructive hover:border-destructive hover:bg-red-950/50">
+                              <Trash2 size={14} />
                             </button>
                           )}
                         </TableCell>
@@ -153,18 +158,18 @@ export default function CustomLabBuilder() {
                 </TableBody>
                 <TableFooter>
                   <TableRow className="border-t border-edge bg-elevated hover:bg-elevated">
-                    <TableCell colSpan={3} className="py-7 pl-8">
-                      <div className="flex items-center gap-4">
-                        <span className="text-lg font-black uppercase tracking-wider text-fg">Total ({selectedCount} parts)</span>
+                    <TableCell colSpan={3} className="py-4 pl-5">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-black uppercase tracking-wider text-fg">Total ({selectedCount} parts)</span>
                         {estimatedWatts > 0 && (
-                          <Badge variant="outline" className="border-edge text-sm text-muted">
-                            <Zap size={13} className="mr-1" />~{estimatedWatts}W
+                          <Badge variant="outline" className="border-edge text-xs text-muted">
+                            <Zap size={11} className="mr-1" />~{estimatedWatts}W
                           </Badge>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="py-7 text-right">
-                      <span className="text-2xl font-black text-brand">{totalPrice > 0 ? formatVnd(totalPrice) : "—"}</span>
+                    <TableCell className="py-4 text-right">
+                      <span className="text-xl font-black text-brand">{totalPrice > 0 ? formatVnd(totalPrice) : "—"}</span>
                     </TableCell>
                     <TableCell />
                   </TableRow>
@@ -191,14 +196,18 @@ export default function CustomLabBuilder() {
             )}
 
             {/* Actions */}
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+              <Button variant="outline" onClick={handleReset} disabled={selectedCount === 0}
+                className="h-10 gap-2 border-edge bg-transparent px-5 text-sm font-bold uppercase tracking-wider text-secondary hover:border-destructive hover:text-destructive">
+                <RotateCcw size={13} /> Reset
+              </Button>
               <Button variant="outline" onClick={saveBuild} disabled={saving || selectedCount === 0}
-                className="h-12 gap-2 border-edge bg-transparent px-6 text-body font-bold uppercase tracking-wider text-secondary hover:border-secondary hover:text-fg">
-                <Save size={15} />{saving ? "Saving…" : "Save Build"}
+                className="h-10 gap-2 border-edge bg-transparent px-5 text-sm font-bold uppercase tracking-wider text-secondary hover:border-secondary hover:text-fg">
+                <Save size={13} />{saving ? "Saving…" : "Save Build"}
               </Button>
               <Button onClick={addAllToCart} disabled={addingCart || selectedCount === 0}
-                className="h-12 gap-2 bg-brand px-6 text-body font-black uppercase tracking-wider text-brand-fg hover:bg-brand-hover disabled:opacity-50">
-                <ShoppingCart size={15} />{addingCart ? "Adding…" : `Add ${selectedCount} Items to Cart`}
+                className="h-10 gap-2 bg-brand px-5 text-sm font-black uppercase tracking-wider text-brand-fg hover:bg-brand-hover disabled:opacity-50">
+                <ShoppingCart size={13} />{addingCart ? "Adding…" : `Add ${selectedCount} Items to Cart`}
               </Button>
             </div>
           </div>

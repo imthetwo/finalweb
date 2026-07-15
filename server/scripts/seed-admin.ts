@@ -66,7 +66,7 @@ async function main() {
           recipient: 'Demo Customer',
           phone: '0900000000',
           street: '123 Demo St',
-          district: 'Quận 1',
+          ward: 'Phường Sài Gòn',
           city: 'Hồ Chí Minh',
         },
         items: {
@@ -85,7 +85,7 @@ async function main() {
 
   // ── 4. Coupons ──
   const coupons = [
-    { code: 'WELCOME10', discountPct: 10,    minOrderValue: 2000000, maxUse: 1000 },
+    { code: 'WELCOME10', discountPct: 10,       minOrderValue: 2000000, maxUse: 1000 },
     { code: 'SAVE500K',  discountFixed: 500000, minOrderValue: 5000000, maxUse: 500 },
   ];
   for (const c of coupons) {

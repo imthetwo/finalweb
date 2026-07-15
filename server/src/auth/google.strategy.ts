@@ -25,6 +25,9 @@ export class GoogleStrategy extends PassportStrategy(
         process.env.GOOGLE_CALLBACK_URL ||
         'http://localhost:3001/auth/google/callback',
       scope: ['email', 'profile'],
+      // Stateless: we mint a JWT in the callback, so Passport must not try to
+      // serialize the user into a session (no express-session is configured).
+      session: false,
     };
 
     super(strategyOptions);

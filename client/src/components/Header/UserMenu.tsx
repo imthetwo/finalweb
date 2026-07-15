@@ -1,24 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
 import { User, Package, Wrench, LogOut, ChevronDown, Shield } from "lucide-react";
-import { toast } from "sonner";
 
-import { useAuthState } from "@/hooks/useAuthState";
-import { LoginOverlay } from "@/features/auth/LoginOverlay";
-import { RegisterOverlay } from "@/features/auth/RegisterOverlay";
-import { uploadAvatar } from "@/lib/api";
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
-}
+import { LoginOverlay } from "@/features/auth";
+import { RegisterOverlay } from "@/features/auth";
+import { useUserMenu } from "./hooks/useUserMenu";
 
 const USER_LINKS = [
   { label: "My Account", href: "/account", icon: User },
@@ -26,41 +13,9 @@ const USER_LINKS = [
   { label: "My Builds", href: "/account?tab=builds", icon: Wrench },
 ];
 
-type AuthDialog = "none" | "login" | "register";
-
 export function UserMenu() {
-  const { user, loaded, logout, refresh } = useAuthState();
-  const [open, setOpen] = useState(false);
-  const [dialog, setDialog] = useState<AuthDialog>("none");
-  const [uploading, setUploading] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  async function onAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    try {
-      await uploadAvatar(file);
-      await refresh();
-      toast.success("Avatar updated");
-    } catch {
-      toast.error("Failed to upload avatar");
-    } finally {
-      setUploading(false);
-      if (fileRef.current) fileRef.current.value = "";
-    }
-  }
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { user, loaded, logout, open, setOpen, dialog, setDialog, ref } = useUserMenu();
 
   if (!loaded) {
     return (
@@ -102,13 +57,8 @@ export function UserMenu() {
         aria-label="Open account menu"
         aria-expanded={open}
       >
-        <span className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden border border-brand/30 bg-brand/10 text-xs font-black text-brand">
-          {user.avatarUrl ? (
-            <Image src={user.avatarUrl} alt={user.fullName} fill className="object-cover" unoptimized />
-          ) : (
-            getInitials(user.fullName)
-          )}
-          {uploading && <span className="absolute inset-0 flex items-center justify-center bg-black/50 text-2xs text-white">...</span>}
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center border border-brand/30 bg-brand/10 text-brand">
+          <User size={15} />
         </span>
         <span className="hidden max-w-20 truncate text-sm font-semibold text-fg lg:block">
           {user.fullName.split(" ")[0]}
@@ -122,23 +72,12 @@ export function UserMenu() {
       {open && (
         <div className="absolute right-0 top-full z-50 mt-2 w-56 border border-white/8 bg-surface shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
           <div className="border-b border-white/5 px-4 py-3">
-            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onAvatarChange} />
             <div className="mb-2 flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => fileRef.current?.click()}
-                className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden border border-brand/30 bg-brand/10 text-sm font-black text-brand hover:border-brand/60"
-                title="Change avatar"
-              >
-                {user.avatarUrl ? (
-                  <Image src={user.avatarUrl} alt={user.fullName} fill className="object-cover" unoptimized />
-                ) : (
-                  getInitials(user.fullName)
-                )}
-              </button>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center border border-brand/30 bg-brand/10 text-brand">
+                <User size={16} />
+              </span>
               <div className="min-w-0">
                 <p className="truncate text-body font-bold text-fg" style={{ fontFamily: 'system-ui, sans-serif' }}>{user.fullName}</p>
-                <p className="text-2xs text-subtle cursor-pointer hover:text-brand" onClick={() => fileRef.current?.click()}>Change avatar</p>
               </div>
             </div>
             <p className="text-xs text-muted truncate">{user.email}</p>

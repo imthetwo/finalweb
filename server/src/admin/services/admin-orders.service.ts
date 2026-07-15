@@ -1,16 +1,31 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { OrderStatus, Prisma, Role } from '@prisma/client';
 import * as ExcelJS from 'exceljs';
 import { PrismaService } from '../../prisma/prisma.service';
 import { EmailService } from '../../email/email.service';
+import { PaymentsService } from '../../payments/payments.service';
 
 const VALID_STATUSES = Object.values(OrderStatus);
 
+// Routine shipping-progress statuses, assignable via the generic status
+// endpoint (open to STAFF + ADMIN). CANCELLED is deliberately excluded here —
+// cancellation always goes through the dedicated cancelOrder() below, which
+// is ADMIN-only and requires a reason, since it triggers a stock rollback.
+const ASSIGNABLE_STATUSES: OrderStatus[] = [
+  OrderStatus.PENDING,
+  OrderStatus.PROCESSING,
+  OrderStatus.SHIPPED,
+  OrderStatus.DELIVERED,
+];
+
 @Injectable()
 export class AdminOrdersService {
+  private readonly logger = new Logger(AdminOrdersService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly email: EmailService,
+    private readonly payments: PaymentsService,
   ) {}
 
   // ── Orders ────────────────────────────────────────────────
@@ -38,24 +53,129 @@ export class AdminOrdersService {
   }
 
   async updateOrderStatus(orderId: string, status: string) {
-    if (!VALID_STATUSES.includes(status as OrderStatus)) {
-      throw new BadRequestException('Invalid status');
+    if (!ASSIGNABLE_STATUSES.includes(status as OrderStatus)) {
+      throw new BadRequestException(
+        'Invalid status. Use the Cancel action to cancel an order.',
+      );
     }
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
       include: { user: { select: { email: true } } },
     });
     if (!order) throw new NotFoundException('Order not found');
+    // A cancelled order already had its stock restored, and a delivered order
+    // is done — neither may be reassigned back into the active pipeline here,
+    // or the restored stock would be double-counted (sold once, sitting back
+    // in inventory, and committed to this reactivated order at the same time).
+    if (order.status === OrderStatus.CANCELLED || order.status === OrderStatus.DELIVERED) {
+      throw new BadRequestException(`Cannot change the status of a ${order.status.toLowerCase()} order.`);
+    }
+    // An order awaiting confirmation hasn't been accepted into the fulfillment
+    // pipeline yet — it can only go forward via acceptOrder() or backward via
+    // rejectOrder(), never through this generic status bump.
+    if (order.status === OrderStatus.AWAITING_CONFIRMATION) {
+      throw new BadRequestException('This order is awaiting confirmation. Use Accept or Reject.');
+    }
 
     const updated = await this.prisma.order.update({
       where: { id: orderId },
       data: { status: status as OrderStatus },
     });
 
-    if (order.user?.email) {
-      this.email.sendOrderStatusUpdate(order.user.email, orderId, status).catch(() => {});
+    const recipient = order.user?.email ?? order.guestEmail;
+    if (recipient) {
+      this.email.sendOrderStatusUpdate(recipient, orderId, status).catch(() => {});
     }
     return updated;
+  }
+
+  // ADMIN ONLY — cancel + restock inventory atomically, with a required
+  // reason for the audit trail (logged server-side; see the reasoning behind
+  // this split in the module comment above ASSIGNABLE_STATUSES).
+  async cancelOrder(orderId: string, reason: string, actorId: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: { user: { select: { email: true } }, items: true },
+    });
+    if (!order) throw new NotFoundException('Order not found');
+    if (order.status === OrderStatus.CANCELLED) throw new BadRequestException('Order is already cancelled');
+    if (order.status === OrderStatus.DELIVERED) throw new BadRequestException('Cannot cancel a delivered order');
+    // Only MoMo orders need the dedicated Refund action first — COD's
+    // isPaid=true is set at order creation as "no gateway needed", not "cash
+    // has actually changed hands" (that only happens on delivery), so a COD
+    // order must stay freely cancellable. A genuinely-paid MoMo order must go
+    // through refundOrder() instead, or it'd restock while leaving isPaid=true
+    // with no refund record — an unrecoverable "cancelled but still paid" state.
+    if (order.paymentMethod === 'MOMO' && order.isPaid) {
+      throw new BadRequestException('This order has already been paid. Use the Refund action instead.');
+    }
+
+    const updated = await this.prisma.$transaction(async (tx) => {
+      for (const item of order.items) {
+        await tx.product.update({
+          where: { id: item.productId },
+          data: { stock: { increment: item.quantity } },
+        });
+      }
+      return tx.order.update({
+        where: { id: orderId },
+        data: { status: OrderStatus.CANCELLED },
+      });
+    });
+
+    this.logger.log(`Order ${orderId} cancelled by admin ${actorId} — reason: ${reason}`);
+
+    const recipient = order.user?.email ?? order.guestEmail;
+    if (recipient) {
+      this.email.sendOrderStatusUpdate(recipient, orderId, OrderStatus.CANCELLED).catch(() => {});
+    }
+    return updated;
+  }
+
+  // STAFF + ADMIN — confirms a freshly-paid (or COD) order can actually be
+  // fulfilled and moves it into the normal pipeline. Purely operational
+  // (like the shipping-progress statuses), so it doesn't need ADMIN-only
+  // gating the way Reject does.
+  async acceptOrder(orderId: string, actorId: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: { user: { select: { email: true } } },
+    });
+    if (!order) throw new NotFoundException('Order not found');
+    if (order.status !== OrderStatus.AWAITING_CONFIRMATION) {
+      throw new BadRequestException('Only orders awaiting confirmation can be accepted.');
+    }
+
+    const updated = await this.prisma.order.update({
+      where: { id: orderId },
+      data: { status: OrderStatus.PROCESSING },
+    });
+
+    this.logger.log(`Order ${orderId} accepted by ${actorId}`);
+    const recipient = order.user?.email ?? order.guestEmail;
+    if (recipient) {
+      this.email.sendOrderStatusUpdate(recipient, orderId, OrderStatus.PROCESSING).catch(() => {});
+    }
+    return updated;
+  }
+
+  // ADMIN ONLY — staff found they can't actually fulfill the order (e.g. the
+  // real inventory doesn't match what's recorded). Reason is required for the
+  // audit trail. Automatically picks the correct remediation so the admin
+  // doesn't have to: a genuinely-paid MoMo order gets a real refund through
+  // MoMo before cancelling; anything else (COD, or MoMo that never actually
+  // paid) is just cancelled + restocked, no refund needed.
+  async rejectOrder(orderId: string, reason: string, actorId: string) {
+    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+    if (!order) throw new NotFoundException('Order not found');
+    if (order.status !== OrderStatus.AWAITING_CONFIRMATION) {
+      throw new BadRequestException('Only orders awaiting confirmation can be rejected.');
+    }
+
+    if (order.paymentMethod === 'MOMO' && order.isPaid) {
+      return this.payments.refundPayment(orderId, reason, actorId);
+    }
+    return this.cancelOrder(orderId, reason, actorId);
   }
 
   // ── Users ─────────────────────────────────────────────────

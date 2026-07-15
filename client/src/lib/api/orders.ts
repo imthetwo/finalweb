@@ -1,5 +1,5 @@
 import type { Order } from "@/types/api";
-import { apiFetch } from "./client";
+import { apiFetch, getApiUrl } from "./client";
 
 export const fetchOrders = () =>
   apiFetch<Order[]>("/orders");
@@ -23,6 +23,10 @@ export const guestCheckout = (data: {
 export const fetchOrder = (id: string) =>
   apiFetch<Order>(`/orders/${id}`);
 
+// POST /orders/track — public guest lookup, no auth. orderId + phone must match.
+export const trackOrder = (orderId: string, phone: string) =>
+  apiFetch<Order>("/orders/track", { method: "POST", body: JSON.stringify({ orderId, phone }) });
+
 export const createOrder = (data: {
   shippingInfo: Record<string, string>;
   paymentMethod: string;
@@ -32,6 +36,17 @@ export const createOrder = (data: {
 
 export const cancelOrder = (orderId: string) =>
   apiFetch<Order>(`/orders/${orderId}/cancel`, { method: "POST" });
+
+// Attaches past guest orders (placed with this account's email before signing
+// in) to the account — call once right after login/register/Google sign-in.
+export async function claimGuestOrders(token: string): Promise<{ claimed: number }> {
+  const res = await fetch(getApiUrl("/orders/claim"), {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error("Failed to claim guest orders");
+  return res.json() as Promise<{ claimed: number }>;
+}
 
 export const validateCoupon = (code: string, subtotal: number) =>
   apiFetch<{ valid: boolean; discount: number; message: string; code?: string }>("/coupons/validate", {

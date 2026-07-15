@@ -26,31 +26,3 @@ export class ChangePasswordDto {
   @MinLength(6)
   newPassword!: string;
 }
-
-export class CreateAddressDto {
-  @IsOptional()
-  @IsString()
-  label?: string;
-
-  @IsString()
-  recipient!: string;
-
-  @IsString()
-  phone!: string;
-
-  @IsString()
-  street!: string;
-
-  @IsOptional()
-  @IsString()
-  ward?: string;
-
-  @IsString()
-  district!: string;
-
-  @IsString()
-  city!: string;
-
-  @IsOptional()
-  isDefault?: boolean;
-}

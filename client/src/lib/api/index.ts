@@ -5,6 +5,8 @@ export * from "./user";
 export * from "./orders";
 export * from "./admin";
 export * from "./settings";
+export * from "./cart";
+export * from "./addresses";
 
 // Re-export types từ @/types/api
 export type {
@@ -16,4 +18,5 @@ export type {
   UserProfile, Order, OrderItem, WishlistEntry,
   AdminStats, AdminOrder,
   Promotion, PromotionInput,
+  Address, AddressInput,
 } from "@/types/api";

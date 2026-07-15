@@ -6,7 +6,7 @@ import { ChatDto } from './dto/chat.dto';
 export class AiController {
   constructor(private readonly ai: AiService) {}
 
-  /** Public — chatbot tư vấn build PC dựa trên tồn kho thực tế. */
+
   @Post('chat')
   chat(@Body() dto: ChatDto) {
     return this.ai.chat(dto.message, dto.history ?? []);

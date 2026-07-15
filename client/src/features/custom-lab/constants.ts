@@ -30,11 +30,17 @@ export const BUILD_SLOTS: SlotCfg[] = [
   },
   {
     slot: "SSD_STORAGE", label: "SSD Storage", shortLabel: "SSD", Icon: HardDrive, defaultWatts: 5,
-    specs: [{ key: "formFactor", label: "Interface" }],
+    specs: [
+      { key: "capacityGb", label: "Capacity", fmt: (v) => v ? `${Number(v) >= 1000 ? `${(Number(v) / 1000).toFixed(1)}TB` : `${v}GB`}` : "—" },
+      { key: "interfaceType", label: "Interface" },
+    ],
   },
   {
     slot: "HDD_STORAGE", label: "HDD Storage", shortLabel: "HDD", Icon: Server, defaultWatts: 8,
-    specs: [{ key: "formFactor", label: "Interface" }],
+    specs: [
+      { key: "capacityGb", label: "Capacity", fmt: (v) => v ? `${Number(v) >= 1000 ? `${(Number(v) / 1000).toFixed(1)}TB` : `${v}GB`}` : "—" },
+      { key: "interfaceType", label: "Interface" },
+    ],
   },
   {
     slot: "POWER_SUPPLY", label: "Power Supply (PSU)", shortLabel: "PSU", Icon: Zap, defaultWatts: 0,

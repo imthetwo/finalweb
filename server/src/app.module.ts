@@ -1,7 +1,9 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { PrismaModule } from './prisma/prisma.module';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { AddressesModule } from './addresses/addresses.module';
 import { OrdersModule } from './orders/orders.module';
 import { PaymentsModule } from './payments/payments.module';
 import { MediaModule } from './media/media.module';
@@ -26,6 +28,7 @@ import { NewsletterModule } from './newsletter/newsletter.module';
     CloudinaryModule,
     AuthModule,
     UsersModule,
+    AddressesModule,
     MediaModule,
     ProductsModule,
     CategoriesModule,
@@ -42,4 +45,8 @@ import { NewsletterModule } from './newsletter/newsletter.module';
     NewsletterModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
