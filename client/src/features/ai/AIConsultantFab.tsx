@@ -11,8 +11,6 @@ const QUICK_PROMPTS = [
   "Streaming setup around 25.000.000₫",
 ];
 
-// Minimal markdown renderer for chat bubbles: **bold**, [label](/link) and
-// **[label](/link)** become real elements — product links navigate the shop.
 function MessageText({ text, onNavigate }: { text: string; onNavigate: () => void }) {
   const re = /\*\*\[([^\]]+)\]\(([^\s)]+)\)\*\*|\[([^\]]+)\]\(([^\s)]+)\)|\*\*([^*]+)\*\*/g;
   const nodes: React.ReactNode[] = [];

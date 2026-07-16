@@ -1,6 +1,11 @@
 // Server Component — thin page
+import { Suspense } from "react";
 import { PaymentGateway } from "@/features/payment/components/PaymentGateway";
 
 export default function PaymentGatewayPage() {
-  return <PaymentGateway />;
+  return (
+    <Suspense>
+      <PaymentGateway />
+    </Suspense>
+  );
 }

@@ -6,7 +6,7 @@ import type {
 
 type Row = { label: string; value: string };
 
-function rows(entries: (Row | null | false)[]): Row[] {
+function rows(entries: (Row | null | undefined | false | "" | 0)[]): Row[] {
   return entries.filter(Boolean) as Row[];
 }
 

@@ -99,9 +99,6 @@ export function PartPickerOverlay({ slotCfg, parts, selected, currentId, loading
   const [compatOnly, setCompatOnly] = useState(true);
   const [checkingId, setCheckingId] = useState<string | null>(null);
 
-  // Runs the real compatibility check against whatever's already in the build
-  // and surfaces the result before confirming the add — so picking a part
-  // visibly goes through a check instead of silently just closing the picker.
   async function handleAdd(part: ApiPart) {
     setCheckingId(part.id);
     const check = checkPartCompatibility(part, slotCfg.slot, selected);

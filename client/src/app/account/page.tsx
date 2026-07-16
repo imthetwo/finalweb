@@ -1,5 +1,10 @@
+import { Suspense } from "react";
 import AccountPage from "@/features/account/AccountPage";
 
 export default function Page() {
-  return <AccountPage />;
+  return (
+    <Suspense>
+      <AccountPage />
+    </Suspense>
+  );
 }
