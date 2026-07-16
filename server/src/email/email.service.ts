@@ -63,6 +63,18 @@ export class EmailService {
     );
   }
 
+  async sendEmailVerification(to: string, token: string) {
+    const link = `${process.env.CLIENT_URL || 'http://localhost:3000'}/verify-email?token=${token}`;
+    await this.send(
+      to,
+      'Verify your Pecify email',
+      `<h2>Confirm your email address</h2>
+       <p>Click the link below to verify your email (valid for 24 hours):</p>
+       <a href="${link}">${link}</a>
+       <p>You can keep browsing and shopping in the meantime — this is just to confirm we can reach you.</p>`,
+    );
+  }
+
   async sendOrderStatusUpdate(to: string, orderId: string, status: string) {
     const statusMap: Record<string, string> = {
       AWAITING_CONFIRMATION: 'Confirming your order',

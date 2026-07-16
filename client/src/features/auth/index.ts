@@ -6,3 +6,5 @@ export { RegisterOverlay } from "./RegisterOverlay";
 export { ForgotPasswordForm } from "./components/ForgotPasswordForm";
 export { ResetPasswordForm } from "./components/ResetPasswordForm";
 export { AuthCallback } from "./components/AuthCallback";
+export { VerifyEmailPage } from "./components/VerifyEmailPage";
+export { EmailVerifyBanner } from "./components/EmailVerifyBanner";

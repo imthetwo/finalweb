@@ -22,6 +22,10 @@ function parseJwt(token: string) {
       email: payload.email ?? "",
       fullName: payload.fullName || payload.name || payload.email?.split("@")[0] || "User",
       role: payload.role ?? "USER",
+      // Older tokens issued before this claim existed default to true (not
+      // false) — safer to under-nag a session we have no info on than to
+      // wrongly flag an already-trusted user as unverified.
+      isEmailVerified: payload.isEmailVerified ?? true,
     } as import("@/store/authStore").AuthUser;
   } catch {
     return null;

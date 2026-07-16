@@ -6,6 +6,9 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { VerifyEmailDto } from './dto/verify-email.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { CurrentUser } from './current-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -43,5 +46,16 @@ export class AuthController {
 	@Post('reset-password')
 	resetPassword(@Body() dto: ResetPasswordDto) {
 		return this.authService.resetPassword(dto.token, dto.password);
+	}
+
+	@Post('verify-email')
+	verifyEmail(@Body() dto: VerifyEmailDto) {
+		return this.authService.verifyEmail(dto.token);
+	}
+
+	@Post('resend-verification')
+	@UseGuards(JwtAuthGuard)
+	resendVerification(@CurrentUser('userId') userId: string) {
+		return this.authService.resendVerification(userId);
 	}
 }

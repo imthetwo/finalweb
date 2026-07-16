@@ -6,6 +6,7 @@ export type AuthUser = {
   fullName: string;
   role: "USER" | "STAFF" | "ADMIN";
   avatarUrl?: string | null;
+  isEmailVerified: boolean;
 };
 
 type AuthState = {

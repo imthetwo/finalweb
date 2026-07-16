@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import * as bcrypt from 'bcrypt';
@@ -28,18 +28,27 @@ export class AuthService {
 			throw new ConflictException('Email already registered');
 		}
 		const password = await bcrypt.hash(dto.password, 10);
+		const verifyToken = randomBytes(32).toString('hex');
+		const verifyTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
 		const user = await this.prisma.user.create({
 			data: {
 				email: dto.email,
 				password,
 				fullName: dto.fullName,
+				verifyToken,
+				verifyTokenExpiry,
 			},
 		});
-		const payload = { sub: user.id, email: user.email, fullName: user.fullName, role: user.role };
+
+		// Non-blocking: registration succeeds regardless of whether this email
+		// actually goes out — verification is a gentle nudge, never a gate.
+		this.email.sendEmailVerification(user.email, verifyToken).catch(() => {});
+
+		const payload = { sub: user.id, email: user.email, fullName: user.fullName, role: user.role, isEmailVerified: user.isEmailVerified };
 		const access_token = this.jwtService.sign(payload);
 		return {
 			access_token,
-			user: { id: user.id, email: user.email, fullName: user.fullName, role: user.role },
+			user: { id: user.id, email: user.email, fullName: user.fullName, role: user.role, isEmailVerified: user.isEmailVerified },
 		};
 	}
 
@@ -47,10 +56,10 @@ export class AuthService {
 		const user = await this.validateUser(dto.email, dto.password);
 		if (!user) throw new UnauthorizedException('Invalid credentials');
 
-		const payload = { sub: user.id, email: user.email, fullName: user.fullName, role: user.role };
+		const payload = { sub: user.id, email: user.email, fullName: user.fullName, role: user.role, isEmailVerified: user.isEmailVerified };
 		const access_token = this.jwtService.sign(payload);
 
-		const safeUser = { id: user.id, email: user.email, fullName: user.fullName, role: user.role };
+		const safeUser = { id: user.id, email: user.email, fullName: user.fullName, role: user.role, isEmailVerified: user.isEmailVerified };
 		return { access_token, user: safeUser };
 	}
 
@@ -75,6 +84,9 @@ export class AuthService {
 					fullName,
 					avatarUrl,
 					googleId,
+					// Google already proved ownership of this email during its own
+					// OAuth consent screen — no app-level verification needed on top.
+					isEmailVerified: true,
 				},
 			});
 		} else {
@@ -84,13 +96,16 @@ export class AuthService {
 					fullName: account.fullName || fullName,
 					avatarUrl: account.avatarUrl || avatarUrl,
 					googleId: account.googleId || googleId,
+					// Signing in with Google to an existing (possibly unverified)
+					// password account is itself proof of email ownership.
+					isEmailVerified: true,
 				},
 			});
 		}
 
-		const payload = { sub: account.id, email: account.email, fullName: account.fullName, role: account.role };
+		const payload = { sub: account.id, email: account.email, fullName: account.fullName, role: account.role, isEmailVerified: account.isEmailVerified };
 		const access_token = this.jwtService.sign(payload);
-		const safeUser = { id: account.id, email: account.email, fullName: account.fullName, role: account.role, avatarUrl: account.avatarUrl };
+		const safeUser = { id: account.id, email: account.email, fullName: account.fullName, role: account.role, avatarUrl: account.avatarUrl, isEmailVerified: account.isEmailVerified };
 
 		return { access_token, user: safeUser };
 	}
@@ -125,5 +140,39 @@ export class AuthService {
 			data: { password, resetToken: null, resetTokenExpiry: null },
 		});
 		return { ok: true };
+	}
+
+	// Reissues a fresh JWT so the client's auth state reflects isEmailVerified
+	// immediately, without requiring a logout/login round trip.
+	async verifyEmail(token: string) {
+		const user = await this.prisma.user.findFirst({
+			where: { verifyToken: token, verifyTokenExpiry: { gt: new Date() } },
+		});
+		if (!user) throw new BadRequestException('Invalid or expired verification link');
+
+		const updated = await this.prisma.user.update({
+			where: { id: user.id },
+			data: { isEmailVerified: true, verifyToken: null, verifyTokenExpiry: null },
+		});
+
+		const payload = { sub: updated.id, email: updated.email, fullName: updated.fullName, role: updated.role, isEmailVerified: updated.isEmailVerified };
+		const access_token = this.jwtService.sign(payload);
+		const safeUser = { id: updated.id, email: updated.email, fullName: updated.fullName, role: updated.role, isEmailVerified: updated.isEmailVerified };
+		return { access_token, user: safeUser };
+	}
+
+	async resendVerification(userId: string) {
+		const user = await this.prisma.user.findUnique({ where: { id: userId } });
+		if (!user) throw new NotFoundException('User not found');
+		if (user.isEmailVerified) return { ok: true, alreadyVerified: true };
+
+		const verifyToken = randomBytes(32).toString('hex');
+		const verifyTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+		await this.prisma.user.update({
+			where: { id: userId },
+			data: { verifyToken, verifyTokenExpiry },
+		});
+		await this.email.sendEmailVerification(user.email, verifyToken);
+		return { ok: true, alreadyVerified: false };
 	}
 }
