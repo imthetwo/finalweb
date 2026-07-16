@@ -1,5 +1,4 @@
 // Shipping — mirrors the backend (orders.service): flat fee, free over the threshold.
-// Coupon discounts are applied later at checkout.
 const SHIPPING_FEE = 30000;
 const FREE_SHIPPING_OVER = 2000000;
 export const shippingFor = (subTotal: number) => (subTotal >= FREE_SHIPPING_OVER ? 0 : SHIPPING_FEE);

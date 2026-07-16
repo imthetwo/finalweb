@@ -16,10 +16,6 @@ async function main() {
     if (c.items.length) console.log(`  ${c.user.email}: ${c.items.map(i => `${i.product.name}(x${i.quantity})`).join(', ')}`);
   }
 
-  console.log('=== COUPONS ===');
-  const coupons = await prisma.coupon.findMany({ select: { code: true, usedCount: true, maxUse: true, discountPct: true, discountFixed: true, minOrderValue: true } });
-  coupons.forEach(c => console.log(`  ${c.code}: used ${c.usedCount}/${c.maxUse} | pct=${c.discountPct} fixed=${c.discountFixed} min=${c.minOrderValue}`));
-
   console.log('=== PRODUCT STOCK SANITY (compare vs paid+pending orders) ===');
   const products = await prisma.product.findMany({ select: { id: true, name: true, stock: true } });
   console.log(`  total products: ${products.length}`);

@@ -4,11 +4,10 @@ import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
 import { CartModule } from '../cart/cart.module';
 import { AuthModule } from '../auth/auth.module';
-import { CouponsModule } from '../coupons/coupons.module';
 import { AddressesModule } from '../addresses/addresses.module';
 
 @Module({
-  imports: [PrismaModule, CartModule, AuthModule, CouponsModule, AddressesModule],
+  imports: [PrismaModule, CartModule, AuthModule, AddressesModule],
   controllers: [OrdersController],
   providers: [OrdersService],
 })

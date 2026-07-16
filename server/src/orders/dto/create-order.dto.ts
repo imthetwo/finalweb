@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsIn, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsIn, IsOptional, ValidateNested } from 'class-validator';
 import { ShippingInfoDto } from './shipping-info.dto';
 
 export class CreateOrderDto {
@@ -9,10 +9,6 @@ export class CreateOrderDto {
 
   @IsIn(['COD', 'MOMO'])
   paymentMethod!: string;
-
-  @IsString()
-  @IsOptional()
-  couponCode?: string;
 
   // Frontend-driven opt-in: user checked "Save this address to my address book"
   // for a freshly-typed shipping address. Ignored when absent/false.

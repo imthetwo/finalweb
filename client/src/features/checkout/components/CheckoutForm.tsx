@@ -1,9 +1,6 @@
 "use client";
 // "use client" because: useState, useEffect, event handlers (form submit, API calls)
 
-import { Tag, X } from "lucide-react";
-
-import { formatVnd } from "@/lib/format";
 import { LoginOverlay } from "@/features/auth";
 import { AddressFields } from "@/components/ui/AddressFields";
 import { useCheckoutForm } from "../hooks/useCheckoutForm";
@@ -23,9 +20,7 @@ export function CheckoutForm() {
     guestEmail, setGuestEmail,
     paymentMethod, setPaymentMethod,
     submitting,
-    couponInput, setCouponInput,
-    couponCode, discount, couponLoading,
-    applyCoupon, removeCoupon, submit,
+    submit,
   } = useCheckoutForm();
 
   return (
@@ -146,49 +141,6 @@ export function CheckoutForm() {
                 </label>
               ))}
             </div>
-          </div>
-
-          {/* Coupon */}
-          <div className="border border-edge bg-elevated p-6">
-            <h2 className="mb-4 text-xs font-black uppercase tracking-wider text-secondary">
-              Coupon code
-            </h2>
-            {couponCode ? (
-              <div className="flex items-center justify-between border border-success/30 bg-success/5 px-4 py-2.5">
-                <div className="flex items-center gap-2 text-success">
-                  <Tag size={14} />
-                  <span className="text-body font-bold">{couponCode}</span>
-                  <span className="text-sm text-success/80">— {formatVnd(discount)} off</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={removeCoupon}
-                  className="ml-2 text-muted transition hover:text-fg"
-                  aria-label="Remove coupon"
-                >
-                  <X size={14} />
-                </button>
-              </div>
-            ) : (
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={couponInput}
-                  onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), applyCoupon())}
-                  placeholder="Enter coupon code"
-                  className="flex-1 border border-edge bg-surface px-4 py-2.5 text-sm uppercase text-fg outline-none transition-colors focus:border-brand/50 placeholder:normal-case placeholder:text-subtle"
-                />
-                <button
-                  type="button"
-                  onClick={applyCoupon}
-                  disabled={couponLoading || !couponInput.trim()}
-                  className="border border-edge px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-secondary transition hover:border-fg hover:text-fg disabled:opacity-40"
-                >
-                  {couponLoading ? "…" : "Apply"}
-                </button>
-              </div>
-            )}
           </div>
 
           {/* Submit */}

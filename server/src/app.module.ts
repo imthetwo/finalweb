@@ -13,7 +13,6 @@ import { CartModule } from './cart/cart.module';
 import { EmailModule } from './email/email.module';
 import { AiModule } from './ai/ai.module';
 import { WishlistModule } from './wishlist/wishlist.module';
-import { CouponsModule } from './coupons/coupons.module';
 import { AdminModule } from './admin/admin.module';
 import { QrModule } from './qr/qr.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
@@ -37,7 +36,6 @@ import { NewsletterModule } from './newsletter/newsletter.module';
     PaymentsModule,
     AiModule,
     WishlistModule,
-    CouponsModule,
     AdminModule,
     QrModule,
     PromotionsModule,

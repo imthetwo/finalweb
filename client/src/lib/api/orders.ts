@@ -11,7 +11,6 @@ export const guestCheckout = (data: {
   items: { productId: string; quantity: number }[];
   shippingInfo: Record<string, string>;
   paymentMethod: string;
-  couponCode?: string;
   guestEmail?: string;
 }) =>
   apiFetch<{ id: string }>("/orders/guest-checkout", {
@@ -30,7 +29,6 @@ export const trackOrder = (orderId: string, phone: string) =>
 export const createOrder = (data: {
   shippingInfo: Record<string, string>;
   paymentMethod: string;
-  couponCode?: string;
   saveAddress?: boolean;
 }) =>
   apiFetch<Order>("/orders", { method: "POST", body: JSON.stringify(data) });
@@ -48,12 +46,6 @@ export async function claimGuestOrders(token: string): Promise<{ claimed: number
   if (!res.ok) throw new Error("Failed to claim guest orders");
   return res.json() as Promise<{ claimed: number }>;
 }
-
-export const validateCoupon = (code: string, subtotal: number) =>
-  apiFetch<{ valid: boolean; discount: number; message: string; code?: string }>("/coupons/validate", {
-    method: "POST",
-    body: JSON.stringify({ code, subtotal }),
-  });
 
 export const initiatePayment = (orderId: string) =>
   apiFetch<InitiatePaymentResponse>("/payments/initiate", { method: "POST", body: JSON.stringify({ orderId }) });

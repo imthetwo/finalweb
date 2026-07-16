@@ -2,7 +2,6 @@ import { BadRequestException, Injectable, Logger, NotFoundException } from '@nes
 import { OrderStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CartService } from '../cart/cart.service';
-import { CouponsService } from '../coupons/coupons.service';
 import { EmailService } from '../email/email.service';
 import { GuestCheckoutDto } from './dto/guest-checkout.dto';
 import { ShippingInfoDto } from './dto/shipping-info.dto';
@@ -33,49 +32,21 @@ export class OrdersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cartService: CartService,
-    private readonly coupons: CouponsService,
     private readonly email: EmailService,
     private readonly addresses: AddressesService,
   ) {}
 
-  // Atomically bump a coupon's usedCount, but only while it's still under maxUse.
-  // Runs inside the checkout transaction so a maxed-out coupon rolls the order back
-  // instead of silently overshooting the limit under concurrency.
-  private async incrementCouponUsage(
-    tx: Prisma.TransactionClient,
-    code: string,
-  ): Promise<void> {
-    const affected = await tx.$executeRaw`
-      UPDATE "Coupon" SET "usedCount" = "usedCount" + 1
-      WHERE "code" = ${code.trim().toUpperCase()} AND "usedCount" < "maxUse"`;
-    if (affected === 0) {
-      throw new BadRequestException('Coupon usage limit reached.');
-    }
-  }
-
   async createFromCart(
     userId: string,
-    body: { shippingInfo: ShippingInfoDto; paymentMethod: string; couponCode?: string; saveAddress?: boolean },
+    body: { shippingInfo: ShippingInfoDto; paymentMethod: string; saveAddress?: boolean },
   ) {
     const cart = await this.cartService.getCart(userId);
     if (!cart.items.length) throw new BadRequestException('Cart is empty');
     assertMethod(body.paymentMethod);
 
     const subTotal = cart.subTotal;
-
-    // Validate coupon if provided
-    let discount = 0;
-    let appliedCoupon: string | null = null;
-    if (body.couponCode) {
-      const result = await this.coupons.validate(body.couponCode, subTotal);
-      if (result.valid) {
-        discount = result.discount;
-        appliedCoupon = result.code ?? body.couponCode;
-      }
-    }
-
     const shippingFee = shippingFor(subTotal);
-    const totalAmount = subTotal - discount + shippingFee;
+    const totalAmount = subTotal + shippingFee;
 
     const order = await this.prisma.$transaction(async (tx) => {
       for (const item of cart.items) {
@@ -91,10 +62,8 @@ export class OrdersService {
         data: {
           userId,
           subTotal,
-          discount,
           shippingFee,
           totalAmount,
-          couponCode: appliedCoupon,
           paymentMethod: body.paymentMethod,
           shippingInfo: body.shippingInfo as unknown as Prisma.InputJsonObject,
           // COD needs no payment gate, but still needs a staff Accept/Reject
@@ -116,9 +85,6 @@ export class OrdersService {
 
       const userCart = await tx.cart.findUnique({ where: { userId } });
       if (userCart) await tx.cartItem.deleteMany({ where: { cartId: userCart.id } });
-
-      // Mark coupon used inside transaction so it rolls back if order creation fails
-      if (appliedCoupon) await this.incrementCouponUsage(tx, appliedCoupon);
 
       return created;
     });
@@ -161,19 +127,8 @@ export class OrdersService {
     });
 
     const subTotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
-
-    let discount = 0;
-    let appliedCoupon: string | null = null;
-    if (body.couponCode) {
-      const result = await this.coupons.validate(body.couponCode, subTotal);
-      if (result.valid) {
-        discount = result.discount;
-        appliedCoupon = result.code ?? body.couponCode;
-      }
-    }
-
     const shippingFee = shippingFor(subTotal);
-    const totalAmount = subTotal - discount + shippingFee;
+    const totalAmount = subTotal + shippingFee;
 
     const order = await this.prisma.$transaction(async (tx) => {
       for (const item of cartItems) {
@@ -189,10 +144,8 @@ export class OrdersService {
         data: {
           guestEmail: body.guestEmail ?? undefined,
           subTotal,
-          discount,
           shippingFee,
           totalAmount,
-          couponCode: appliedCoupon,
           paymentMethod: body.paymentMethod,
           shippingInfo: body.shippingInfo as unknown as Prisma.InputJsonObject,
           // COD needs no payment gate, but still needs a staff Accept/Reject
@@ -211,8 +164,6 @@ export class OrdersService {
         },
         include: { items: ORDER_ITEMS_WITH_PRODUCT },
       });
-
-      if (appliedCoupon) await this.incrementCouponUsage(tx, appliedCoupon);
 
       return created;
     });
@@ -251,7 +202,7 @@ export class OrdersService {
       select: {
         id: true, status: true, isPaid: true, paymentMethod: true,
         subTotal: true, discount: true, shippingFee: true, totalAmount: true,
-        couponCode: true, createdAt: true, shippingInfo: true,
+        createdAt: true, shippingInfo: true,
         items: ORDER_ITEMS_WITH_PRODUCT_SUMMARY,
       },
     });

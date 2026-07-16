@@ -23,9 +23,6 @@ export class GuestCheckoutDto {
   @IsIn(['COD', 'MOMO'])
   paymentMethod!: string;
 
-  @IsString() @IsOptional()
-  couponCode?: string;
-
   @IsEmail() @IsOptional()
   guestEmail?: string;
 }

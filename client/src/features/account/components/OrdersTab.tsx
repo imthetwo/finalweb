@@ -146,14 +146,7 @@ function OrderDetailModal({
               </div>
               {order.discount > 0 && (
                 <div className="flex justify-between text-success">
-                  <span>
-                    Discount
-                    {order.couponCode && (
-                      <span className="ml-1.5 border border-success/40 bg-success/10 px-2 py-0.5 text-sm font-bold uppercase tracking-wider">
-                        {order.couponCode}
-                      </span>
-                    )}
-                  </span>
+                  <span>Discount</span>
                   <span>−{formatVnd(order.discount)}</span>
                 </div>
               )}

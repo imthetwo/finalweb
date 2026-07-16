@@ -289,7 +289,6 @@ model Order {
   discount      Float       @default(0)
   shippingFee   Float       @default(30000)
   totalAmount   Float
-  couponCode    String?
   status        OrderStatus @default(PENDING)
   paymentMethod String
   isPaid        Boolean     @default(false)
@@ -327,21 +326,6 @@ model Wishlist {
   createdAt DateTime @default(now())
 
   @@unique([userId, productId])
-}
-
-// ─── COUPON ───────────────────────────────────────────────────────────────────
-
-model Coupon {
-  id            String    @id @default(uuid())
-  code          String    @unique
-  discountPct   Float?
-  discountFixed Float?
-  minOrderValue Float     @default(0)
-  maxUse        Int       @default(1000)
-  usedCount     Int       @default(0)
-  isActive      Boolean   @default(true)
-  validUntil    DateTime?
-  createdAt     DateTime  @default(now())
 }
 
 // ─── SITE SETTINGS ────────────────────────────────────────────────────────────

@@ -129,7 +129,6 @@ export type Order = {
   discount: number;
   shippingFee: number;
   totalAmount: number;
-  couponCode: string | null;
   status: string;
   paymentMethod: string;
   isPaid: boolean;

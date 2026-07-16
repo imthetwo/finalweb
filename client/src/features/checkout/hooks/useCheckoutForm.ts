@@ -2,14 +2,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { createOrder, validateCoupon, guestCheckout, fetchAddresses, type Address } from "@/lib/api";
-import { formatVnd } from "@/lib/format";
+import { createOrder, guestCheckout, fetchAddresses, type Address } from "@/lib/api";
 import { getGuestCart, clearGuestCart } from "@/lib/guestCart";
 import { useAuthState } from "@/hooks/useAuthState";
 
-// Data/logic for the checkout screen — shipping form, payment method, coupon
-// apply/remove, and order submission for both logged-in and guest flows. The
-// component only wires these to inputs and renders.
+// Data/logic for the checkout screen — shipping form, payment method, and
+// order submission for both logged-in and guest flows. The component only
+// wires these to inputs and renders.
 export function useCheckoutForm() {
   const router = useRouter();
   // Reactive auth state (same store Header/CartView use) — flips to true the
@@ -58,38 +57,6 @@ export function useCheckoutForm() {
   function updateForm(next: typeof form) {
     setSelectedAddressId("new");
     setForm(next);
-  }
-
-  // Coupon state
-  const [couponInput, setCouponInput] = useState("");
-  const [couponCode, setCouponCode] = useState<string | null>(null);
-  const [discount, setDiscount] = useState(0);
-  const [couponLoading, setCouponLoading] = useState(false);
-
-  async function applyCoupon() {
-    const code = couponInput.trim().toUpperCase();
-    if (!code) return;
-    setCouponLoading(true);
-    try {
-      const res = await validateCoupon(code, 0);
-      if (res.valid) {
-        setCouponCode(code);
-        setDiscount(res.discount);
-        toast.success(`Coupon applied — discount: ${formatVnd(res.discount)}`);
-      } else {
-        toast.error(res.message || "Invalid coupon");
-      }
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not apply coupon");
-    } finally {
-      setCouponLoading(false);
-    }
-  }
-
-  function removeCoupon() {
-    setCouponCode(null);
-    setCouponInput("");
-    setDiscount(0);
   }
 
   function redirect(orderId: string) {
@@ -153,7 +120,6 @@ export function useCheckoutForm() {
         const order = await createOrder({
           shippingInfo,
           paymentMethod,
-          ...(couponCode ? { couponCode } : {}),
           ...(offerSaveAddress && saveAddress ? { saveAddress: true } : {}),
         });
         redirect(order.id);
@@ -171,7 +137,6 @@ export function useCheckoutForm() {
           items: guestItems,
           shippingInfo,
           paymentMethod,
-          ...(couponCode ? { couponCode } : {}),
           ...(guestEmail.trim() ? { guestEmail: guestEmail.trim() } : {}),
         });
         clearGuestCart();
@@ -199,8 +164,6 @@ export function useCheckoutForm() {
     guestEmail, setGuestEmail,
     paymentMethod, setPaymentMethod,
     submitting,
-    couponInput, setCouponInput,
-    couponCode, discount, couponLoading,
-    applyCoupon, removeCoupon, submit,
+    submit,
   };
 }
