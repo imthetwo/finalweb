@@ -15,8 +15,15 @@ if (!process.env.JWT_SECRET) {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // CLIENT_URL may be a comma-separated list (e.g. custom domain + the
+  // Vercel-assigned default URL) — avoids re-deploying every time a new
+  // preview/alias URL needs access.
+  const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:3000')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean);
   app.enableCors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: allowedOrigins,
     credentials: true,
   });
   app.useGlobalPipes(
