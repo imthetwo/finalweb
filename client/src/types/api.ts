@@ -110,6 +110,7 @@ export type UserProfile = {
   role: "USER" | "ADMIN";
   createdAt: string;
   isGoogleUser: boolean;
+  isEmailVerified: boolean;
   _count: { orders: number; wishlists: number };
 };
 

@@ -13,7 +13,7 @@ export class UsersService {
       select: {
         id: true, email: true, fullName: true, phone: true,
         avatarUrl: true, role: true, createdAt: true,
-        googleId: true,
+        googleId: true, isEmailVerified: true,
         _count: { select: { orders: true, wishlists: true } },
       },
     });
