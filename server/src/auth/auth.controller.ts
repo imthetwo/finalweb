@@ -9,6 +9,7 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { CurrentUser } from './current-user.decorator';
+import { getClientUrl } from '../common/client-url';
 
 @Controller('auth')
 export class AuthController {
@@ -34,7 +35,7 @@ export class AuthController {
 	@UseGuards(AuthGuard('google'))
 	async googleLoginCallback(@Req() req: Request, @Res() res: Response) {
 		const result = await this.authService.googleLogin(req.user as any);
-		const base = process.env.CLIENT_URL || 'http://localhost:3000';
+		const base = getClientUrl();
 		return res.redirect(`${base}/auth/callback#token=${result.access_token}`);
 	}
 

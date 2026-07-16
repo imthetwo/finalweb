@@ -3,6 +3,7 @@ import { OrderStatus } from '@prisma/client';
 import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
+import { getClientUrl } from '../common/client-url';
 import type { MomoIpnDto } from './dto/momo-ipn.dto';
 
 // ── MoMo sandbox credentials — must be set via .env ─────────────────────────
@@ -78,7 +79,7 @@ export class PaymentsService {
     // guard in markOrderPaid below for the matching backstop).
     if (order.status === OrderStatus.CANCELLED) throw new BadRequestException('This order has been cancelled and can no longer be paid.');
 
-    const clientUrl  = process.env.CLIENT_URL  || 'http://localhost:3000';
+    const clientUrl  = getClientUrl();
     const serverUrl  = process.env.API_PUBLIC_URL || 'http://localhost:3001';
 
     // MoMo orderId must be unique + ≤ 50 chars

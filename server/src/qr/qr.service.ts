@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import * as QRCode from 'qrcode';
 import { PrismaService } from '../prisma/prisma.service';
+import { getClientUrl } from '../common/client-url';
 
 @Injectable()
 export class QrService {
   constructor(private readonly prisma: PrismaService) {}
 
   private base() {
-    return process.env.CLIENT_URL || 'http://localhost:3000';
+    return getClientUrl();
   }
 
   async orderQr(orderId: string) {

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { getClientUrl } from '../common/client-url';
 
 @Injectable()
 export class EmailService {
@@ -34,7 +35,7 @@ export class EmailService {
       'Welcome to Pecify!',
       `<h2>Hi ${fullName}!</h2>
        <p>Your account has been created successfully at <strong>Pecify</strong> — where you can explore and build your custom PC.</p>
-       <p>Visit us at <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}">Pecify Store</a></p>`,
+       <p>Visit us at <a href="${getClientUrl()}">Pecify Store</a></p>`,
     );
   }
 
@@ -47,12 +48,12 @@ export class EmailService {
        <p>Order ID: <strong>${orderId.slice(0, 8).toUpperCase()}</strong></p>
        <p>Total: <strong>${fmt.format(totalAmount)}</strong></p>
        <p>We'll process your order as soon as possible.</p>
-       <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/account?tab=orders">View order</a>`,
+       <a href="${getClientUrl()}/account?tab=orders">View order</a>`,
     );
   }
 
   async sendPasswordReset(to: string, token: string) {
-    const link = `${process.env.CLIENT_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
+    const link = `${getClientUrl()}/reset-password?token=${token}`;
     await this.send(
       to,
       'Reset your Pecify password',
@@ -64,7 +65,7 @@ export class EmailService {
   }
 
   async sendEmailVerification(to: string, token: string) {
-    const link = `${process.env.CLIENT_URL || 'http://localhost:3000'}/verify-email?token=${token}`;
+    const link = `${getClientUrl()}/verify-email?token=${token}`;
     await this.send(
       to,
       'Verify your Pecify email',
@@ -88,12 +89,12 @@ export class EmailService {
       `Order update #${orderId.slice(0, 8).toUpperCase()}`,
       `<h2>Your order has been updated</h2>
        <p>New status: <strong>${statusMap[status] || status}</strong></p>
-       <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/account?tab=orders">View details</a>`,
+       <a href="${getClientUrl()}/account?tab=orders">View details</a>`,
     );
   }
 
   async sendNewsletterWelcome(to: string, unsubscribeToken: string) {
-    const base = process.env.CLIENT_URL || 'http://localhost:3000';
+    const base = getClientUrl();
     const unsubscribeLink = `${base}/newsletter/unsubscribe?token=${unsubscribeToken}`;
     await this.send(
       to,
