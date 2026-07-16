@@ -1,16 +1,7 @@
 "use client";
 
 import { VN_LOCATIONS, wardsOf } from "@/lib/vn-locations";
-
-// The 5 fields that make up a Vietnamese shipping address — shared by checkout
-// and the account Address Book so both use identical inputs/validation feel.
-export type AddressFieldsValue = {
-  recipient: string;
-  phone: string;
-  street: string;
-  ward: string;
-  city: string;
-};
+import type { AddressFieldsValue } from "@/types/api";
 
 const TEXT_FIELDS: { key: "recipient" | "phone" | "street"; label: string; placeholder: string }[] = [
   { key: "recipient", label: "Full name", placeholder: "Nguyen Van A" },
@@ -64,7 +55,7 @@ export function AddressFields({
         </select>
       </div>
 
-      {/* Ward (phường/xã) — depends on the selected city; districts no longer exist */}
+      {/* Ward — depends on the selected city; districts no longer exist */}
       <div>
         <label className={labelCls}>Ward</label>
         <select

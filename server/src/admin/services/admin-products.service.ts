@@ -2,15 +2,9 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { Prisma } from '@prisma/client';
 import * as ExcelJS from 'exceljs';
 import { PrismaService } from '../../prisma/prisma.service';
-import { ProductsService } from '../../products/products.service';
+import { ProductsService, SPEC_INCLUDE } from '../../products/products.service';
 import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import { CreateProductDto, UpdateProductDto } from '../dto/admin-product.dto';
-
-const SPEC_INCLUDE = {
-  cpuSpec: true, gpuSpec: true, ramSpec: true, motherboardSpec: true,
-  psuSpec: true, caseSpec: true, coolerSpec: true, monitorSpec: true,
-  storageSpec: true, laptopSpec: true, pcBuildSpec: true, furnitureSpec: true,
-} as const;
 
 @Injectable()
 export class AdminProductsService {
@@ -79,7 +73,7 @@ export class AdminProductsService {
         stock: get('stock') ? Number(get('stock')) : 10,
         description: get('description')?.toString().trim() || null,
         imageUrl: get('imageurl')?.toString().trim() || null,
-        // Staff import → luôn là draft, dù Excel ghi Published=Yes
+        // Staff import → always a draft, even if the Excel row says Published=Yes
         isPublished: asDraft ? false : get('published')?.toString().toLowerCase() !== 'no',
       };
 
@@ -178,12 +172,12 @@ export class AdminProductsService {
     if (!p) throw new NotFoundException('Product not found');
   }
 
-  // ── Template Excel cho nhân viên nhập liệu ───────────────
+  // ── Excel template for staff data entry ───────────────
   async exportProductTemplate(): Promise<ExcelJS.Buffer> {
     const categories = await this.prisma.category.findMany({ orderBy: { name: 'asc' } });
     const wb = new ExcelJS.Workbook();
 
-    // Sheet 1: Template nhập liệu
+    // Sheet 1: Data-entry template
     const ws = wb.addWorksheet('Import Template');
     ws.columns = [
       { header: 'Name *',         key: 'name',         width: 35 },
@@ -203,15 +197,15 @@ export class AdminProductsService {
     hRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1A1A2E' } };
     hRow.getCell(1).font = { bold: true, color: { argb: 'FF00FFFF' } };
 
-    // 2 dòng ví dụ
-    ws.addRow({ name: 'Intel Core i9-14900K', brand: 'Intel', categoryname: 'Processors (CPU)', costprice: 12000000, price: 16000000, saleprice: 15000000, stock: 10, description: 'CPU Intel thế hệ 14, 24 nhân...', imageurl: '', published: 'Yes' });
+    // 2 example rows
+    ws.addRow({ name: 'Intel Core i9-14900K', brand: 'Intel', categoryname: 'Processors (CPU)', costprice: 12000000, price: 16000000, saleprice: 15000000, stock: 10, description: '14th-gen Intel CPU, 24 cores...', imageurl: '', published: 'Yes' });
     ws.addRow({ name: 'ASUS ROG RTX 4080', brand: 'ASUS', categoryname: 'Graphics Cards (GPU)', costprice: 24000000, price: 29000000, saleprice: '', stock: 5, description: 'GPU RTX 4080 SUPER 16GB...', imageurl: '', published: 'Yes' });
     ws.getRow(2).font = { italic: true, color: { argb: 'FF888888' } };
     ws.getRow(3).font = { italic: true, color: { argb: 'FF888888' } };
 
-    // Sheet 2: Danh sách category hợp lệ
+    // Sheet 2: List of valid categories
     const catSheet = wb.addWorksheet('Valid Categories');
-    catSheet.columns = [{ header: 'Category Name (dùng chính xác)', key: 'name', width: 35 }] as ExcelJS.Column[];
+    catSheet.columns = [{ header: 'Category Name (use exact spelling)', key: 'name', width: 35 }] as ExcelJS.Column[];
     catSheet.getRow(1).font = { bold: true };
     categories.forEach((c) => catSheet.addRow({ name: c.name }));
 

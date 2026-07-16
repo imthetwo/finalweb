@@ -1,6 +1,6 @@
 import { prisma } from './prisma-client';
 
-// Tất cả categories của shop — chỉ cần name là đủ
+// All of the shop's categories — just the name is enough
 const CATEGORIES = [
   'Laptops',
   'Prebuilt PCs',
@@ -21,7 +21,7 @@ const CATEGORIES = [
 ];
 
 async function main() {
-  // Xóa theo đúng thứ tự FK
+  // Delete in the correct FK order
   await prisma.orderItem.deleteMany();
   await prisma.order.deleteMany();
   await prisma.cartItem.deleteMany();

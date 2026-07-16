@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { ImageOff } from "lucide-react";
 import Image, { type ImageProps } from "next/image";
 import { cn } from "@/lib/utils";
+import { useImageLoadState } from "@/hooks/useImageLoadState";
 
 type Props = Omit<ImageProps, "fill" | "onLoad" | "onError">;
 
@@ -13,7 +13,8 @@ type Props = Omit<ImageProps, "fill" | "onLoad" | "onError">;
 // full-page loading style instead of introducing a new one. Falls back to a
 // static "image unavailable" state on error instead of shimmering forever.
 export function ProductImage({ className, ...props }: Props) {
-  const [status, setStatus] = useState<"loading" | "loaded" | "error">("loading");
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { status, onLoad, onError } = useImageLoadState();
 
   if (status === "error") {
     return (
@@ -34,8 +35,8 @@ export function ProductImage({ className, ...props }: Props) {
       <Image
         {...props}
         fill
-        onLoad={() => setStatus("loaded")}
-        onError={() => setStatus("error")}
+        onLoad={onLoad}
+        onError={onError}
         className={cn("transition-opacity duration-300", status === "loaded" ? "opacity-100" : "opacity-0", className)}
       />
     </>

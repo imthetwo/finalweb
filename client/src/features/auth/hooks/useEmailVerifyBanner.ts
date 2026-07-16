@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { apiFetch } from "@/lib/api";
+import { resendVerification as resendVerificationEmail } from "@/lib/api/auth";
 import { useAuthState } from "@/hooks/useAuthState";
 
 const DISMISS_KEY = "email-verify-banner-dismissed";
@@ -26,9 +26,7 @@ export function useEmailVerifyBanner() {
   async function resend() {
     setSending(true);
     try {
-      const res = await apiFetch<{ ok: boolean; alreadyVerified: boolean }>("/auth/resend-verification", {
-        method: "POST",
-      });
+      const res = await resendVerificationEmail();
       toast.success(res.alreadyVerified ? "Your email is already verified" : "Verification email sent — check your inbox");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to resend verification email");

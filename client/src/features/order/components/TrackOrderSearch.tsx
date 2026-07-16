@@ -1,5 +1,5 @@
 "use client";
-// "use client" vì: useState (form fields), event handlers (form submit)
+// "use client" because: useState (form fields), event handlers (form submit)
 
 import Link from "next/link";
 import { Search } from "lucide-react";

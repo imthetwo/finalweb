@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { apiFetch } from "@/lib/api";
+import { forgotPassword } from "@/lib/api/auth";
 
 type Step = "form" | "sent";
 
@@ -17,10 +17,7 @@ export function useForgotPasswordForm() {
     if (!email.trim()) return;
     setLoading(true);
     try {
-      await apiFetch("/auth/forgot-password", {
-        method: "POST",
-        body: JSON.stringify({ email }),
-      });
+      await forgotPassword(email);
       setStep("sent");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");

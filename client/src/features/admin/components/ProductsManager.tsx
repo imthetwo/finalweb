@@ -1,5 +1,5 @@
 "use client";
-// "use client" vì: useState, useCallback, useEffect, event handlers (CRUD, pagination)
+// "use client" because: useState, useCallback, useEffect, event handlers (CRUD, pagination)
 
 import Image from "next/image";
 import { Plus, Pencil, Trash2, Search, Upload, Download, CheckCircle, FileSpreadsheet } from "lucide-react";
@@ -110,7 +110,7 @@ export function ProductsManager() {
                       <span className="text-2xs font-bold uppercase text-success">Live</span>
                     ) : (
                       <span className="inline-block rounded bg-yellow-900/30 px-2 py-0.5 text-2xs font-bold uppercase text-warning">
-                        Draft · Chờ duyệt
+                        Draft · Awaiting approval
                       </span>
                     )}
                   </td>

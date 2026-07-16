@@ -20,7 +20,7 @@ export type ProductListItem = {
   category?: { id: string; name: string };
 };
 
-// ProductDetail — đầy đủ hơn ProductListItem, dùng cho trang /product/[id]
+// ProductDetail — more complete than ProductListItem, used for the /product/[id] page
 export type ProductDetail = ProductListItem & ProductSpecs & {
   description: string | null;
 };
@@ -138,6 +138,25 @@ export type Order = {
   items: OrderItem[];
 };
 
+// ─── Payments & QR ────────────────────────────────────────────────────────────
+
+export type InitiatePaymentResponse = {
+  orderId: string;
+  amount: number;
+  payUrl: string | null;
+  qrCodeUrl: string | null;
+  source: "momo" | "simulated";
+};
+
+export type PaymentStatus = {
+  orderId: string;
+  isPaid: boolean;
+  status: string;
+  totalAmount: number;
+};
+
+export type OrderQr = { dataUrl: string; status: string; total: number };
+
 // ─── Address book ─────────────────────────────────────────────────────────────
 
 export type Address = {
@@ -160,6 +179,16 @@ export type AddressInput = {
   ward: string;
   city: string;
   isDefault?: boolean;
+};
+
+// The 5 fields that make up a Vietnamese shipping address — shared by checkout
+// and the account Address Book so both use identical inputs/validation feel.
+export type AddressFieldsValue = {
+  recipient: string;
+  phone: string;
+  street: string;
+  ward: string;
+  city: string;
 };
 
 // ─── Wishlist ─────────────────────────────────────────────────────────────────
@@ -224,6 +253,18 @@ export type AdminOrder = {
   items: Array<{ id: string; quantity: number; product: { name: string } }>;
 };
 
+export type UserRole = "USER" | "STAFF" | "ADMIN";
+
+export type AdminUser = {
+  id: string;
+  email: string;
+  fullName: string;
+  role: UserRole;
+  isActive: boolean;
+  createdAt: string;
+  _count: { orders: number };
+};
+
 // ─── Promotions ───────────────────────────────────────────────────────────────
 
 export type Promotion = {
@@ -245,4 +286,17 @@ export type PromotionInput = {
   endsAt?: string;
   isActive?: boolean;
   sortOrder?: number;
+};
+
+// ─── AI Consultant ──────────────────────────────────────────────────────────────
+
+export type ChatTurn = { role: "user" | "model"; text: string };
+export type ChatResponse = { reply: string; source: "gemini" | "fallback" };
+
+// ─── Newsletter ───────────────────────────────────────────────────────────────
+
+export type SubscribeResponse = {
+  ok: boolean;
+  message?: string;
+  alreadySubscribed?: boolean;
 };

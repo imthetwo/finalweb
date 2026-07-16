@@ -1,26 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
-import { usePathname, useSearchParams } from "next/navigation";
 
 import { formatVnd } from "@/lib/format";
 import { CATEGORY_NAV } from "@/lib/category-nav";
-
-// Sub-type filters — a small in-page selector shown only while browsing the
-// matching category, mirroring the corresponding header mega-menu links and
-// getShopPage's query-param handling. Each one uses a real DB field
-// (PcBuildSpec.buildType / StorageSpec.storageType / CoolerSpec.coolerType /
-// FurnitureSpec.furnitureType), never a fake/decorative split.
-type SubTypeOption = { label: string; value?: string };
-type SubTypeFilter = {
-  matchPath: string;
-  basePath: string;
-  title: string;
-  param: string;
-  options: SubTypeOption[];
-};
+import { useFilterSidebar } from "../hooks/useFilterSidebar";
+import { useCollapsible } from "../hooks/useCollapsible";
+import type { SubTypeFilter, FilterSidebarProps } from "../types";
 
 const SUB_TYPE_FILTERS: SubTypeFilter[] = [
   {
@@ -80,12 +67,13 @@ function CollapsibleFilter({
   children: React.ReactNode;
   defaultOpen?: boolean;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { open, toggle } = useCollapsible(defaultOpen);
   return (
     <div className="border-t border-edge py-3">
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={toggle}
         className="flex w-full items-center justify-between text-sm font-bold uppercase tracking-wider text-fg"
       >
         {title}
@@ -96,17 +84,9 @@ function CollapsibleFilter({
   );
 }
 
-type Props = {
-  maxPrice: number | null;
-  priceMax: number;
-  onMaxPriceChange: (v: number | null) => void;
-};
-
-export function FilterSidebar({ maxPrice, priceMax, onMaxPriceChange }: Props) {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const subTypeFilter = SUB_TYPE_FILTERS.find((f) => pathname.startsWith(f.matchPath));
-  const activeSubType = subTypeFilter ? searchParams.get(subTypeFilter.param) : null;
+export function FilterSidebar({ maxPrice, priceMax, onMaxPriceChange }: FilterSidebarProps) {
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { pathname, subTypeFilter, activeSubType } = useFilterSidebar(SUB_TYPE_FILTERS);
 
   return (
     <aside className="w-full shrink-0 lg:w-64">

@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { useAuthState } from "@/hooks/useAuthState";
-
-type AuthDialog = "none" | "login" | "register";
+import type { AuthDialog } from "../types";
 
 // Data/logic for the header user menu — auth state, dropdown and auth-dialog
 // open state, and close-on-outside-click. The component only renders.

@@ -35,7 +35,7 @@ async function main() {
       continue;
     }
 
-    // Build spec relation nếu có
+    // Build the spec relation if present
     const specRelation: Record<string, unknown> = {};
     if (p.spec) {
       const { type, ...fields } = p.spec;

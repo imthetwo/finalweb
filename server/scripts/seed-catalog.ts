@@ -1,6 +1,6 @@
 /**
- * Seed Category + Product từ server/local_images/*
- * Chạy: npx ts-node scripts/seed-catalog.ts
+ * Seed Category + Product from server/local_images/*
+ * Run: npx ts-node scripts/seed-catalog.ts
  */
 import * as fs from 'fs';
 import * as path from 'path';

@@ -2,64 +2,12 @@
 
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
 
-import { fetchPromotions } from "@/lib/api";
-
-const FALLBACK_PROMOS = [
-  {
-    text: "FREE SHIPPING ON ORDERS OVER 2.000.000₫",
-    action: "SHOP NOW",
-    href: "/components/processors",
-  },
-  {
-    text: "RTX 5080 & INTEL CORE ULTRA 200 — NOW IN STOCK",
-    action: "DISCOVER",
-    href: "/components/graphics-cards",
-  },
-  {
-    text: "CUSTOM PC BUILDER: CONFIGURE YOUR DREAM RIG",
-    action: "BUILD NOW",
-    href: "/custom-lab",
-  },
-  {
-    text: "2-YEAR WARRANTY ON ALL PRODUCTS",
-    action: "LEARN MORE",
-    href: "/warranty",
-  },
-];
+import { usePromoBar } from "./hooks/usePromoBar";
 
 export default function PromoBar() {
-  const [idx, setIdx] = useState(0);
-  const [promos, setPromos] = useState(FALLBACK_PROMOS);
-
-  useEffect(() => {
-    fetchPromotions()
-      .then((data) => {
-        if (data.length > 0) {
-          setPromos(
-            data.map((p) => ({
-              text: p.title,
-              action: p.actionLabel || "VIEW",
-              href: p.href || "/",
-            })),
-          );
-        }
-      })
-      .catch(() => {});
-  }, []);
-
-  const next = useCallback(() => setIdx((i) => (i + 1) % promos.length), [promos.length]);
-  const prev = useCallback(() => setIdx((i) => (i - 1 + promos.length) % promos.length), [promos.length]);
-
-  useEffect(() => {
-    setIdx(0);
-  }, [promos]);
-
-  useEffect(() => {
-    const t = setInterval(next, 5000);
-    return () => clearInterval(t);
-  }, [next]);
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { idx, promos, next, prev } = usePromoBar();
 
   return (
     <div className="h-9 w-full select-none bg-elevated">

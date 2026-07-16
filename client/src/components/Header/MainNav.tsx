@@ -2,15 +2,13 @@
 
 import Link from "next/link";
 import { Menu } from "lucide-react";
-import { useState } from "react";
 
 import CategoryMenu from "@/components/Header/CategoryMenu";
 import Logo from "@/components/Header/Logo";
 import { CartIcon } from "@/components/Header/CartIcon";
 import { SearchBar } from "@/components/Header/SearchBar";
 import { UserMenu } from "@/components/Header/UserMenu";
-import { useCartCount } from "@/hooks/useCartCount";
-import { useAuthState } from "@/hooks/useAuthState";
+import { useMainNav } from "@/components/Header/hooks/useMainNav";
 import { Button } from "@/components/ui/button";
 import {
   Sheet, SheetBody, SheetClose, SheetContent,
@@ -29,9 +27,8 @@ const MOBILE_LINKS = [
 ];
 
 export default function MainNav() {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const cartCount = useCartCount();
-  const { user, loaded } = useAuthState();
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { searchOpen, setSearchOpen, cartCount, user, loaded } = useMainNav();
 
   return (
     <nav className="w-full select-none bg-base border-b border-edge">

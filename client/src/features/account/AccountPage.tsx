@@ -1,14 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { LogOut, Shield } from "lucide-react";
 
-import { fetchProfile, type UserProfile } from "@/lib/api";
-import { getToken } from "@/lib/auth";
-import { useAuthState } from "@/hooks/useAuthState";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAccountPage } from "./hooks/useAccountPage";
 import { ProfileTab } from "./components/ProfileTab";
 import OrdersTab from "./components/OrdersTab";
 import WishlistTab from "./components/WishlistTab";
@@ -18,33 +14,9 @@ function initials(name: string) {
   return name.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
-// The only tabs AccountPage actually renders — anything else (e.g. a future
-// "builds" tab requested via ?tab=builds before that feature exists) falls
-// back to Profile instead of silently rendering a blank tab area.
-const VALID_TABS = ["profile", "orders", "wishlist", "addresses"] as const;
-
 export default function AccountPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { logout } = useAuthState();
-
-  const requestedTab = searchParams.get("tab");
-  const initialTab = (VALID_TABS as readonly string[]).includes(requestedTab ?? "")
-    ? requestedTab!
-    : "profile";
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!getToken()) {
-      router.replace("/login");
-      return;
-    }
-    fetchProfile()
-      .then(setProfile)
-      .catch(() => router.replace("/login"))
-      .finally(() => setLoading(false));
-  }, [router]);
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { profile, setProfile, loading, initialTab, logout } = useAccountPage();
 
   if (loading) {
     return <div className="flex min-h-[60vh] items-center justify-center text-muted">Loading account…</div>;

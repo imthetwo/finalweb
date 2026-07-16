@@ -12,7 +12,7 @@ export class ChatTurnDto {
 
 export class ChatDto {
   @IsString()
-  @MaxLength(2000, { message: 'Câu hỏi quá dài (tối đa 2000 ký tự)' })
+  @MaxLength(2000, { message: 'Question is too long (max 2000 characters)' })
   message!: string;
 
   @IsOptional()

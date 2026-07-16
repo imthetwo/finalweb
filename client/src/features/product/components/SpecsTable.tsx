@@ -3,14 +3,13 @@ import type {
   PsuSpec, CaseSpec, CoolerSpec, MonitorSpec, StorageSpec, LaptopSpec,
   PcBuildSpec, FurnitureSpec,
 } from "@/types/api";
+import type { SpecRow, SpecsTableProps } from "../types";
 
-type Row = { label: string; value: string };
-
-function rows(entries: (Row | null | undefined | false | "" | 0)[]): Row[] {
-  return entries.filter(Boolean) as Row[];
+function rows(entries: (SpecRow | null | undefined | false | "" | 0)[]): SpecRow[] {
+  return entries.filter(Boolean) as SpecRow[];
 }
 
-function cpuRows(s: CpuSpec): Row[] {
+function cpuSpecRows(s: CpuSpec): SpecRow[] {
   return rows([
     { label: "Socket",          value: s.socket },
     { label: "Cores / Threads", value: `${s.cores} cores / ${s.threads} threads` },
@@ -22,7 +21,7 @@ function cpuRows(s: CpuSpec): Row[] {
   ]);
 }
 
-function gpuRows(s: GpuSpec): Row[] {
+function gpuSpecRows(s: GpuSpec): SpecRow[] {
   return rows([
     { label: "VRAM",        value: `${s.vramGb} GB${s.memType ? ` ${s.memType}` : ""}` },
     s.boostClockMhz && { label: "Boost Clock",  value: `${s.boostClockMhz} MHz` },
@@ -32,7 +31,7 @@ function gpuRows(s: GpuSpec): Row[] {
   ]);
 }
 
-function ramRows(s: RamSpec): Row[] {
+function ramSpecRows(s: RamSpec): SpecRow[] {
   return rows([
     { label: "Capacity",    value: `${s.capacityGb} GB${s.kit ? ` (${s.kit})` : ""}` },
     { label: "Generation",  value: s.generation },
@@ -41,7 +40,7 @@ function ramRows(s: RamSpec): Row[] {
   ]);
 }
 
-function motherboardRows(s: MotherboardSpec): Row[] {
+function motherboardSpecRows(s: MotherboardSpec): SpecRow[] {
   return rows([
     { label: "Socket",      value: s.socket },
     s.chipset   && { label: "Chipset",     value: s.chipset },
@@ -52,7 +51,7 @@ function motherboardRows(s: MotherboardSpec): Row[] {
   ]);
 }
 
-function psuRows(s: PsuSpec): Row[] {
+function psuSpecRows(s: PsuSpec): SpecRow[] {
   return rows([
     { label: "Wattage",    value: `${s.wattage}W` },
     s.efficiency && { label: "Efficiency", value: s.efficiency },
@@ -60,7 +59,7 @@ function psuRows(s: PsuSpec): Row[] {
   ]);
 }
 
-function caseRows(s: CaseSpec): Row[] {
+function caseSpecRows(s: CaseSpec): SpecRow[] {
   return rows([
     { label: "Form Factor Support", value: s.formFactor },
     s.maxGpuLengthMm  && { label: "Max GPU Length",    value: `${s.maxGpuLengthMm} mm` },
@@ -69,7 +68,7 @@ function caseRows(s: CaseSpec): Row[] {
   ]);
 }
 
-function coolerRows(s: CoolerSpec): Row[] {
+function coolerSpecRows(s: CoolerSpec): SpecRow[] {
   return rows([
     { label: "Type",        value: s.coolerType === "AIO" ? "All-in-One Liquid Cooler" : `${s.coolerType} Air Cooler` },
     s.radiatorSizeMm  && { label: "Radiator",         value: `${s.radiatorSizeMm} mm` },
@@ -78,7 +77,7 @@ function coolerRows(s: CoolerSpec): Row[] {
   ]);
 }
 
-function monitorRows(s: MonitorSpec): Row[] {
+function monitorSpecRows(s: MonitorSpec): SpecRow[] {
   return rows([
     { label: "Size",          value: `${s.sizeIn}"` },
     { label: "Resolution",    value: s.resolution },
@@ -89,7 +88,7 @@ function monitorRows(s: MonitorSpec): Row[] {
   ]);
 }
 
-function storageRows(s: StorageSpec): Row[] {
+function storageSpecRows(s: StorageSpec): SpecRow[] {
   const cap = s.capacityGb >= 1000 ? `${s.capacityGb / 1000} TB` : `${s.capacityGb} GB`;
   return rows([
     { label: "Capacity",         value: cap },
@@ -100,7 +99,7 @@ function storageRows(s: StorageSpec): Row[] {
   ]);
 }
 
-function laptopRows(s: LaptopSpec): Row[] {
+function laptopSpecRows(s: LaptopSpec): SpecRow[] {
   const storage = s.storageGb >= 1000 ? `${s.storageGb / 1000} TB` : `${s.storageGb} GB`;
   return rows([
     { label: "Processor",  value: s.cpu },
@@ -118,7 +117,7 @@ const BUILD_TYPE_LABEL: Record<PcBuildSpec["buildType"], string> = {
   MINI_SFF: "Mini (SFF)",
 };
 
-function pcBuildRows(s: PcBuildSpec): Row[] {
+function pcBuildSpecRows(s: PcBuildSpec): SpecRow[] {
   return rows([{ label: "Build Type", value: BUILD_TYPE_LABEL[s.buildType] }]);
 }
 
@@ -127,43 +126,28 @@ const FURNITURE_TYPE_LABEL: Record<FurnitureSpec["furnitureType"], string> = {
   DESK: "Gaming Desk",
 };
 
-function furnitureRows(s: FurnitureSpec): Row[] {
+function furnitureSpecRows(s: FurnitureSpec): SpecRow[] {
   return rows([{ label: "Furniture Type", value: FURNITURE_TYPE_LABEL[s.furnitureType] }]);
 }
-
-type Props = {
-  cpuSpec?: CpuSpec | null;
-  gpuSpec?: GpuSpec | null;
-  ramSpec?: RamSpec | null;
-  motherboardSpec?: MotherboardSpec | null;
-  psuSpec?: PsuSpec | null;
-  caseSpec?: CaseSpec | null;
-  coolerSpec?: CoolerSpec | null;
-  monitorSpec?: MonitorSpec | null;
-  storageSpec?: StorageSpec | null;
-  laptopSpec?: LaptopSpec | null;
-  pcBuildSpec?: PcBuildSpec | null;
-  furnitureSpec?: FurnitureSpec | null;
-};
 
 // A single product can carry multiple spec relations at once (e.g. a Prebuilt
 // PC has pcBuildSpec + cpuSpec + gpuSpec + ramSpec + storageSpec together) —
 // combine every section that's present into one table instead of only
 // showing the first match.
-export function SpecsTable(props: Props) {
-  const specRows: Row[] = [
-    ...(props.pcBuildSpec ? pcBuildRows(props.pcBuildSpec) : []),
-    ...(props.cpuSpec ? cpuRows(props.cpuSpec) : []),
-    ...(props.gpuSpec ? gpuRows(props.gpuSpec) : []),
-    ...(props.ramSpec ? ramRows(props.ramSpec) : []),
-    ...(props.storageSpec ? storageRows(props.storageSpec) : []),
-    ...(props.motherboardSpec ? motherboardRows(props.motherboardSpec) : []),
-    ...(props.psuSpec ? psuRows(props.psuSpec) : []),
-    ...(props.caseSpec ? caseRows(props.caseSpec) : []),
-    ...(props.coolerSpec ? coolerRows(props.coolerSpec) : []),
-    ...(props.monitorSpec ? monitorRows(props.monitorSpec) : []),
-    ...(props.laptopSpec ? laptopRows(props.laptopSpec) : []),
-    ...(props.furnitureSpec ? furnitureRows(props.furnitureSpec) : []),
+export function SpecsTable(props: SpecsTableProps) {
+  const specRows: SpecRow[] = [
+    ...(props.pcBuildSpec ? pcBuildSpecRows(props.pcBuildSpec) : []),
+    ...(props.cpuSpec ? cpuSpecRows(props.cpuSpec) : []),
+    ...(props.gpuSpec ? gpuSpecRows(props.gpuSpec) : []),
+    ...(props.ramSpec ? ramSpecRows(props.ramSpec) : []),
+    ...(props.storageSpec ? storageSpecRows(props.storageSpec) : []),
+    ...(props.motherboardSpec ? motherboardSpecRows(props.motherboardSpec) : []),
+    ...(props.psuSpec ? psuSpecRows(props.psuSpec) : []),
+    ...(props.caseSpec ? caseSpecRows(props.caseSpec) : []),
+    ...(props.coolerSpec ? coolerSpecRows(props.coolerSpec) : []),
+    ...(props.monitorSpec ? monitorSpecRows(props.monitorSpec) : []),
+    ...(props.laptopSpec ? laptopSpecRows(props.laptopSpec) : []),
+    ...(props.furnitureSpec ? furnitureSpecRows(props.furnitureSpec) : []),
   ];
 
   if (specRows.length === 0) return null;

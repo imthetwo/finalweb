@@ -1,4 +1,4 @@
-// GET /products + /categories — dùng cho (shop)/shop/[...slug]/page.tsx
+// GET /products + /categories — used by (shop)/shop/[...slug]/page.tsx
 import { fetchCategories, fetchProducts } from "@/lib/api";
 import { CATEGORY_NAV } from "@/lib/category-nav";
 

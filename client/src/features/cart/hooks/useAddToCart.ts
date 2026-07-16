@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { apiFetch } from "@/lib/api";
+import { addCartItem } from "@/lib/api/cart";
 import { addToGuestCart, getGuestCart } from "@/lib/guestCart";
 import { useAuthStore } from "@/store/authStore";
 
@@ -33,10 +33,7 @@ export function useAddToCart(productId: string) {
     setLoading(true);
     try {
       if (authed) {
-        await apiFetch("/cart/items", {
-          method: "POST",
-          body: JSON.stringify({ productId, quantity: 1 }),
-        });
+        await addCartItem(productId);
       } else {
         addToGuestCart(productId);
       }

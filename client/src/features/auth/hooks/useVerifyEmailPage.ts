@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-import { apiFetch } from "@/lib/api";
+import { verifyEmail } from "@/lib/api/auth";
 import { saveToken } from "@/lib/auth";
 
 type Status = "verifying" | "success" | "error";
@@ -16,10 +16,7 @@ export function useVerifyEmailPage() {
 
   useEffect(() => {
     if (!token) return;
-    apiFetch<{ access_token: string }>("/auth/verify-email", {
-      method: "POST",
-      body: JSON.stringify({ token }),
-    })
+    verifyEmail(token)
       .then((res) => {
         // Reissues the JWT so isEmailVerified updates immediately, without
         // requiring the user to log out and back in.

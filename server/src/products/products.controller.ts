@@ -1,5 +1,18 @@
 import { Controller, Get, Header, Param, Query } from '@nestjs/common';
+import { Type } from 'class-transformer';
+import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { ProductsService } from './products.service';
+
+class ListProductsQueryDto {
+  @IsOptional() @IsString() categoryId?: string;
+  @IsOptional() @IsString() search?: string;
+  @IsOptional() @IsString() buildType?: string;
+  @IsOptional() @IsString() storageType?: string;
+  @IsOptional() @IsString() coolerType?: string;
+  @IsOptional() @IsString() furnitureType?: string;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) page?: number;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(100) limit?: number;
+}
 
 @Controller('products')
 export class ProductsController {
@@ -7,25 +20,11 @@ export class ProductsController {
 
   @Get()
   @Header('Cache-Control', 'public, max-age=30, stale-while-revalidate=60')
-  list(
-    @Query('categoryId') categoryId?: string,
-    @Query('search') search?: string,
-    @Query('buildType') buildType?: string,
-    @Query('storageType') storageType?: string,
-    @Query('coolerType') coolerType?: string,
-    @Query('furnitureType') furnitureType?: string,
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ) {
+  list(@Query() query: ListProductsQueryDto) {
     return this.productsService.findAll({
-      categoryId,
-      search,
-      buildType,
-      storageType,
-      coolerType,
-      furnitureType,
-      page: page ? parseInt(page, 10) : 1,
-      limit: limit ? parseInt(limit, 10) : 24,
+      ...query,
+      page: query.page ?? 1,
+      limit: query.limit ?? 24,
     });
   }
 

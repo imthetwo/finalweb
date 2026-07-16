@@ -15,13 +15,13 @@ class UpdateSettingDto {
 export class SettingsController {
   constructor(private readonly settings: SettingsService) {}
 
-  // Public — HeroSection Server Component đọc
+  // Public — read by HeroSection
   @Get(':key')
   get(@Param('key') key: string) {
     return this.settings.get(key).then((value) => ({ key, value }));
   }
 
-  // Admin only — cập nhật giá trị
+  // Admin only
   @Patch(':key')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)

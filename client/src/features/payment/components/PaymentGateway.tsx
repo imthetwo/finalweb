@@ -1,5 +1,5 @@
 "use client";
-// "use client" vì: useState, useEffect (polling), useParams, useSearchParams, event handlers
+// "use client" because: useState, useEffect (polling), useParams, useSearchParams, event handlers
 
 import { XCircle, RefreshCw, ExternalLink } from "lucide-react";
 

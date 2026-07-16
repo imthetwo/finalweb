@@ -1,4 +1,4 @@
-// GET /settings/:key  — public, dùng trong Server Components
+// GET /settings/:key  — public, used in Server Components
 import { apiFetch, serverApiUrl } from "./client";
 
 export async function getSetting(key: string): Promise<string | null> {

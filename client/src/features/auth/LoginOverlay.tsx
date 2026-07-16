@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import type { ReactNode } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
@@ -11,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getApiUrl } from "@/lib/api/client";
-import { useLoginForm } from "./hooks/useLoginForm";
+import { useLoginOverlay } from "./hooks/useLoginOverlay";
 
 type LoginOverlayProps = {
   triggerButton?: ReactNode;
@@ -20,27 +19,15 @@ type LoginOverlayProps = {
   onSwitchToRegister?: () => void;
 };
 
-export function LoginOverlay({ triggerButton, open: controlledOpen, onOpenChange: controlledOnOpenChange, onSwitchToRegister }: LoginOverlayProps) {
-  const [internalOpen, setInternalOpen] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
-  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
-  const setOpen = controlledOnOpenChange ?? setInternalOpen;
-
-  const { form, submitError, onSubmit, clearError } = useLoginForm(() => {
-    setShowPassword(false);
-    setOpen(false);
-  });
-
-  const { register, formState: { errors, isSubmitting } } = form;
-
-  const handleOpenChange = (nextOpen: boolean) => {
-    setOpen(nextOpen);
-    if (!nextOpen) { clearError(); setShowPassword(false); form.reset(); }
-  };
+export function LoginOverlay({ triggerButton, open, onOpenChange, onSwitchToRegister }: LoginOverlayProps) {
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const {
+    open: isOpen, handleOpenChange, showPassword, togglePassword,
+    register, errors, isSubmitting, submitError, onSubmit,
+  } = useLoginOverlay({ open, onOpenChange });
 
   return (
-    <Dialog modal={false} open={open} onOpenChange={handleOpenChange}>
+    <Dialog modal={false} open={isOpen} onOpenChange={handleOpenChange}>
       {triggerButton && <DialogTrigger asChild>{triggerButton}</DialogTrigger>}
 
       <DialogContent className="w-190 border-none rounded-none p-0 shadow-2xl bg-white text-black">
@@ -77,7 +64,7 @@ export function LoginOverlay({ triggerButton, open: controlledOpen, onOpenChange
               className="rounded-none border-zinc-300 bg-white pr-10 text-black placeholder:text-secondary focus:border-black focus:ring-0"
               {...register("password")} />
             <button type="button" className="absolute right-3 top-9 text-secondary hover:text-zinc-700"
-              onClick={() => setShowPassword((v) => !v)}>
+              onClick={togglePassword}>
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
             {errors.password?.message && <p className="text-xs text-destructive">{errors.password.message}</p>}

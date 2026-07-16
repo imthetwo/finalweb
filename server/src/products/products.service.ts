@@ -2,7 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { FurnitureType, PcBuildType } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
-const SPEC_INCLUDE = {
+// Exported so AdminProductsService (which needs the same shape for its own
+// list/create/update/export queries) doesn't redeclare it.
+export const SPEC_INCLUDE = {
   cpuSpec: true,
   gpuSpec: true,
   ramSpec: true,
@@ -68,13 +70,13 @@ export class ProductsService {
     if (params.search) {
       const q = params.search;
       where.OR = [
-        // Tên sản phẩm bắt đầu bằng từ khóa
+        // Product name starts with the keyword
         { name:  { startsWith: q, mode: 'insensitive' } },
-        // Từ trong tên bắt đầu bằng từ khóa (có khoảng trắng trước)
+        // A word within the name starts with the keyword (preceded by a space)
         { name:  { contains: ` ${q}`, mode: 'insensitive' } },
-        // Thương hiệu khớp: "intel", "amd", "corsair"
+        // Brand matches: "intel", "amd", "corsair"
         { brand: { startsWith: q, mode: 'insensitive' } },
-        // Category bắt đầu bằng từ khóa: "ca" → "Case Fans" ✅, "pc" → "PC Cases" ✅
+        // Category starts with the keyword: "ca" → "Case Fans" ✅, "pc" → "PC Cases" ✅
         { category: { name: { startsWith: q, mode: 'insensitive' } } },
       ];
     }
@@ -119,9 +121,7 @@ export class ProductsService {
       include: {
         category: { select: { id: true, name: true } },
         // Only load specs that exist (Prisma skips nulls automatically)
-        cpuSpec: true, gpuSpec: true, ramSpec: true, motherboardSpec: true,
-        psuSpec: true, caseSpec: true, coolerSpec: true, monitorSpec: true,
-        storageSpec: true, laptopSpec: true, pcBuildSpec: true, furnitureSpec: true,
+        ...SPEC_INCLUDE,
       },
     });
     if (!product) throw new NotFoundException('Product not found');

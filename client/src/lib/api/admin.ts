@@ -1,5 +1,5 @@
 import type {
-  AdminStats, AdminProduct, AdminOrder, Promotion,
+  AdminStats, AdminProduct, AdminOrder, AdminUser, UserRole, Promotion,
   ProductInput, PromotionInput, Paginated,
 } from "@/types/api";
 import { apiFetch, getApiUrl, getToken } from "./client";
@@ -151,12 +151,10 @@ export async function downloadOrdersExcel() {
 // ── Users ─────────────────────────────────────────────────────────────────────
 
 export const fetchAdminUsers = (page = 1) =>
-  apiFetch<{ id: string; email: string; fullName: string; role: string; createdAt: string }[]>(
-    `/admin/users?page=${page}`,
-  );
+  apiFetch<AdminUser[]>(`/admin/users?page=${page}`);
 
 // PATCH /admin/users/:id/role — ADMIN ONLY
-export const updateAdminUserRole = (id: string, role: "USER" | "STAFF" | "ADMIN") =>
+export const updateAdminUserRole = (id: string, role: UserRole) =>
   apiFetch<{ id: string; email: string; fullName: string; role: string }>(
     `/admin/users/${id}/role`,
     { method: "PATCH", body: JSON.stringify({ role }) },

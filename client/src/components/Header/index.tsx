@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 import MainNav from "./MainNav";
@@ -8,8 +7,6 @@ import PromoBar from "./PromoBar";
 
 export default function Header() {
   const pathname = usePathname();
-
-  useEffect(() => {}, [pathname]);
 
   if (pathname.startsWith("/custom-lab")) {
     return null;

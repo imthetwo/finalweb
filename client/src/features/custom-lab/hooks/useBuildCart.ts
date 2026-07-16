@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { apiFetch } from "@/lib/api/client";
+import { addCartItem } from "@/lib/api/cart";
 import { getToken } from "@/lib/auth";
 import { addToGuestCart, getGuestCart } from "@/lib/guestCart";
 import { useBuilderStore } from "@/store/builderStore";
@@ -33,10 +33,10 @@ export function useBuildCart() {
         // in the cart — quantity only changes from the cart page). Use
         // allSettled so one "already in cart" rejection doesn't sink the
         // whole batch and mislabel parts that really did get added.
-        const results = await Promise.allSettled(items.map((p) =>
-          apiFetch("/cart/items", { method: "POST", body: JSON.stringify({ productId: p.id, quantity: 1 }) })
-        ));
-        for (const r of results) r.status === "fulfilled" ? added++ : alreadyInCart++;
+        const results = await Promise.allSettled(items.map((p) => addCartItem(p.id)));
+        for (const r of results) {
+          if (r.status === "fulfilled") added++; else alreadyInCart++;
+        }
       } else {
         // Same one-shot rule for the guest cart — re-adding an already-present
         // part must not keep bumping its quantity past the intended cap.

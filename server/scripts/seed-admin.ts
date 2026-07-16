@@ -5,7 +5,7 @@ import { prisma } from './prisma-client';
 async function main() {
   const password = await bcrypt.hash('admin123', 10);
 
-  // ── 1. Admin account — toàn quyền ──
+  // ── 1. Admin account — full access ──
   await prisma.user.upsert({
     where: { email: 'admin@pecify.tech' },
     create: { email: 'admin@pecify.tech', password, fullName: 'Pecify Admin', role: Role.ADMIN },
@@ -13,7 +13,7 @@ async function main() {
   });
   console.log(`✅ Admin: admin@pecify.tech / admin123`);
 
-  // ── 2. Staff account — nhập liệu, xem kho, xem giá ──
+  // ── 2. Staff account — data entry, view inventory, view prices ──
   await prisma.user.upsert({
     where: { email: 'staff@pecify.tech' },
     create: { email: 'staff@pecify.tech', password, fullName: 'Pecify Staff', role: Role.STAFF },
@@ -29,14 +29,14 @@ async function main() {
   });
   console.log(`✅ Customer: customer@pecify.tech / admin123`);
 
-  // ── 3. Sample orders (để admin dashboard có data) ──
+  // ── 3. Sample orders (so the admin dashboard has data) ──
   const products = await prisma.product.findMany({
     where: { isPublished: true, stock: { gt: 0 } },
     take: 6,
   });
 
   if (products.length < 2) {
-    console.warn('⚠️  Chạy seed-clean-catalog.ts trước khi seed-admin.ts');
+    console.warn('⚠️  Run seed-clean-catalog.ts before seed-admin.ts');
     return;
   }
 
@@ -93,7 +93,7 @@ async function main() {
   }
   console.log(`✅ Coupons: ${coupons.map((c) => c.code).join(', ')}`);
 
-  console.log('\n🎉 Seed admin hoàn tất.');
+  console.log('\n🎉 Seed admin complete.');
 }
 
 main()

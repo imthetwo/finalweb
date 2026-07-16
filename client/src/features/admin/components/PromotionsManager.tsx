@@ -1,5 +1,5 @@
 "use client";
-// "use client" vì: component gọi hook usePromotionsManager (state, effect, event handlers)
+// "use client" because: component calls the usePromotionsManager hook (state, effect, event handlers)
 
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 

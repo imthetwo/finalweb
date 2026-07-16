@@ -1,11 +1,12 @@
 import {
-  BadRequestException,
-  Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, Res, UploadedFile,
+  Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UploadedFile,
   UseGuards, UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import type { Request, Response } from 'express';
+import type { Response } from 'express';
 import { Role } from '@prisma/client';
+import { Type } from 'class-transformer';
+import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { AdminService } from './admin.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -17,9 +18,22 @@ import { CurrentUser } from '../auth/current-user.decorator';
 
 type UploadedFileType = { buffer: Buffer; mimetype: string; size: number };
 
-// Helper để lấy role từ request (sau JwtAuthGuard)
-function getRole(req: Request & { user?: { role?: Role } }): Role | undefined {
-  return req.user?.role;
+class ListAdminProductsQueryDto {
+  @IsOptional() @IsString() search?: string;
+  @IsOptional() @IsString() category?: string;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) page?: number;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(100) limit?: number;
+}
+
+class ListAdminOrdersQueryDto {
+  @IsOptional() @IsString() status?: string;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) page?: number;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(100) limit?: number;
+}
+
+class ListAdminUsersQueryDto {
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) page?: number;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(200) limit?: number;
 }
 
 @Controller('admin')
@@ -27,57 +41,51 @@ function getRole(req: Request & { user?: { role?: Role } }): Role | undefined {
 export class AdminController {
   constructor(private readonly admin: AdminService) {}
 
-  // ── Dashboard — STAFF chỉ xem, ADMIN đầy đủ ──────────────────────────────
+  // ── Dashboard — STAFF read-only, ADMIN full access ───────────────────────
   @Get('stats')
   @Roles(Role.ADMIN, Role.STAFF)
   stats() {
     return this.admin.stats();
   }
 
-  // ── Products: STAFF chỉ được xem + import (draft) ────────────────────────
+  // ── Products: STAFF can only view + import (as draft) ────────────────────
 
   @Get('products')
   @Roles(Role.ADMIN, Role.STAFF)
-  listProducts(
-    @Query('search') search?: string,
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-    @Query('category') category?: string,
-  ) {
+  listProducts(@Query() query: ListAdminProductsQueryDto) {
     return this.admin.listProducts({
-      search,
-      page: page ? Number(page) : undefined,
-      limit: limit ? Number(limit) : undefined,
-      categoryId: category,
+      search: query.search,
+      page: query.page,
+      limit: query.limit,
+      categoryId: query.category,
     });
   }
 
-  // ADMIN → published ngay; STAFF → draft (isPublished: false), chờ admin duyệt
+  // ADMIN → published immediately; STAFF → draft (isPublished: false), awaits admin approval
   @Post('products')
   @Roles(Role.ADMIN, Role.STAFF)
   createProduct(
     @Body() dto: CreateProductDto,
-    @Req() req: Request & { user?: { role?: Role } },
+    @CurrentUser('role') role: Role,
   ) {
-    const asDraft = getRole(req) === Role.STAFF;
-    return this.admin.createProduct(dto, asDraft);
+    return this.admin.createProduct(dto, role);
   }
 
-  // ADMIN ONLY — duyệt sản phẩm (set isPublished: true)
+  // ADMIN ONLY — approve a product (set isPublished: true)
   @Patch('products/:id/approve')
   @Roles(Role.ADMIN)
   approveProduct(@Param('id') id: string) {
     return this.admin.approveProduct(id);
   }
 
-  // ADMIN ONLY — chỉnh sửa sản phẩm
+  // ADMIN ONLY — edit a product
   @Patch('products/:id')
   @Roles(Role.ADMIN)
   updateProduct(@Param('id') id: string, @Body() dto: UpdateProductDto) {
     return this.admin.updateProduct(id, dto);
   }
 
-  // ADMIN ONLY — xóa sản phẩm
+  // ADMIN ONLY — delete a product
   @Delete('products/:id')
   @Roles(Role.ADMIN)
   deleteProduct(@Param('id') id: string) {
@@ -89,21 +97,15 @@ export class AdminController {
   @Roles(Role.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
   uploadImage(@UploadedFile() file: UploadedFileType) {
-    if (!file) throw new BadRequestException('No file uploaded');
-    if (!file.mimetype.startsWith('image/')) throw new BadRequestException('File must be an image');
-    return this.admin.uploadImage(file.buffer);
+    return this.admin.uploadImage(file);
   }
 
   // ── Video upload → Cloudinary — ADMIN ONLY ───────────────────────────────
   @Post('upload-video')
   @Roles(Role.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
-  async uploadVideo(@UploadedFile() file: UploadedFileType) {
-    if (!file) throw new BadRequestException('No file uploaded');
-    if (!file.mimetype.startsWith('video/')) throw new BadRequestException('File must be a video');
-    if (file.size > 200 * 1024 * 1024) throw new BadRequestException('Video must be under 200MB');
-    const url = await this.admin.uploadVideo(file.buffer);
-    return { url };
+  uploadVideo(@UploadedFile() file: UploadedFileType) {
+    return this.admin.uploadVideo(file);
   }
 
   // ── Excel template — STAFF + ADMIN ───────────────────────────────────────
@@ -116,34 +118,23 @@ export class AdminController {
     res.end(buffer);
   }
 
-  // ── Excel import — STAFF tạo draft (isPublished: false), ADMIN publish ngay
+  // ── Excel import — STAFF creates as draft (isPublished: false), ADMIN publishes immediately
   @Post('products/import')
   @Roles(Role.ADMIN, Role.STAFF)
   @UseInterceptors(FileInterceptor('file'))
   importProducts(
     @UploadedFile() file: UploadedFileType,
-    @Req() req: Request & { user?: { role?: Role } },
+    @CurrentUser('role') role: Role,
   ) {
-    if (!file) throw new BadRequestException('No file uploaded');
-    // Staff import → tạo draft, admin phải duyệt trước khi publish
-    const asDraft = getRole(req) === Role.STAFF;
-    return this.admin.importProductsExcel(file.buffer, asDraft);
+    return this.admin.importProductsExcel(file, role);
   }
 
-  // ── Orders: STAFF xem + cập nhật tiến trình giao hàng, ADMIN toàn quyền ───
+  // ── Orders: STAFF views + updates shipping progress, ADMIN has full control ───
 
   @Get('orders')
   @Roles(Role.ADMIN, Role.STAFF)
-  listOrders(
-    @Query('status') status?: string,
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ) {
-    return this.admin.listOrders({
-      status,
-      page: page ? Number(page) : undefined,
-      limit: limit ? Number(limit) : undefined,
-    });
+  listOrders(@Query() query: ListAdminOrdersQueryDto) {
+    return this.admin.listOrders(query);
   }
 
   // STAFF + ADMIN — routine shipping progress only (PENDING/PROCESSING/
@@ -243,11 +234,8 @@ export class AdminController {
 
   @Get('users')
   @Roles(Role.ADMIN)
-  listUsers(@Query('page') page?: string, @Query('limit') limit?: string) {
-    return this.admin.listUsers({
-      page: page ? Number(page) : undefined,
-      limit: limit ? Number(limit) : undefined,
-    });
+  listUsers(@Query() query: ListAdminUsersQueryDto) {
+    return this.admin.listUsers(query);
   }
 
   @Patch('users/:id/role')

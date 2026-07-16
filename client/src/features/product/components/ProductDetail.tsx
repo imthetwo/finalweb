@@ -1,20 +1,12 @@
-import { notFound } from "next/navigation";
-
 import AddToCartButton from "@/components/shop/AddToCartButton";
 import { WishlistButton } from "@/features/product/WishlistButton";
 import { SpecsTable } from "@/features/product/components/SpecsTable";
 import { ProductImage } from "@/components/ui/ProductImage";
-import { apiFetch } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
-import type { ProductDetail as ProductDetailType } from "@/types/api";
+import { getProductDetail } from "../data/getProductDetail";
 
 export async function ProductDetail({ id }: { id: string }) {
-  let product: ProductDetailType;
-  try {
-    product = await apiFetch<ProductDetailType>(`/products/${id}`);
-  } catch {
-    notFound();
-  }
+  const product = await getProductDetail(id);
 
   const hasSale = product.salePrice !== null && product.salePrice < product.price;
 

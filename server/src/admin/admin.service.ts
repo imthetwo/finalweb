@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { CreateProductDto, UpdateProductDto } from './dto/admin-product.dto';
 import { AdminStatsService } from './services/admin-stats.service';
@@ -6,6 +6,8 @@ import { AdminProductsService } from './services/admin-products.service';
 import { AdminOrdersService } from './services/admin-orders.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { PaymentsService } from '../payments/payments.service';
+
+type UploadedFileLike = { buffer: Buffer; mimetype: string; size: number };
 
 @Injectable()
 export class AdminService {
@@ -21,12 +23,30 @@ export class AdminService {
   stats() { return this.statsService.getDashboardStats(); }
 
   // ── Products ──────────────────────────────────────────────
-  uploadImage(buffer: Buffer) { return this.productsService.uploadImage(buffer); }
-  uploadVideo(buffer: Buffer) { return this.cloudinary.uploadVideo(buffer); }
-  importProductsExcel(buffer: Buffer, asDraft = false) { return this.productsService.importExcel(buffer, asDraft); }
+  uploadImage(file: UploadedFileLike) {
+    if (!file) throw new BadRequestException('No file uploaded');
+    if (!file.mimetype.startsWith('image/')) throw new BadRequestException('File must be an image');
+    return this.productsService.uploadImage(file.buffer);
+  }
+
+  async uploadVideo(file: UploadedFileLike) {
+    if (!file) throw new BadRequestException('No file uploaded');
+    if (!file.mimetype.startsWith('video/')) throw new BadRequestException('File must be a video');
+    if (file.size > 200 * 1024 * 1024) throw new BadRequestException('Video must be under 200MB');
+    const url = await this.cloudinary.uploadVideo(file.buffer);
+    return { url };
+  }
+
+  importProductsExcel(file: { buffer: Buffer }, role: Role) {
+    if (!file) throw new BadRequestException('No file uploaded');
+    // Staff import → created as draft, admin must approve before it publishes
+    return this.productsService.importExcel(file.buffer, role === Role.STAFF);
+  }
+
   exportProductTemplate() { return this.productsService.exportProductTemplate(); }
   listProducts(p: { search?: string; page?: number; limit?: number; categoryId?: string }) { return this.productsService.list(p); }
-  createProduct(dto: CreateProductDto, asDraft = false) { return this.productsService.create(dto, asDraft); }
+  // ADMIN → published immediately; STAFF → draft (isPublished: false), awaits admin approval
+  createProduct(dto: CreateProductDto, role: Role) { return this.productsService.create(dto, role === Role.STAFF); }
   updateProduct(id: string, dto: UpdateProductDto) { return this.productsService.update(id, dto); }
   approveProduct(id: string) { return this.productsService.approve(id); }
   deleteProduct(id: string) { return this.productsService.remove(id); }

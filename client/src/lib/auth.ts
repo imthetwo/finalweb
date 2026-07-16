@@ -35,7 +35,7 @@ function parseJwt(token: string) {
 export function saveToken(token: string) {
   localStorage.setItem(KEY, token);
   document.cookie = `${KEY}=${token}; path=/; max-age=${MAX_AGE}; SameSite=Lax`;
-  // Cập nhật Zustand store ngay lập tức
+  // Update the Zustand store immediately
   const user = parseJwt(token);
   useAuthStore.getState().setUser(user);
   useAuthStore.getState().setLoaded(true);

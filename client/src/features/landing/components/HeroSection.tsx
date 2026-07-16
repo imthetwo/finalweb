@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
+
+import { useHeroSection } from "../hooks/useHeroSection";
 
 export default function HeroSection({
   videoUrl = "/hero.mp4",
@@ -11,20 +12,8 @@ export default function HeroSection({
   videoUrl?: string;
   posterUrl?: string;
 }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [playing, setPlaying] = useState(true);
-
-  function toggleVideo() {
-    const v = videoRef.current;
-    if (!v) return;
-    if (v.paused) {
-      v.play();
-      setPlaying(true);
-    } else {
-      v.pause();
-      setPlaying(false);
-    }
-  }
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { videoRef, playing, toggleVideo } = useHeroSection();
 
   return (
     <section className="relative flex min-h-[92vh] w-full items-center justify-center overflow-hidden bg-base">
@@ -64,7 +53,7 @@ export default function HeroSection({
         <div className="mt-12 flex flex-col gap-4 sm:flex-row">
           <Link
             href="/shop"
-            className="inline-flex items-center justify-center bg-brand px-9 py-4 text-sm font-black uppercase tracking-[0.25em] text-black transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow-btn"
+            className="inline-flex items-center justify-center bg-brand px-9 py-4 text-sm font-black uppercase tracking-[0.25em] text-brand-fg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow-btn"
           >
             Shop Now
           </Link>

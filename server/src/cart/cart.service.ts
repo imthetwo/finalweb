@@ -1,12 +1,15 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ProductsService } from '../products/products.service';
 import { maxQtyFor } from '../common/quantity-caps';
 
+// Reused Prisma include shapes — kept in one place so the cart queries below
+// can't drift out of sync with each other.
+const CART_WITH_ITEMS = { items: { include: { product: { include: { category: true } } } } } as const;
+const CATEGORY_NAME_ONLY = { category: { select: { name: true } } } as const;
+
 @Injectable()
 export class CartService {
-  private readonly logger = new Logger(CartService.name);
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly productsService: ProductsService,
@@ -15,12 +18,12 @@ export class CartService {
   private async getOrCreateCart(userId: string) {
     let cart = await this.prisma.cart.findUnique({
       where: { userId },
-      include: { items: { include: { product: { include: { category: true } } } } },
+      include: CART_WITH_ITEMS,
     });
     if (!cart) {
       cart = await this.prisma.cart.create({
         data: { userId },
-        include: { items: { include: { product: { include: { category: true } } } } },
+        include: CART_WITH_ITEMS,
       });
     }
     return cart;
@@ -41,7 +44,7 @@ export class CartService {
   async addItem(userId: string, productId: string, quantity = 1) {
     const product = await this.prisma.product.findFirst({
       where: { id: productId, isPublished: true },
-      include: { category: { select: { name: true } } },
+      include: CATEGORY_NAME_ONLY,
     });
     if (!product) throw new NotFoundException('Product not found');
 
@@ -97,7 +100,7 @@ export class CartService {
     for (const { productId, quantity } of items) {
       const product = await this.prisma.product.findFirst({
         where: { id: productId, isPublished: true },
-        include: { category: { select: { name: true } } },
+        include: CATEGORY_NAME_ONLY,
       });
       if (!product) { skipped++; continue; }
 

@@ -7,24 +7,24 @@ export class EmailService {
   private readonly logger = new Logger(EmailService.name);
   private transporter: nodemailer.Transporter;
 
-  // Hỗ trợ cả 2 bộ tên biến: SMTP_* (chuẩn cũ) và MAIL_* (đang dùng trong .env)
+  // Supports both variable-name sets: SMTP_* (old standard) and MAIL_* (currently used in .env)
   private readonly mailUser = process.env.SMTP_USER || process.env.MAIL_USER;
   private readonly mailPass = process.env.SMTP_PASS || process.env.MAIL_PASSWORD;
-  private readonly mailFrom = process.env.MAIL_FROM || `"Pecify Store" <${this.mailUser}>`;
+  private readonly mailFrom = process.env.MAIL_FROM || `"Pecify" <${this.mailUser}>`;
 
   constructor() {
     const port = Number(process.env.SMTP_PORT || process.env.MAIL_PORT) || 587;
     this.transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || process.env.MAIL_HOST || 'smtp.gmail.com',
       port,
-      secure: port === 465, // true cho SSL trực tiếp, false cho STARTTLS (587)
-      requireTLS: port !== 465, // bắt buộc STARTTLS trên port 587
+      secure: port === 465, // true for direct SSL, false for STARTTLS (587)
+      requireTLS: port !== 465, // require STARTTLS on port 587
       auth: {
         user: this.mailUser,
         pass: this.mailPass,
       },
       tls: {
-        rejectUnauthorized: false, // bỏ check cert trong dev
+        rejectUnauthorized: false, // skip cert check in dev
       },
     });
   }

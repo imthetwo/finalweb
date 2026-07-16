@@ -135,7 +135,7 @@ export default function AIConsultantFab() {
               </div>
             )}
 
-            {/* Quick prompts (chỉ hiện ở đầu) */}
+            {/* Quick prompts (only shown at the start) */}
             {messages.length === 1 && !loading && (
               <div className="space-y-2 pt-2">
                 <p className="text-2xs font-bold uppercase tracking-wider text-subtle">Quick prompts</p>

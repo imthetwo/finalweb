@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
-import { apiFetch } from "@/lib/api";
+import { fetchCart, updateCartItemQty } from "@/lib/api/cart";
+import { fetchProductById, fetchProducts } from "@/lib/api/products";
 import { getGuestCart, updateGuestCartQty } from "@/lib/guestCart";
 import { useAuthState } from "@/hooks/useAuthState";
 import type { ProductListItem } from "@/types/api";
@@ -63,7 +64,7 @@ export function useCartView(): CartViewState {
       raw.map(async (item) => {
         let product = productCacheRef.current.get(item.productId);
         if (!product) {
-          product = await apiFetch<ProductListItem>(`/products/${item.productId}`);
+          product = await fetchProductById(item.productId);
           productCacheRef.current.set(item.productId, product);
         }
         return { ...item, product };
@@ -97,14 +98,14 @@ export function useCartView(): CartViewState {
   useEffect(() => {
     if (!loaded) return;
     if (isLoggedIn) {
-      apiFetch<Cart>("/cart")
+      fetchCart()
         .then(setCart)
         .catch(() => setCart({ items: [], subTotal: 0 }));
       return;
     }
     const raw = getGuestCart();
     if (raw.length === 0) {
-      apiFetch<{ items: ProductListItem[] }>("/products?limit=4")
+      fetchProducts({ limit: 4 })
         .then((d) => setTrending(d.items))
         .catch(() => {});
     } else {
@@ -118,11 +119,11 @@ export function useCartView(): CartViewState {
     if (!loaded) return;
     const handler = async () => {
       if (isLoggedIn) {
-        apiFetch<Cart>("/cart").then(setCart).catch(() => toast.error("Failed to refresh cart"));
+        fetchCart().then(setCart).catch(() => toast.error("Failed to refresh cart"));
       } else {
         await loadGuestItems();
         if (getGuestCart().length === 0) {
-          apiFetch<{ items: ProductListItem[] }>("/products?limit=4")
+          fetchProducts({ limit: 4 })
             .then((d) => setTrending(d.items))
             .catch(() => {});
         }
@@ -147,12 +148,7 @@ export function useCartView(): CartViewState {
   async function updateQty(itemId: string, quantity: number) {
     setUpdatingId(itemId);
     try {
-      setCart(
-        await apiFetch<Cart>(`/cart/items/${itemId}`, {
-          method: "PATCH",
-          body: JSON.stringify({ quantity }),
-        }),
-      );
+      setCart(await updateCartItemQty(itemId, quantity));
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Error");
     } finally {

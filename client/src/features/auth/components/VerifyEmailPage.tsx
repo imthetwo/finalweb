@@ -1,5 +1,5 @@
 "use client";
-// "use client" vì: useState/useEffect (verify on mount), reads URL token
+// "use client" because: useState/useEffect (verify on mount), reads URL token
 
 import Link from "next/link";
 import { CheckCircle2, XCircle } from "lucide-react";

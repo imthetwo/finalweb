@@ -1,5 +1,5 @@
 "use client";
-// "use client" vì: useState, useEffect, useRouter — OAuth callback xử lý hash fragment
+// "use client" because: useState, useEffect, useRouter — OAuth callback processes the hash fragment
 
 import Link from "next/link";
 

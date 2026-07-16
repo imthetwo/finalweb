@@ -2,22 +2,8 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-import { apiFetch, confirmPayment, initiatePayment } from "@/lib/api";
-
-type InitiateResponse = {
-  orderId: string;
-  amount: number;
-  payUrl: string | null;
-  qrCodeUrl: string | null;
-  source: "momo" | "simulated";
-};
-
-type PaymentStatus = {
-  orderId: string;
-  isPaid: boolean;
-  status: string;
-  totalAmount: number;
-};
+import { confirmPayment, fetchPaymentStatus, initiatePayment } from "@/lib/api";
+import type { InitiatePaymentResponse } from "@/types/api";
 
 const POLL_INTERVAL = 3000; // 3 s
 
@@ -33,7 +19,7 @@ export function usePaymentGateway() {
   const amount = Number(search.get("amount") ?? 0);
   const isMomo = method?.toLowerCase() === "momo";
 
-  const [payment, setPayment] = useState<InitiateResponse | null>(null);
+  const [payment, setPayment] = useState<InitiatePaymentResponse | null>(null);
   const [orderAmount, setOrderAmount] = useState(0);
   const [loading, setLoading] = useState(Boolean(orderId));
   const [processing, setProcessing] = useState(false);
@@ -44,7 +30,7 @@ export function usePaymentGateway() {
   useEffect(() => {
     if (!orderId) return;
 
-    apiFetch<PaymentStatus>(`/payments/status/${orderId}`)
+    fetchPaymentStatus(orderId)
       .then((s) => {
         if (s.isPaid) {
           toast.success("Payment received!");
@@ -57,7 +43,7 @@ export function usePaymentGateway() {
           return;
         }
         return initiatePayment(orderId).then((data) => {
-          setPayment(data as InitiateResponse);
+          setPayment(data);
           setLoading(false);
         });
       })
@@ -74,7 +60,7 @@ export function usePaymentGateway() {
     // Poll for real IPN (works when backend is publicly reachable via ngrok/deploy)
     pollRef.current = setInterval(async () => {
       try {
-        const status = await apiFetch<PaymentStatus>(`/payments/status/${orderId}`);
+        const status = await fetchPaymentStatus(orderId);
         if (status.isPaid) {
           clearInterval(pollRef.current!);
           toast.success("Payment received!");
@@ -88,7 +74,6 @@ export function usePaymentGateway() {
     return () => {
       clearInterval(pollRef.current!);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [payment, orderId, router]);
 
   // ── Confirm payment (manual or auto) ─────────────────────────────────────

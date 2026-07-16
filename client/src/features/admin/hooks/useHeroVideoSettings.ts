@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { uploadHeroVideo } from "@/lib/api/admin";
 import { fetchSettingValue, updateSettingValue } from "@/lib/api/settings";
@@ -14,6 +14,9 @@ export function useHeroVideoSettings() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState("");
+  const [previewing, setPreviewing] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const togglePreview = () => setPreviewing((v) => !v);
 
   useEffect(() => {
     Promise.all([fetchSettingValue("hero_video_url"), fetchSettingValue("hero_poster_url")])
@@ -37,6 +40,13 @@ export function useHeroVideoSettings() {
     } finally {
       setUploading(false);
     }
+  }
+
+  async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await handleVideoUpload(file);
+    if (fileRef.current) fileRef.current.value = "";
   }
 
   async function save() {
@@ -73,7 +83,8 @@ export function useHeroVideoSettings() {
 
   return {
     videoUrl, posterUrl, saving, uploading, uploadProgress,
+    previewing, togglePreview, fileRef,
     setVideoUrl, setPosterUrl,
-    handleVideoUpload, save, reset,
+    onFileChange, save, reset,
   };
 }

@@ -1,21 +1,9 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { apiFetch } from "@/lib/api";
-import { updateAdminUserRole } from "@/lib/api/admin";
+import { fetchAdminUsers, updateAdminUserRole } from "@/lib/api/admin";
 import { useAuthState } from "@/hooks/useAuthState";
-
-export type UserRole = "USER" | "STAFF" | "ADMIN";
-
-export type AdminUser = {
-  id: string;
-  email: string;
-  fullName: string;
-  role: UserRole;
-  isActive: boolean;
-  createdAt: string;
-  _count: { orders: number };
-};
+import type { AdminUser, UserRole } from "@/types/api";
 
 // Data/logic for the admin Users table — loading users and changing roles (with
 // a guard so an admin can't demote themselves). The component only renders.
@@ -26,7 +14,7 @@ export function useUsersTable() {
   const [changing, setChanging] = useState<string | null>(null);
 
   useEffect(() => {
-    apiFetch<AdminUser[]>("/admin/users")
+    fetchAdminUsers()
       .then(setUsers)
       .catch(() => toast.error("Failed to load users"))
       .finally(() => setLoading(false));

@@ -1,11 +1,8 @@
 "use client";
 
-// Map category name → spec key
-export type SpecKey =
-  | "cpuSpec" | "gpuSpec" | "ramSpec" | "motherboardSpec" | "psuSpec"
-  | "caseSpec" | "coolerSpec" | "monitorSpec" | "storageSpec" | "laptopSpec"
-  | "pcBuildSpec" | "furnitureSpec";
+import type { SpecKey } from "../types";
 
+// Map category name → spec key
 export const NAME_TO_SPEC: Record<string, SpecKey> = {
   "processors (cpu)": "cpuSpec",
   "processors": "cpuSpec",

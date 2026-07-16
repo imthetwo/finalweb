@@ -3,8 +3,7 @@
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
 
-import { apiFetch } from "@/lib/api/client";
-import { fetchCategories } from "@/lib/api/products";
+import { fetchCategories, fetchPartCatalog } from "@/lib/api/products";
 import { useBuilderStore } from "@/store/builderStore";
 import type { ApiPart } from "../types";
 
@@ -44,7 +43,7 @@ export function usePartCatalog() {
   const { setCatMap, setParts, setLoading, openPicker: storeOpenPicker, closePicker } =
     useBuilderStore.getState();
 
-  // ── Tải category map 1 lần khi mount ────────────────────────────
+  // ── Load the category map once on mount ─────────────────────────
   useEffect(() => {
     if (Object.keys(catMap).length) return;
     fetchCategories()
@@ -56,7 +55,7 @@ export function usePartCatalog() {
       .catch(() => toast.error("Failed to load part categories — please refresh"));
   }, [catMap, setCatMap]);
 
-  // ── Async: load parts từ DB theo slot ───────────────────────────
+  // ── Async: load parts from the DB per slot ───────────────────────
   const loadParts = useCallback(async (slot: string) => {
     if (parts[slot]) return;
     setLoading(slot, true);
@@ -65,23 +64,7 @@ export function usePartCatalog() {
       if (!categoryId) { setParts(slot, []); return; }
 
       const storageType = SLOT_TO_STORAGE_TYPE[slot];
-      const query = new URLSearchParams({ categoryId, limit: '50' });
-      if (storageType) query.set('storageType', storageType);
-
-      const data = await apiFetch<{
-        items: Array<{
-          id: string; name: string; brand: string;
-          displayPrice: number; thumbnailUrl: string | null;
-          cpuSpec?:         { socket?: string; tdp?: number } | null;
-          gpuSpec?:         { tdp?: number; lengthMm?: number | null } | null;
-          ramSpec?:         { generation?: string; speedMhz?: number } | null;
-          motherboardSpec?: { socket?: string; ramGen?: string; formFactor?: string; ramSlots?: number; maxRamGb?: number | null } | null;
-          psuSpec?:         { wattage?: number } | null;
-          caseSpec?:        { formFactor?: string; maxGpuLengthMm?: number | null } | null;
-          coolerSpec?:      { socketSupport?: string | null; tdpRating?: number | null } | null;
-          storageSpec?:     { capacityGb?: number | null; interfaceType?: string | null } | null;
-        }>;
-      }>(`/products?${query.toString()}`);
+      const data = await fetchPartCatalog({ categoryId, storageType });
 
       const mapped: ApiPart[] = data.items.map((p) => ({
         id: p.id, name: p.name, brand: p.brand,

@@ -18,6 +18,10 @@ const ASSIGNABLE_STATUSES: OrderStatus[] = [
   OrderStatus.DELIVERED,
 ];
 
+// Reused Prisma include shape — kept in one place so the various order
+// lookups below can't drift out of sync with each other.
+const ORDER_WITH_USER_EMAIL = { user: { select: { email: true } } } as const;
+
 @Injectable()
 export class AdminOrdersService {
   private readonly logger = new Logger(AdminOrdersService.name);
@@ -60,7 +64,7 @@ export class AdminOrdersService {
     }
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
-      include: { user: { select: { email: true } } },
+      include: ORDER_WITH_USER_EMAIL,
     });
     if (!order) throw new NotFoundException('Order not found');
     // A cancelled order already had its stock restored, and a delivered order
@@ -95,7 +99,7 @@ export class AdminOrdersService {
   async cancelOrder(orderId: string, reason: string, actorId: string) {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
-      include: { user: { select: { email: true } }, items: true },
+      include: { ...ORDER_WITH_USER_EMAIL, items: true },
     });
     if (!order) throw new NotFoundException('Order not found');
     if (order.status === OrderStatus.CANCELLED) throw new BadRequestException('Order is already cancelled');
@@ -139,7 +143,7 @@ export class AdminOrdersService {
   async acceptOrder(orderId: string, actorId: string) {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
-      include: { user: { select: { email: true } } },
+      include: ORDER_WITH_USER_EMAIL,
     });
     if (!order) throw new NotFoundException('Order not found');
     if (order.status !== OrderStatus.AWAITING_CONFIRMATION) {
@@ -159,12 +163,9 @@ export class AdminOrdersService {
     return updated;
   }
 
-  // ADMIN ONLY — staff found they can't actually fulfill the order (e.g. the
-  // real inventory doesn't match what's recorded). Reason is required for the
-  // audit trail. Automatically picks the correct remediation so the admin
-  // doesn't have to: a genuinely-paid MoMo order gets a real refund through
-  // MoMo before cancelling; anything else (COD, or MoMo that never actually
-  // paid) is just cancelled + restocked, no refund needed.
+  // ADMIN ONLY — order can't be fulfilled (e.g. stock mismatch). Reason required
+  // for audit. Auto-picks remediation: refunds via MoMo first if actually paid,
+  // otherwise just cancels + restocks.
   async rejectOrder(orderId: string, reason: string, actorId: string) {
     const order = await this.prisma.order.findUnique({ where: { id: orderId } });
     if (!order) throw new NotFoundException('Order not found');

@@ -1,13 +1,7 @@
-// Server Component — hiển thị stats, không có interaction
+// Server Component — displays stats, no interaction
 import { DollarSign, Package, ShoppingBag, Users } from "lucide-react";
 import type { AdminStats } from "@/types/api";
-import { formatVnd } from "@/lib/format";
-
-const STATUS_COLOR: Record<string, string> = {
-  PENDING: "text-warning", PROCESSING: "text-info",
-  SHIPPED: "text-brand",      DELIVERED: "text-success",
-  CANCELLED: "text-muted",    PAYMENT_FAILED: "text-destructive",
-};
+import { formatVnd, ORDER_STATUS_TEXT_CLASS as STATUS_COLOR } from "@/lib/format";
 
 const CARDS = (s: AdminStats) => [
   { label: "Revenue (paid)", value: formatVnd(s.totalRevenue), Icon: DollarSign, accent: "text-brand" },

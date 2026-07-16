@@ -1,5 +1,5 @@
 "use client";
-// "use client" vì: useState/useEffect (sessionStorage dismiss state), event handlers
+// "use client" because: useState/useEffect (sessionStorage dismiss state), event handlers
 
 import { Mail, X } from "lucide-react";
 

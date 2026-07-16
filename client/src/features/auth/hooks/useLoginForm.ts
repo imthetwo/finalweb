@@ -5,9 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { getApiUrl } from "@/lib/api/client";
+import { login } from "@/lib/api/auth";
 import { saveToken } from "@/lib/auth";
-import { readBackendError } from "../utils/readBackendError";
 import { syncGuestDataToAccount } from "../utils/syncGuestDataToAccount";
 
 export const loginSchema = z.object({
@@ -28,22 +27,15 @@ export function useLoginForm(onSuccess: () => void) {
   const onSubmit = form.handleSubmit(async (values) => {
     setSubmitError(null);
     try {
-      const res = await fetch(getApiUrl("/auth/login"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      if (!res.ok) { setSubmitError(await readBackendError(res, "Login failed.")); return; }
-      const data = (await res.json()) as { access_token?: string };
-      if (!data?.access_token) { setSubmitError("No access token returned."); return; }
+      const data = await login(values.email, values.password);
       saveToken(data.access_token);
       // Claim past guest orders placed with this email + merge the guest cart.
       await syncGuestDataToAccount(data.access_token);
       toast.success("Signed in successfully.");
       form.reset();
       onSuccess();
-    } catch {
-      setSubmitError("Unable to connect to the authentication server.");
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Unable to connect to the authentication server.");
     }
   });
 

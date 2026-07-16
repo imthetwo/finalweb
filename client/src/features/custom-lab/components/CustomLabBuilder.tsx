@@ -1,7 +1,5 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { AlertCircle, AlertTriangle, Plus, RotateCcw, Save, ShoppingCart, Trash2, Zap } from "lucide-react";
@@ -14,52 +12,20 @@ import {
 import { formatVnd } from "@/lib/format";
 
 import { BUILD_SLOTS } from "../constants";
-import { useBuild } from "../hooks/useBuild";
+import { useCustomLabBuilder } from "../hooks/useCustomLabBuilder";
 import { StatusBar } from "./StatusBar";
 import { PartPickerOverlay } from "./PartPickerOverlay";
 
 export default function CustomLabBuilder() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const pickingParam = searchParams.get("picking");
-
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
   const {
-    selected, parts, loading, pickerSlot, compat,
+    selected, parts, loading, pickerSlot, pickerCfg, compat,
     validating, saving, addingCart,
     totalPrice, estimatedWatts, selectedCount,
-    openPicker: rawOpenPicker,
-    closePicker: storeClosePicker,
-    selectPart, removePart, resetBuild,
+    openPicker, closePicker,
+    selectPart, removePart, handleReset,
     validateBuild, addAllToCart, saveBuild,
-  } = useBuild();
-
-  const handleReset = useCallback(() => {
-    if (selectedCount === 0) return;
-    if (confirm("Reset the build? This removes every part you've added.")) resetBuild();
-  }, [selectedCount, resetBuild]);
-
-  // When browser back removes ?picking from URL, close the overlay in store
-  const prevPickingParam = useRef(pickingParam);
-  useEffect(() => {
-    if (prevPickingParam.current !== null && pickingParam === null) {
-      storeClosePicker();
-    }
-    prevPickingParam.current = pickingParam;
-  }, [pickingParam, storeClosePicker]);
-
-  // Push URL when opening so browser back returns to /custom-lab (not home)
-  const openPicker = useCallback(async (slot: string) => {
-    await rawOpenPicker(slot);
-    router.push(`/custom-lab?picking=${slot}`);
-  }, [rawOpenPicker, router]);
-
-  // Close overlay immediately + navigate back to remove ?picking from URL
-  const closePicker = useCallback(() => {
-    storeClosePicker();
-    router.back();
-  }, [storeClosePicker, router]);
-
-  const pickerCfg = BUILD_SLOTS.find((s) => s.slot === pickerSlot);
+  } = useCustomLabBuilder();
 
   return (
     <>

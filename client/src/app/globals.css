@@ -69,16 +69,6 @@
   --info-foreground: #000000;
   --input: rgba(255, 255, 255, 0.08);
   --ring: var(--primary);
-  --neon-50: #effefd;
-  --neon-100: #d4fffb;
-  --neon-200: #a8fffa;
-  --neon-300: #79f6f0;
-  --neon-400: #4be9de;
-  --neon-500: #27d6cd;
-  --neon-600: #1bb0aa;
-  --neon-700: #178d8a;
-  --neon-800: #136d6d;
-  --neon-900: #0f5358;
   /* ── Typography scale ───────────────────── */
   --text-3xs: 0.5625rem; /* 9px  — micro labels, eyebrow */
   --text-2xs: 0.625rem; /* 10px — badges, table headers */
@@ -192,59 +182,6 @@
   100% {
     transform: translateX(-100%);
   }
-}
-
-@utility brand-radial-left {
-  background-image: radial-gradient(
-    ellipse 80% 60% at 20% 60%,
-    color-mix(in srgb, var(--primary) 10%, transparent),
-    transparent 55%
-  );
-}
-
-@utility brand-radial-right {
-  background-image: radial-gradient(
-    ellipse 60% 80% at 80% 50%,
-    color-mix(in srgb, var(--primary) 5%, transparent),
-    transparent 70%
-  );
-}
-
-@utility glass-card {
-  border: 1px solid var(--border);
-  background: var(--surface-glass);
-  backdrop-filter: blur(10px);
-}
-
-@utility neon-glow-text {
-  text-shadow:
-    0 0 16px rgba(103, 246, 240, 0.56),
-    0 0 36px rgba(103, 246, 240, 0.18);
-}
-
-@utility technical-grid {
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size:
-    32px 32px,
-    32px 32px,
-    100% 100%;
-}
-
-@utility layout-shell {
-  max-width: 90rem;
-  margin-inline: auto;
-  padding-inline: var(--spacing-shell);
-}
-
-@utility section-stack {
-  display: grid;
-  gap: 1.5rem;
-}
-
-@utility panel-border {
-  border: 1px solid color-mix(in srgb, var(--neon-200) 10%, transparent);
 }
 
 @layer base {

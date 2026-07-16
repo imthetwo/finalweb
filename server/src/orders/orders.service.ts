@@ -19,6 +19,13 @@ const assertMethod = (m: string) => {
   if (!ALLOWED_METHODS.includes(m)) throw new BadRequestException('Unsupported payment method');
 };
 
+// Reused Prisma `items` shapes — kept in one place so the various order
+// queries below can't drift out of sync with each other.
+const ORDER_ITEMS_WITH_PRODUCT = { include: { product: true } } as const;
+const ORDER_ITEMS_WITH_PRODUCT_SUMMARY = {
+  include: { product: { select: { id: true, name: true, imageUrl: true } } },
+} as const;
+
 @Injectable()
 export class OrdersService {
   private readonly logger = new Logger(OrdersService.name);
@@ -56,7 +63,7 @@ export class OrdersService {
 
     const subTotal = cart.subTotal;
 
-    // Validate coupon nếu có
+    // Validate coupon if provided
     let discount = 0;
     let appliedCoupon: string | null = null;
     if (body.couponCode) {
@@ -104,7 +111,7 @@ export class OrdersService {
             })),
           },
         },
-        include: { items: { include: { product: true } }, user: { select: { email: true } } },
+        include: { items: ORDER_ITEMS_WITH_PRODUCT, user: { select: { email: true } } },
       });
 
       const userCart = await tx.cart.findUnique({ where: { userId } });
@@ -202,7 +209,7 @@ export class OrdersService {
             })),
           },
         },
-        include: { items: { include: { product: true } } },
+        include: { items: ORDER_ITEMS_WITH_PRODUCT },
       });
 
       if (appliedCoupon) await this.incrementCouponUsage(tx, appliedCoupon);
@@ -245,7 +252,7 @@ export class OrdersService {
         id: true, status: true, isPaid: true, paymentMethod: true,
         subTotal: true, discount: true, shippingFee: true, totalAmount: true,
         couponCode: true, createdAt: true, shippingInfo: true,
-        items: { include: { product: { select: { id: true, name: true, imageUrl: true } } } },
+        items: ORDER_ITEMS_WITH_PRODUCT_SUMMARY,
       },
     });
     const shippingPhone = (order?.shippingInfo as { phone?: string } | null)?.phone;
@@ -260,7 +267,7 @@ export class OrdersService {
       where: { userId },
       orderBy: { createdAt: 'desc' },
       include: {
-        items: { include: { product: { select: { id: true, name: true, imageUrl: true } } } },
+        items: ORDER_ITEMS_WITH_PRODUCT_SUMMARY,
       },
     });
   }
@@ -268,7 +275,7 @@ export class OrdersService {
   async getOne(userId: string, orderId: string) {
     const order = await this.prisma.order.findFirst({
       where: { id: orderId, userId },
-      include: { items: { include: { product: true } } },
+      include: { items: ORDER_ITEMS_WITH_PRODUCT },
     });
     if (!order) throw new NotFoundException('Order not found');
     return order;

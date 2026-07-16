@@ -12,17 +12,7 @@ import {
   NavigationMenuTrigger,
 } from "../../ui/navigation-menu";
 import { cdn } from "@/lib/cloudinary";
-
-// ─── Types ────────────────────────────────────────────────────────────
-type NavLink = { label: string; href: string };
-type NavColumn = { title: string; links: NavLink[] };
-type NavSection = {
-  key: string;
-  label: string;
-  href: string;
-  image: string;   // full URL to /media/:folder/:file
-  columns: NavColumn[];
-};
+import type { NavSection } from "../types";
 
 // ─── Static navigation (always visible) ───────────────────────────────
 const NAV: NavSection[] = [
@@ -182,9 +172,9 @@ function StandardMegaMenu({ section }: { section: NavSection }) {
               className="absolute inset-0 h-full w-full object-cover object-center opacity-75"
             />
             {/* Right fade overlay so image blends into dark bg */}
-            <div className="absolute inset-0 bg-linear-to-r from-transparent via-[#0a0a0a]/20 to-[#0a0a0a]" />
+            <div className="absolute inset-0 bg-linear-to-r from-transparent via-base/20 to-base" />
             {/* Bottom info overlay */}
-            <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-[#0a0a0a] to-transparent px-6 py-5">
+            <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-base to-transparent px-6 py-5">
               <p className="text-3xs font-black uppercase tracking-[0.35em] text-brand">
                 Pecify Store
               </p>

@@ -1,4 +1,5 @@
-import type { Category, MenuSection, ProductListResponse } from "@/types/api";
+import type { Category, MenuSection, ProductListResponse, ProductDetail } from "@/types/api";
+import type { PartCatalogItem } from "@/features/custom-lab/types";
 import { apiFetch } from "./client";
 
 export function fetchProducts(params: {
@@ -27,6 +28,12 @@ export function fetchProductById(id: string) {
   return apiFetch<ProductListResponse["items"][0]>(`/products/${id}`);
 }
 
+// Full product detail (all spec relations) — for the product detail page, as
+// opposed to fetchProductById's narrower list-item shape used for cart display.
+export function fetchProductDetail(id: string) {
+  return apiFetch<ProductDetail>(`/products/${id}`);
+}
+
 export function fetchCategoryMenu() {
   return apiFetch<{ sections: MenuSection[] }>("/categories/menu");
 }
@@ -37,4 +44,12 @@ export function fetchCategory(id: string) {
 
 export function fetchCategories() {
   return apiFetch<Category[]>("/categories");
+}
+
+// Custom Lab part-picker — narrower spec fields than fetchProducts' full
+// ProductListItem, so it has its own return shape (PartCatalogItem).
+export function fetchPartCatalog(params: { categoryId: string; storageType?: string; limit?: number }) {
+  const q = new URLSearchParams({ categoryId: params.categoryId, limit: String(params.limit ?? 50) });
+  if (params.storageType) q.set("storageType", params.storageType);
+  return apiFetch<{ items: PartCatalogItem[] }>(`/products?${q.toString()}`);
 }

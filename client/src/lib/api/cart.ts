@@ -1,7 +1,16 @@
-import { getApiUrl } from "./client";
+import { apiFetch, getApiUrl } from "./client";
 import type { GuestCartItem } from "@/lib/guestCart";
+import type { Cart } from "@/features/cart/types";
 
 export type MergeCartResult = { merged: number; skipped: number };
+
+export const fetchCart = () => apiFetch<Cart>("/cart");
+
+export const addCartItem = (productId: string, quantity = 1) =>
+  apiFetch<Cart>("/cart/items", { method: "POST", body: JSON.stringify({ productId, quantity }) });
+
+export const updateCartItemQty = (itemId: string, quantity: number) =>
+  apiFetch<Cart>(`/cart/items/${itemId}`, { method: "PATCH", body: JSON.stringify({ quantity }) });
 
 // Merges a guest (localStorage) cart into the just-authenticated account's
 // server cart. Lossless: quantities for products already in the account cart

@@ -1,28 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Package, X, ChevronRight } from "lucide-react";
 
 import { type Order } from "@/lib/api";
-import { formatVnd } from "@/lib/format";
+import { formatVnd, ORDER_STATUS_BADGE_CLASS as STATUS_STYLE, ORDER_STATUS_LABEL as STATUS_LABEL } from "@/lib/format";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useOrdersTab } from "../hooks/useOrdersTab";
-
-const STATUS_STYLE: Record<string, string> = {
-  PENDING:               "border-yellow-700/50 bg-yellow-950/30 text-warning",
-  AWAITING_CONFIRMATION: "border-orange-700/50 bg-orange-950/30 text-orange-400",
-  PROCESSING:            "border-blue-700/50 bg-blue-950/30 text-info",
-  SHIPPED:               "border-cyan-700/50 bg-cyan-950/30 text-brand",
-  DELIVERED:             "border-emerald-700/50 bg-emerald-950/30 text-success",
-  CANCELLED:             "border-edge bg-surface text-muted",
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  PENDING: "Pending payment", AWAITING_CONFIRMATION: "Confirming order",
-  PROCESSING: "Preparing", SHIPPED: "Shipped", DELIVERED: "Delivered",
-  CANCELLED: "Cancelled",
-};
 
 // COD's isPaid=true is set at creation (no gateway needed), not "cash has
 // changed hands" — that only happens on delivery — so it must stay
@@ -57,13 +42,7 @@ function OrderDetailModal({
 }) {
   const si = order.shippingInfo ?? {};
 
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [onClose]);
+  useEscapeKey(onClose);
 
   return (
     <div

@@ -1,4 +1,4 @@
-// Barrel export — re-export tất cả để các file cũ dùng "@/lib/api" vẫn hoạt động
+// Barrel export — re-exports everything so old files importing from "@/lib/api" still work
 export * from "./client";
 export * from "./products";
 export * from "./user";
@@ -8,7 +8,7 @@ export * from "./settings";
 export * from "./cart";
 export * from "./addresses";
 
-// Re-export types từ @/types/api
+// Re-export types from @/types/api
 export type {
   Category, Paginated, ProductListItem, ProductListResponse,
   MenuLink, MenuSection,

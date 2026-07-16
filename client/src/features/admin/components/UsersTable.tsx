@@ -1,7 +1,8 @@
 "use client";
-// "use client" vì: useState, useEffect, event handlers
+// "use client" because: useState, useEffect, event handlers
 
-import { useUsersTable, type UserRole } from "../hooks/useUsersTable";
+import { useUsersTable } from "../hooks/useUsersTable";
+import type { UserRole } from "@/types/api";
 
 const ROLE_STYLES: Record<UserRole, string> = {
   ADMIN: "text-brand",

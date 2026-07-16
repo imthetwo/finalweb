@@ -3,17 +3,17 @@ import type { ApiPart, CompatibilityResult } from "@/features/custom-lab";
 
 type BuilderState = {
   // ── Data ──────────────────────────────────────────────────────
-  selected:    Record<string, ApiPart | null>;   // slot → part đã chọn
-  parts:       Record<string, ApiPart[]>;        // slot → danh sách part từ DB
-  loading:     Record<string, boolean>;          // slot → đang load
+  selected:    Record<string, ApiPart | null>;   // slot → chosen part
+  parts:       Record<string, ApiPart[]>;        // slot → list of parts from the DB
+  loading:     Record<string, boolean>;          // slot → currently loading
   catMap:      Record<string, string>;           // category name → id
-  pickerSlot:  string | null;                    // slot đang mở picker
-  compat:      CompatibilityResult | null;       // kết quả kiểm tra tương thích
+  pickerSlot:  string | null;                    // slot with the picker open
+  compat:      CompatibilityResult | null;       // compatibility check result
   validating:  boolean;
   addingCart:  boolean;
 
-  // ── Computed (dùng selector) ───────────────────────────────────
-  // totalPrice, estimatedWatts → tính trong component qua selector
+  // ── Computed (via selector) ─────────────────────────────────────
+  // totalPrice, estimatedWatts → computed in the component via selector
 
   // ── Actions ───────────────────────────────────────────────────
   setCatMap:      (map: Record<string, string>) => void;
@@ -52,7 +52,7 @@ export const useBuilderStore = create<BuilderState>((set) => ({
   resetBuild:    ()            => set({ selected: {}, compat: null }),
 }));
 
-// ── Selectors (dùng trong component để tránh re-render thừa) ──
+// ── Selectors (used in components to avoid extra re-renders) ──
 export const selectTotalPrice = (s: BuilderState) =>
   Object.values(s.selected).reduce((sum, p) => sum + (p?.displayPrice ?? 0), 0);
 

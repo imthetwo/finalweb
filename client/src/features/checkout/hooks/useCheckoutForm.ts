@@ -2,7 +2,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { apiFetch, validateCoupon, guestCheckout, fetchAddresses, type Address } from "@/lib/api";
+import { createOrder, validateCoupon, guestCheckout, fetchAddresses, type Address } from "@/lib/api";
 import { formatVnd } from "@/lib/format";
 import { getGuestCart, clearGuestCart } from "@/lib/guestCart";
 import { useAuthState } from "@/hooks/useAuthState";
@@ -150,21 +150,18 @@ export function useCheckoutForm() {
     try {
       if (isLoggedIn) {
         // ── Logged-in: read from DB cart ──────────────────────────────────────
-        const order = await apiFetch<{ id: string }>("/orders", {
-          method: "POST",
-          body: JSON.stringify({
-            paymentMethod,
-            shippingInfo,
-            ...(couponCode ? { couponCode } : {}),
-            ...(offerSaveAddress && saveAddress ? { saveAddress: true } : {}),
-          }),
+        const order = await createOrder({
+          shippingInfo,
+          paymentMethod,
+          ...(couponCode ? { couponCode } : {}),
+          ...(offerSaveAddress && saveAddress ? { saveAddress: true } : {}),
         });
         redirect(order.id);
       } else {
         // ── Guest: localStorage is the "session cart" ─────────────────────────
         // Read items from localStorage → POST /orders/guest-checkout
         // Backend: $transaction(Order + OrderItem) → stock decrement
-        // Frontend: clear localStorage after success (= "xóa session")
+        // Frontend: clear localStorage after success (= "clear session")
         const guestItems = getGuestCart();
         if (!guestItems.length) {
           toast.error("Your cart is empty.");

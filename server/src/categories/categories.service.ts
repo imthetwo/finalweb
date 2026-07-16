@@ -38,7 +38,7 @@ export class CategoriesService {
     const counts = await this.productsService.countByCategory();
     const cats = await this.prisma.category.findMany({ orderBy: { name: 'asc' } });
 
-    // categoryCounts keyed by category name — dùng bởi ShopByCategory frontend
+    // categoryCounts keyed by category name — used by the ShopByCategory frontend
     const categoryCounts: Record<string, number> = {};
     for (const c of cats) {
       categoryCounts[c.name] = counts[c.id] ?? 0;

@@ -2,7 +2,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { apiFetch } from "@/lib/api";
+import { resetPassword } from "@/lib/api/auth";
 
 type Step = "form" | "done";
 
@@ -34,10 +34,7 @@ export function useResetPasswordForm() {
     }
     setLoading(true);
     try {
-      await apiFetch("/auth/reset-password", {
-        method: "POST",
-        body: JSON.stringify({ token, password }),
-      });
+      await resetPassword(token, password);
       setStep("done");
       setTimeout(() => router.push("/login"), 3000);
     } catch (err) {

@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { apiFetch } from "@/lib/api";
-
-type SubscribeResponse = {
-  ok: boolean;
-  message?: string;
-  alreadySubscribed?: boolean;
-};
+import { subscribeNewsletter } from "@/lib/api/newsletter";
 
 // Logic for the newsletter signup — validating and submitting the email.
 export function useNewsletter() {
@@ -22,10 +16,7 @@ export function useNewsletter() {
     }
     setLoading(true);
     try {
-      const res = await apiFetch<SubscribeResponse>("/newsletter/subscribe", {
-        method: "POST",
-        body: JSON.stringify({ email: email.trim(), source: "landing-page" }),
-      });
+      const res = await subscribeNewsletter(email.trim(), "landing-page");
       if (res.alreadySubscribed) {
         toast.message("This email is already subscribed.");
       } else {

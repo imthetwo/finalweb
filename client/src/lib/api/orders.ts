@@ -1,4 +1,4 @@
-import type { Order } from "@/types/api";
+import type { InitiatePaymentResponse, Order, PaymentStatus } from "@/types/api";
 import { apiFetch, getApiUrl } from "./client";
 
 export const fetchOrders = () =>
@@ -31,6 +31,7 @@ export const createOrder = (data: {
   shippingInfo: Record<string, string>;
   paymentMethod: string;
   couponCode?: string;
+  saveAddress?: boolean;
 }) =>
   apiFetch<Order>("/orders", { method: "POST", body: JSON.stringify(data) });
 
@@ -55,13 +56,10 @@ export const validateCoupon = (code: string, subtotal: number) =>
   });
 
 export const initiatePayment = (orderId: string) =>
-  apiFetch<{
-    orderId: string;
-    amount: number;
-    payUrl: string | null;
-    qrCodeUrl: string | null;
-    source: "momo" | "simulated";
-  }>("/payments/initiate", { method: "POST", body: JSON.stringify({ orderId }) });
+  apiFetch<InitiatePaymentResponse>("/payments/initiate", { method: "POST", body: JSON.stringify({ orderId }) });
+
+export const fetchPaymentStatus = (orderId: string) =>
+  apiFetch<PaymentStatus>(`/payments/status/${orderId}`);
 
 export const confirmPayment = (orderId: string, success = true) =>
   apiFetch<{ ok: boolean; status: string; isPaid?: boolean }>("/payments/confirm", {

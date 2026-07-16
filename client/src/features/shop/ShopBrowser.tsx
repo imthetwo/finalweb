@@ -1,13 +1,13 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
+import { Suspense } from "react";
 
 import type { ProductListItem } from "@/types/api";
 import { ProductCard } from "./components/ProductCard";
 import { FilterSidebar } from "./components/FilterSidebar";
 import { Pagination } from "./components/Pagination";
-
-type SortKey = "featured" | "price-asc" | "price-desc" | "name";
+import { useShopBrowser } from "./hooks/useShopBrowser";
+import type { SortKey } from "./types";
 
 export default function ShopBrowser({
   title,
@@ -20,21 +20,8 @@ export default function ShopBrowser({
   page?: number;
   totalPages?: number;
 }) {
-  const [maxPrice, setMaxPrice] = useState<number | null>(null);
-  const [sort, setSort] = useState<SortKey>("featured");
-
-  const priceMax = useMemo(() => Math.max(0, ...items.map((p) => p.displayPrice)), [items]);
-
-  const filtered = useMemo(() => {
-    let list = [...items];
-    if (maxPrice !== null) list = list.filter((p) => p.displayPrice <= maxPrice);
-    if (sort === "price-asc") list.sort((a, b) => a.displayPrice - b.displayPrice);
-    if (sort === "price-desc") list.sort((a, b) => b.displayPrice - a.displayPrice);
-    if (sort === "name") list.sort((a, b) => a.name.localeCompare(b.name));
-    return list;
-  }, [items, maxPrice, sort]);
-
-  const clearFilters = () => setMaxPrice(null);
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { maxPrice, setMaxPrice, sort, setSort, priceMax, filtered, clearFilters } = useShopBrowser(items);
 
   return (
     <main className="min-h-screen bg-base text-fg">

@@ -1,4 +1,4 @@
-// Server Component — fetch stats và render dashboard
+// Server Component — fetches stats and renders the dashboard
 import { cookies } from "next/headers";
 import { getAdminStats } from "@/features/admin/data/getAdminStats";
 import { DashboardView } from "./DashboardView";

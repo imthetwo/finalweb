@@ -1,4 +1,4 @@
-// Base HTTP client — dùng cho tất cả API calls
+// Base HTTP client — used for all API calls
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 

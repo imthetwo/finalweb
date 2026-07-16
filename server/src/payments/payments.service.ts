@@ -15,8 +15,13 @@ const ACCESS_KEY     = process.env.MOMO_ACCESS_KEY || '';
 const SECRET_KEY     = process.env.MOMO_SECRET_KEY || '';
 
 if (!SECRET_KEY) {
-  console.warn('[PaymentsService] MOMO_SECRET_KEY is not set — MoMo payments will fail. Set it in .env to enable real payments.');
+  Logger.warn('MOMO_SECRET_KEY is not set — MoMo payments will fail. Set it in .env to enable real payments.', 'PaymentsService');
 }
+
+// Reused Prisma include shapes — kept in one place so the various order
+// lookups below can't drift out of sync with each other.
+const ORDER_WITH_USER_EMAIL = { user: { select: { email: true } } } as const;
+const ORDER_WITH_USER_EMAIL_AND_ITEMS = { ...ORDER_WITH_USER_EMAIL, items: true } as const;
 
 @Injectable()
 export class PaymentsService {
@@ -208,7 +213,7 @@ export class PaymentsService {
 
     const order = await this.prisma.order.findFirst({
       where: { momoOrderId: body.orderId },
-      include: { items: true, user: { select: { email: true } } },
+      include: ORDER_WITH_USER_EMAIL_AND_ITEMS,
     });
 
     if (!order) {
@@ -248,7 +253,7 @@ export class PaymentsService {
   async forcePollPayment(orderId: string) {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
-      include: { user: { select: { email: true } } },
+      include: ORDER_WITH_USER_EMAIL,
     });
     if (!order) throw new NotFoundException('Order not found');
     if (order.paymentMethod !== 'MOMO') throw new BadRequestException('Only MoMo orders can be rechecked.');
@@ -300,7 +305,7 @@ export class PaymentsService {
   async refundPayment(orderId: string, reason: string, actorId: string) {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
-      include: { user: { select: { email: true } }, items: true },
+      include: ORDER_WITH_USER_EMAIL_AND_ITEMS,
     });
     if (!order) throw new NotFoundException('Order not found');
     if (order.status === OrderStatus.CANCELLED) throw new BadRequestException('Order is already cancelled');

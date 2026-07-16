@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import type { ReactNode } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -9,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRegisterForm } from "./hooks/useRegisterForm";
+import { useRegisterOverlay } from "./hooks/useRegisterOverlay";
 
 type RegisterOverlayProps = {
   triggerButton?: ReactNode;
@@ -18,30 +17,15 @@ type RegisterOverlayProps = {
   onSwitchToLogin?: () => void;
 };
 
-export function RegisterOverlay({ triggerButton, open: controlledOpen, onOpenChange: controlledOnOpenChange, onSwitchToLogin }: RegisterOverlayProps) {
-  const [internalOpen, setInternalOpen] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
-  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
-  const setOpen = controlledOnOpenChange ?? setInternalOpen;
-
-  const { form, submitError, onSubmit, clearError } = useRegisterForm(() => {
-    setShowPassword(false);
-    setOpen(false);
-  });
-
-  const { register, formState: { errors, isSubmitting } } = form;
-
-  const handleOpenChange = (nextOpen: boolean) => {
-    setOpen(nextOpen);
-    if (!nextOpen) { clearError(); setShowPassword(false); form.reset(); }
-  };
-
-  const firstError = submitError || errors.fullName?.message || errors.email?.message
-    || errors.password?.message || errors.confirmPassword?.message;
+export function RegisterOverlay({ triggerButton, open, onOpenChange, onSwitchToLogin }: RegisterOverlayProps) {
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const {
+    open: isOpen, handleOpenChange, showPassword, togglePassword,
+    register, errors, isSubmitting, onSubmit, firstError,
+  } = useRegisterOverlay({ open, onOpenChange });
 
   return (
-    <Dialog modal={false} open={open} onOpenChange={handleOpenChange}>
+    <Dialog modal={false} open={isOpen} onOpenChange={handleOpenChange}>
       {triggerButton && <DialogTrigger asChild>{triggerButton}</DialogTrigger>}
 
       <DialogContent className="sm:max-w-100 border-none rounded-none p-0 shadow-2xl bg-white text-black">
@@ -82,7 +66,7 @@ export function RegisterOverlay({ triggerButton, open: controlledOpen, onOpenCha
               className="rounded-none border-zinc-300 bg-white pr-10 text-black placeholder:text-secondary focus:border-black focus:ring-0"
               {...register("password")} />
             <button type="button" className="absolute right-3 top-9 text-secondary hover:text-zinc-700"
-              onClick={() => setShowPassword((v) => !v)}>
+              onClick={togglePassword}>
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
             {errors.password?.message && <p className="text-xs text-destructive">{errors.password.message}</p>}

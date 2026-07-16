@@ -1,5 +1,5 @@
 "use client";
-// "use client" vì: useState, useEffect, event handlers (form submit, API calls)
+// "use client" because: useState, useEffect, event handlers (form submit, API calls)
 
 import Link from "next/link";
 

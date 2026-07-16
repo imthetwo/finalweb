@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 import { cdn } from "@/lib/cloudinary";
 
-// key phải khớp đúng với category name trong DB — ảnh verified HTTP 200 trên Cloudinary
+// key must match the category name in the DB exactly — image verified HTTP 200 on Cloudinary
 const CATEGORIES = [
   {
     key: "Processors (CPU)",

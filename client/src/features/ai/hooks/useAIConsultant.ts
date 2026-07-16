@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
-import { apiFetch } from "@/lib/api";
-
-export type ChatTurn = { role: "user" | "model"; text: string };
-
-type ChatResponse = { reply: string; source: "gemini" | "fallback" };
+import { sendChatMessage } from "@/lib/api/ai";
+import type { ChatTurn } from "@/types/api";
 
 const WELCOME: ChatTurn = {
   role: "model",
@@ -20,7 +17,7 @@ export function useAIConsultant() {
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll xuống tin nhắn mới nhất
+  // Auto-scroll down to the newest message
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
@@ -35,10 +32,7 @@ export function useAIConsultant() {
     setLoading(true);
 
     try {
-      const res = await apiFetch<ChatResponse>("/ai/chat", {
-        method: "POST",
-        body: JSON.stringify({ message, history }),
-      });
+      const res = await sendChatMessage(message, history);
       setMessages((prev) => [...prev, { role: "model", text: res.reply }]);
     } catch {
       setMessages((prev) => [

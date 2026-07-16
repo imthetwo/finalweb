@@ -5,7 +5,7 @@ import {
   fetchAddresses, createAddress, updateAddress, deleteAddress,
   type Address, type AddressInput,
 } from "@/lib/api";
-import type { AddressFieldsValue } from "@/components/ui/AddressFields";
+import type { AddressFieldsValue } from "@/types/api";
 
 const EMPTY_FORM: AddressFieldsValue & { label: string } = {
   label: "", recipient: "", phone: "", street: "", ward: "", city: "",

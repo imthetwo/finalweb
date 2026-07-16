@@ -1,27 +1,12 @@
 "use client";
-// "use client" vì: useState/useEffect (auto-lookup, phone fallback form)
+// "use client" because: useState/useEffect (auto-lookup, phone fallback form)
 
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Package, Search } from "lucide-react";
 
-import { formatVnd } from "@/lib/format";
+import { formatVnd, ORDER_STATUS_BADGE_CLASS as STATUS_STYLE, ORDER_STATUS_LABEL as STATUS_LABEL } from "@/lib/format";
 import { useTrackOrderDetail } from "../hooks/useTrackOrderDetail";
-
-const STATUS_STYLE: Record<string, string> = {
-  PENDING: "border-yellow-700/50 bg-yellow-950/30 text-warning",
-  AWAITING_CONFIRMATION: "border-orange-700/50 bg-orange-950/30 text-orange-400",
-  PROCESSING: "border-blue-700/50 bg-blue-950/30 text-info",
-  SHIPPED: "border-cyan-700/50 bg-cyan-950/30 text-brand",
-  DELIVERED: "border-emerald-700/50 bg-emerald-950/30 text-success",
-  CANCELLED: "border-edge bg-surface text-muted",
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  PENDING: "Pending payment", AWAITING_CONFIRMATION: "Confirming order",
-  PROCESSING: "Preparing", SHIPPED: "Shipped",
-  DELIVERED: "Delivered", CANCELLED: "Cancelled",
-};
 
 const inputCls =
   "w-full border border-edge bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors focus:border-brand/50 placeholder:text-subtle";

@@ -1,26 +1,18 @@
 "use client";
 
-import { useRef, useState } from "react";
 import { Save, Video, RefreshCw, Upload, Loader2 } from "lucide-react";
 import { useHeroVideoSettings, DEFAULT_VIDEO, DEFAULT_POSTER } from "@/features/admin/hooks/useHeroVideoSettings";
 
+const inputCls = "w-full border border-edge bg-surface px-4 py-2.5 text-body text-fg outline-none transition-colors focus:border-brand/50 placeholder:text-subtle";
+const labelCls = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted";
+
 export function HeroVideoManager() {
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
   const {
     videoUrl, posterUrl, saving, uploading, uploadProgress,
-    setVideoUrl, setPosterUrl, handleVideoUpload, save, reset,
+    previewing, togglePreview, fileRef,
+    setVideoUrl, setPosterUrl, onFileChange, save, reset,
   } = useHeroVideoSettings();
-  const [previewing, setPreviewing] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    await handleVideoUpload(file);
-    if (fileRef.current) fileRef.current.value = "";
-  }
-
-  const inputCls = "w-full border border-edge bg-surface px-4 py-2.5 text-body text-fg outline-none transition-colors focus:border-brand/50 placeholder:text-subtle";
-  const labelCls = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted";
 
   return (
     <div className="p-8 max-w-2xl">
@@ -86,7 +78,7 @@ export function HeroVideoManager() {
         <div>
           <button
             type="button"
-            onClick={() => setPreviewing((v) => !v)}
+            onClick={togglePreview}
             className="mb-3 text-xs text-brand underline hover:text-brand/80"
           >
             {previewing ? "Hide preview" : "Preview video"}

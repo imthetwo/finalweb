@@ -1,13 +1,13 @@
 // Shared Cloudinary URL builder — single source of truth.
-// Ảnh trong server/local_images đã upload lên Cloudinary dưới TechStore/{folder}/{name}.
+// Images in server/local_images were uploaded to Cloudinary under TechStore/{folder}/{name}.
 
 const CLOUD = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD ?? "dxbvnueoq";
 
 /**
- * Trả về URL Cloudinary với auto-format + auto-quality + giới hạn width.
- * @param folder Tên folder gốc (vd "PCs", "gpu", "funiture")
- * @param file   Tên file (có hoặc không phần mở rộng — Cloudinary tự resolve)
- * @param w      Width tối đa (px)
+ * Returns a Cloudinary URL with auto-format + auto-quality + a max width.
+ * @param folder Root folder name (e.g. "PCs", "gpu", "funiture")
+ * @param file   File name (with or without extension — Cloudinary resolves it)
+ * @param w      Max width (px)
  */
 export function cdn(folder: string, file: string, w = 600): string {
   const name = file.replace(/\.[^.]+$/, ""); // strip extension

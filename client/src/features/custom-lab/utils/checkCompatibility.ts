@@ -1,5 +1,7 @@
-import type { ApiPart, CompatibilityResult } from "../types";
+import type { ApiPart, CompatibilityResult, CompatCheck } from "../types";
 import { BUILD_SLOTS } from "../constants";
+
+const NO_CHECK: CompatCheck = { ok: true, label: "", detail: "" };
 
 // Shared by both the "Validate" check below and the live picker's
 // Compatibility Filter (PartPickerOverlay.tsx) — a single source of truth so
@@ -66,4 +68,76 @@ export function checkCompatibility(selected: Record<string, ApiPart | null>): Co
   }
 
   return { valid: errors.length === 0, errors, warnings, requiredWatts: totalWatts };
+}
+
+// ── Single-candidate check ───────────────────────────────────────────────────
+// Same rules as checkCompatibility() above, but scoped to one candidate part
+// against whatever else is already in the build — used by the part-picker's
+// Compatibility Filter and its "Add" confirmation toast, which need a
+// human-readable reason rather than a whole-build error/warning list. Kept
+// here (not duplicated in the component) so the two can't drift apart.
+export function checkCandidatePart(part: ApiPart, slot: string, sel: Record<string, ApiPart | null | undefined>): CompatCheck {
+  const cpu    = sel['CPU'];
+  const mb     = sel['MOTHERBOARD'];
+  const ram    = sel['MEMORY'];
+  const gpu    = sel['GPU'];
+  const pcCase = sel['CASE'];
+
+  switch (slot) {
+    case 'CPU':
+      if (mb?.socket && part.socket) {
+        return part.socket !== mb.socket
+          ? { ok: false, label: "Socket compatibility", detail: `${part.socket} does not match your motherboard's ${mb.socket} socket` }
+          : { ok: true, label: "Socket compatibility", detail: `${part.socket} matches your motherboard` };
+      }
+      break;
+    case 'MOTHERBOARD':
+      if (cpu?.socket && part.socket && part.socket !== cpu.socket)
+        return { ok: false, label: "Socket compatibility", detail: `${part.socket} does not match your CPU's ${cpu.socket} socket` };
+      if (ram?.ramGen && part.ramGen && part.ramGen !== ram.ramGen)
+        return { ok: false, label: "RAM generation compatibility", detail: `Board supports ${part.ramGen}, but your RAM is ${ram.ramGen}` };
+      if (cpu?.socket || ram?.ramGen)
+        return { ok: true, label: "Socket compatibility", detail: "Matches your current build" };
+      break;
+    case 'MEMORY':
+      if (mb?.ramGen && part.ramGen) {
+        return part.ramGen !== mb.ramGen
+          ? { ok: false, label: "RAM generation compatibility", detail: `${part.ramGen} does not match your motherboard's ${mb.ramGen} slots` }
+          : { ok: true, label: "RAM generation compatibility", detail: `${part.ramGen} matches your motherboard` };
+      }
+      break;
+    case 'GPU':
+      if (pcCase?.maxGpuLengthMm && part.gpuLengthMm) {
+        return part.gpuLengthMm > pcCase.maxGpuLengthMm
+          ? { ok: false, label: "Case clearance", detail: `${part.gpuLengthMm}mm is too long for your case (max ${pcCase.maxGpuLengthMm}mm)` }
+          : { ok: true, label: "Case clearance", detail: `${part.gpuLengthMm}mm fits your case` };
+      }
+      break;
+    case 'CASE': {
+      if (mb?.formFactor && part.formFactor) {
+        const mbIdx   = FORM_FACTOR_SIZE[normalizeFormFactor(mb.formFactor)]   ?? -1;
+        const caseIdx = FORM_FACTOR_SIZE[normalizeFormFactor(part.formFactor)] ?? -1;
+        if (mbIdx !== -1 && caseIdx !== -1 && mbIdx > caseIdx)
+          return { ok: false, label: "Form factor compatibility", detail: `Your ${mb.formFactor} motherboard doesn't fit this ${part.formFactor} case` };
+      }
+      if (gpu?.gpuLengthMm && part.maxGpuLengthMm && gpu.gpuLengthMm > part.maxGpuLengthMm)
+        return { ok: false, label: "GPU clearance", detail: `Your GPU (${gpu.gpuLengthMm}mm) is too long for this case (max ${part.maxGpuLengthMm}mm)` };
+      if (mb?.formFactor || gpu?.gpuLengthMm)
+        return { ok: true, label: "Form factor compatibility", detail: "Fits your current build" };
+      break;
+    }
+    case 'CPU_COOLER':
+      if (cpu?.socket && part.socketSupport) {
+        const supported = part.socketSupport.split(',').map((s) => s.trim());
+        return !supported.includes(cpu.socket)
+          ? { ok: false, label: "Socket compatibility", detail: `Cooler does not support your CPU's ${cpu.socket} socket` }
+          : { ok: true, label: "Socket compatibility", detail: `Supports your CPU's ${cpu.socket} socket` };
+      }
+      break;
+  }
+  return NO_CHECK; // nothing to check yet — no relevant part selected in the build so far
+}
+
+export function isCandidateCompatible(part: ApiPart, slot: string, sel: Record<string, ApiPart | null | undefined>): boolean {
+  return checkCandidatePart(part, slot, sel).ok;
 }

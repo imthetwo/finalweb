@@ -1,6 +1,5 @@
 import {
   IsBoolean,
-  IsDateString,
   IsEnum,
   IsInt,
   IsNumber,
@@ -221,24 +220,4 @@ export class CancelOrderDto {
 
 export class UpdateUserRoleDto {
   @IsEnum(Role) role!: Role;
-}
-
-export class CreatePromotionDto {
-  @IsString() title!: string;
-  @IsOptional() @IsString() actionLabel?: string;
-  @IsOptional() @IsString() href?: string;
-  @IsOptional() @IsDateString() startsAt?: string;
-  @IsOptional() @IsDateString() endsAt?: string;
-  @IsOptional() @IsBoolean() isActive?: boolean;
-  @IsOptional() @IsInt() sortOrder?: number;
-}
-
-export class UpdatePromotionDto {
-  @IsOptional() @IsString() title?: string;
-  @IsOptional() @IsString() actionLabel?: string;
-  @IsOptional() @IsString() href?: string;
-  @IsOptional() @IsDateString() startsAt?: string;
-  @IsOptional() @IsDateString() endsAt?: string;
-  @IsOptional() @IsBoolean() isActive?: boolean;
-  @IsOptional() @IsInt() sortOrder?: number;
 }

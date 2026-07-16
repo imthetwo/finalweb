@@ -1,13 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { LayoutDashboard, Package, ShoppingBag, Users, ArrowLeft, ChevronDown, Video } from "lucide-react";
 
-import { useAuthState } from "@/hooks/useAuthState";
-import { fetchCategories, type Category } from "@/lib/api";
-import { toast } from "sonner";
+import { useAdminSidebar } from "../hooks/useAdminSidebar";
 
 const TOP_NAV = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -17,31 +13,9 @@ const TOP_NAV = [
 ];
 
 export function AdminSidebar({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const { user, loaded } = useAuthState();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const isProducts = pathname.startsWith("/admin/products");
-  const [productsOpen, setProductsOpen] = useState(isProducts);
-
-  // Auto-open the Products submenu when navigating into it (adjust state during
-  // render — the React-recommended alternative to a setState-in-effect).
-  const [prevIsProducts, setPrevIsProducts] = useState(isProducts);
-  if (isProducts !== prevIsProducts) {
-    setPrevIsProducts(isProducts);
-    if (isProducts) setProductsOpen(true);
-  }
-
-  const allowed = loaded && !!user && (user.role === "ADMIN" || user.role === "STAFF");
-
-  useEffect(() => {
-    if (!loaded) return;
-    if (!user) { router.replace("/login"); return; }
-    if (user.role !== "ADMIN" && user.role !== "STAFF") { router.replace("/"); return; }
-    fetchCategories()
-      .then(setCategories)
-      .catch(() => toast.error("Failed to load categories — please refresh the page"));
-  }, [loaded, user, router]);
+  // Logic lives in the hook (defined outside); the component only calls it and renders.
+  const { pathname, user, allowed, isAdmin, categories, isProducts, productsOpen, setProductsOpen } =
+    useAdminSidebar();
 
   if (!allowed) {
     return (
@@ -50,8 +24,6 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-
-  const isAdmin = user?.role === "ADMIN";
 
   return (
     <div className="flex min-h-screen bg-base text-fg">
