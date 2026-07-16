@@ -3,7 +3,13 @@ import { apiFetch, serverApiUrl } from "./client";
 
 export async function getSetting(key: string): Promise<string | null> {
   try {
-    const res = await fetch(`${serverApiUrl}/settings/${key}`, { next: { revalidate: 60 } });
+    // A cold-starting backend (e.g. Render's free tier spinning back up) can
+    // take 30-60s+ to respond — that would otherwise hang this call past
+    // Vercel's build-time prerender budget. Fail fast and fall back instead.
+    const res = await fetch(`${serverApiUrl}/settings/${key}`, {
+      next: { revalidate: 60 },
+      signal: AbortSignal.timeout(8000),
+    });
     if (!res.ok) return null;
     const data = await res.json() as { key: string; value: string | null };
     return data.value ?? null;
