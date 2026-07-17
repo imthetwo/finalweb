@@ -1,54 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
-import * as dns from 'dns';
+import { google } from 'googleapis';
 import { getClientUrl } from '../common/client-url';
 
+// Sends via the Gmail API (OAuth2) instead of raw SMTP — Render has no
+// outbound path to smtp.gmail.com that Google doesn't throttle/drop
+// (IPv6-only routing, then plain connection timeouts on both 587 and 465,
+// consistent with Google blocking SMTP AUTH from cloud-hosting IP ranges).
+// The Gmail API sends over regular HTTPS, which isn't subject to that.
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
-  private readonly transporterPromise: Promise<nodemailer.Transporter>;
-
-  // Supports both variable-name sets: SMTP_* (old standard) and MAIL_* (currently used in .env)
-  private readonly mailUser = process.env.SMTP_USER || process.env.MAIL_USER;
-  private readonly mailPass = process.env.SMTP_PASS || process.env.MAIL_PASSWORD;
+  private readonly mailUser = process.env.MAIL_USER || process.env.SMTP_USER;
   private readonly mailFrom = process.env.MAIL_FROM || `"Pecify" <${this.mailUser}>`;
+  private readonly oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+  );
 
   constructor() {
-    this.transporterPromise = this.createTransporter();
-  }
-
-  // Render has no outbound IPv6 — smtp.gmail.com resolves to both an A and
-  // an AAAA record, and Node picks the AAAA record first, which dies with
-  // ENETUNREACH (same class of issue as the DATABASE_URL/Supabase fix).
-  // Resolving to a literal IPv4 address ourselves and connecting to that
-  // sidesteps nodemailer's own dual-stack resolution entirely; `servername`
-  // keeps TLS SNI/cert checks targeting the real hostname.
-  private async createTransporter(): Promise<nodemailer.Transporter> {
-    const port = Number(process.env.SMTP_PORT || process.env.MAIL_PORT) || 587;
-    const host = process.env.SMTP_HOST || process.env.MAIL_HOST || 'smtp.gmail.com';
-
-    let connectHost = host;
-    try {
-      const { address } = await dns.promises.lookup(host, { family: 4 });
-      connectHost = address;
-    } catch (err) {
-      this.logger.warn(`IPv4 lookup for ${host} failed, connecting by hostname instead: ${(err as Error).message}`);
+    if (process.env.GOOGLE_REFRESH_TOKEN) {
+      this.oauth2Client.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN });
     }
-
-    return nodemailer.createTransport({
-      host: connectHost,
-      port,
-      secure: port === 465, // true for direct SSL, false for STARTTLS (587)
-      requireTLS: port !== 465, // require STARTTLS on port 587
-      auth: {
-        user: this.mailUser,
-        pass: this.mailPass,
-      },
-      tls: {
-        rejectUnauthorized: false, // skip cert check in dev
-        servername: host,
-      },
-    });
   }
 
   async sendWelcome(to: string, fullName: string) {
@@ -130,21 +102,40 @@ export class EmailService {
   }
 
   private async send(to: string, subject: string, html: string) {
-    if (!this.mailUser) {
-      this.logger.warn(`Email skipped (no SMTP/MAIL config): ${subject} → ${to}`);
+    if (!this.mailUser || !process.env.GOOGLE_REFRESH_TOKEN) {
+      this.logger.warn(`Email skipped (Gmail API not configured): ${subject} → ${to}`);
       return;
     }
     try {
-      const transporter = await this.transporterPromise;
-      await transporter.sendMail({
-        from: this.mailFrom,
-        to,
-        subject,
-        html,
+      const gmail = google.gmail({ version: 'v1', auth: this.oauth2Client });
+      await gmail.users.messages.send({
+        userId: 'me',
+        requestBody: { raw: buildRawMessage(this.mailFrom, to, subject, html) },
       });
       this.logger.log(`Email sent: ${subject} → ${to}`);
     } catch (err) {
       this.logger.error(`Failed to send email to ${to}: ${(err as Error).message}`);
     }
   }
+}
+
+// Gmail API takes a full RFC 2822 message, base64url-encoded. Subject is
+// RFC 2047-encoded so non-ASCII (e.g. the newsletter emoji) survives.
+function buildRawMessage(from: string, to: string, subject: string, html: string): string {
+  const encodedSubject = `=?UTF-8?B?${Buffer.from(subject, 'utf-8').toString('base64')}?=`;
+  const message = [
+    `From: ${from}`,
+    `To: ${to}`,
+    `Subject: ${encodedSubject}`,
+    'MIME-Version: 1.0',
+    'Content-Type: text/html; charset=UTF-8',
+    '',
+    html,
+  ].join('\r\n');
+
+  return Buffer.from(message, 'utf-8')
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
 }
