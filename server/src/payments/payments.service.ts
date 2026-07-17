@@ -38,26 +38,21 @@ export class PaymentsService {
   }
 
   // ── Helper: atomically flip an order to PAID + send confirmation email ──
-  // Shared by the IPN webhook and the admin force-poll — both are just
-  // different ways of learning the same fact from MoMo, so both must apply it
-  // identically. Returns false if the order was already paid (no-op).
+  // Shared by the IPN webhook and admin force-poll (same fact, two sources).
+  // Returns false if already paid (no-op).
   private async markOrderPaid(
     order: { id: string; totalAmount: number; guestEmail: string | null; user: { email: string | null } | null },
     transId: number | null,
     source: 'ipn' | 'force-poll',
   ): Promise<boolean> {
     const updated = await this.prisma.order.updateMany({
-      // status: { not: CANCELLED } is the real backstop here — atomic, so no
-      // race condition can slip a payment through onto an order whose stock
-      // was already restored. The explicit CANCELLED check in forcePollPayment
-      // is just an earlier, friendlier error before wasting a MoMo API call;
-      // this is what actually protects the IPN webhook path too.
+      // Atomic guard against a cancelled (stock-restored) order getting paid —
+      // this protects both IPN and force-poll; the CANCELLED check in
+      // forcePollPayment is just a friendlier early error, not the real guard.
       where: { id: order.id, isPaid: false, status: { not: OrderStatus.CANCELLED } },
-      // transId is stored so a later refund can reference the exact MoMo
-      // transaction — MoMo's refund API requires it, and it's otherwise never
-      // persisted anywhere. Lands in AWAITING_CONFIRMATION, not PROCESSING —
-      // payment clearing doesn't mean staff have confirmed they can actually
-      // fulfill it (see AdminOrdersService.acceptOrder/rejectOrder).
+      // transId is saved for refunds (MoMo's refund API requires it). Status
+      // goes to AWAITING_CONFIRMATION, not PROCESSING — paid isn't the same as
+      // staff confirming they can fulfill it (see AdminOrdersService).
       data: { isPaid: true, status: OrderStatus.AWAITING_CONFIRMATION, momoTransId: transId != null ? String(transId) : undefined },
     });
     if (updated.count === 0) return false;
@@ -77,11 +72,9 @@ export class PaymentsService {
     const order = await this.prisma.order.findFirst({ where: { id: orderId, userId } });
     if (!order) throw new NotFoundException('Order not found');
     if (order.isPaid) throw new BadRequestException('Order has already been paid');
-    // Without this, a stale payment-gateway tab (or a reloaded link) for an
-    // order that was since cancelled would silently open a fresh, live MoMo
-    // session for it — and if that payment actually completed, the IPN/force-
-    // poll path would reactivate a cancelled+restocked order (see the where
-    // guard in markOrderPaid below for the matching backstop).
+    // Blocks a stale/reloaded payment tab from opening a fresh MoMo session on
+    // an order that's since been cancelled (markOrderPaid's where-guard above
+    // is the backstop if one somehow still completes).
     if (order.status === OrderStatus.CANCELLED) throw new BadRequestException('This order has been cancelled and can no longer be paid.');
 
     const clientUrl  = getClientUrl();
@@ -94,9 +87,8 @@ export class PaymentsService {
     const redirectUrl = `${clientUrl}/payment/momo?orderId=${order.id}`;
     const ipnUrl      = `${serverUrl}/payments/momo/ipn`;
     const extraData   = '';
-    // payWithATM = MoMo's hosted checkout with ONLY domestic ATM card payment —
-    // no wallet/QR option at all. (Use 'payWithCC' for Visa/Master/JCB only, or
-    // 'payWithMethod' to offer every method including the MoMo wallet.)
+    // payWithATM = domestic ATM cards only, no wallet/QR ('payWithCC' = cards
+    // only, 'payWithMethod' = every method including the MoMo wallet).
     const requestType = 'payWithATM';
     // Charge amount in VND (integer) — MoMo settles in VND, which is our currency.
     const amount      = Math.round(order.totalAmount);
@@ -244,12 +236,9 @@ export class PaymentsService {
     return { resultCode: 0, message: 'ok' };
   }
 
-  // ── 2b. Admin "Force Poll" — on-demand recheck against MoMo's own query API.
-  // Fixes the IPN-lag/loss scenario: the customer's money was taken but our
-  // webhook never arrived (or was dropped), so the order sits stuck as
-  // unpaid. This only ever moves an order TOWARD paid — a non-success result
-  // here is reported back as-is and never auto-cancels anything, so a flaky
-  // query call can't accidentally cancel a genuinely pending order. ──────────
+  // ── 2b. Admin "Force Poll" — recheck payment against MoMo's query API.
+  // Fixes IPN lag/loss (money taken, webhook lost). Only ever moves TOWARD
+  // paid — a non-success result is just reported, never auto-cancels. ──────
   async forcePollPayment(orderId: string) {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
@@ -258,10 +247,8 @@ export class PaymentsService {
     if (!order) throw new NotFoundException('Order not found');
     if (order.paymentMethod !== 'MOMO') throw new BadRequestException('Only MoMo orders can be rechecked.');
     if (order.isPaid) return { orderId: order.id, isPaid: true, status: order.status, momoResultCode: 0, momoMessage: 'Already paid' };
-    // A cancelled order already had its stock restored — marking it paid here
-    // would reactivate it without ever re-decrementing that stock. A late
-    // MoMo confirmation on a cancelled order needs a manual refund, not an
-    // automatic reactivation.
+    // Cancelled = stock already restored; marking it paid would reactivate it
+    // without re-decrementing stock. Needs a manual refund, not auto-reactivation.
     if (order.status === OrderStatus.CANCELLED) {
       throw new BadRequestException('This order was cancelled. If MoMo shows it as paid, process a refund manually — do not reactivate it.');
     }
@@ -298,10 +285,8 @@ export class PaymentsService {
     return { orderId: order.id, isPaid: false, status: order.status, momoResultCode: data.resultCode, momoMessage: data.message };
   }
 
-  // ── 2c. Admin "Refund" — calls MoMo's real refund API for a paid order,
-  // and only on a confirmed success does it restock + cancel the order. If
-  // MoMo rejects the refund, nothing changes (order stays paid, untouched) —
-  // this must never restock/cancel speculatively. ──────────────────────────
+  // ── 2c. Admin "Refund" — calls MoMo's refund API; only restocks + cancels
+  // on confirmed success. Rejected refund = order stays paid, untouched. ───
   async refundPayment(orderId: string, reason: string, actorId: string) {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },

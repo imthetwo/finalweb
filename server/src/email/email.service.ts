@@ -1,11 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import * as dns from 'dns';
 import { getClientUrl } from '../common/client-url';
 
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
-  private transporter: nodemailer.Transporter;
+  private readonly transporterPromise: Promise<nodemailer.Transporter>;
 
   // Supports both variable-name sets: SMTP_* (old standard) and MAIL_* (currently used in .env)
   private readonly mailUser = process.env.SMTP_USER || process.env.MAIL_USER;
@@ -13,9 +14,29 @@ export class EmailService {
   private readonly mailFrom = process.env.MAIL_FROM || `"Pecify" <${this.mailUser}>`;
 
   constructor() {
+    this.transporterPromise = this.createTransporter();
+  }
+
+  // Render has no outbound IPv6 — smtp.gmail.com resolves to both an A and
+  // an AAAA record, and Node picks the AAAA record first, which dies with
+  // ENETUNREACH (same class of issue as the DATABASE_URL/Supabase fix).
+  // Resolving to a literal IPv4 address ourselves and connecting to that
+  // sidesteps nodemailer's own dual-stack resolution entirely; `servername`
+  // keeps TLS SNI/cert checks targeting the real hostname.
+  private async createTransporter(): Promise<nodemailer.Transporter> {
     const port = Number(process.env.SMTP_PORT || process.env.MAIL_PORT) || 587;
-    this.transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || process.env.MAIL_HOST || 'smtp.gmail.com',
+    const host = process.env.SMTP_HOST || process.env.MAIL_HOST || 'smtp.gmail.com';
+
+    let connectHost = host;
+    try {
+      const { address } = await dns.promises.lookup(host, { family: 4 });
+      connectHost = address;
+    } catch (err) {
+      this.logger.warn(`IPv4 lookup for ${host} failed, connecting by hostname instead: ${(err as Error).message}`);
+    }
+
+    return nodemailer.createTransport({
+      host: connectHost,
       port,
       secure: port === 465, // true for direct SSL, false for STARTTLS (587)
       requireTLS: port !== 465, // require STARTTLS on port 587
@@ -25,6 +46,7 @@ export class EmailService {
       },
       tls: {
         rejectUnauthorized: false, // skip cert check in dev
+        servername: host,
       },
     });
   }
@@ -113,7 +135,8 @@ export class EmailService {
       return;
     }
     try {
-      await this.transporter.sendMail({
+      const transporter = await this.transporterPromise;
+      await transporter.sendMail({
         from: this.mailFrom,
         to,
         subject,
