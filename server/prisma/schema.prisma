@@ -209,7 +209,6 @@ model User {
   password           String
   fullName           String
   phone              String?
-  avatarUrl          String?
   role               Role      @default(USER)
   googleId           String?   @unique
   resetToken         String?   @unique

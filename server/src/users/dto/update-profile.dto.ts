@@ -12,10 +12,6 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsString()
   phone?: string;
-
-  @IsOptional()
-  @IsString()
-  avatarUrl?: string;
 }
 
 export class ChangePasswordDto {

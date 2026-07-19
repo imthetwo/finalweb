@@ -106,7 +106,6 @@ export type UserProfile = {
   email: string;
   fullName: string;
   phone: string | null;
-  avatarUrl: string | null;
   role: "USER" | "ADMIN";
   createdAt: string;
   isGoogleUser: boolean;
@@ -262,29 +261,6 @@ export type AdminUser = {
   isActive: boolean;
   createdAt: string;
   _count: { orders: number };
-};
-
-// ─── Promotions ───────────────────────────────────────────────────────────────
-
-export type Promotion = {
-  id: string;
-  title: string;
-  actionLabel: string | null;
-  href: string | null;
-  startsAt: string;
-  endsAt: string | null;
-  isActive: boolean;
-  sortOrder: number;
-};
-
-export type PromotionInput = {
-  title: string;
-  actionLabel?: string;
-  href?: string;
-  startsAt?: string;
-  endsAt?: string;
-  isActive?: boolean;
-  sortOrder?: number;
 };
 
 // ─── AI Consultant ──────────────────────────────────────────────────────────────

@@ -9,7 +9,6 @@ type GoogleProfile = {
     givenName?: string;
     familyName?: string;
   };
-  photos?: Array<{ value?: string }>;
 };
 
 @Injectable()
@@ -41,14 +40,12 @@ export class GoogleStrategy extends PassportStrategy(
     const email = profile.emails?.[0]?.value ?? '';
     const firstName = profile.name?.givenName ?? '';
     const lastName = profile.name?.familyName ?? '';
-    const picture = profile.photos?.[0]?.value ?? '';
 
     return {
       id: profile.id ?? '',
       email,
       firstName,
       lastName,
-      picture,
     };
   }
 }

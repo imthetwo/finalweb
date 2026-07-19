@@ -12,7 +12,7 @@ export class UsersService {
       where: { id: userId },
       select: {
         id: true, email: true, fullName: true, phone: true,
-        avatarUrl: true, role: true, createdAt: true,
+        role: true, createdAt: true,
         googleId: true, isEmailVerified: true,
         _count: { select: { orders: true, wishlists: true } },
       },
@@ -35,7 +35,6 @@ export class UsersService {
         fullName: dto.fullName,
         email: dto.email,
         phone: dto.phone,
-        avatarUrl: dto.avatarUrl,
       },
     });
     // Return the full profile (isGoogleUser + _count) so the response matches

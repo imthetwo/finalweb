@@ -63,13 +63,12 @@ export class AuthService {
 		return { access_token, user: safeUser };
 	}
 
-	async googleLogin(user: { id: string; email: string; firstName?: string; lastName?: string; picture?: string }) {
+	async googleLogin(user: { id: string; email: string; firstName?: string; lastName?: string }) {
 		if (!user?.email) {
 			throw new UnauthorizedException('Google account email is required');
 		}
 
 		const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || user.email.split('@')[0];
-		const avatarUrl = user.picture || null;
 		const googleId = user.id;
 		const existingUser = await this.prisma.user.findUnique({ where: { email: user.email } });
 
@@ -82,7 +81,6 @@ export class AuthService {
 					email: user.email,
 					password: dummyPassword,
 					fullName,
-					avatarUrl,
 					googleId,
 					// Google already proved ownership of this email during its own
 					// OAuth consent screen — no app-level verification needed on top.
@@ -94,7 +92,6 @@ export class AuthService {
 				where: { email: user.email },
 				data: {
 					fullName: account.fullName || fullName,
-					avatarUrl: account.avatarUrl || avatarUrl,
 					googleId: account.googleId || googleId,
 					// Signing in with Google to an existing (possibly unverified)
 					// password account is itself proof of email ownership.
@@ -105,7 +102,7 @@ export class AuthService {
 
 		const payload = { sub: account.id, email: account.email, fullName: account.fullName, role: account.role, isEmailVerified: account.isEmailVerified };
 		const access_token = this.jwtService.sign(payload);
-		const safeUser = { id: account.id, email: account.email, fullName: account.fullName, role: account.role, avatarUrl: account.avatarUrl, isEmailVerified: account.isEmailVerified };
+		const safeUser = { id: account.id, email: account.email, fullName: account.fullName, role: account.role, isEmailVerified: account.isEmailVerified };
 
 		return { access_token, user: safeUser };
 	}
