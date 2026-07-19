@@ -1,5 +1,3 @@
-export type PromoItem = { text: string; action: string; href: string };
-
 // Header user-menu dialog state: which auth overlay (if any) is open.
 export type AuthDialog = "none" | "login" | "register";
 

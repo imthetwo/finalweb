@@ -16,7 +16,6 @@ import { WishlistModule } from './wishlist/wishlist.module';
 import { AdminModule } from './admin/admin.module';
 import { QrModule } from './qr/qr.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
-import { PromotionsModule } from './promotions/promotions.module';
 import { SettingsModule } from './settings/settings.module';
 import { NewsletterModule } from './newsletter/newsletter.module';
 
@@ -38,7 +37,6 @@ import { NewsletterModule } from './newsletter/newsletter.module';
     WishlistModule,
     AdminModule,
     QrModule,
-    PromotionsModule,
     SettingsModule,
     NewsletterModule,
   ],

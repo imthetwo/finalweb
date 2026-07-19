@@ -9,7 +9,7 @@ import { maxQtyFor } from '../common/quantity-caps';
 import { AddressesService } from '../addresses/addresses.service';
 
 const SHIPPING_FEE = 30000;          // flat shipping rate (VND)
-const FREE_SHIPPING_OVER = 2000000;  // free shipping threshold (VND) — matches the PromoBar promise
+const FREE_SHIPPING_OVER = 2000000;  // free shipping threshold (VND)
 const shippingFor = (subTotal: number) => (subTotal >= FREE_SHIPPING_OVER ? 0 : SHIPPING_FEE);
 
 // Accepted payment methods — COD is paid on delivery, MOMO through the gateway.

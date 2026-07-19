@@ -23,9 +23,9 @@ function canPay(o: Order) {
 }
 
 /* ─── Order Detail Modal ──────────────────────────────────────────────────── */
-// Centered modal — follows the same overlay pattern as ProductFormModal /
-// PromotionsManager (fixed inset-0 + flex centering + bg-base/70 backdrop)
-// so it looks and behaves consistently with the rest of the admin/account UI.
+// Centered modal — follows the same overlay pattern as ProductFormModal
+// (fixed inset-0 + flex centering + bg-base/70 backdrop) so it looks and
+// behaves consistently with the rest of the admin/account UI.
 
 function OrderDetailModal({
   order,

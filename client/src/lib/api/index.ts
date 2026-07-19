@@ -17,6 +17,5 @@ export type {
   ProductSpecs, AdminProduct, ProductInput,
   UserProfile, Order, OrderItem, WishlistEntry,
   AdminStats, AdminOrder,
-  Promotion, PromotionInput,
   Address, AddressInput,
 } from "@/types/api";

@@ -1,6 +1,6 @@
 import type {
-  AdminStats, AdminProduct, AdminOrder, AdminUser, UserRole, Promotion,
-  ProductInput, PromotionInput, Paginated,
+  AdminStats, AdminProduct, AdminOrder, AdminUser, UserRole,
+  ProductInput, Paginated,
 } from "@/types/api";
 import { apiFetch, getApiUrl, getToken } from "./client";
 
@@ -159,17 +159,3 @@ export const updateAdminUserRole = (id: string, role: UserRole) =>
     `/admin/users/${id}/role`,
     { method: "PATCH", body: JSON.stringify({ role }) },
   );
-
-// ── Promotions ────────────────────────────────────────────────────────────────
-
-export const fetchPromotions = () => apiFetch<Promotion[]>("/promotions");
-export const fetchAdminPromotions = () => apiFetch<Promotion[]>("/admin/promotions");
-
-export const createAdminPromotion = (data: PromotionInput) =>
-  apiFetch<Promotion>("/admin/promotions", { method: "POST", body: JSON.stringify(data) });
-
-export const updateAdminPromotion = (id: string, data: Partial<PromotionInput>) =>
-  apiFetch<Promotion>(`/admin/promotions/${id}`, { method: "PATCH", body: JSON.stringify(data) });
-
-export const deleteAdminPromotion = (id: string) =>
-  apiFetch<{ ok: boolean }>(`/admin/promotions/${id}`, { method: "DELETE" });
