@@ -258,7 +258,6 @@ export type AdminUser = {
   email: string;
   fullName: string;
   role: UserRole;
-  isActive: boolean;
   createdAt: string;
   _count: { orders: number };
 };
