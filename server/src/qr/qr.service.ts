@@ -18,7 +18,7 @@ export class QrService {
     });
     if (!order) throw new NotFoundException('Order not found');
 
-    const url = `${this.base()}/order-success?orderId=${order.id}`;
+    const url = `${this.base()}/track-order/${order.id}`;
     const dataUrl = await QRCode.toDataURL(url, { width: 240, margin: 1 });
     return { orderId: order.id, url, dataUrl, status: order.status, total: order.totalAmount };
   }
