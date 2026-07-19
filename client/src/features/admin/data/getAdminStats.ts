@@ -1,10 +1,9 @@
 import type { AdminStats } from "@/types/api";
-
-const API = process.env.API_URL ?? "http://localhost:3001";
+import { serverApiUrl } from "@/lib/api/client";
 
 export async function getAdminStats(token: string): Promise<AdminStats | null> {
   try {
-    const res = await fetch(`${API}/admin/stats`, {
+    const res = await fetch(`${serverApiUrl}/admin/stats`, {
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
     });

@@ -3,7 +3,10 @@
 import { useAuthStore } from "@/store/authStore";
 
 const KEY = "access_token";
-const MAX_AGE = 60 * 60; 
+// Must match the server's JWT_EXPIRES_IN (7d) — a shorter cookie age than the
+// token's real lifetime makes server components (e.g. AdminDashboard, which
+// reads this cookie) lose auth while the client-side session is still valid.
+const MAX_AGE = 60 * 60 * 24 * 7;
 function parseJwt(token: string) {
   try {
     // JWT uses Base64url (- and _ instead of + and /). atob() needs standard Base64.
