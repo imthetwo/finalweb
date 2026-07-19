@@ -44,8 +44,38 @@ export function useAddressBook() {
     setEditingId(null);
   }
 
+  // Client-side validation — mirrors the backend ShippingInfoDto rules (same
+  // ones CreateAddressDto/UpdateAddressDto extend) so the user gets a friendly
+  // message instead of a raw 400 from the API.
+  function validateForm(): boolean {
+    const name = form.recipient.trim();
+    if (!/^[\p{L}][\p{L}\s.'-]{1,59}$/u.test(name)) {
+      toast.error("Full name must contain letters only (no numbers).");
+      return false;
+    }
+    if (!/^(0\d{9}|\+84\d{9})$/.test(form.phone.trim())) {
+      toast.error("Phone must be a valid Vietnamese number, e.g. 0901234567.");
+      return false;
+    }
+    const street = form.street.trim();
+    if (street.length < 3 || !/\p{L}/u.test(street)) {
+      toast.error("Street address must include a street name, e.g. 123 Nguyen Hue.");
+      return false;
+    }
+    if (!form.ward.trim()) {
+      toast.error("Please select your ward.");
+      return false;
+    }
+    if (!form.city.trim()) {
+      toast.error("Please select your city / province.");
+      return false;
+    }
+    return true;
+  }
+
   async function save(e: React.FormEvent) {
     e.preventDefault();
+    if (!validateForm()) return;
     setSaving(true);
     try {
       const payload: AddressInput = {
