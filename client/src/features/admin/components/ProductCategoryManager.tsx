@@ -80,7 +80,7 @@ export function ProductCategoryManager() {
                     )}
                   </td>
                   <td className="px-4 py-2.5 text-center">
-                    <span className={p.stock <= 5 ? "text-warning" : "text-secondary"}>{p.stock}</span>
+                    <span className="text-fg">{p.stock}</span>
                   </td>
                   <td className="px-4 py-2.5 text-center">
                     <span className={`text-2xs font-bold uppercase ${p.isPublished ? "text-success" : "text-subtle"}`}>
