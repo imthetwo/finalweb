@@ -29,6 +29,10 @@ export function usePartPicker({
     if (check.label) {
       if (check.ok) toast.success(`${check.label} — ${check.detail}`);
       else toast.warning(`${check.label} issue — ${check.detail}`);
+    } else {
+      // No compatibility rule applies to this slot (or nothing to compare
+      // against yet) — still confirm the add instead of showing nothing.
+      toast.success(`${part.name} added to your build`);
     }
     setCheckingId(null);
     onAdd(part);
