@@ -37,10 +37,12 @@ export default function AddToCartButton({
   productId,
   className = DEFAULT_CLASS,
   label = "Add to Cart",
+  disabled = false,
 }: {
   productId: string;
   className?: string;
   label?: React.ReactNode;
+  disabled?: boolean;
 }) {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
   const { loading, done, add } = useAddToCart(productId);
@@ -49,14 +51,16 @@ export default function AddToCartButton({
     <button
       type="button"
       onClick={add}
-      disabled={loading}
+      disabled={disabled || loading}
       className={`${className} relative overflow-hidden`}
     >
       <span
         className="flex items-center justify-center gap-2 transition-all duration-200"
         style={{ opacity: loading ? 0 : 1 }}
       >
-        {done ? (
+        {disabled ? (
+          "Out of Stock"
+        ) : done ? (
           <>
             <svg
               className="h-4 w-4"

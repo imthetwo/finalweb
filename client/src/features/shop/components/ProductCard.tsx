@@ -52,7 +52,8 @@ export function ProductCard({ p }: { p: ProductListItem }) {
         <div className="mt-auto pt-3">
           <AddToCartButton
             productId={p.id}
-            className="flex w-full items-center justify-center gap-2 border border-brand/40 bg-transparent py-2 text-xs font-black uppercase tracking-wider text-brand transition hover:bg-brand hover:text-brand-fg"
+            disabled={p.stock <= 0}
+            className="flex w-full items-center justify-center gap-2 border border-brand/40 bg-transparent py-2 text-xs font-black uppercase tracking-wider text-brand transition hover:bg-brand hover:text-brand-fg disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-brand"
           />
         </div>
       </div>
