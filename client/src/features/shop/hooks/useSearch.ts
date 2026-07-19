@@ -20,7 +20,7 @@ export function useSearch(onClose: () => void) {
 
   useEffect(() => {
     const q = query.trim();
-    if (q.length < 2) {
+    if (q.length < 3) {
       setResults([]);
       setOpen(false);
       return;

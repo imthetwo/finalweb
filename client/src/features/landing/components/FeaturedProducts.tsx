@@ -72,7 +72,7 @@ export default async function FeaturedProducts() {
 
   return (
     <section className="bg-base py-20">
-      <div className="mx-auto max-w-[1400px] px-4 md:px-8">
+      <div className="mx-auto max-w-350 px-4 md:px-8">
         {/* Header */}
         <div className="mb-12 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>

@@ -10,7 +10,7 @@ export default function NewsletterSection() {
 
   return (
     <section className="bg-base py-20">
-      <div className="mx-auto max-w-[700px] px-4 text-center md:px-8">
+      <div className="mx-auto max-w-175 px-4 text-center md:px-8">
         <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">
           Stay in the Loop
         </p>

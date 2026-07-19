@@ -32,7 +32,7 @@ export default function HeroSection({
       <div className="absolute inset-0 z-1">
         <div className="absolute inset-0 bg-base/55" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,#050505_0%,transparent_25%,transparent_70%,#050505_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] [background-size:60px_60px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-size-[60px_60px]" />
       </div>
 
       {/* Main content */}
