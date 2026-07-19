@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { User, Package, Wrench, LogOut, ChevronDown, Shield } from "lucide-react";
+import { User, Package, LogOut, ChevronDown, Shield } from "lucide-react";
 
 import { LoginOverlay } from "@/features/auth";
 import { RegisterOverlay } from "@/features/auth";
@@ -10,7 +10,6 @@ import { useUserMenu } from "./hooks/useUserMenu";
 const USER_LINKS = [
   { label: "My Account", href: "/account", icon: User },
   { label: "My Orders", href: "/account?tab=orders", icon: Package },
-  { label: "My Builds", href: "/account?tab=builds", icon: Wrench },
 ];
 
 export function UserMenu() {

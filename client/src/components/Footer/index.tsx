@@ -22,7 +22,6 @@ const LINKS = {
   "PC Builder": [
     { label: "PC Builder", href: "/custom-lab" },
     { label: "Compatibility Guide", href: "/custom-lab" },
-    { label: "My Builds", href: "/account" },
   ],
   Support: [
     { label: "My Account", href: "/account" },
