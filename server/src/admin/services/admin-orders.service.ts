@@ -80,6 +80,12 @@ export class AdminOrdersService {
     if (order.status === OrderStatus.AWAITING_CONFIRMATION) {
       throw new BadRequestException('This order is awaiting confirmation. Use Accept or Reject.');
     }
+    // MoMo orders must be confirmed paid (via IPN or Recheck Payment) before
+    // moving forward in the fulfillment pipeline — COD is unaffected, since it
+    // is expected to stay unpaid until cash is collected on delivery.
+    if (order.paymentMethod === 'MOMO' && !order.isPaid && status !== OrderStatus.PENDING) {
+      throw new BadRequestException('This MoMo order has not been paid yet. Use Recheck Payment first.');
+    }
 
     const updated = await this.prisma.order.update({
       where: { id: orderId },
@@ -189,7 +195,7 @@ export class AdminOrdersService {
       take: limit,
       select: {
         id: true, email: true, fullName: true,
-        role: true, isActive: true, createdAt: true,
+        role: true, createdAt: true,
         _count: { select: { orders: true } },
       },
     });
