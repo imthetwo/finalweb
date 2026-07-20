@@ -10,8 +10,8 @@ import { addToGuestCart, getGuestCart } from "@/lib/guestCart";
 import { useBuilderStore } from "@/store/builderStore";
 import type { ApiPart } from "../types";
 
-// Custom hook #3 — turns the current build into cart actions: add every selected
-// part to the cart, or (placeholder) save the build.
+// Custom hook #3 — turns the current build into a cart action: add every
+// selected part to the cart.
 export function useBuildCart() {
   const router     = useRouter();
   const selected   = useBuilderStore((s) => s.selected);
@@ -67,9 +67,5 @@ export function useBuildCart() {
     }
   }, [selected, setAddingCart, router]);
 
-  const saveBuild = useCallback(async () => {
-    toast.info("Saving builds is coming soon.");
-  }, []);
-
-  return { addingCart, addAllToCart, saveBuild };
+  return { addingCart, addAllToCart };
 }

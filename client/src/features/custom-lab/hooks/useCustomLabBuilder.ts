@@ -17,12 +17,12 @@ export function useCustomLabBuilder() {
 
   const {
     selected, parts, loading, pickerSlot, compat,
-    validating, saving, addingCart,
+    validating, addingCart,
     totalPrice, estimatedWatts, selectedCount,
     openPicker: rawOpenPicker,
     closePicker: storeClosePicker,
     selectPart, removePart, resetBuild,
-    validateBuild, addAllToCart, saveBuild,
+    validateBuild, addAllToCart,
   } = useBuild();
 
   const handleReset = useCallback(() => {
@@ -55,10 +55,10 @@ export function useCustomLabBuilder() {
 
   return {
     selected, parts, loading, pickerSlot, pickerCfg, compat,
-    validating, saving, addingCart,
+    validating, addingCart,
     totalPrice, estimatedWatts, selectedCount,
     openPicker, closePicker,
     selectPart, removePart, handleReset,
-    validateBuild, addAllToCart, saveBuild,
+    validateBuild, addAllToCart,
   };
 }

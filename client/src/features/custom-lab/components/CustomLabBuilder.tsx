@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { AlertCircle, AlertTriangle, Plus, RotateCcw, Save, ShoppingCart, Trash2, Zap } from "lucide-react";
+import { AlertCircle, AlertTriangle, Plus, RotateCcw, ShoppingCart, Trash2, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,11 +20,11 @@ export default function CustomLabBuilder() {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
   const {
     selected, parts, loading, pickerSlot, pickerCfg, compat,
-    validating, saving, addingCart,
+    validating, addingCart,
     totalPrice, estimatedWatts, selectedCount,
     openPicker, closePicker,
     selectPart, removePart, handleReset,
-    validateBuild, addAllToCart, saveBuild,
+    validateBuild, addAllToCart,
   } = useCustomLabBuilder();
 
   return (
@@ -163,10 +163,6 @@ export default function CustomLabBuilder() {
               <Button variant="outline" onClick={handleReset} disabled={selectedCount === 0}
                 className="h-10 gap-2 border-edge bg-transparent px-5 text-sm font-bold uppercase tracking-wider text-secondary hover:border-destructive hover:text-destructive">
                 <RotateCcw size={13} /> Reset
-              </Button>
-              <Button variant="outline" onClick={saveBuild} disabled={saving || selectedCount === 0}
-                className="h-10 gap-2 border-edge bg-transparent px-5 text-sm font-bold uppercase tracking-wider text-secondary hover:border-secondary hover:text-fg">
-                <Save size={13} />{saving ? "Saving…" : "Save Build"}
               </Button>
               <Button onClick={addAllToCart} disabled={addingCart || selectedCount === 0}
                 className="h-10 gap-2 bg-brand px-5 text-sm font-black uppercase tracking-wider text-brand-fg hover:bg-brand-hover disabled:opacity-50">
