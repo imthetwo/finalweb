@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
-// Data/logic for the top-of-page navigation progress bar — starts on any
-// in-app link click, ramps up while the navigation is in flight, and
-// completes/fades once the pathname actually changes. The component only renders.
 export function useNavigationProgress() {
   const pathname = usePathname();
   const [progress, setProgress] = useState(0);
@@ -30,7 +27,13 @@ export function useNavigationProgress() {
       const anchor = (e.target as HTMLElement).closest("a");
       if (!anchor) return;
       const href = anchor.getAttribute("href") ?? "";
-      if (!href || href.startsWith("#") || href.startsWith("http") || href.startsWith("mailto:")) return;
+      if (
+        !href ||
+        href.startsWith("#") ||
+        href.startsWith("http") ||
+        href.startsWith("mailto:")
+      )
+        return;
       if (href === pathname) return;
 
       if (timerRef.current) clearTimeout(timerRef.current);

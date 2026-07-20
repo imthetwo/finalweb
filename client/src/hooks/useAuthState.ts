@@ -14,10 +14,6 @@ export function useAuthState() {
     if (!loaded) initAuth();
   }, [loaded]);
 
-  // Cross-tab sync: e.g. clicking the email-verify link opens /verify-email
-  // in a new tab, which updates localStorage's token there — this tab's
-  // Zustand store only learns about it via the browser's "storage" event
-  // (which fires in every OTHER tab, never the one that made the change).
   useEffect(() => {
     function onStorage(e: StorageEvent) {
       if (e.key === "access_token") initAuth();
