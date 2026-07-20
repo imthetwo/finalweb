@@ -48,16 +48,14 @@ export default function CustomLabPromo() {
           {BUILD_STEPS.map(({ step, label, desc }) => (
             <div
               key={step}
-              className="group flex items-start gap-5 border border-white/5 bg-elevated p-5 transition-all duration-200 hover:border-brand/15"
+              className="flex items-start gap-5 border border-edge bg-elevated p-5"
             >
-              <span className="flex-none text-2xl font-black text-brand/20 transition-colors duration-200 group-hover:text-brand/50">
+              <span className="flex-none text-2xl font-black text-brand/60">
                 {step}
               </span>
               <div>
-                <p className="text-sm font-bold text-fg transition-colors duration-200 group-hover:text-brand">
-                  {label}
-                </p>
-                <p className="mt-0.5 text-sm text-subtle">{desc}</p>
+                <p className="text-sm font-bold text-fg">{label}</p>
+                <p className="mt-0.5 text-sm text-secondary">{desc}</p>
               </div>
             </div>
           ))}
