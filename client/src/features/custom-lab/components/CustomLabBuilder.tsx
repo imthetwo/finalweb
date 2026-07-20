@@ -42,9 +42,6 @@ export default function CustomLabBuilder() {
               <h1 className="text-body font-black uppercase tracking-wider text-fg">PC Builder</h1>
             </div>
           </div>
-          <Badge variant="outline" className="border-edge text-xs text-muted">
-            {selectedCount}/{BUILD_SLOTS.length} components
-          </Badge>
         </header>
 
         {/* Status bar */}
