@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { login } from "@/lib/api/auth";
+import { login, resendVerificationByEmail } from "@/lib/api/auth";
 import { saveToken } from "@/lib/auth";
 import { syncGuestDataToAccount } from "../utils/syncGuestDataToAccount";
 
@@ -16,8 +16,12 @@ export const loginSchema = z.object({
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 
+const UNVERIFIED_MESSAGE = "Please verify your email before signing in — check your inbox for the verification link.";
+
 export function useLoginForm(onSuccess: () => void) {
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+  const [resending, setResending] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -26,6 +30,7 @@ export function useLoginForm(onSuccess: () => void) {
 
   const onSubmit = form.handleSubmit(async (values) => {
     setSubmitError(null);
+    setUnverifiedEmail(null);
     try {
       const data = await login(values.email, values.password);
       saveToken(data.access_token);
@@ -35,11 +40,26 @@ export function useLoginForm(onSuccess: () => void) {
       form.reset();
       onSuccess();
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : "Unable to connect to the authentication server.");
+      const message = err instanceof Error ? err.message : "Unable to connect to the authentication server.";
+      setSubmitError(message);
+      if (message === UNVERIFIED_MESSAGE) setUnverifiedEmail(values.email);
     }
   });
 
-  const clearError = () => setSubmitError(null);
+  async function resendEmail() {
+    if (!unverifiedEmail) return;
+    setResending(true);
+    try {
+      await resendVerificationByEmail(unverifiedEmail);
+      toast.success("Verification email resent.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to resend email.");
+    } finally {
+      setResending(false);
+    }
+  }
 
-  return { form, submitError, onSubmit, clearError };
+  const clearError = () => { setSubmitError(null); setUnverifiedEmail(null); };
+
+  return { form, submitError, onSubmit, clearError, unverifiedEmail, resendEmail, resending };
 }

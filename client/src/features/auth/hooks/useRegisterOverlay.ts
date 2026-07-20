@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useRegisterForm } from "./useRegisterForm";
 
 // Data/logic for the register overlay — open state (controlled or internal),
-// password visibility, and wiring useRegisterForm's onSuccess to close/reset.
+// password visibility, and the post-submit "check your email" state (register
+// no longer signs the user in, so there's nothing to close the overlay for).
 // The component only renders based on this.
 export function useRegisterOverlay({
   open: controlledOpen,
@@ -18,16 +19,13 @@ export function useRegisterOverlay({
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
   const setOpen = controlledOnOpenChange ?? setInternalOpen;
 
-  const { form, submitError, onSubmit, clearError } = useRegisterForm(() => {
-    setShowPassword(false);
-    setOpen(false);
-  });
+  const { form, submitError, onSubmit, registeredEmail, resendEmail, resending, reset } = useRegisterForm();
 
   const { register, formState: { errors, isSubmitting } } = form;
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
-    if (!nextOpen) { clearError(); setShowPassword(false); form.reset(); }
+    if (!nextOpen) { setShowPassword(false); reset(); }
   }
 
   function togglePassword() {
@@ -40,5 +38,6 @@ export function useRegisterOverlay({
   return {
     open, handleOpenChange, showPassword, togglePassword,
     register, errors, isSubmitting, onSubmit, firstError,
+    registeredEmail, resendEmail, resending,
   };
 }

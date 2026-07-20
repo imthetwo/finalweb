@@ -24,6 +24,7 @@ export function LoginOverlay({ triggerButton, open, onOpenChange, onSwitchToRegi
   const {
     open: isOpen, handleOpenChange, showPassword, togglePassword,
     register, errors, isSubmitting, submitError, onSubmit,
+    unverifiedEmail, resendEmail, resending,
   } = useLoginOverlay({ open, onOpenChange });
 
   return (
@@ -43,6 +44,16 @@ export function LoginOverlay({ triggerButton, open, onOpenChange, onSwitchToRegi
           {(submitError || Object.keys(errors).length > 0) && (
             <Alert variant="destructive" className="rounded-none border-red-300 bg-red-50 text-red-700">
               {submitError || errors.email?.message || errors.password?.message}
+              {unverifiedEmail && (
+                <button
+                  type="button"
+                  disabled={resending}
+                  onClick={resendEmail}
+                  className="mt-1.5 block font-bold underline underline-offset-2 disabled:opacity-50"
+                >
+                  {resending ? "Resending…" : "Resend verification email"}
+                </button>
+              )}
             </Alert>
           )}
 

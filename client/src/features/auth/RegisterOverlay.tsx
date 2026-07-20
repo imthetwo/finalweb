@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, MailCheck } from "lucide-react";
 
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,45 @@ export function RegisterOverlay({ triggerButton, open, onOpenChange, onSwitchToL
   const {
     open: isOpen, handleOpenChange, showPassword, togglePassword,
     register, errors, isSubmitting, onSubmit, firstError,
+    registeredEmail, resendEmail, resending,
   } = useRegisterOverlay({ open, onOpenChange });
+
+  if (registeredEmail) {
+    return (
+      <Dialog modal={false} open={isOpen} onOpenChange={handleOpenChange}>
+        {triggerButton && <DialogTrigger asChild>{triggerButton}</DialogTrigger>}
+        <DialogContent className="sm:max-w-100 border-none rounded-none p-0 shadow-2xl bg-white text-black">
+          <div className="flex flex-col items-center gap-4 px-8 py-10 text-center">
+            <MailCheck size={40} className="text-black" />
+            <DialogHeader>
+              <DialogTitle className="text-xl font-black uppercase tracking-widest text-black">
+                Check your email
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-secondary">
+              We sent a verification link to <strong className="text-black">{registeredEmail}</strong>.
+              Click it to activate your account — you can&apos;t sign in until then.
+            </p>
+            <Button
+              type="button"
+              disabled={resending}
+              onClick={resendEmail}
+              className="w-full rounded-none bg-black py-6 text-sm font-black uppercase tracking-widest text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {resending ? "Resending…" : "Resend email"}
+            </Button>
+            <button
+              type="button"
+              onClick={() => { handleOpenChange(false); onSwitchToLogin?.(); }}
+              className="text-sm font-semibold text-black underline underline-offset-2 hover:text-subtle"
+            >
+              Back to sign in
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog modal={false} open={isOpen} onOpenChange={handleOpenChange}>

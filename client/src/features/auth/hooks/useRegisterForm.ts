@@ -5,9 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { register as registerAccount } from "@/lib/api/auth";
-import { saveToken } from "@/lib/auth";
-import { syncGuestDataToAccount } from "../utils/syncGuestDataToAccount";
+import { register as registerAccount, resendVerificationByEmail } from "@/lib/api/auth";
 
 export const registerSchema = z.object({
   fullName:            z.string().min(2, "Please enter your full name."),
@@ -22,8 +20,13 @@ export const registerSchema = z.object({
 
 export type RegisterFormValues = z.infer<typeof registerSchema>;
 
-export function useRegisterForm(onSuccess: () => void) {
+// `onSuccess` is not called on a successful register anymore — verification is
+// mandatory, so there's no session to hand off yet. The overlay instead shows
+// a "check your email" state (see registeredEmail) until they click the link.
+export function useRegisterForm() {
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
+  const [resending, setResending] = useState(false);
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -34,20 +37,28 @@ export function useRegisterForm(onSuccess: () => void) {
     setSubmitError(null);
     try {
       const data = await registerAccount(values.fullName, values.email, values.password, values.subscribeNewsletter);
-      saveToken(data.access_token);
-      // Claim past guest orders placed with this email + merge the guest cart.
-      // (Common flow: checked out as guest before, now registering with the
-      // same email — their order history should carry over.)
-      await syncGuestDataToAccount(data.access_token);
-      toast.success("Account created successfully.");
+      setRegisteredEmail(data.email);
       form.reset();
-      onSuccess();
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Unable to connect to the authentication server.");
     }
   });
 
-  const clearError = () => setSubmitError(null);
+  async function resendEmail() {
+    if (!registeredEmail) return;
+    setResending(true);
+    try {
+      await resendVerificationByEmail(registeredEmail);
+      toast.success("Verification email resent.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to resend email.");
+    } finally {
+      setResending(false);
+    }
+  }
 
-  return { form, submitError, onSubmit, clearError };
+  const clearError = () => setSubmitError(null);
+  const reset = () => { setRegisteredEmail(null); setSubmitError(null); form.reset(); };
+
+  return { form, submitError, onSubmit, clearError, registeredEmail, resendEmail, resending, reset };
 }

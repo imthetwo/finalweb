@@ -57,17 +57,18 @@ export class AuthService {
 				.catch(() => {});
 		}
 
-		const payload = { sub: user.id, email: user.email, fullName: user.fullName, role: user.role, isEmailVerified: user.isEmailVerified };
-		const access_token = this.jwtService.sign(payload);
-		return {
-			access_token,
-			user: { id: user.id, email: user.email, fullName: user.fullName, role: user.role, isEmailVerified: user.isEmailVerified },
-		};
+		// Verification is mandatory — no session is issued at registration.
+		// The account only becomes usable once the emailed link is clicked
+		// (see verifyEmail() below, which is what actually signs the first JWT).
+		return { ok: true, email: user.email };
 	}
 
 	async login(dto: LoginDto) {
 		const user = await this.validateUser(dto.email, dto.password);
 		if (!user) throw new UnauthorizedException('Invalid credentials');
+		if (!user.isEmailVerified) {
+			throw new UnauthorizedException('Please verify your email before signing in — check your inbox for the verification link.');
+		}
 
 		const payload = { sub: user.id, email: user.email, fullName: user.fullName, role: user.role, isEmailVerified: user.isEmailVerified };
 		const access_token = this.jwtService.sign(payload);
@@ -177,6 +178,24 @@ export class AuthService {
 		const access_token = this.jwtService.sign(payload);
 		const safeUser = { id: updated.id, email: updated.email, fullName: updated.fullName, role: updated.role, isEmailVerified: updated.isEmailVerified };
 		return { access_token, user: safeUser };
+	}
+
+	// Public — no login required, since an unverified account can no longer
+	// sign in to reach the authenticated resendVerification() below. Always
+	// returns ok:true regardless of outcome so it can't be used to probe which
+	// emails have an account (same pattern as forgotPassword()).
+	async resendVerificationByEmail(emailAddr: string) {
+		const user = await this.prisma.user.findUnique({ where: { email: emailAddr } });
+		if (!user || user.isEmailVerified) return { ok: true };
+
+		const verifyToken = randomBytes(32).toString('hex');
+		const verifyTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+		await this.prisma.user.update({
+			where: { id: user.id },
+			data: { verifyToken, verifyTokenExpiry },
+		});
+		await this.email.sendEmailVerification(user.email, verifyToken);
+		return { ok: true };
 	}
 
 	async resendVerification(userId: string) {

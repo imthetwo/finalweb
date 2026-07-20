@@ -18,7 +18,7 @@ export function useLoginOverlay({
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
   const setOpen = controlledOnOpenChange ?? setInternalOpen;
 
-  const { form, submitError, onSubmit, clearError } = useLoginForm(() => {
+  const { form, submitError, onSubmit, clearError, unverifiedEmail, resendEmail, resending } = useLoginForm(() => {
     setShowPassword(false);
     setOpen(false);
   });
@@ -37,5 +37,6 @@ export function useLoginOverlay({
   return {
     open, handleOpenChange, showPassword, togglePassword,
     register, errors, isSubmitting, submitError, onSubmit,
+    unverifiedEmail, resendEmail, resending,
   };
 }

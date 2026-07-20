@@ -7,6 +7,7 @@ import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
+import { ResendVerificationByEmailDto } from './dto/resend-verification-by-email.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { CurrentUser } from './current-user.decorator';
 import { getClientUrl } from '../common/client-url';
@@ -58,5 +59,12 @@ export class AuthController {
 	@UseGuards(JwtAuthGuard)
 	resendVerification(@CurrentUser('userId') userId: string) {
 		return this.authService.resendVerification(userId);
+	}
+
+	// Public — for a just-registered or login-blocked (unverified) user, who
+	// by definition can't hold a valid JWT to use the endpoint above.
+	@Post('resend-verification-by-email')
+	resendVerificationByEmail(@Body() dto: ResendVerificationByEmailDto) {
+		return this.authService.resendVerificationByEmail(dto.email);
 	}
 }
