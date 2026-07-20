@@ -33,13 +33,33 @@ export class AdminOrdersService {
   ) {}
 
   // ── Orders ────────────────────────────────────────────────
-  async listOrders(params: { status?: string; page?: number; limit?: number }) {
+  async listOrders(params: { status?: string; search?: string; page?: number; limit?: number }) {
     const page = Math.max(1, params.page ?? 1);
     const limit = Math.min(params.limit ?? 20, 100);
-    const where: Prisma.OrderWhereInput =
-      params.status && VALID_STATUSES.includes(params.status as OrderStatus)
+    const search = params.search?.trim();
+    // Strip a leading "#" so a copy-paste of the UI's own display format
+    // (e.g. "#EE5E182D") still matches the underlying id.
+    const idSearch = search?.replace(/^#/, '');
+
+    const where: Prisma.OrderWhereInput = {
+      ...(params.status && VALID_STATUSES.includes(params.status as OrderStatus)
         ? { status: params.status as OrderStatus }
-        : {};
+        : {}),
+      // Support/admin lookup for a caller who lost their order ID — matches
+      // the order id itself (full or partial), customer name and phone (both
+      // live inside the shippingInfo JSON blob), plus email (registered
+      // user's or a guest's).
+      ...(search ? {
+        OR: [
+          { id: { contains: idSearch, mode: 'insensitive' } },
+          { guestEmail: { contains: search, mode: 'insensitive' } },
+          { user: { email: { contains: search, mode: 'insensitive' } } },
+          { user: { fullName: { contains: search, mode: 'insensitive' } } },
+          { shippingInfo: { path: ['recipient'], string_contains: search, mode: 'insensitive' } },
+          { shippingInfo: { path: ['phone'], string_contains: search } },
+        ],
+      } : {}),
+    };
 
     const [items, total] = await Promise.all([
       this.prisma.order.findMany({
@@ -129,7 +149,11 @@ export class AdminOrdersService {
       }
       return tx.order.update({
         where: { id: orderId },
-        data: { status: OrderStatus.CANCELLED },
+        // isPaid: false — a cancelled order never had cash actually collected
+        // (COD's isPaid=true at creation was only ever "no gateway needed"; a
+        // paid MoMo order can't reach here, see the guard above). Keeps
+        // dashboard revenue and the Paid column from crediting a hollow order.
+        data: { status: OrderStatus.CANCELLED, isPaid: false },
       });
     });
 
@@ -240,7 +264,9 @@ export class AdminOrdersService {
         email: o.user?.email ?? '—',
         total: o.totalAmount,
         paymentMethod: o.paymentMethod,
-        isPaid: o.isPaid ? 'Yes' : 'No',
+        // A cancelled order never had cash actually collected, regardless of
+        // any stale isPaid left over on rows cancelled before this check existed.
+        isPaid: o.status !== OrderStatus.CANCELLED && o.isPaid ? 'Yes' : 'No',
         status: o.status,
         createdAt: o.createdAt.toLocaleString('en-GB'),
       });

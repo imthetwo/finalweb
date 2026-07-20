@@ -20,7 +20,7 @@ export function useNewsletter() {
       if (res.alreadySubscribed) {
         toast.message("This email is already subscribed.");
       } else {
-        toast.success("You're subscribed! Watch your inbox for exclusive deals.");
+        toast.success("Almost there! Check your inbox to confirm your subscription.");
         setEmail("");
       }
     } catch (err) {

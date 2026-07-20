@@ -18,12 +18,21 @@ export function useOrdersManager() {
 
   const [exporting, setExporting] = useState(false);
   const [changingId, setChangingId] = useState<string | null>(null);
+  // Separate from `filter` (status buttons) — free-text lookup by customer
+  // name/phone/email, for support to find an order when the caller lost
+  // their order ID.
+  const [query, setQuery] = useState("");
 
   const { data, search: filter, page, loading, reload, setPage, handleSearch: setFilter } =
     useCRUDManager<AdminOrder>(useCallback(
-      (s, p) => fetchAdminOrders(s, p),
-      [],
+      (s, p) => fetchAdminOrders(s, p, query),
+      [query],
     ));
+
+  function setQueryAndResetPage(q: string) {
+    setQuery(q);
+    setPage(1);
+  }
 
   async function changeStatus(id: string, status: string) {
     setChangingId(id);
@@ -120,8 +129,8 @@ export function useOrdersManager() {
 
   return {
     isAdmin, canAccept,
-    data, filter, page, loading, changingId, exporting,
-    setPage, setFilter, reload,
+    data, filter, query, page, loading, changingId, exporting,
+    setPage, setFilter, setQuery: setQueryAndResetPage, reload,
     changeStatus, handleAccept, handleReject, handleCancel, handleRefund, handleRecheckPayment, exportExcel,
   };
 }

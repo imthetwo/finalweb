@@ -95,11 +95,13 @@ export function CheckoutForm() {
                   Save this address to my address book
                 </label>
               )}
-              {/* Email for guest — optional but useful for order tracking */}
+              {/* Email for guest — required, it's the only way to recover the
+                  order ID if it's lost (no account to log into) */}
               {!isLoggedIn && (
                 <div>
-                  <label className={labelCls}>Email (optional)</label>
+                  <label className={labelCls}>Email</label>
                   <input
+                    required
                     type="email"
                     placeholder="your@email.com"
                     className={inputCls}
@@ -107,7 +109,7 @@ export function CheckoutForm() {
                     onChange={(e) => setGuestEmail(e.target.value)}
                   />
                   <p className="mt-1.5 text-xs text-subtle">
-                    We'll send your order ID here — without it, you'll need your phone number and the ID to track your order later.
+                    We’ll send your order confirmation and ID here — you’ll need it to track your order later.
                   </p>
                 </div>
               )}

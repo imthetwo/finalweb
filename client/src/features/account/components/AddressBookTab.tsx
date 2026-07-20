@@ -3,6 +3,7 @@
 import { MapPin, Pencil, Plus, Star, Trash2, X } from "lucide-react";
 
 import { AddressFields } from "@/components/ui/AddressFields";
+import { displayCityName } from "@/lib/vn-locations";
 import { useAddressBook } from "../hooks/useAddressBook";
 
 const inputCls =
@@ -86,7 +87,7 @@ export function AddressBookTab() {
               </div>
               <p className="font-semibold text-fg">{a.recipient}</p>
               <p className="text-body text-secondary">{a.phone}</p>
-              <p className="text-body text-secondary">{[a.street, a.ward, a.city].join(", ")}</p>
+              <p className="text-body text-secondary">{[a.street, a.ward, displayCityName(a.city)].join(", ")}</p>
 
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 {!a.isDefault && (

@@ -104,8 +104,10 @@ export async function importProductsExcel(file: File) {
 
 // ── Orders ────────────────────────────────────────────────────────────────────
 
-export const fetchAdminOrders = (status = "", page = 1) =>
-  apiFetch<Paginated<AdminOrder>>(`/admin/orders?status=${status}&page=${page}`);
+export const fetchAdminOrders = (status = "", page = 1, search = "") =>
+  apiFetch<Paginated<AdminOrder>>(
+    `/admin/orders?status=${encodeURIComponent(status)}&page=${page}${search ? `&search=${encodeURIComponent(search)}` : ""}`,
+  );
 
 export const updateOrderStatus = (id: string, status: string) =>
   apiFetch<AdminOrder>(`/admin/orders/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) });

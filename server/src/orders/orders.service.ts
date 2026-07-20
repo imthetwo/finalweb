@@ -142,7 +142,7 @@ export class OrdersService {
 
       const created = await tx.order.create({
         data: {
-          guestEmail: body.guestEmail ?? undefined,
+          guestEmail: body.guestEmail,
           subTotal,
           shippingFee,
           totalAmount,
@@ -169,7 +169,7 @@ export class OrdersService {
     });
 
     this.logger.log(`Guest order ${order.id} — total ${order.totalAmount} — method ${body.paymentMethod}`);
-    if (order.isPaid && body.guestEmail) {
+    if (order.isPaid) {
       this.email.sendOrderConfirmation(body.guestEmail, order.id, order.totalAmount).catch(() => {});
     }
     return order;
@@ -255,7 +255,10 @@ export class OrdersService {
       }
       const cancelled = await tx.order.update({
         where: { id: orderId },
-        data: { status: OrderStatus.CANCELLED },
+        // isPaid: false — mirrors AdminOrdersService.cancelOrder: no cash was
+        // actually collected (COD's isPaid=true at creation was only ever "no
+        // gateway needed"; a paid MoMo order is blocked above).
+        data: { status: OrderStatus.CANCELLED, isPaid: false },
       });
       this.logger.log(`Order ${orderId} cancelled by user ${userId}`);
       return cancelled;

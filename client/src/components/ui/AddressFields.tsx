@@ -1,6 +1,6 @@
 "use client";
 
-import { VN_LOCATIONS, wardsOf } from "@/lib/vn-locations";
+import { VN_LOCATIONS, wardsOf, displayCityName } from "@/lib/vn-locations";
 import type { AddressFieldsValue } from "@/types/api";
 
 const TEXT_FIELDS: { key: "recipient" | "phone" | "street"; label: string; placeholder: string }[] = [
@@ -49,7 +49,7 @@ export function AddressFields({
           </option>
           {VN_LOCATIONS.map((l) => (
             <option key={l.name} value={l.name}>
-              {l.name}
+              {displayCityName(l.name)}
             </option>
           ))}
         </select>

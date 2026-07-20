@@ -14,7 +14,7 @@ const TOP_NAV = [
 
 export function AdminSidebar({ children }: { children: React.ReactNode }) {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
-  const { pathname, user, allowed, isAdmin, categories, isProducts, productsOpen, setProductsOpen } =
+  const { pathname, allowed, isAdmin, categories, isProducts, productsOpen, setProductsOpen } =
     useAdminSidebar();
 
   if (!allowed) {
@@ -28,14 +28,6 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-base text-fg">
       <aside className="flex w-56 shrink-0 flex-col border-r border-edge bg-surface">
-        <div className="border-b border-edge px-5 py-5">
-          <p className="text-3xs font-bold uppercase tracking-[0.3em] text-brand">Pecify</p>
-          <p className="text-sm font-black uppercase tracking-wider text-fg">
-            {isAdmin ? "Admin Panel" : "Staff Panel"}
-          </p>
-          <p className="mt-0.5 text-3xs uppercase tracking-widest text-muted">{user?.fullName}</p>
-        </div>
-
         <nav className="flex-1 overflow-y-auto space-y-0.5 p-3">
           {TOP_NAV.slice(0, 1).map(({ href, label, icon: Icon }) => {
             const active = pathname === href;

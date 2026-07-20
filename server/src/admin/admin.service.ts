@@ -54,7 +54,7 @@ export class AdminService {
   exportInventoryReport() { return this.productsService.exportInventoryReport(); }
 
   // ── Orders & Users ────────────────────────────────────────
-  listOrders(p: { status?: string; page?: number; limit?: number }) { return this.ordersService.listOrders(p); }
+  listOrders(p: { status?: string; search?: string; page?: number; limit?: number }) { return this.ordersService.listOrders(p); }
   updateOrderStatus(orderId: string, status: string) { return this.ordersService.updateOrderStatus(orderId, status); }
   cancelOrder(orderId: string, reason: string, actorId: string) { return this.ordersService.cancelOrder(orderId, reason, actorId); }
   acceptOrder(orderId: string, actorId: string) { return this.ordersService.acceptOrder(orderId, actorId); }

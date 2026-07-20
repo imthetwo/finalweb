@@ -81,8 +81,8 @@ export function useCheckoutForm() {
       return false;
     }
     const street = form.street.trim();
-    if (street.length < 3 || !/\p{L}/u.test(street)) {
-      toast.error("Street address must include a street name, e.g. 123 Nguyen Hue.");
+    if (street.length < 3 || !/^(?=.*\d)(?=.*\p{L}).*$/u.test(street)) {
+      toast.error("Street address must include both a house number and a street name, e.g. 123 Nguyen Hue.");
       return false;
     }
     if (!form.ward.trim()) {
@@ -93,8 +93,8 @@ export function useCheckoutForm() {
       toast.error("Please select your city / province.");
       return false;
     }
-    if (!isLoggedIn && guestEmail.trim() && !/^\S+@\S+\.\S+$/.test(guestEmail.trim())) {
-      toast.error("Please enter a valid email address.");
+    if (!isLoggedIn && !/^\S+@\S+\.\S+$/.test(guestEmail.trim())) {
+      toast.error("Please enter a valid email address — it's the only way to recover your order ID later.");
       return false;
     }
     return true;
@@ -137,7 +137,7 @@ export function useCheckoutForm() {
           items: guestItems,
           shippingInfo,
           paymentMethod,
-          ...(guestEmail.trim() ? { guestEmail: guestEmail.trim() } : {}),
+          guestEmail: guestEmail.trim(),
         });
         clearGuestCart();
         window.dispatchEvent(new Event("cart-updated"));

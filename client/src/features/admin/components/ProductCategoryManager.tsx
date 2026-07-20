@@ -10,7 +10,7 @@ import { useProductCategoryManager } from "../hooks/useProductCategoryManager";
 export function ProductCategoryManager() {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
   const {
-    categoryId, title,
+    isAdmin, categoryId, title,
     data, search, page, loading, reload, setPage, handleSearch,
     modalOpen, setModalOpen, editing, setEditing, removingId, remove,
   } = useProductCategoryManager();
@@ -23,7 +23,7 @@ export function ProductCategoryManager() {
           onClick={() => { setEditing(null); setModalOpen(true); }}
           className="inline-flex items-center gap-2 bg-brand px-4 py-2.5 text-sm font-black uppercase tracking-wider text-brand-fg hover:bg-brand-hover"
         >
-          <Plus size={14} /> Add Product
+          <Plus size={14} /> {isAdmin ? "Add Product" : "Submit for Review"}
         </button>
       </div>
 
@@ -88,14 +88,18 @@ export function ProductCategoryManager() {
                     </span>
                   </td>
                   <td className="px-4 py-2.5">
-                    <div className="flex items-center justify-end gap-1.5">
-                      <button onClick={() => { setEditing(p); setModalOpen(true); }} className="flex h-7 w-7 items-center justify-center border border-edge text-secondary hover:border-brand/50 hover:text-brand" aria-label="Edit">
-                        <Pencil size={12} />
-                      </button>
-                      <button onClick={() => remove(p)} disabled={removingId === p.id} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-destructive hover:border-destructive disabled:opacity-40" aria-label="Delete">
-                        <Trash2 size={12} />
-                      </button>
-                    </div>
+                    {isAdmin ? (
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button onClick={() => { setEditing(p); setModalOpen(true); }} className="flex h-7 w-7 items-center justify-center border border-edge text-secondary hover:border-brand/50 hover:text-brand" aria-label="Edit">
+                          <Pencil size={12} />
+                        </button>
+                        <button onClick={() => remove(p)} disabled={removingId === p.id} className="flex h-7 w-7 items-center justify-center border border-red-800/40 text-destructive hover:border-destructive disabled:opacity-40" aria-label="Delete">
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="text-2xs text-subtle">View only</span>
+                    )}
                   </td>
                 </tr>
               ))

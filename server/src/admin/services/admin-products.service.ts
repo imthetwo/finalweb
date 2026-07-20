@@ -64,21 +64,30 @@ export class AdminProductsService {
       const price = Number(get('price'));
       if (!Number.isFinite(price) || price <= 0) { result.errors.push(`Row ${r}: invalid or negative price`); continue; }
 
-      const data = {
-        categoryId, name,
-        brand: get('brand')?.toString().trim() || 'Pecify',
-        price,
-        costPrice: get('costprice') ? Number(get('costprice')) : null,
-        salePrice: get('saleprice') ? Number(get('saleprice')) : null,
-        stock: get('stock') ? Number(get('stock')) : 10,
-        description: get('description')?.toString().trim() || null,
-        imageUrl: get('imageurl')?.toString().trim() || null,
-        // Staff import → always a draft, even if the Excel row says Published=Yes
-        isPublished: asDraft ? false : get('published')?.toString().toLowerCase() !== 'no',
-      };
-
       try {
         const existing = await this.prisma.product.findFirst({ where: { name, categoryId } });
+
+        // Staff import → a brand-new row always starts as a draft, even if the
+        // Excel row says Published=Yes. But a staff correction to a row that
+        // already exists must NOT silently pull an already-live product off
+        // the shop — it keeps its current publish state instead. Admin import
+        // always just respects the Published column either way.
+        const isPublished = !asDraft
+          ? get('published')?.toString().toLowerCase() !== 'no'
+          : (existing?.isPublished ?? false);
+
+        const data = {
+          categoryId, name,
+          brand: get('brand')?.toString().trim() || 'Pecify',
+          price,
+          costPrice: get('costprice') ? Number(get('costprice')) : null,
+          salePrice: get('saleprice') ? Number(get('saleprice')) : null,
+          stock: get('stock') ? Number(get('stock')) : 10,
+          description: get('description')?.toString().trim() || null,
+          imageUrl: get('imageurl')?.toString().trim() || null,
+          isPublished,
+        };
+
         if (existing) { await this.prisma.product.update({ where: { id: existing.id }, data }); result.updated++; }
         else { await this.prisma.product.create({ data }); result.created++; }
       } catch (e) { result.errors.push(`Row ${r}: ${(e as Error).message}`); }

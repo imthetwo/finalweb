@@ -22,7 +22,7 @@ export class UpdateAddressDto {
   @IsOptional()
   @IsString()
   @Length(3, 120)
-  @Matches(/\p{L}/u, { message: 'street must include a street name' })
+  @Matches(/^(?=.*\d)(?=.*\p{L}).*$/u, { message: 'street must include both a house number and a street name, e.g. "123 Nguyen Hue"' })
   street?: string;
 
   @IsOptional()

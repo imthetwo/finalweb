@@ -58,8 +58,8 @@ export function useAddressBook() {
       return false;
     }
     const street = form.street.trim();
-    if (street.length < 3 || !/\p{L}/u.test(street)) {
-      toast.error("Street address must include a street name, e.g. 123 Nguyen Hue.");
+    if (street.length < 3 || !/^(?=.*\d)(?=.*\p{L}).*$/u.test(street)) {
+      toast.error("Street address must include both a house number and a street name, e.g. 123 Nguyen Hue.");
       return false;
     }
     if (!form.ward.trim()) {

@@ -9,6 +9,7 @@ import {
   type AdminProduct,
   type Category,
 } from "@/lib/api";
+import { useAuthState } from "@/hooks/useAuthState";
 import { useCRUDManager } from "./useCRUDManager";
 
 // Data/logic for the per-category admin product list — composes the shared
@@ -17,6 +18,8 @@ import { useCRUDManager } from "./useCRUDManager";
 export function useProductCategoryManager() {
   const params = useParams();
   const categoryId = params.categoryId as string;
+  const { user } = useAuthState();
+  const isAdmin = user?.role === "ADMIN";
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<AdminProduct | null>(null);
@@ -50,6 +53,7 @@ export function useProductCategoryManager() {
   }
 
   return {
+    isAdmin,
     categoryId,
     title: category?.name ?? "Products",
     ...crud,

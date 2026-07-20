@@ -14,10 +14,11 @@ export class ShippingInfoDto {
   @Matches(/^(0\d{9}|\+84\d{9})$/, { message: 'phone must be a valid Vietnamese phone number, e.g. 0901234567' })
   phone!: string;
 
-  // Must contain at least one letter — "123123" alone is not an address
+  // Must contain both a house number and a street name — a letters-only string
+  // like "aaaaaaaaaaaaaa" is not a real address, and neither is a digits-only one.
   @IsString()
   @Length(3, 120)
-  @Matches(/\p{L}/u, { message: 'street must include a street name' })
+  @Matches(/^(?=.*\d)(?=.*\p{L}).*$/u, { message: 'street must include both a house number and a street name, e.g. "123 Nguyen Hue"' })
   street!: string;
 
   // Ward (phường/xã) — Vietnam's two-tier structure since July 2025 has no districts

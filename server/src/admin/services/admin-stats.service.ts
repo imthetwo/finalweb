@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { OrderStatus } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
@@ -8,7 +9,13 @@ export class AdminStatsService {
   async getDashboardStats() {
     const [revenueAgg, orderCount, userCount, productCount, recentOrders] =
       await Promise.all([
-        this.prisma.order.aggregate({ where: { isPaid: true }, _sum: { totalAmount: true } }),
+        // Excludes CANCELLED so a cancelled COD order (isPaid=true was only ever
+        // "no gateway needed", never confirmation cash was collected) can't
+        // still count toward revenue.
+        this.prisma.order.aggregate({
+          where: { isPaid: true, status: { not: OrderStatus.CANCELLED } },
+          _sum: { totalAmount: true },
+        }),
         this.prisma.order.count(),
         this.prisma.user.count(),
         this.prisma.product.count(),

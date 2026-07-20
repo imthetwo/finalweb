@@ -7,6 +7,7 @@ import { Package, X, ChevronRight } from "lucide-react";
 import { type Order } from "@/lib/api";
 import { formatVnd, ORDER_STATUS_BADGE_CLASS as STATUS_STYLE, ORDER_STATUS_LABEL as STATUS_LABEL } from "@/lib/format";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { displayCityName } from "@/lib/vn-locations";
 import { useOrdersTab } from "../hooks/useOrdersTab";
 
 // COD's isPaid=true is set at creation (no gateway needed), not "cash has
@@ -86,7 +87,7 @@ function OrderDetailModal({
               {si.phone && <p className="text-secondary">{si.phone}</p>}
               {(si.street || si.ward || si.city) && (
                 <p className="text-secondary">
-                  {[si.street, si.ward, si.city].filter(Boolean).join(", ")}
+                  {[si.street, si.ward, si.city && displayCityName(si.city)].filter(Boolean).join(", ")}
                 </p>
               )}
               {!si.recipient && !si.phone && !si.street && (

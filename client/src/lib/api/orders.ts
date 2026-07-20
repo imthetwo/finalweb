@@ -11,7 +11,7 @@ export const guestCheckout = (data: {
   items: { productId: string; quantity: number }[];
   shippingInfo: Record<string, string>;
   paymentMethod: string;
-  guestEmail?: string;
+  guestEmail: string;
 }) =>
   apiFetch<{ id: string }>("/orders/guest-checkout", {
     method: "POST",

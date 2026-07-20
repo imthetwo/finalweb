@@ -12,3 +12,13 @@ export const wardsOf = (city: string): string[] =>
   [...(VN_LOCATIONS.find((l) => l.name === city)?.wards ?? [])].sort((a, b) =>
     a.localeCompare(b, "vi"),
   );
+
+// Display-only: renders the admin-unit prefix in English ("Thành phố X" →
+// "X City", "Tỉnh Y" → "Y Province") for an English-language UI. The
+// underlying value stays the official Vietnamese name — that's what's
+// submitted and stored, since couriers and wardsOf() key off it.
+export const displayCityName = (name: string): string => {
+  if (name.startsWith("Thành phố ")) return `${name.slice("Thành phố ".length)} City`;
+  if (name.startsWith("Tỉnh ")) return `${name.slice("Tỉnh ".length)} Province`;
+  return name;
+};
