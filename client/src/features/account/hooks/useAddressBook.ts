@@ -6,6 +6,7 @@ import {
   type Address, type AddressInput,
 } from "@/lib/api";
 import type { AddressFieldsValue } from "@/types/api";
+import { confirmDialog } from "@/store/confirmStore";
 
 const EMPTY_FORM: AddressFieldsValue & { label: string } = {
   label: "", recipient: "", phone: "", street: "", ward: "", city: "",
@@ -104,7 +105,7 @@ export function useAddressBook() {
   }
 
   async function remove(id: string) {
-    if (!confirm("Delete this address?")) return;
+    if (!(await confirmDialog("This can't be undone.", "Delete this address?"))) return;
     setBusyId(id);
     try {
       await deleteAddress(id);

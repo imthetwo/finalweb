@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { fetchOrders, cancelOrder, type Order } from "@/lib/api";
+import { confirmDialog } from "@/store/confirmStore";
 
 // Data/logic for the account Orders tab — loading the order list, resuming
 // payment for an unpaid order, and cancelling. The component only renders.
@@ -23,7 +24,7 @@ export function useOrdersTab() {
   }
 
   async function handleCancel(orderId: string) {
-    if (!confirm("Cancel this order? Stock will be restored.")) return;
+    if (!(await confirmDialog("Stock will be restored.", "Cancel this order?"))) return;
     setCancelling(orderId);
     try {
       const updated = await cancelOrder(orderId);

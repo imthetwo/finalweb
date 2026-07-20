@@ -10,6 +10,7 @@ import {
   type Category,
 } from "@/lib/api";
 import { useAuthState } from "@/hooks/useAuthState";
+import { confirmDialog } from "@/store/confirmStore";
 import { useCRUDManager } from "./useCRUDManager";
 
 // Data/logic for the per-category admin product list — composes the shared
@@ -39,7 +40,7 @@ export function useProductCategoryManager() {
   ));
 
   async function remove(p: AdminProduct) {
-    if (!confirm(`Delete "${p.name}"?`)) return;
+    if (!(await confirmDialog(`Delete "${p.name}"?`))) return;
     setRemovingId(p.id);
     try {
       await deleteAdminProduct(p.id);

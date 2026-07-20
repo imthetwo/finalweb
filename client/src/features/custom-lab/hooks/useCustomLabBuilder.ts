@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { confirmDialog } from "@/store/confirmStore";
 import { BUILD_SLOTS } from "../constants";
 import { useBuild } from "./useBuild";
 
@@ -25,9 +26,9 @@ export function useCustomLabBuilder() {
     validateBuild, addAllToCart,
   } = useBuild();
 
-  const handleReset = useCallback(() => {
+  const handleReset = useCallback(async () => {
     if (selectedCount === 0) return;
-    if (confirm("Reset the build? This removes every part you've added.")) resetBuild();
+    if (await confirmDialog("This removes every part you've added.", "Reset the build?")) resetBuild();
   }, [selectedCount, resetBuild]);
 
   // When browser back removes ?picking from URL, close the overlay in store

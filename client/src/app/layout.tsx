@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import AIConsultantFab from "@/features/ai/AIConsultantFab";
 import { EmailVerifyBanner } from "@/features/auth";
 import { Toaster } from "@/components/ui/toaster";
+import { ConfirmDialogHost } from "@/components/ui/ConfirmDialogHost";
 import NavigationProgress from "@/components/ui/NavigationProgress";
 
 import "./globals.css";
@@ -49,6 +50,7 @@ export default function RootLayout({
         <Footer />
         <AIConsultantFab />
         <Toaster />
+        <ConfirmDialogHost />
         <NavigationProgress />
       </body>
     </html>

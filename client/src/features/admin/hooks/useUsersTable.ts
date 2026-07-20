@@ -3,6 +3,7 @@ import { toast } from "sonner";
 
 import { fetchAdminUsers, updateAdminUserRole } from "@/lib/api/admin";
 import { useAuthState } from "@/hooks/useAuthState";
+import { confirmDialog } from "@/store/confirmStore";
 import type { AdminUser, UserRole } from "@/types/api";
 
 // Data/logic for the admin Users table — loading users and changing roles (with
@@ -23,7 +24,7 @@ export function useUsersTable() {
   async function handleRoleChange(u: AdminUser, newRole: UserRole) {
     if (newRole === u.role) return;
     const label = newRole === "STAFF" ? "promote to Staff" : newRole === "ADMIN" ? "promote to Admin" : "demote to User";
-    if (!confirm(`${label} "${u.fullName}"?`)) return;
+    if (!(await confirmDialog(`${label} "${u.fullName}"?`, "Change role?"))) return;
 
     setChanging(u.id);
     try {
