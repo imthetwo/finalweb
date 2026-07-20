@@ -10,10 +10,11 @@ import { saveToken } from "@/lib/auth";
 import { syncGuestDataToAccount } from "../utils/syncGuestDataToAccount";
 
 export const registerSchema = z.object({
-  fullName:        z.string().min(2, "Please enter your full name."),
-  email:           z.string().email("Please enter a valid email address."),
-  password:        z.string().min(6, "Password must be at least 6 characters."),
-  confirmPassword: z.string(),
+  fullName:            z.string().min(2, "Please enter your full name."),
+  email:               z.string().email("Please enter a valid email address."),
+  password:            z.string().min(6, "Password must be at least 6 characters."),
+  confirmPassword:     z.string(),
+  subscribeNewsletter: z.boolean(),
 }).refine((d) => d.password === d.confirmPassword, {
   message: "Passwords do not match.",
   path: ["confirmPassword"],
@@ -26,13 +27,13 @@ export function useRegisterForm(onSuccess: () => void) {
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { fullName: "", email: "", password: "", confirmPassword: "" },
+    defaultValues: { fullName: "", email: "", password: "", confirmPassword: "", subscribeNewsletter: true },
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
     setSubmitError(null);
     try {
-      const data = await registerAccount(values.fullName, values.email, values.password);
+      const data = await registerAccount(values.fullName, values.email, values.password, values.subscribeNewsletter);
       saveToken(data.access_token);
       // Claim past guest orders placed with this email + merge the guest cart.
       // (Common flow: checked out as guest before, now registering with the

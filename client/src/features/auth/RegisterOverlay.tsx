@@ -80,6 +80,15 @@ export function RegisterOverlay({ triggerButton, open, onOpenChange, onSwitchToL
             {errors.confirmPassword?.message && <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>}
           </div>
 
+          <label className="flex items-center gap-2 text-sm text-secondary">
+            <input
+              type="checkbox"
+              className="h-4 w-4 accent-black"
+              {...register("subscribeNewsletter")}
+            />
+            Subscribe to the newsletter for exclusive deals
+          </label>
+
           <Button type="submit" disabled={isSubmitting}
             className="w-full rounded-none bg-black py-6 text-sm font-black uppercase tracking-widest text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50">
             {isSubmitting ? "Creating account..." : "CREATE ACCOUNT"}

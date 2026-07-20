@@ -22,7 +22,7 @@ export class AuthService {
 		return user;
 	}
 
-	async register(dto: { email: string; password: string; fullName: string }) {
+	async register(dto: { email: string; password: string; fullName: string; subscribeNewsletter?: boolean }) {
 		const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
 		if (existing) {
 			throw new ConflictException('Email already registered');
@@ -43,6 +43,19 @@ export class AuthService {
 		// Non-blocking: registration succeeds regardless of whether this email
 		// actually goes out — verification is a gentle nudge, never a gate.
 		this.email.sendEmailVerification(user.email, verifyToken).catch(() => {});
+
+		// Record newsletter intent as a pending (isActive: false) row — the
+		// account's own email-verification link is what confirms it (no separate
+		// double opt-in needed), see verifyEmail() below.
+		if (dto.subscribeNewsletter) {
+			this.prisma.newsletterSubscriber
+				.upsert({
+					where: { email: user.email },
+					create: { email: user.email, source: 'register' },
+					update: {},
+				})
+				.catch(() => {});
+		}
 
 		const payload = { sub: user.id, email: user.email, fullName: user.fullName, role: user.role, isEmailVerified: user.isEmailVerified };
 		const access_token = this.jwtService.sign(payload);
@@ -151,6 +164,14 @@ export class AuthService {
 			where: { id: user.id },
 			data: { isEmailVerified: true, verifyToken: null, verifyTokenExpiry: null },
 		});
+
+		// Activate any newsletter subscription requested at registration — the
+		// account's email is now proven real, so no separate confirm email needed.
+		const subscriber = await this.prisma.newsletterSubscriber.findUnique({ where: { email: updated.email } });
+		if (subscriber && !subscriber.isActive) {
+			await this.prisma.newsletterSubscriber.update({ where: { id: subscriber.id }, data: { isActive: true } });
+			this.email.sendNewsletterWelcome(subscriber.email, subscriber.unsubscribeToken).catch(() => {});
+		}
 
 		const payload = { sub: updated.id, email: updated.email, fullName: updated.fullName, role: updated.role, isEmailVerified: updated.isEmailVerified };
 		const access_token = this.jwtService.sign(payload);

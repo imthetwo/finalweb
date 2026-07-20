@@ -23,8 +23,8 @@ async function postAuthForm(path: string, body: unknown, fallback: string): Prom
 export const login = (email: string, password: string) =>
   postAuthForm("/auth/login", { email, password }, "Login failed.");
 
-export const register = (fullName: string, email: string, password: string) =>
-  postAuthForm("/auth/register", { fullName, email, password }, "Registration failed.");
+export const register = (fullName: string, email: string, password: string, subscribeNewsletter: boolean) =>
+  postAuthForm("/auth/register", { fullName, email, password, subscribeNewsletter }, "Registration failed.");
 
 export const forgotPassword = (email: string) =>
   apiFetch<{ ok: boolean }>("/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) });
