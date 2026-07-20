@@ -51,6 +51,8 @@ export default function CustomLabBuilder() {
           totalPrice={totalPrice}
           validating={validating}
           onValidate={validateBuild}
+          selectedCount={selectedCount}
+          totalSlots={BUILD_SLOTS.length}
         />
 
         {/* Build table */}

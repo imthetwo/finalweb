@@ -11,16 +11,23 @@ type Props = {
   totalPrice: number;
   validating: boolean;
   onValidate: () => void;
+  selectedCount: number;
+  totalSlots: number;
 };
 
-export function StatusBar({ compatibility, estimatedWatts, totalPrice, validating, onValidate }: Props) {
+export function StatusBar({ compatibility, estimatedWatts, totalPrice, validating, onValidate, selectedCount, totalSlots }: Props) {
+  const isComplete = selectedCount >= totalSlots;
   const status = !compatibility
     ? { Icon: AlertCircle, label: "Not checked yet", cls: "text-muted border-edge bg-surface" }
     : compatibility.errors.length > 0
     ? { Icon: AlertCircle, label: `${compatibility.errors.length} compatibility errors`, cls: "text-destructive border-red-800/50 bg-red-950/30" }
     : compatibility.warnings.length > 0
     ? { Icon: AlertTriangle, label: `${compatibility.warnings.length} warnings`, cls: "text-warning border-yellow-800/50 bg-yellow-950/30" }
-    : { Icon: CheckCircle2, label: "Fully compatible", cls: "text-success border-emerald-800/50 bg-emerald-950/30" };
+    : isComplete
+    ? { Icon: CheckCircle2, label: "Fully compatible", cls: "text-success border-emerald-800/50 bg-emerald-950/30" }
+    // Nothing conflicts yet, but the build isn't complete — "Fully compatible"
+    // would wrongly read as "your build is done", not "nothing clashes so far".
+    : { Icon: CheckCircle2, label: `No conflicts (${selectedCount}/${totalSlots} selected)`, cls: "text-success border-emerald-800/50 bg-emerald-950/30" };
 
   return (
     <div className="flex shrink-0 flex-col gap-2 border-b border-edge bg-base px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between md:px-6">
