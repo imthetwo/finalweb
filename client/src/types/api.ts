@@ -274,3 +274,8 @@ export type SubscribeResponse = {
   message?: string;
   alreadySubscribed?: boolean;
 };
+
+export type ConfirmSubscriptionResponse = {
+  ok: boolean;
+  alreadyConfirmed?: boolean;
+};

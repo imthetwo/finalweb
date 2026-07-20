@@ -87,6 +87,18 @@ export class EmailService {
     );
   }
 
+  async sendNewsletterConfirm(to: string, confirmToken: string) {
+    const link = `${getClientUrl()}/newsletter/confirm?token=${confirmToken}`;
+    await this.send(
+      to,
+      'Confirm your Pecify newsletter subscription',
+      `<h2>One more step</h2>
+       <p>Click the link below to confirm you'd like to receive the Pecify newsletter:</p>
+       <a href="${link}">${link}</a>
+       <p>If you didn't request this, you can safely ignore this email — you won't be subscribed.</p>`,
+    );
+  }
+
   async sendNewsletterWelcome(to: string, unsubscribeToken: string) {
     const base = getClientUrl();
     const unsubscribeLink = `${base}/newsletter/unsubscribe?token=${unsubscribeToken}`;

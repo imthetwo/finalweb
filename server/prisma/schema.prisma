@@ -342,6 +342,8 @@ model NewsletterSubscriber {
   email            String   @unique
   unsubscribeToken String   @unique @default(uuid())
   source           String?
-  isActive         Boolean  @default(true)
+  // false until the confirm-email link is clicked (double opt-in) — catches
+  // fake/mistyped addresses that pass @IsEmail() but can never be delivered to.
+  isActive         Boolean  @default(false)
   subscribedAt     DateTime @default(now())
 }
