@@ -56,9 +56,9 @@ export function PartPickerOverlay({ slotCfg, parts, selected, currentId, loading
                 { label: "Total", value: formatVnd(buildSummary.total), cyan: true },
                 { label: "Watts", value: `${buildSummary.watts}W` },
               ].map(({ label, value, cyan }) => (
-                <div key={label}>
+                <div key={label} className="min-w-0">
                   <p className="text-3xs font-bold uppercase tracking-wider text-muted">{label}</p>
-                  <p className={`text-sm font-black ${cyan ? "text-brand" : "text-fg"}`}>{value}</p>
+                  <p className={`wrap-break-word text-sm font-black ${cyan ? "text-brand" : "text-fg"}`}>{value}</p>
                 </div>
               ))}
             </div>
