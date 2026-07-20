@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { AlertCircle, AlertTriangle, Plus, RotateCcw, ShoppingCart, Trash2, Zap } from "lucide-react";
+import { AlertCircle, AlertTriangle, RotateCcw, ShoppingCart, Trash2, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -99,7 +99,6 @@ export default function CustomLabBuilder() {
                           ) : (
                             <Button variant="ghost" onClick={() => openPicker(cfg.slot)} disabled={isLoading}
                               className="h-10 gap-2 border border-dashed border-edge bg-transparent px-5 text-sm font-bold uppercase tracking-wider text-fg hover:border-brand/40 hover:bg-brand/5 hover:text-brand">
-                              <Plus size={14} />
                               {isLoading ? "Loading…" : `Choose A ${cfg.shortLabel}`}
                             </Button>
                           )}
