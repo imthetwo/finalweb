@@ -31,12 +31,15 @@ export class CartService {
 
   async getCart(userId: string) {
     const cart = await this.getOrCreateCart(userId);
-    const items = cart.items.map((item) => ({
-      id: item.id,
-      quantity: item.quantity,
-      product: this.productsService.formatProduct(item.product),
-      lineTotal: (item.product.salePrice ?? item.product.price) * item.quantity,
-    }));
+    const items = cart.items.map((item) => {
+      const product = this.productsService.formatProduct(item.product);
+      return {
+        id: item.id,
+        quantity: item.quantity,
+        product,
+        lineTotal: product.displayPrice * item.quantity,
+      };
+    });
     const subTotal = items.reduce((s, i) => s + i.lineTotal, 0);
     return { id: cart.id, items, subTotal };
   }

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { effectivePrice } from '../common/pricing';
 
 export type ChatTurn = { role: 'user' | 'model'; text: string };
 
@@ -90,7 +91,7 @@ export class AiService {
       lines.push(`\n### ${catName}`);
       for (const p of this.spread(items, MAX_PER_CATEGORY)) {
         count++;
-        const price = p.salePrice ?? p.price;
+        const price = effectivePrice(p);
         lines.push(
           `- ${p.name} (${p.brand}) — ${fmt.format(price)}${this.specOf(p)} — ${p.stock} in stock — link: /product/${p.id}`,
         );

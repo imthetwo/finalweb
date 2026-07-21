@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { FurnitureType, PcBuildType } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { effectivePrice } from '../common/pricing';
 
 // Exported so AdminProductsService (which needs the same shape for its own
 // list/create/update/export queries) doesn't redeclare it.
@@ -32,7 +33,7 @@ export class ProductsService {
     return {
       ...p,
       thumbnailUrl,
-      displayPrice: p.salePrice ?? p.price,
+      displayPrice: effectivePrice(p),
     };
   }
 
