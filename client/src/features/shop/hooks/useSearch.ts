@@ -1,11 +1,22 @@
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { fetchProducts, type ProductListItem } from "@/lib/api";
+import { SEARCHABLE_PAGES, type SearchablePage } from "../constants";
+
+// A keyword phrase matches on either a whole-phrase prefix ("pc build" ->
+// "pc builder") or any single word within it starting with the query
+// ("order" -> "track order") — same "word-prefix" feel as the product-name
+// matching on the backend.
+function matchesPage(page: SearchablePage, q: string): boolean {
+  return page.keywords.some(
+    (phrase) => phrase.startsWith(q) || phrase.split(" ").some((word) => word.startsWith(q)),
+  );
+}
 
 // Data/logic for the header search — debounced product lookup, results dropdown
-// state, and navigation to a product or the full results page. The component
-// only renders the input and the result list.
+// state, and navigation to a product, a site page, or the full results page.
+// The component only renders the input and the result list.
 export function useSearch(onClose: () => void) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -18,11 +29,17 @@ export function useSearch(onClose: () => void) {
     inputRef.current?.focus();
   }, []);
 
+  const q = query.trim().toLowerCase();
+
+  const pageResults = useMemo(
+    () => (q.length < 2 ? [] : SEARCHABLE_PAGES.filter((p) => matchesPage(p, q))),
+    [q],
+  );
+
   useEffect(() => {
-    const q = query.trim();
     if (q.length < 3) {
       setResults([]);
-      setOpen(false);
+      setOpen(pageResults.length > 0);
       return;
     }
     setLoading(true);
@@ -34,10 +51,9 @@ export function useSearch(onClose: () => void) {
         .finally(() => setLoading(false));
     }, 250);
     return () => clearTimeout(t);
-  }, [query]);
+  }, [q, pageResults.length]);
 
   function goToResults() {
-    const q = query.trim();
     if (!q) return;
     router.push(`/shop?search=${encodeURIComponent(q)}`);
     onClose();
@@ -48,5 +64,10 @@ export function useSearch(onClose: () => void) {
     onClose();
   }
 
-  return { inputRef, query, setQuery, results, loading, open, goToResults, goToProduct };
+  function goToPage(href: string) {
+    router.push(href);
+    onClose();
+  }
+
+  return { inputRef, query, setQuery, results, pageResults, loading, open, goToResults, goToProduct, goToPage };
 }
