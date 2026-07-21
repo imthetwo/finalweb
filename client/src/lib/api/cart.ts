@@ -1,4 +1,4 @@
-import { apiFetch, getApiUrl } from "./client";
+import { apiFetch, fetchWithTimeout, getApiUrl } from "./client";
 import type { GuestCartItem } from "@/lib/guestCart";
 import type { Cart } from "@/features/cart/types";
 
@@ -20,7 +20,7 @@ export async function mergeGuestCart(
   items: GuestCartItem[],
   token: string,
 ): Promise<MergeCartResult> {
-  const res = await fetch(getApiUrl("/cart/merge"), {
+  const res = await fetchWithTimeout(getApiUrl("/cart/merge"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

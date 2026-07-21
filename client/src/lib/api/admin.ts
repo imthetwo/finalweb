@@ -2,7 +2,7 @@ import type {
   AdminStats, AdminProduct, AdminOrder, AdminUser, UserRole,
   ProductInput, Paginated,
 } from "@/types/api";
-import { apiFetch, getApiUrl, getToken } from "./client";
+import { apiFetch, fetchWithTimeout, getApiUrl, getToken, LONG_TIMEOUT_MS } from "./client";
 
 // ── Stats ─────────────────────────────────────────────────────────────────────
 
@@ -32,11 +32,11 @@ export async function uploadProductImage(file: File): Promise<{ url: string }> {
   const token = getToken();
   const fd = new FormData();
   fd.append("file", file);
-  const res = await fetch(getApiUrl("/admin/upload"), {
+  const res = await fetchWithTimeout(getApiUrl("/admin/upload"), {
     method: "POST",
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     body: fd,
-  });
+  }, LONG_TIMEOUT_MS);
   if (!res.ok) throw new Error("Upload failed");
   return res.json();
 }
@@ -46,11 +46,11 @@ export async function uploadHeroVideo(file: File): Promise<{ url: string }> {
   const token = getToken();
   const fd = new FormData();
   fd.append("file", file);
-  const res = await fetch(getApiUrl("/admin/upload-video"), {
+  const res = await fetchWithTimeout(getApiUrl("/admin/upload-video"), {
     method: "POST",
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     body: fd,
-  });
+  }, LONG_TIMEOUT_MS);
   if (!res.ok) {
     const err = await res.json().catch(() => ({})) as { message?: string };
     throw new Error(err.message ?? "Upload failed");
@@ -60,9 +60,9 @@ export async function uploadHeroVideo(file: File): Promise<{ url: string }> {
 
 export async function downloadProductTemplate() {
   const token = getToken();
-  const res = await fetch(getApiUrl("/admin/products/template"), {
+  const res = await fetchWithTimeout(getApiUrl("/admin/products/template"), {
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-  });
+  }, LONG_TIMEOUT_MS);
   if (!res.ok) throw new Error("Download failed");
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);
@@ -76,9 +76,9 @@ export async function downloadProductTemplate() {
 // GET /admin/products/inventory-report — downloads the Inventory Report .xlsx (ADMIN only)
 export async function downloadInventoryReport() {
   const token = getToken();
-  const res = await fetch(getApiUrl("/admin/products/inventory-report"), {
+  const res = await fetchWithTimeout(getApiUrl("/admin/products/inventory-report"), {
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-  });
+  }, LONG_TIMEOUT_MS);
   if (!res.ok) throw new Error("Export failed");
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);
@@ -93,11 +93,11 @@ export async function importProductsExcel(file: File) {
   const token = getToken();
   const fd = new FormData();
   fd.append("file", file);
-  const res = await fetch(getApiUrl("/admin/products/import"), {
+  const res = await fetchWithTimeout(getApiUrl("/admin/products/import"), {
     method: "POST",
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     body: fd,
-  });
+  }, LONG_TIMEOUT_MS);
   if (!res.ok) throw new Error("Import failed");
   return res.json() as Promise<{ created: number; updated: number; skipped: number; errors: string[] }>;
 }
@@ -137,9 +137,9 @@ export const refundOrder = (id: string, reason: string) =>
 
 export async function downloadOrdersExcel() {
   const token = getToken();
-  const res = await fetch(getApiUrl("/admin/orders/export"), {
+  const res = await fetchWithTimeout(getApiUrl("/admin/orders/export"), {
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-  });
+  }, LONG_TIMEOUT_MS);
   if (!res.ok) throw new Error("Export failed");
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);

@@ -1,4 +1,4 @@
-import { apiFetch, getApiUrl } from "./client";
+import { apiFetch, fetchWithTimeout, getApiUrl } from "./client";
 import { readBackendError } from "@/features/auth/utils/readBackendError";
 import type { AuthUser } from "@/store/authStore";
 
@@ -10,7 +10,7 @@ export type RegisterResponse = { ok: boolean; email: string };
 // `message` field) — apiFetch's generic error handling doesn't format those
 // the same way, so these go through fetch directly instead of apiFetch.
 async function postAuthForm(path: string, body: unknown, fallback: string): Promise<AuthResponse> {
-  const res = await fetch(getApiUrl(path), {
+  const res = await fetchWithTimeout(getApiUrl(path), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -29,7 +29,7 @@ export const login = (email: string, password: string) =>
 export async function register(
   fullName: string, email: string, password: string, subscribeNewsletter: boolean,
 ): Promise<RegisterResponse> {
-  const res = await fetch(getApiUrl("/auth/register"), {
+  const res = await fetchWithTimeout(getApiUrl("/auth/register"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ fullName, email, password, subscribeNewsletter }),

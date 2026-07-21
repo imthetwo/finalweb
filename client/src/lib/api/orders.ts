@@ -1,5 +1,5 @@
 import type { InitiatePaymentResponse, Order, PaymentStatus } from "@/types/api";
-import { apiFetch, getApiUrl } from "./client";
+import { apiFetch, fetchWithTimeout, getApiUrl } from "./client";
 
 export const fetchOrders = () =>
   apiFetch<Order[]>("/orders");
@@ -39,7 +39,7 @@ export const cancelOrder = (orderId: string) =>
 // Attaches past guest orders (placed with this account's email before signing
 // in) to the account — call once right after login/register/Google sign-in.
 export async function claimGuestOrders(token: string): Promise<{ claimed: number }> {
-  const res = await fetch(getApiUrl("/orders/claim"), {
+  const res = await fetchWithTimeout(getApiUrl("/orders/claim"), {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
   });
