@@ -22,3 +22,15 @@ export const displayCityName = (name: string): string => {
   if (name.startsWith("Tỉnh ")) return `${name.slice("Tỉnh ".length)} Province`;
   return name;
 };
+
+// Same idea as displayCityName(), for the ward/commune level: "Phường X" →
+// "X Ward", "Xã X" → "X Commune", "Đặc khu X" → "X Special Zone" (island
+// districts like Vân Đồn, Cô Tô) for display. The submitted/stored value
+// stays the official Vietnamese name. "xã " (lowercase) is matched too — a
+// handful of entries in the source data are inconsistently cased.
+export const displayWardName = (name: string): string => {
+  if (name.startsWith("Phường ")) return `${name.slice("Phường ".length)} Ward`;
+  if (name.startsWith("Xã ") || name.startsWith("xã ")) return `${name.slice(3)} Commune`;
+  if (name.startsWith("Đặc khu ")) return `${name.slice("Đặc khu ".length)} Special Zone`;
+  return name;
+};
