@@ -5,11 +5,14 @@ import { LayoutDashboard, Package, ShoppingBag, Users, ArrowLeft, ChevronDown, V
 
 import { useAdminSidebar } from "../hooks/useAdminSidebar";
 
+// staffAllowed: STAFF can view/accept orders (server + useOrdersManager.ts
+// both allow it) — only Users (role management) and Hero Video are actually
+// ADMIN-only.
 const TOP_NAV = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/orders",    label: "Orders",    icon: ShoppingBag },
-  { href: "/admin/users",     label: "Users",     icon: Users },
-  { href: "/admin/settings",  label: "Hero Video", icon: Video },
+  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard, staffAllowed: true },
+  { href: "/admin/orders",    label: "Orders",    icon: ShoppingBag, staffAllowed: true },
+  { href: "/admin/users",     label: "Users",     icon: Users, staffAllowed: false },
+  { href: "/admin/settings",  label: "Hero Video", icon: Video, staffAllowed: false },
 ];
 
 export function AdminSidebar({ children }: { children: React.ReactNode }) {
@@ -24,6 +27,18 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
+
+  // The sidebar link already hides ADMIN-only pages from STAFF, but that
+  // alone doesn't stop direct navigation to the URL — gate the page itself
+  // too, since fetchAdminUsers()/etc. would otherwise 403 and the page below
+  // would misleadingly render an empty "No data" state instead of this.
+  const currentNavItem = TOP_NAV.find((item) => pathname.startsWith(item.href));
+  const pageAllowed = isAdmin || currentNavItem?.staffAllowed !== false;
+  const content = pageAllowed ? children : (
+    <div className="flex min-h-[60vh] items-center justify-center text-muted">
+      This page requires an Admin account.
+    </div>
+  );
 
   return (
     <div className="flex min-h-screen bg-base text-fg">
@@ -74,7 +89,7 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
             )}
           </div>
 
-          {isAdmin && TOP_NAV.slice(1).map(({ href, label, icon: Icon }) => {
+          {TOP_NAV.slice(1).filter((item) => isAdmin || item.staffAllowed).map(({ href, label, icon: Icon }) => {
             const active = pathname === href;
             return (
               <Link key={href} href={href}
@@ -94,7 +109,7 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
         </Link>
       </aside>
 
-      <main className="flex-1 overflow-y-auto">{children}</main>
+      <main className="flex-1 overflow-y-auto">{content}</main>
     </div>
   );
 }
