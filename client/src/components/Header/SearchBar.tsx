@@ -28,15 +28,6 @@ export function SearchBar({ onClose }: { onClose: () => void }) {
           placeholder="Search products, brands, categories…"
           className="flex-1 border-none bg-transparent px-4 text-base text-fg outline-none placeholder:text-subtle"
         />
-        {query && (
-          <button
-            type="button"
-            onClick={() => setQuery("")}
-            className="mr-2 text-muted hover:text-fg"
-          >
-            <X size={16} />
-          </button>
-        )}
         <button
           type="button"
           onClick={onClose}
