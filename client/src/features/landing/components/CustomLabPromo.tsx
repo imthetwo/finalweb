@@ -20,10 +20,7 @@ export default function CustomLabPromo() {
       <div className="relative mx-auto grid max-w-[1400px] items-center gap-10 px-4 md:gap-16 md:px-8 lg:grid-cols-2">
         {/* Left: Text */}
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">
-            Pecify PC Builder
-          </p>
-          <h2 className="mt-4 text-3xl font-black uppercase leading-tight tracking-tight text-fg sm:text-4xl md:text-5xl lg:text-6xl">
+          <h2 className="text-3xl font-black uppercase leading-tight tracking-tight text-fg sm:text-4xl md:text-5xl lg:text-6xl">
             Configure Your
             <br />
             <span className="text-brand">Perfect Build</span>
