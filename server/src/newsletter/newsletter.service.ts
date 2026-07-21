@@ -59,4 +59,21 @@ export class NewsletterService {
     await this.email.sendNewsletterWelcome(subscriber.email, subscriber.unsubscribeToken);
     return { ok: true };
   }
+
+  // Same token doubles as the unsubscribe link (see sendNewsletterWelcome) —
+  // self-service, no login required, matched by the unguessable token so
+  // nobody can unsubscribe someone else using just their email.
+  async unsubscribe(dto: ConfirmSubscriptionDto) {
+    const subscriber = await this.prisma.newsletterSubscriber.findUnique({
+      where: { unsubscribeToken: dto.token },
+    });
+    if (!subscriber) throw new NotFoundException('Invalid unsubscribe link');
+    if (!subscriber.isActive) return { ok: true, alreadyUnsubscribed: true };
+
+    await this.prisma.newsletterSubscriber.update({
+      where: { id: subscriber.id },
+      data: { isActive: false },
+    });
+    return { ok: true };
+  }
 }

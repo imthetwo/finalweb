@@ -29,11 +29,15 @@ export function useBuildCart() {
       let alreadyInCart = 0;
 
       if (getToken()) {
+        // Tag every part with the same build id (only when there's more than
+        // one — a lone part has nothing to group with) so the cart page shows
+        // them together as one build instead of loose, unrelated line items.
+        const customBuildId = items.length > 1 ? crypto.randomUUID() : undefined;
         // Add-to-cart is one-shot site-wide (server rejects a product already
         // in the cart — quantity only changes from the cart page). Use
         // allSettled so one "already in cart" rejection doesn't sink the
         // whole batch and mislabel parts that really did get added.
-        const results = await Promise.allSettled(items.map((p) => addCartItem(p.id)));
+        const results = await Promise.allSettled(items.map((p) => addCartItem(p.id, 1, customBuildId)));
         for (const r of results) {
           if (r.status === "fulfilled") added++; else alreadyInCart++;
         }

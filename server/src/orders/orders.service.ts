@@ -121,8 +121,16 @@ export class OrdersService {
     if (!body.items.length) throw new BadRequestException('Cart is empty');
     assertMethod(body.paymentMethod);
 
+    // No cron in this project — piggyback on checkout traffic itself to keep
+    // abandoned/expired pending rows from accumulating forever. Only ever
+    // touches rows nobody can act on anymore (past expiry, never confirmed),
+    // so it's safe to run unconditionally on every request.
+    this.prisma.pendingGuestOrder
+      .deleteMany({ where: { expiresAt: { lt: new Date() }, confirmedAt: null } })
+      .catch(() => {});
+
     const token = randomBytes(32).toString('hex');
-    await this.prisma.pendingGuestOrder.create({
+    const created = await this.prisma.pendingGuestOrder.create({
       data: {
         token,
         email: body.guestEmail,
@@ -134,7 +142,22 @@ export class OrdersService {
     });
 
     this.email.sendGuestOrderConfirmation(body.guestEmail, token).catch(() => {});
-    return { pending: true as const, email: body.guestEmail };
+    // pendingId (NOT the token) is safe to hand back to the tab that just
+    // submitted — it only ever reveals confirm/not-confirmed status (see
+    // getGuestCheckoutStatus below), never lets that tab complete the
+    // confirmation itself. Lets the original checkout tab poll and redirect
+    // on its own once the guest confirms via the emailed link, even if they
+    // open that link on a different device or tab.
+    return { pending: true as const, email: body.guestEmail, pendingId: created.id };
+  }
+
+  // Polled by the original checkout tab while it shows "check your email" —
+  // deliberately keyed by pendingId, not the token, so it can only ever
+  // report status, never trigger the actual confirmation itself.
+  async getGuestCheckoutStatus(pendingId: string) {
+    const pending = await this.prisma.pendingGuestOrder.findUnique({ where: { id: pendingId } });
+    if (!pending) throw new NotFoundException('Not found');
+    return { confirmed: !!pending.orderId, orderId: pending.orderId };
   }
 
   // Called from the /guest-checkout/confirm page after the guest clicks the

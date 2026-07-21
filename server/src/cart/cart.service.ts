@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { ProductsService } from '../products/products.service';
 import { maxQtyFor } from '../common/quantity-caps';
@@ -36,6 +37,7 @@ export class CartService {
       return {
         id: item.id,
         quantity: item.quantity,
+        customBuildId: item.customBuildId,
         product,
         lineTotal: product.displayPrice * item.quantity,
       };
@@ -44,7 +46,7 @@ export class CartService {
     return { id: cart.id, items, subTotal };
   }
 
-  async addItem(userId: string, productId: string, quantity = 1) {
+  async addItem(userId: string, productId: string, quantity = 1, customBuildId?: string) {
     const product = await this.prisma.product.findFirst({
       where: { id: productId, isPublished: true },
       include: CATEGORY_NAME_ONLY,
@@ -66,9 +68,19 @@ export class CartService {
     if (product.stock < quantity)
       throw new BadRequestException('Insufficient stock');
 
-    await this.prisma.cartItem.create({
-      data: { cartId: cart.id, productId, quantity },
-    });
+    try {
+      await this.prisma.cartItem.create({
+        data: { cartId: cart.id, productId, quantity, customBuildId },
+      });
+    } catch (e) {
+      // A concurrent duplicate add (rapid double-click) can slip past the
+      // check above and hit the unique constraint instead — report it the
+      // same friendly way rather than letting it surface as a raw 500.
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+        throw new BadRequestException('This product is already in your cart');
+      }
+      throw e;
+    }
 
     return this.getCart(userId);
   }

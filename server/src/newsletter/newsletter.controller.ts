@@ -20,4 +20,12 @@ export class NewsletterController {
   confirm(@Body() dto: ConfirmSubscriptionDto) {
     return this.newsletter.confirm(dto);
   }
+
+  // POST /newsletter/unsubscribe — called from the "Unsubscribe" link in every
+  // newsletter email (same token, see EmailService.sendNewsletterWelcome)
+  @Post('unsubscribe')
+  @HttpCode(200)
+  unsubscribe(@Body() dto: ConfirmSubscriptionDto) {
+    return this.newsletter.unsubscribe(dto);
+  }
 }

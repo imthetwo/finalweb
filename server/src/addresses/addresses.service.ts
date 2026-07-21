@@ -20,22 +20,29 @@ export class AddressesService {
     // The very first address is always the default, regardless of what was sent.
     const isDefault = count === 0 || !!dto.isDefault;
 
-    if (isDefault) await this.clearOtherDefaults(userId);
-
-    return this.prisma.address.create({
-      data: { ...dto, userId, isDefault },
-    });
+    // Clearing the old default(s) and creating the new one must commit
+    // together — otherwise two concurrent "set as default" requests could
+    // each clear before either has inserted its own row, leaving two rows
+    // marked isDefault at once.
+    if (isDefault) {
+      return this.prisma.$transaction(async (tx) => {
+        await tx.address.updateMany({ where: { userId, isDefault: true }, data: { isDefault: false } });
+        return tx.address.create({ data: { ...dto, userId, isDefault } });
+      });
+    }
+    return this.prisma.address.create({ data: { ...dto, userId, isDefault } });
   }
 
   async update(userId: string, id: string, dto: UpdateAddressDto) {
     await this.findOwned(userId, id);
 
-    if (dto.isDefault) await this.clearOtherDefaults(userId);
-
-    return this.prisma.address.update({
-      where: { id },
-      data: dto,
-    });
+    if (dto.isDefault) {
+      return this.prisma.$transaction(async (tx) => {
+        await tx.address.updateMany({ where: { userId, isDefault: true }, data: { isDefault: false } });
+        return tx.address.update({ where: { id }, data: dto });
+      });
+    }
+    return this.prisma.address.update({ where: { id }, data: dto });
   }
 
   async remove(userId: string, id: string) {
@@ -77,9 +84,5 @@ export class AddressesService {
     const address = await this.prisma.address.findFirst({ where: { id, userId } });
     if (!address) throw new NotFoundException('Address not found');
     return address;
-  }
-
-  private clearOtherDefaults(userId: string) {
-    return this.prisma.address.updateMany({ where: { userId, isDefault: true }, data: { isDefault: false } });
   }
 }

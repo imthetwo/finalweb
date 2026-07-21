@@ -6,8 +6,8 @@ export type MergeCartResult = { merged: number; skipped: number };
 
 export const fetchCart = () => apiFetch<Cart>("/cart");
 
-export const addCartItem = (productId: string, quantity = 1) =>
-  apiFetch<Cart>("/cart/items", { method: "POST", body: JSON.stringify({ productId, quantity }) });
+export const addCartItem = (productId: string, quantity = 1, customBuildId?: string) =>
+  apiFetch<Cart>("/cart/items", { method: "POST", body: JSON.stringify({ productId, quantity, customBuildId }) });
 
 export const updateCartItemQty = (itemId: string, quantity: number) =>
   apiFetch<Cart>(`/cart/items/${itemId}`, { method: "PATCH", body: JSON.stringify({ quantity }) });

@@ -1,5 +1,4 @@
 // Shared Cloudinary URL builder — single source of truth.
-// Images in server/local_images were uploaded to Cloudinary under TechStore/{folder}/{name}.
 
 const CLOUD = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD ?? "dxbvnueoq";
 

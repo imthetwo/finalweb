@@ -12,15 +12,20 @@ export class QrService {
   }
 
   async orderQr(orderId: string) {
+    // No auth guard here by design — guests need this right after checkout,
+    // with no account to log into. So the response must never carry anything
+    // beyond what generating the QR code itself needs: no status, no total.
+    // Anyone wanting the real order details still has to go through
+    // trackGuestOrder(), which requires the phone number too.
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
-      select: { id: true, totalAmount: true, status: true },
+      select: { id: true },
     });
     if (!order) throw new NotFoundException('Order not found');
 
     const url = `${this.base()}/track-order/${order.id}`;
     const dataUrl = await QRCode.toDataURL(url, { width: 240, margin: 1 });
-    return { orderId: order.id, url, dataUrl, status: order.status, total: order.totalAmount };
+    return { orderId: order.id, url, dataUrl };
   }
 
   async productQr(id: string) {

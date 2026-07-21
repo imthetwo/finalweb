@@ -15,7 +15,7 @@ export const guestCheckout = (data: {
   paymentMethod: string;
   guestEmail: string;
 }) =>
-  apiFetch<{ pending: true; email: string }>("/orders/guest-checkout", {
+  apiFetch<{ pending: true; email: string; pendingId: string }>("/orders/guest-checkout", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -28,6 +28,12 @@ export const confirmGuestCheckout = (token: string) =>
     method: "POST",
     body: JSON.stringify({ token }),
   });
+
+// GET /orders/guest-checkout/status/:pendingId — polled by the checkout tab
+// while it shows "check your email", so it can auto-redirect once the guest
+// confirms via the link, even if they open it on a different tab/device.
+export const fetchGuestCheckoutStatus = (pendingId: string) =>
+  apiFetch<{ confirmed: boolean; orderId: string | null }>(`/orders/guest-checkout/status/${pendingId}`);
 
 // GET /orders/:id
 export const fetchOrder = (id: string) =>

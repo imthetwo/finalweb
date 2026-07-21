@@ -25,7 +25,7 @@ export class CartController {
     @Req() req: Request & { user: { userId: string } },
     @Body() dto: AddCartItemDto,
   ) {
-    return this.cartService.addItem(this.uid(req), dto.productId, dto.quantity ?? 1);
+    return this.cartService.addItem(this.uid(req), dto.productId, dto.quantity ?? 1, dto.customBuildId);
   }
 
   // Merge a guest (localStorage) cart into this account on login/register —

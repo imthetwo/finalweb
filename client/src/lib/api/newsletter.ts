@@ -6,3 +6,6 @@ export const subscribeNewsletter = (email: string, source: string) =>
 
 export const confirmNewsletter = (token: string) =>
   apiFetch<ConfirmSubscriptionResponse>("/newsletter/confirm", { method: "POST", body: JSON.stringify({ token }) });
+
+export const unsubscribeNewsletter = (token: string) =>
+  apiFetch<{ ok: boolean; alreadyUnsubscribed?: boolean }>("/newsletter/unsubscribe", { method: "POST", body: JSON.stringify({ token }) });

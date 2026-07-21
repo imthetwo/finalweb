@@ -1,4 +1,5 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { ProductsService } from '../products/products.service';
 
@@ -41,7 +42,17 @@ export class WishlistService {
     });
     if (existing) throw new ConflictException('Already in wishlist');
 
-    await this.prisma.wishlist.create({ data: { userId, productId } });
+    try {
+      await this.prisma.wishlist.create({ data: { userId, productId } });
+    } catch (e) {
+      // A concurrent duplicate add (rapid double-click) can slip past the
+      // check above and hit the unique constraint instead — report it the
+      // same friendly way rather than letting it surface as a raw 500.
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+        throw new ConflictException('Already in wishlist');
+      }
+      throw e;
+    }
     return { ok: true };
   }
 

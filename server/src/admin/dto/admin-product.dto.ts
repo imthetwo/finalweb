@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUrl,
   Length,
   Max,
   Min,
@@ -114,9 +115,7 @@ export class CreateProductDto {
   @IsString() @Length(2, 200, { message: 'Name must be between 2 and 200 characters' }) name!: string;
   @IsString() @Length(1, 100, { message: 'Brand must be between 1 and 100 characters' }) brand!: string;
   @IsOptional() @IsString() @Length(0, 5000, { message: 'Description must be under 5000 characters' }) description?: string;
-  // Not @IsUrl(): formatProduct() (products.service.ts) intentionally accepts
-  // relative paths (e.g. "/media/...") alongside absolute Cloudinary URLs.
-  @IsOptional() @IsString() @Length(0, 2000, { message: 'Image URL is too long' }) imageUrl?: string;
+  @IsOptional() @IsUrl({}, { message: 'Image URL must be a valid URL' }) @Length(0, 2000, { message: 'Image URL is too long' }) imageUrl?: string;
   @IsNumber() @Min(0, { message: 'Price cannot be negative' }) price!: number;
   @IsOptional() @IsNumber() @Min(0, { message: 'Cost price cannot be negative' }) costPrice?: number;
   @IsOptional() @IsNumber() @Min(0, { message: 'Sale price cannot be negative' }) salePrice?: number;
@@ -166,9 +165,7 @@ export class UpdateProductDto {
   @IsOptional() @IsString() @Length(2, 200, { message: 'Name must be between 2 and 200 characters' }) name?: string;
   @IsOptional() @IsString() @Length(1, 100, { message: 'Brand must be between 1 and 100 characters' }) brand?: string;
   @IsOptional() @IsString() @Length(0, 5000, { message: 'Description must be under 5000 characters' }) description?: string;
-  // Not @IsUrl(): formatProduct() (products.service.ts) intentionally accepts
-  // relative paths (e.g. "/media/...") alongside absolute Cloudinary URLs.
-  @IsOptional() @IsString() @Length(0, 2000, { message: 'Image URL is too long' }) imageUrl?: string;
+  @IsOptional() @IsUrl({}, { message: 'Image URL must be a valid URL' }) @Length(0, 2000, { message: 'Image URL is too long' }) imageUrl?: string;
   @IsOptional() @IsNumber() @Min(0, { message: 'Price cannot be negative' }) price?: number;
   @IsOptional() @IsNumber() @Min(0, { message: 'Cost price cannot be negative' }) costPrice?: number;
   @IsOptional() @IsNumber() @Min(0, { message: 'Sale price cannot be negative' }) salePrice?: number;

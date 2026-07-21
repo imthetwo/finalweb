@@ -1,10 +1,12 @@
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-import { createOrder, guestCheckout, fetchAddresses, type Address } from "@/lib/api";
-import { getGuestCart } from "@/lib/guestCart";
+import { createOrder, guestCheckout, fetchGuestCheckoutStatus, fetchAddresses, type Address } from "@/lib/api";
+import { getGuestCart, clearGuestCart } from "@/lib/guestCart";
 import { useAuthState } from "@/hooks/useAuthState";
+
+const GUEST_CHECKOUT_POLL_MS = 3000;
 
 // Data/logic for the checkout screen — shipping form, payment method, and
 // order submission for both logged-in and guest flows. The component only
@@ -25,6 +27,11 @@ export function useCheckoutForm() {
   // itself isn't created yet, so the cart is deliberately left untouched
   // until the guest actually confirms via the emailed link.
   const [awaitingEmailConfirmation, setAwaitingEmailConfirmation] = useState(false);
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Phone at the moment of submission — needed to seed the track-order lookup
+  // once polling detects the guest confirmed on another tab/device.
+  const pendingPhoneRef = useRef("");
 
   // Saved addresses — let a logged-in user pick one instead of retyping.
   const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
@@ -71,6 +78,33 @@ export function useCheckoutForm() {
       router.push(`/payment/${paymentMethod.toLowerCase()}?orderId=${orderId}`);
     }
   }
+
+  // While showing "check your email", poll for confirmation so this tab
+  // notices and moves on even if the guest clicks the link on a different
+  // tab or device — mirrors the payment page's status-polling pattern.
+  useEffect(() => {
+    if (!awaitingEmailConfirmation || !pendingId) return;
+
+    pollRef.current = setInterval(async () => {
+      try {
+        const status = await fetchGuestCheckoutStatus(pendingId);
+        if (status.confirmed && status.orderId) {
+          clearInterval(pollRef.current!);
+          clearGuestCart();
+          window.dispatchEvent(new Event("cart-updated"));
+          sessionStorage.setItem(`track:${status.orderId}`, pendingPhoneRef.current);
+          redirect(status.orderId);
+        }
+      } catch {
+        // ignore poll errors — keep trying until it expires or succeeds
+      }
+    }, GUEST_CHECKOUT_POLL_MS);
+
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [awaitingEmailConfirmation, pendingId]);
 
   // Client-side validation — mirrors the backend ShippingInfoDto rules so the
   // customer gets a friendly message instead of a 400 from the API.
@@ -141,12 +175,14 @@ export function useCheckoutForm() {
           toast.error("Your cart is empty.");
           return;
         }
-        await guestCheckout({
+        const { pendingId: newPendingId } = await guestCheckout({
           items: guestItems,
           shippingInfo,
           paymentMethod,
           guestEmail: guestEmail.trim(),
         });
+        pendingPhoneRef.current = shippingInfo.phone;
+        setPendingId(newPendingId);
         setAwaitingEmailConfirmation(true);
       }
     } catch (err) {

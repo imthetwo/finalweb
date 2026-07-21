@@ -8,6 +8,6 @@ export type NavSection = {
   key: string;
   label: string;
   href: string;
-  image: string; // full URL to /media/:folder/:file
+  image: string; // full Cloudinary URL (see lib/cloudinary.ts's cdn())
   columns: NavColumn[];
 };

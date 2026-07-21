@@ -153,7 +153,7 @@ export type PaymentStatus = {
   totalAmount: number;
 };
 
-export type OrderQr = { dataUrl: string; status: string; total: number };
+export type OrderQr = { dataUrl: string };
 
 // ─── Address book ─────────────────────────────────────────────────────────────
 

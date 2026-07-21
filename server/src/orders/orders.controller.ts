@@ -31,6 +31,15 @@ export class OrdersController {
     return this.ordersService.confirmGuestCheckout(dto.token);
   }
 
+  // ── Polled by the original checkout tab while showing "check your email" ─────
+  // Keyed by pendingId (not the token), so it can only report status, never
+  // complete the confirmation — lets that tab auto-redirect once the guest
+  // confirms via the emailed link, even from a different tab/device.
+  @Get('guest-checkout/status/:pendingId')
+  guestCheckoutStatus(@Param('pendingId') pendingId: string) {
+    return this.ordersService.getGuestCheckoutStatus(pendingId);
+  }
+
   // ── Guest "track my order" lookup — no auth, orderId + phone must match ──
   @Post('track')
   trackOrder(@Body() dto: TrackOrderDto) {
