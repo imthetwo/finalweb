@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LogOut, Shield } from "lucide-react";
+import { LogOut, Shield, User } from "lucide-react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAccountPage } from "./hooks/useAccountPage";
@@ -9,10 +9,6 @@ import { ProfileTab } from "./components/ProfileTab";
 import OrdersTab from "./components/OrdersTab";
 import WishlistTab from "./components/WishlistTab";
 import { AddressBookTab } from "./components/AddressBookTab";
-
-function initials(name: string) {
-  return name.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase();
-}
 
 export default function AccountPage() {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
@@ -30,8 +26,8 @@ export default function AccountPage() {
         {/* Header */}
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-edge pb-6">
           <div className="flex items-center gap-4">
-            <span className="flex h-14 w-14 items-center justify-center border border-brand/30 bg-brand/10 text-lg font-black text-brand">
-              {initials(profile.fullName)}
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center border border-brand/30 bg-brand/10 text-brand">
+              <User size={24} />
             </span>
             <div>
               <h1 className="text-xl font-black uppercase tracking-wide text-fg">{profile.fullName}</h1>
