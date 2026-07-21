@@ -2,6 +2,8 @@ import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common
 import { AuthGuard } from '@nestjs/passport';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
+import { PasswordResetService } from './password-reset.service';
+import { EmailVerificationService } from './email-verification.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
@@ -14,7 +16,11 @@ import { getClientUrl } from '../common/client-url';
 
 @Controller('auth')
 export class AuthController {
-	constructor(private readonly authService: AuthService) {}
+	constructor(
+		private readonly authService: AuthService,
+		private readonly passwordReset: PasswordResetService,
+		private readonly emailVerification: EmailVerificationService,
+	) {}
 
 	@Post('register')
 	async register(@Body() dto: RegisterDto) {
@@ -42,29 +48,29 @@ export class AuthController {
 
 	@Post('forgot-password')
 	forgotPassword(@Body() dto: ForgotPasswordDto) {
-		return this.authService.forgotPassword(dto.email);
+		return this.passwordReset.forgotPassword(dto.email);
 	}
 
 	@Post('reset-password')
 	resetPassword(@Body() dto: ResetPasswordDto) {
-		return this.authService.resetPassword(dto.token, dto.password);
+		return this.passwordReset.resetPassword(dto.token, dto.password);
 	}
 
 	@Post('verify-email')
 	verifyEmail(@Body() dto: VerifyEmailDto) {
-		return this.authService.verifyEmail(dto.token);
+		return this.emailVerification.verifyEmail(dto.token);
 	}
 
 	@Post('resend-verification')
 	@UseGuards(JwtAuthGuard)
 	resendVerification(@CurrentUser('userId') userId: string) {
-		return this.authService.resendVerification(userId);
+		return this.emailVerification.resendVerification(userId);
 	}
 
 	// Public — for a just-registered or login-blocked (unverified) user, who
 	// by definition can't hold a valid JWT to use the endpoint above.
 	@Post('resend-verification-by-email')
 	resendVerificationByEmail(@Body() dto: ResendVerificationByEmailDto) {
-		return this.authService.resendVerificationByEmail(dto.email);
+		return this.emailVerification.resendVerificationByEmail(dto.email);
 	}
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { fetchAdminUsers, updateAdminUserRole } from "@/lib/api/admin";
+import { fetchAdminUsers, updateAdminUserRole } from "@/lib/api/admin-users.api";
 import { useAuthState } from "@/hooks/useAuthState";
 import { confirmDialog } from "@/store/confirmStore";
 import type { AdminUser, UserRole } from "@/types/api";

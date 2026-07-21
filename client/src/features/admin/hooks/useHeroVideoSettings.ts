@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { uploadHeroVideo } from "@/lib/api/admin";
+import { uploadHeroVideo } from "@/lib/api/admin-products.api";
 import { fetchSettingValue, updateSettingValue } from "@/lib/api/settings";
 
 const DEFAULT_VIDEO  = "/hero.mp4";

@@ -15,8 +15,8 @@ const CATEGORY_SEARCH_SYNONYMS: Record<string, string> = {
   memory: 'ram',
 };
 
-// Exported so AdminProductsService (which needs the same shape for its own
-// list/create/update/export queries) doesn't redeclare it.
+// Exported so the admin products services (which need the same shape for
+// their own list/create/update/export queries) don't redeclare it.
 export const SPEC_INCLUDE = {
   cpuSpec: true,
   gpuSpec: true,

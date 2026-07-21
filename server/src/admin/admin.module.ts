@@ -5,15 +5,26 @@ import { ProductsModule } from '../products/products.module';
 import { EmailModule } from '../email/email.module';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 import { PaymentsModule } from '../payments/payments.module';
-import { AdminController } from './admin.controller';
+import { AdminStatsController } from './admin-stats.controller';
+import { AdminProductsController } from './admin-products.controller';
+import { AdminOrdersController } from './admin-orders.controller';
+import { AdminUsersController } from './admin-users.controller';
 import { AdminService } from './admin.service';
 import { AdminStatsService } from './services/admin-stats.service';
-import { AdminProductsService } from './services/admin-products.service';
+import { AdminProductsCrudService } from './services/admin-products-crud.service';
+import { AdminProductsImportService } from './services/admin-products-import.service';
+import { AdminProductsExportService } from './services/admin-products-export.service';
 import { AdminOrdersService } from './services/admin-orders.service';
+import { AdminOrdersExportService } from './services/admin-orders-export.service';
+import { AdminUsersService } from './services/admin-users.service';
 
 @Module({
   imports: [PrismaModule, AuthModule, ProductsModule, EmailModule, CloudinaryModule, PaymentsModule],
-  controllers: [AdminController],
-  providers: [AdminService, AdminStatsService, AdminProductsService, AdminOrdersService],
+  controllers: [AdminStatsController, AdminProductsController, AdminOrdersController, AdminUsersController],
+  providers: [
+    AdminService, AdminStatsService,
+    AdminProductsCrudService, AdminProductsImportService, AdminProductsExportService,
+    AdminOrdersService, AdminOrdersExportService, AdminUsersService,
+  ],
 })
 export class AdminModule {}

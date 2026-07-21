@@ -1,10 +1,11 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import { randomBytes } from 'crypto';
+import { issueToken } from './issue-token.util';
 
 @Injectable()
 export class AuthService {
@@ -46,7 +47,7 @@ export class AuthService {
 
 		// Record newsletter intent as a pending (isActive: false) row — the
 		// account's own email-verification link is what confirms it (no separate
-		// double opt-in needed), see verifyEmail() below.
+		// double opt-in needed), see EmailVerificationService.verifyEmail().
 		if (dto.subscribeNewsletter) {
 			this.prisma.newsletterSubscriber
 				.upsert({
@@ -59,7 +60,8 @@ export class AuthService {
 
 		// Verification is mandatory — no session is issued at registration.
 		// The account only becomes usable once the emailed link is clicked
-		// (see verifyEmail() below, which is what actually signs the first JWT).
+		// (see EmailVerificationService.verifyEmail(), which is what actually
+		// signs the first JWT).
 		return { ok: true, email: user.email };
 	}
 
@@ -69,12 +71,7 @@ export class AuthService {
 		if (!user.isEmailVerified) {
 			throw new UnauthorizedException('Please verify your email before signing in — check your inbox for the verification link.');
 		}
-
-		const payload = { sub: user.id, email: user.email, fullName: user.fullName, role: user.role, isEmailVerified: user.isEmailVerified };
-		const access_token = this.jwtService.sign(payload);
-
-		const safeUser = { id: user.id, email: user.email, fullName: user.fullName, role: user.role, isEmailVerified: user.isEmailVerified };
-		return { access_token, user: safeUser };
+		return issueToken(this.jwtService, user);
 	}
 
 	async googleLogin(user: { id: string; email: string; firstName?: string; lastName?: string }) {
@@ -114,102 +111,6 @@ export class AuthService {
 			});
 		}
 
-		const payload = { sub: account.id, email: account.email, fullName: account.fullName, role: account.role, isEmailVerified: account.isEmailVerified };
-		const access_token = this.jwtService.sign(payload);
-		const safeUser = { id: account.id, email: account.email, fullName: account.fullName, role: account.role, isEmailVerified: account.isEmailVerified };
-
-		return { access_token, user: safeUser };
-	}
-
-	async forgotPassword(emailAddr: string) {
-		const user = await this.prisma.user.findUnique({ where: { email: emailAddr } });
-		// Always return ok=true — don't reveal if email exists
-		if (!user) return { ok: true };
-
-		const token = randomBytes(32).toString('hex');
-		const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-
-		// Persist token in DB so it survives server restarts
-		await this.prisma.user.update({
-			where: { email: emailAddr },
-			data: { resetToken: token, resetTokenExpiry: expiry },
-		});
-
-		await this.email.sendPasswordReset(emailAddr, token);
-		return { ok: true };
-	}
-
-	async resetPassword(token: string, newPassword: string) {
-		const user = await this.prisma.user.findFirst({
-			where: { resetToken: token, resetTokenExpiry: { gt: new Date() } },
-		});
-		if (!user) throw new BadRequestException('Invalid or expired reset link');
-
-		const password = await bcrypt.hash(newPassword, 10);
-		await this.prisma.user.update({
-			where: { id: user.id },
-			data: { password, resetToken: null, resetTokenExpiry: null },
-		});
-		return { ok: true };
-	}
-
-	// Reissues a fresh JWT so the client's auth state reflects isEmailVerified
-	// immediately, without requiring a logout/login round trip.
-	async verifyEmail(token: string) {
-		const user = await this.prisma.user.findFirst({
-			where: { verifyToken: token, verifyTokenExpiry: { gt: new Date() } },
-		});
-		if (!user) throw new BadRequestException('Invalid or expired verification link');
-
-		const updated = await this.prisma.user.update({
-			where: { id: user.id },
-			data: { isEmailVerified: true, verifyToken: null, verifyTokenExpiry: null },
-		});
-
-		// Activate any newsletter subscription requested at registration — the
-		// account's email is now proven real, so no separate confirm email needed.
-		const subscriber = await this.prisma.newsletterSubscriber.findUnique({ where: { email: updated.email } });
-		if (subscriber && !subscriber.isActive) {
-			await this.prisma.newsletterSubscriber.update({ where: { id: subscriber.id }, data: { isActive: true } });
-			this.email.sendNewsletterWelcome(subscriber.email, subscriber.unsubscribeToken).catch(() => {});
-		}
-
-		const payload = { sub: updated.id, email: updated.email, fullName: updated.fullName, role: updated.role, isEmailVerified: updated.isEmailVerified };
-		const access_token = this.jwtService.sign(payload);
-		const safeUser = { id: updated.id, email: updated.email, fullName: updated.fullName, role: updated.role, isEmailVerified: updated.isEmailVerified };
-		return { access_token, user: safeUser };
-	}
-
-	// Public — no login required, since an unverified account can no longer
-	// sign in to reach the authenticated resendVerification() below. Always
-	// returns ok:true regardless of outcome so it can't be used to probe which
-	// emails have an account (same pattern as forgotPassword()).
-	async resendVerificationByEmail(emailAddr: string) {
-		const user = await this.prisma.user.findUnique({ where: { email: emailAddr } });
-		if (!user || user.isEmailVerified) return { ok: true };
-
-		const verifyToken = randomBytes(32).toString('hex');
-		const verifyTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
-		await this.prisma.user.update({
-			where: { id: user.id },
-			data: { verifyToken, verifyTokenExpiry },
-		});
-		await this.email.sendEmailVerification(user.email, verifyToken);
-		return { ok: true };
-	}
-
-	async resendVerification(userId: string) {
-		const user = await this.prisma.user.findUnique({ where: { id: userId } });
-		if (!user) throw new NotFoundException('User not found');
-		if (user.isEmailVerified) return { ok: true, alreadyVerified: true };
-
-		const verifyToken = randomBytes(32).toString('hex');
-		const verifyTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
-		await this.prisma.user.update({
-			where: { id: userId },
-			data: { verifyToken, verifyTokenExpiry },
-		});
-		await this.email.sendEmailVerification(user.email, verifyToken);
-		return { ok: true, alreadyVerified: false };
+		return issueToken(this.jwtService, account);
 	}
 }

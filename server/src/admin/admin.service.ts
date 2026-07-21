@@ -2,8 +2,12 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { CreateProductDto, UpdateProductDto } from './dto/admin-product.dto';
 import { AdminStatsService } from './services/admin-stats.service';
-import { AdminProductsService } from './services/admin-products.service';
+import { AdminProductsCrudService } from './services/admin-products-crud.service';
+import { AdminProductsImportService } from './services/admin-products-import.service';
+import { AdminProductsExportService } from './services/admin-products-export.service';
 import { AdminOrdersService } from './services/admin-orders.service';
+import { AdminOrdersExportService } from './services/admin-orders-export.service';
+import { AdminUsersService } from './services/admin-users.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { PaymentsService } from '../payments/payments.service';
 
@@ -13,8 +17,12 @@ type UploadedFileLike = { buffer: Buffer; mimetype: string; size: number };
 export class AdminService {
   constructor(
     private readonly statsService: AdminStatsService,
-    private readonly productsService: AdminProductsService,
+    private readonly productsCrud: AdminProductsCrudService,
+    private readonly productsImport: AdminProductsImportService,
+    private readonly productsExport: AdminProductsExportService,
     private readonly ordersService: AdminOrdersService,
+    private readonly ordersExport: AdminOrdersExportService,
+    private readonly usersService: AdminUsersService,
     private readonly cloudinary: CloudinaryService,
     private readonly payments: PaymentsService,
   ) {}
@@ -23,11 +31,12 @@ export class AdminService {
   stats() { return this.statsService.getDashboardStats(); }
 
   // ── Products ──────────────────────────────────────────────
-  uploadImage(file: UploadedFileLike) {
+  async uploadImage(file: UploadedFileLike) {
     if (!file) throw new BadRequestException('No file uploaded');
     if (!file.mimetype.startsWith('image/')) throw new BadRequestException('File must be an image');
     if (file.size > 10 * 1024 * 1024) throw new BadRequestException('Image must be under 10MB');
-    return this.productsService.uploadImage(file.buffer);
+    const url = await this.cloudinary.uploadImage(file.buffer);
+    return { url };
   }
 
   async uploadVideo(file: UploadedFileLike) {
@@ -41,18 +50,18 @@ export class AdminService {
   importProductsExcel(file: { buffer: Buffer }, role: Role) {
     if (!file) throw new BadRequestException('No file uploaded');
     // Staff import → created as draft, admin must approve before it publishes
-    return this.productsService.importExcel(file.buffer, role === Role.STAFF);
+    return this.productsImport.importExcel(file.buffer, role === Role.STAFF);
   }
 
-  exportProductTemplate() { return this.productsService.exportProductTemplate(); }
-  listProducts(p: { search?: string; page?: number; limit?: number; categoryId?: string }) { return this.productsService.list(p); }
+  exportProductTemplate() { return this.productsImport.exportProductTemplate(); }
+  listProducts(p: { search?: string; page?: number; limit?: number; categoryId?: string }) { return this.productsCrud.list(p); }
   // ADMIN → published immediately; STAFF → draft (isPublished: false), awaits admin approval
-  createProduct(dto: CreateProductDto, role: Role) { return this.productsService.create(dto, role === Role.STAFF); }
-  updateProduct(id: string, dto: UpdateProductDto) { return this.productsService.update(id, dto); }
-  approveProduct(id: string) { return this.productsService.approve(id); }
-  deleteProduct(id: string) { return this.productsService.remove(id); }
-  exportProductsExcel() { return this.productsService.exportExcel(); }
-  exportInventoryReport() { return this.productsService.exportInventoryReport(); }
+  createProduct(dto: CreateProductDto, role: Role) { return this.productsCrud.create(dto, role === Role.STAFF); }
+  updateProduct(id: string, dto: UpdateProductDto) { return this.productsCrud.update(id, dto); }
+  approveProduct(id: string) { return this.productsCrud.approve(id); }
+  deleteProduct(id: string) { return this.productsCrud.remove(id); }
+  exportProductsExcel() { return this.productsExport.exportExcel(); }
+  exportInventoryReport() { return this.productsExport.exportInventoryReport(); }
 
   // ── Orders & Users ────────────────────────────────────────
   listOrders(p: { status?: string; search?: string; page?: number; limit?: number }) { return this.ordersService.listOrders(p); }
@@ -62,7 +71,7 @@ export class AdminService {
   rejectOrder(orderId: string, reason: string, actorId: string) { return this.ordersService.rejectOrder(orderId, reason, actorId); }
   forcePollPayment(orderId: string) { return this.payments.forcePollPayment(orderId); }
   refundOrder(orderId: string, reason: string, actorId: string) { return this.payments.refundPayment(orderId, reason, actorId); }
-  listUsers(p: { page?: number; limit?: number }) { return this.ordersService.listUsers(p); }
-  updateUserRole(userId: string, role: Role, requesterId: string) { return this.ordersService.updateUserRole(userId, role, requesterId); }
-  exportOrdersExcel() { return this.ordersService.exportOrdersExcel(); }
+  listUsers(p: { page?: number; limit?: number }) { return this.usersService.listUsers(p); }
+  updateUserRole(userId: string, role: Role, requesterId: string) { return this.usersService.updateUserRole(userId, role, requesterId); }
+  exportOrdersExcel() { return this.ordersExport.exportOrdersExcel(); }
 }
