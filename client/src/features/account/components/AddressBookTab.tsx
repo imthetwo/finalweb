@@ -80,8 +80,12 @@ export function AddressBookTab() {
                   {a.label || "Address"}
                 </p>
                 {a.isDefault && (
-                  <span className="flex shrink-0 items-center gap-1 border border-brand/40 bg-brand/10 px-2 py-0.5 text-2xs font-black uppercase tracking-wider text-brand">
-                    <Star size={10} className="fill-brand" /> Default
+                  <span
+                    className="flex shrink-0 items-center justify-center border border-brand/40 bg-brand/10 p-1 text-brand"
+                    aria-label="Default address"
+                    title="Default address"
+                  >
+                    <Star size={12} className="fill-brand" />
                   </span>
                 )}
               </div>
