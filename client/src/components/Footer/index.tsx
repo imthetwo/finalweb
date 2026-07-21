@@ -1,24 +1,25 @@
 import Link from "next/link";
+import { CATEGORY_NAV } from "@/lib/category-nav";
+
+// Component/system category links are derived from CATEGORY_NAV — the same
+// single source of truth used for URL routing (see getShopPage.ts) — instead
+// of hand-typed hrefs, which had drifted out of sync with the real routes for
+// 5 of 8 entries (e.g. "/components/graphics-cards" when the real slug is
+// ".../gpu") and were missing Case Fans/Monitors entirely.
+function navFor(labels: string[]) {
+  return labels
+    .map((label) => CATEGORY_NAV.find((c) => c.label === label))
+    .filter((c): c is NonNullable<typeof c> => !!c);
+}
 
 const LINKS = {
-  Components: [
-    { label: "Processors (CPU)", href: "/components/processors" },
-    { label: "Graphics Cards (GPU)", href: "/components/graphics-cards" },
-    { label: "Motherboards", href: "/components/motherboards" },
-    { label: "Memory (RAM)", href: "/components/memory-storage/ram" },
-    { label: "Storage / SSDs", href: "/components/memory-storage/nvme-ssds" },
-    { label: "Power Supplies", href: "/components/power-cooling/psu" },
-    { label: "CPU Cooling", href: "/components/power-cooling/aio-liquid-coolers" },
-    { label: "PC Cases", href: "/components/chassis-modding/pc-cases" },
-  ],
-  "Systems & Gear": [
-    { label: "Prebuilt PCs", href: "/pcs" },
-    { label: "Laptops", href: "/laptops" },
-    { label: "Mechanical Keyboards", href: "/gaming-gear/input-devices/mechanical-keyboards" },
-    { label: "Gaming Mice", href: "/gaming-gear/input-devices/wireless-mice" },
-    { label: "Gaming Headsets", href: "/gaming-gear/audio/gaming-headsets" },
-    { label: "Gaming Furniture", href: "/gaming-furniture/seating/ergonomic-chairs" },
-  ],
+  Components: navFor([
+    "Processors (CPU)", "Graphics Cards", "Motherboards", "Memory (RAM)",
+    "Storage", "Power Supplies", "CPU Coolers", "Case Fans", "PC Cases",
+  ]),
+  "Systems & Gear": navFor([
+    "Gaming PCs", "Laptops", "Keyboards", "Gaming Mice", "Headsets", "Monitors", "Furniture",
+  ]),
   "PC Builder": [
     { label: "PC Builder", href: "/custom-lab" },
     { label: "Compatibility Guide", href: "/custom-lab" },
