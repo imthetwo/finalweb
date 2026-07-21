@@ -34,6 +34,19 @@ export function useOrdersManager() {
     setPage(1);
   }
 
+  // Mirrors the backend's CancelOrderDto.reason constraint (@Length(3, 300))
+  // so a too-short prompt() answer gets a friendly toast instead of the raw
+  // class-validator message.
+  function promptForReason(message: string): string | null {
+    const reason = window.prompt(message)?.trim();
+    if (!reason) return null;
+    if (reason.length < 3 || reason.length > 300) {
+      toast.error("Reason must be between 3 and 300 characters");
+      return null;
+    }
+    return reason;
+  }
+
   async function changeStatus(id: string, status: string) {
     setChangingId(id);
     try {
@@ -61,11 +74,11 @@ export function useOrdersManager() {
   }
 
   async function handleReject(id: string) {
-    const reason = window.prompt("Reason for rejecting this order (visible in server logs):");
-    if (!reason || !reason.trim()) return;
+    const reason = promptForReason("Reason for rejecting this order (visible in server logs):");
+    if (!reason) return;
     setChangingId(id);
     try {
-      await rejectOrder(id, reason.trim());
+      await rejectOrder(id, reason);
       toast.success("Order rejected — refunded/cancelled and stock restored");
       reload();
     } catch (err) {
@@ -76,11 +89,11 @@ export function useOrdersManager() {
   }
 
   async function handleCancel(id: string) {
-    const reason = window.prompt("Reason for cancelling this order (visible in server logs):");
-    if (!reason || !reason.trim()) return;
+    const reason = promptForReason("Reason for cancelling this order (visible in server logs):");
+    if (!reason) return;
     setChangingId(id);
     try {
-      await adminCancelOrder(id, reason.trim());
+      await adminCancelOrder(id, reason);
       toast.success("Order cancelled and stock restored");
       reload();
     } catch (err) {
@@ -91,11 +104,11 @@ export function useOrdersManager() {
   }
 
   async function handleRefund(id: string) {
-    const reason = window.prompt("Reason for this refund (visible in server logs):");
-    if (!reason || !reason.trim()) return;
+    const reason = promptForReason("Reason for this refund (visible in server logs):");
+    if (!reason) return;
     setChangingId(id);
     try {
-      await refundOrder(id, reason.trim());
+      await refundOrder(id, reason);
       toast.success("Refunded via MoMo, order cancelled and stock restored");
       reload();
     } catch (err) {
