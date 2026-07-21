@@ -26,6 +26,7 @@ export class AdminService {
   uploadImage(file: UploadedFileLike) {
     if (!file) throw new BadRequestException('No file uploaded');
     if (!file.mimetype.startsWith('image/')) throw new BadRequestException('File must be an image');
+    if (file.size > 10 * 1024 * 1024) throw new BadRequestException('Image must be under 10MB');
     return this.productsService.uploadImage(file.buffer);
   }
 

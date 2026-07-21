@@ -18,6 +18,13 @@ import { CurrentUser } from '../auth/current-user.decorator';
 
 type UploadedFileType = { buffer: Buffer; mimetype: string; size: number };
 
+// Multer buffers the whole upload into memory before any service-level check
+// runs, so the size cap has to live here too — otherwise an oversized "image"
+// or Excel file is fully read into memory regardless of what the service does.
+const IMAGE_UPLOAD_LIMITS = { limits: { fileSize: 10 * 1024 * 1024 } }; // 10MB
+const VIDEO_UPLOAD_LIMITS = { limits: { fileSize: 200 * 1024 * 1024 } }; // 200MB
+const EXCEL_UPLOAD_LIMITS = { limits: { fileSize: 10 * 1024 * 1024 } }; // 10MB
+
 class ListAdminProductsQueryDto {
   @IsOptional() @IsString() search?: string;
   @IsOptional() @IsString() category?: string;
@@ -96,7 +103,7 @@ export class AdminController {
   // ── Image upload — ADMIN ONLY ─────────────────────────────────────────────
   @Post('upload')
   @Roles(Role.ADMIN)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', IMAGE_UPLOAD_LIMITS))
   uploadImage(@UploadedFile() file: UploadedFileType) {
     return this.admin.uploadImage(file);
   }
@@ -104,7 +111,7 @@ export class AdminController {
   // ── Video upload → Cloudinary — ADMIN ONLY ───────────────────────────────
   @Post('upload-video')
   @Roles(Role.ADMIN)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', VIDEO_UPLOAD_LIMITS))
   uploadVideo(@UploadedFile() file: UploadedFileType) {
     return this.admin.uploadVideo(file);
   }
@@ -122,7 +129,7 @@ export class AdminController {
   // ── Excel import — STAFF creates as draft (isPublished: false), ADMIN publishes immediately
   @Post('products/import')
   @Roles(Role.ADMIN, Role.STAFF)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', EXCEL_UPLOAD_LIMITS))
   importProducts(
     @UploadedFile() file: UploadedFileType,
     @CurrentUser('role') role: Role,
