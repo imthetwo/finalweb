@@ -6,6 +6,7 @@ import { EmailService } from '../email/email.service';
 import { GuestCheckoutDto } from './dto/guest-checkout.dto';
 import { ShippingInfoDto } from './dto/shipping-info.dto';
 import { maxQtyFor } from '../common/quantity-caps';
+import { effectivePrice } from '../common/pricing';
 import { AddressesService } from '../addresses/addresses.service';
 
 const SHIPPING_FEE = 30000;          // flat shipping rate (VND)
@@ -123,7 +124,7 @@ export class OrdersService {
       const cap = maxQtyFor(product.category?.name);
       if (item.quantity > cap)
         throw new BadRequestException(`Maximum ${cap} per order for ${product.category?.name ?? product.name}`);
-      return { product, quantity: item.quantity, price: product.salePrice ?? product.price };
+      return { product, quantity: item.quantity, price: effectivePrice(product) };
     });
 
     const subTotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
@@ -196,18 +197,27 @@ export class OrdersService {
   // registered user's order without logging in. Both orderId and phone must
   // match, and the error is identical either way so it can't be used to
   // enumerate valid order IDs (can't tell "no such order" from "wrong phone").
+  //
+  // orderId is matched as a PREFIX, not an exact UUID — a guest never actually
+  // sees the full UUID anywhere (order-success page, confirmation email, every
+  // other UI surface all only ever show the first 8 hex chars), so requiring
+  // an exact match made this lookup fail for basically every real guest.
   async trackGuestOrder(orderId: string, phone: string) {
-    const order = await this.prisma.order.findFirst({
-      where: { id: orderId, userId: null },
+    const candidates = await this.prisma.order.findMany({
+      where: { id: { startsWith: orderId.trim().toLowerCase() }, userId: null },
       select: {
         id: true, status: true, isPaid: true, paymentMethod: true,
         subTotal: true, discount: true, shippingFee: true, totalAmount: true,
         createdAt: true, shippingInfo: true,
         items: ORDER_ITEMS_WITH_PRODUCT_SUMMARY,
       },
+      take: 5,
     });
-    const shippingPhone = (order?.shippingInfo as { phone?: string } | null)?.phone;
-    if (!order || shippingPhone?.trim() !== phone.trim()) {
+    const order = candidates.find((o) => {
+      const shippingPhone = (o.shippingInfo as { phone?: string } | null)?.phone;
+      return shippingPhone?.trim() === phone.trim();
+    });
+    if (!order) {
       throw new NotFoundException('Order not found. Check your order ID and phone number.');
     }
     return order;
