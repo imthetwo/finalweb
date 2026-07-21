@@ -1,16 +1,25 @@
-import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsOptional, IsString, Length, Matches, MinLength, ValidateIf } from 'class-validator';
 
 export class UpdateProfileDto {
+  // Same rule as checkout's ShippingInfoDto.recipient — letters only, rejects
+  // digit-only junk like "123".
   @IsOptional()
   @IsString()
+  @Length(2, 60, { message: 'Full name must be between 2 and 60 characters' })
+  @Matches(/^[\p{L}][\p{L}\s.'-]*$/u, { message: 'Full name must contain letters only (no numbers)' })
   fullName?: string;
 
   @IsOptional()
-  @IsEmail()
+  @IsEmail({}, { message: 'Please enter a valid email address' })
   email?: string;
 
+  // Same Vietnamese phone format enforced everywhere else in the app — but an
+  // empty string is allowed through (skips the regex) so the profile form can
+  // still clear an existing phone number back to "not set".
   @IsOptional()
   @IsString()
+  @ValidateIf((o: UpdateProfileDto) => !!o.phone)
+  @Matches(/^(0\d{9}|\+84\d{9})$/, { message: 'Phone must be a valid Vietnamese phone number, e.g. 0901234567' })
   phone?: string;
 }
 
@@ -19,6 +28,6 @@ export class ChangePasswordDto {
   currentPassword!: string;
 
   @IsString()
-  @MinLength(6)
+  @MinLength(6, { message: 'Password must be at least 6 characters' })
   newPassword!: string;
 }
