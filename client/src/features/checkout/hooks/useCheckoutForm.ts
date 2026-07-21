@@ -122,6 +122,9 @@ export function useCheckoutForm() {
           paymentMethod,
           ...(offerSaveAddress && saveAddress ? { saveAddress: true } : {}),
         });
+        // Server clears the cart on order creation — refresh the header
+        // badge to match, same as the guest-checkout branch below.
+        window.dispatchEvent(new Event("cart-updated"));
         redirect(order.id);
       } else {
         // ── Guest: localStorage is the "session cart" ─────────────────────────

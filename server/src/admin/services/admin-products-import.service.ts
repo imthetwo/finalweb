@@ -15,8 +15,13 @@ export class AdminProductsImportService {
     const ws = wb.worksheets[0];
     if (!ws) throw new BadRequestException('Empty workbook');
 
+    // Strips a "*" (required-field marker) and all whitespace so header text
+    // like "Name *" or "Cost Price" both normalize to the same lookup key
+    // regardless of which sheet (hand-written, template, or catalog export)
+    // produced them.
+    const normalizeHeader = (v: unknown) => String(v).trim().toLowerCase().replace(/\*/g, '').replace(/\s+/g, '');
     const header: Record<string, number> = {};
-    ws.getRow(1).eachCell((cell, col) => { header[String(cell.value).trim().toLowerCase()] = col; });
+    ws.getRow(1).eachCell((cell, col) => { header[normalizeHeader(cell.value)] = col; });
 
     // Accept "category" as an alias for "categoryname" so either header works.
     if (!header['categoryname'] && header['category']) header['categoryname'] = header['category'];
@@ -80,11 +85,18 @@ export class AdminProductsImportService {
       try {
         const existing = await this.prisma.product.findFirst({ where: { name, categoryId } });
 
+        // Staff import may create new drafts and correct existing drafts, but
+        // must NOT be able to silently rewrite a product that's already live —
+        // that would let STAFF bypass the ADMIN-only PATCH /admin/products/:id
+        // gate simply by re-uploading a spreadsheet with a matching name.
+        if (asDraft && existing?.isPublished) {
+          result.errors.push(`Row ${r}: "${name}" is already live — ask an admin to edit it directly`);
+          continue;
+        }
+
         // Staff import → a brand-new row always starts as a draft, even if the
-        // Excel row says Published=Yes. But a staff correction to a row that
-        // already exists must NOT silently pull an already-live product off
-        // the shop — it keeps its current publish state instead. Admin import
-        // always just respects the Published column either way.
+        // Excel row says Published=Yes. Admin import always just respects the
+        // Published column either way.
         const isPublished = !asDraft
           ? get('published')?.toString().toLowerCase() !== 'no'
           : (existing?.isPublished ?? false);

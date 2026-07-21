@@ -20,7 +20,8 @@ export class AdminProductsExportService {
       name: p.name, brand: p.brand, category: p.category?.name ?? '',
       costPrice: p.costPrice ?? '', price: p.price, salePrice: p.salePrice ?? '',
       margin: p.costPrice ? `${Math.round((1 - p.costPrice / p.price) * 100)}%` : '',
-      stock: p.stock, published: p.isPublished ? 'Yes' : 'No',
+      stock: p.stock, description: p.description ?? '', imageUrl: p.imageUrl ?? '',
+      published: p.isPublished ? 'Yes' : 'No',
     });
 
     const sheet = (name: string, cols: Partial<ExcelJS.Column>[], rows: Record<string, unknown>[]) => {
@@ -30,13 +31,19 @@ export class AdminProductsExportService {
       rows.forEach((r) => ws.addRow(r));
     };
 
+    // Header text matches what AdminProductsImportService's parser normalizes
+    // to (strip spaces/asterisks, lowercase) — so exporting the catalog and
+    // re-importing it round-trips every field instead of silently nulling
+    // whatever this sheet's headers don't spell exactly like the parser.
     const baseCols = (extra: Partial<ExcelJS.Column>[]) => [
       { header: 'Name', key: 'name', width: 32 }, { header: 'Brand', key: 'brand', width: 16 },
       { header: 'Category', key: 'category', width: 20 },
-      { header: 'Cost Price', key: 'costPrice', width: 14 },
-      { header: 'Price', key: 'price', width: 14 }, { header: 'Sale', key: 'salePrice', width: 14 },
+      { header: 'CostPrice', key: 'costPrice', width: 14 },
+      { header: 'Price', key: 'price', width: 14 }, { header: 'SalePrice', key: 'salePrice', width: 14 },
       { header: 'Margin', key: 'margin', width: 10 },
       { header: 'Stock', key: 'stock', width: 8 },
+      { header: 'Description', key: 'description', width: 50 },
+      { header: 'ImageUrl', key: 'imageUrl', width: 40 },
       { header: 'Published', key: 'published', width: 10 }, ...extra,
     ] as ExcelJS.Column[];
 

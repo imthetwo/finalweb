@@ -66,16 +66,82 @@ export class PaymentsService {
     return true;
   }
 
+  // ── Helper: query MoMo's own record for a momoOrderId ────────────────────
+  // Shared by forcePollPayment (admin manual recheck) and initiate (checking
+  // a pre-existing in-flight session before minting a new one).
+  private async queryMomoStatus(momoOrderId: string): Promise<{ resultCode: number; message: string; transId?: number }> {
+    const requestId = `${PARTNER_CODE}${Date.now()}`;
+    const rawSig = [
+      `accessKey=${ACCESS_KEY}`,
+      `orderId=${momoOrderId}`,
+      `partnerCode=${PARTNER_CODE}`,
+      `requestId=${requestId}`,
+    ].join('&');
+
+    const res = await fetch(MOMO_QUERY_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+      body: JSON.stringify({
+        partnerCode: PARTNER_CODE,
+        requestId,
+        orderId: momoOrderId,
+        signature: this.sign(rawSig),
+        lang: 'vi',
+      }),
+    });
+
+    return (await res.json()) as { resultCode: number; message: string; transId?: number };
+  }
+
+  // ── Helper: atomically cancel + restock, guarded so a duplicate/replayed
+  // call (redelivered IPN, double-click, racing another cancel path) can
+  // only ever restock once. Mirrors markOrderPaid's atomic-guard pattern.
+  // Returns false if the order was already paid or already cancelled.
+  private async cancelAndRestock(order: { id: string; items: { productId: string; quantity: number }[] }): Promise<boolean> {
+    return this.prisma.$transaction(async (tx) => {
+      const guard = await tx.order.updateMany({
+        where: { id: order.id, isPaid: false, status: { not: OrderStatus.CANCELLED } },
+        data: { status: OrderStatus.CANCELLED },
+      });
+      if (guard.count === 0) return false;
+
+      for (const item of order.items) {
+        await tx.product.update({
+          where: { id: item.productId },
+          data: { stock: { increment: item.quantity } },
+        });
+      }
+      return true;
+    });
+  }
+
   // ── 1. Initiate payment — calls MoMo API, returns qrCodeUrl ─────────────
   // userId=null → guest: may only pay guest orders (userId IS NULL in the DB).
   async initiate(userId: string | null, orderId: string) {
-    const order = await this.prisma.order.findFirst({ where: { id: orderId, userId } });
+    const order = await this.prisma.order.findFirst({
+      where: { id: orderId, userId },
+      include: ORDER_WITH_USER_EMAIL,
+    });
     if (!order) throw new NotFoundException('Order not found');
     if (order.isPaid) throw new BadRequestException('Order has already been paid');
     // Blocks a stale/reloaded payment tab from opening a fresh MoMo session on
     // an order that's since been cancelled (markOrderPaid's where-guard above
     // is the backstop if one somehow still completes).
     if (order.status === OrderStatus.CANCELLED) throw new BadRequestException('This order has been cancelled and can no longer be paid.');
+
+    // A previous MoMo session may still be outstanding for this order (e.g.
+    // the browser remounts this page on MoMo's redirect back before the IPN
+    // has landed). Minting a brand-new momoOrderId would overwrite the one
+    // IPN needs to map the real transaction back to this order — so check
+    // MoMo's own record for it first. If MoMo already processed it as paid,
+    // record that now instead of orphaning a payment the customer already made.
+    if (order.momoOrderId) {
+      const existing = await this.queryMomoStatus(order.momoOrderId);
+      if (existing.resultCode === 0) {
+        await this.markOrderPaid(order, existing.transId ?? null, 'force-poll');
+        throw new BadRequestException('Order has already been paid');
+      }
+    }
 
     const clientUrl  = getClientUrl();
     const serverUrl  = process.env.API_PUBLIC_URL || 'http://localhost:3001';
@@ -217,20 +283,11 @@ export class PaymentsService {
       const changed = await this.markOrderPaid(order, body.transId, 'ipn');
       if (!changed) return { resultCode: 0, message: 'already paid' };
     } else {
-      // Payment failed
-      await this.prisma.$transaction(async (tx) => {
-        for (const item of order.items) {
-          await tx.product.update({
-            where: { id: item.productId },
-            data: { stock: { increment: item.quantity } },
-          });
-        }
-        await tx.order.update({
-          where: { id: order.id },
-          data: { status: OrderStatus.CANCELLED },
-        });
-      });
-      this.logger.warn(`Order ${order.id} PAYMENT_FAILED via MoMo IPN (code=${body.resultCode})`);
+      // Payment failed — guarded so a redelivered failure IPN (webhooks are
+      // at-least-once delivery) or one arriving after a success IPN already
+      // paid this order can't double-restock or silently un-pay it.
+      const changed = await this.cancelAndRestock(order);
+      if (changed) this.logger.warn(`Order ${order.id} PAYMENT_FAILED via MoMo IPN (code=${body.resultCode})`);
     }
 
     return { resultCode: 0, message: 'ok' };
@@ -254,27 +311,7 @@ export class PaymentsService {
     }
     if (!order.momoOrderId) throw new BadRequestException('This order has no MoMo transaction to check yet.');
 
-    const requestId = `${PARTNER_CODE}${Date.now()}`;
-    const rawSig = [
-      `accessKey=${ACCESS_KEY}`,
-      `orderId=${order.momoOrderId}`,
-      `partnerCode=${PARTNER_CODE}`,
-      `requestId=${requestId}`,
-    ].join('&');
-
-    const res = await fetch(MOMO_QUERY_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-      body: JSON.stringify({
-        partnerCode: PARTNER_CODE,
-        requestId,
-        orderId: order.momoOrderId,
-        signature: this.sign(rawSig),
-        lang: 'vi',
-      }),
-    });
-
-    const data = (await res.json()) as { resultCode: number; message: string; transId?: number };
+    const data = await this.queryMomoStatus(order.momoOrderId);
     this.logger.log(`Force-poll MoMo query for order ${order.id}: resultCode=${data.resultCode} — ${data.message}`);
 
     if (data.resultCode === 0) {
@@ -366,15 +403,10 @@ export class PaymentsService {
     if (order.isPaid) return { ok: true, alreadyPaid: true };
 
     if (!success) {
-      await this.prisma.$transaction(async (tx) => {
-        for (const item of order.items) {
-          await tx.product.update({
-            where: { id: item.productId },
-            data: { stock: { increment: item.quantity } },
-          });
-        }
-        await tx.order.update({ where: { id: order.id }, data: { status: OrderStatus.CANCELLED } });
-      });
+      // Guarded so a double-click or client retry firing this twice can't
+      // restock the same items twice — a cancelled order stays isPaid:false
+      // forever, so that check alone can't catch a duplicate call.
+      await this.cancelAndRestock(order);
       return { ok: false, status: OrderStatus.CANCELLED };
     }
 

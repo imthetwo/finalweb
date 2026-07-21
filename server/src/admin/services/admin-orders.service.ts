@@ -139,20 +139,27 @@ export class AdminOrdersService {
     }
 
     const updated = await this.prisma.$transaction(async (tx) => {
-      for (const item of order.items) {
-        await tx.product.update({
-          where: { id: item.productId },
-          data: { stock: { increment: item.quantity } },
-        });
-      }
-      return tx.order.update({
-        where: { id: orderId },
+      // Atomic guard against a concurrent cancel (e.g. two admin clicks, or
+      // this racing a payment-failure restock) — the checks above are a
+      // friendlier early error, this is what actually prevents a double
+      // restock if two calls both pass those checks before either commits.
+      const guard = await tx.order.updateMany({
+        where: { id: orderId, status: { notIn: [OrderStatus.CANCELLED, OrderStatus.DELIVERED] } },
         // isPaid: false — a cancelled order never had cash actually collected
         // (COD's isPaid=true at creation was only ever "no gateway needed"; a
         // paid MoMo order can't reach here, see the guard above). Keeps
         // dashboard revenue and the Paid column from crediting a hollow order.
         data: { status: OrderStatus.CANCELLED, isPaid: false },
       });
+      if (guard.count === 0) throw new BadRequestException('Order is already cancelled');
+
+      for (const item of order.items) {
+        await tx.product.update({
+          where: { id: item.productId },
+          data: { stock: { increment: item.quantity } },
+        });
+      }
+      return tx.order.findUniqueOrThrow({ where: { id: orderId } });
     });
 
     this.logger.log(`Order ${orderId} cancelled by admin ${actorId} — reason: ${reason}`);

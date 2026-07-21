@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { PasswordResetService } from './password-reset.service';
@@ -27,7 +28,10 @@ export class AuthController {
 		return this.authService.register(dto);
 	}
 
+	// Stricter than the app-wide default — unlimited attempts would let
+	// credential-stuffing/brute-force run freely against any known email.
 	@Post('login')
+	@Throttle({ default: { limit: 5, ttl: 60_000 } })
 	async login(@Body() dto: LoginDto) {
 		return this.authService.login(dto);
 	}
@@ -46,7 +50,11 @@ export class AuthController {
 		return res.redirect(`${base}/auth/callback#token=${result.access_token}`);
 	}
 
+	// Stricter than the app-wide default — this always returns ok:true (no
+	// account enumeration), but is otherwise free to spam-bomb any inbox via
+	// the app's own transactional sender without a limit.
 	@Post('forgot-password')
+	@Throttle({ default: { limit: 5, ttl: 60_000 } })
 	forgotPassword(@Body() dto: ForgotPasswordDto) {
 		return this.passwordReset.forgotPassword(dto.email);
 	}
@@ -68,8 +76,10 @@ export class AuthController {
 	}
 
 	// Public — for a just-registered or login-blocked (unverified) user, who
-	// by definition can't hold a valid JWT to use the endpoint above.
+	// by definition can't hold a valid JWT to use the endpoint above. Same
+	// email-bomb concern as forgot-password, so same stricter limit.
 	@Post('resend-verification-by-email')
+	@Throttle({ default: { limit: 5, ttl: 60_000 } })
 	resendVerificationByEmail(@Body() dto: ResendVerificationByEmailDto) {
 		return this.emailVerification.resendVerificationByEmail(dto.email);
 	}

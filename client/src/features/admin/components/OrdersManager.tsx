@@ -52,14 +52,16 @@ export function OrdersManager() {
         <h1 className="text-2xl font-black uppercase tracking-wide text-fg">
           Orders
         </h1>
-        <button
-          onClick={exportExcel}
-          disabled={exporting}
-          className="inline-flex items-center gap-2 border border-emerald-700/50 bg-emerald-950/30 px-4 py-2.5 text-sm font-black uppercase tracking-wider text-success hover:bg-emerald-950/50 disabled:opacity-50"
-        >
-          <FileSpreadsheet size={14} />{" "}
-          {exporting ? "Exporting…" : "Export Excel"}
-        </button>
+        {isAdmin && (
+          <button
+            onClick={exportExcel}
+            disabled={exporting}
+            className="inline-flex items-center gap-2 border border-emerald-700/50 bg-emerald-950/30 px-4 py-2.5 text-sm font-black uppercase tracking-wider text-success hover:bg-emerald-950/50 disabled:opacity-50"
+          >
+            <FileSpreadsheet size={14} />{" "}
+            {exporting ? "Exporting…" : "Export Excel"}
+          </button>
+        )}
       </div>
 
       <div className="mb-4 flex flex-wrap gap-2">

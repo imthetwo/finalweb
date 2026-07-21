@@ -1,4 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { PrismaModule } from './prisma/prisma.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { AuthModule } from './auth/auth.module';
@@ -21,6 +23,10 @@ import { NewsletterModule } from './newsletter/newsletter.module';
 
 @Module({
   imports: [
+    // Global default: generous, just a backstop against runaway/abusive
+    // clients. Sensitive auth endpoints (login, forgot-password, resend
+    // verification) override this to a much stricter limit via @Throttle().
+    ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 60 }]),
     PrismaModule,
     EmailModule,
     CloudinaryModule,
@@ -40,6 +46,7 @@ import { NewsletterModule } from './newsletter/newsletter.module';
     SettingsModule,
     NewsletterModule,
   ],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

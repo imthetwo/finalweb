@@ -6,8 +6,7 @@ import { useAuthState } from "@/hooks/useAuthState";
 import { confirmDialog } from "@/store/confirmStore";
 import type { AdminUser, UserRole } from "@/types/api";
 
-// Data/logic for the admin Users table — loading users and changing roles (with
-// a guard so an admin can't demote themselves). The component only renders.
+
 export function useUsersTable() {
   const { user: me } = useAuthState();
   const [users, setUsers] = useState<AdminUser[]>([]);

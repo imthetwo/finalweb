@@ -69,23 +69,54 @@ export class AdminProductsCrudService {
       assertSalePriceValid(nextPrice, nextSalePrice);
     }
     const { cpuSpec, gpuSpec, ramSpec, motherboardSpec, psuSpec, caseSpec, coolerSpec, monitorSpec, storageSpec, laptopSpec, pcBuildSpec, furnitureSpec, ...base } = dto;
+
+    // A request that touches ANY spec field defines the product's complete
+    // spec set for this update — any of the 12 spec types omitted from it
+    // gets cleared if the product currently has one, so switching a
+    // product's category (e.g. CPU → GPU) can't leave a stale, now-
+    // irrelevant spec row attached forever.
+    const touchesSpecs = [cpuSpec, gpuSpec, ramSpec, motherboardSpec, psuSpec, caseSpec, coolerSpec, monitorSpec, storageSpec, laptopSpec, pcBuildSpec, furnitureSpec].some((v) => v !== undefined);
+    const hasSpec = touchesSpecs ? await this.prisma.product.findUnique({
+      where: { id },
+      select: {
+        cpuSpec: { select: { productId: true } }, gpuSpec: { select: { productId: true } },
+        ramSpec: { select: { productId: true } }, motherboardSpec: { select: { productId: true } },
+        psuSpec: { select: { productId: true } }, caseSpec: { select: { productId: true } },
+        coolerSpec: { select: { productId: true } }, monitorSpec: { select: { productId: true } },
+        storageSpec: { select: { productId: true } }, laptopSpec: { select: { productId: true } },
+        pcBuildSpec: { select: { productId: true } }, furnitureSpec: { select: { productId: true } },
+      },
+    }) : null;
+
+    const data: Prisma.ProductUpdateInput = { ...(base as Prisma.ProductUncheckedUpdateInput) };
+    if (cpuSpec) data.cpuSpec = { upsert: { create: cpuSpec, update: cpuSpec } };
+    else if (touchesSpecs && hasSpec?.cpuSpec) data.cpuSpec = { delete: true };
+    if (gpuSpec) data.gpuSpec = { upsert: { create: gpuSpec, update: gpuSpec } };
+    else if (touchesSpecs && hasSpec?.gpuSpec) data.gpuSpec = { delete: true };
+    if (ramSpec) data.ramSpec = { upsert: { create: ramSpec, update: ramSpec } };
+    else if (touchesSpecs && hasSpec?.ramSpec) data.ramSpec = { delete: true };
+    if (motherboardSpec) data.motherboardSpec = { upsert: { create: motherboardSpec, update: motherboardSpec } };
+    else if (touchesSpecs && hasSpec?.motherboardSpec) data.motherboardSpec = { delete: true };
+    if (psuSpec) data.psuSpec = { upsert: { create: psuSpec, update: psuSpec } };
+    else if (touchesSpecs && hasSpec?.psuSpec) data.psuSpec = { delete: true };
+    if (caseSpec) data.caseSpec = { upsert: { create: caseSpec, update: caseSpec } };
+    else if (touchesSpecs && hasSpec?.caseSpec) data.caseSpec = { delete: true };
+    if (coolerSpec) data.coolerSpec = { upsert: { create: coolerSpec, update: coolerSpec } };
+    else if (touchesSpecs && hasSpec?.coolerSpec) data.coolerSpec = { delete: true };
+    if (monitorSpec) data.monitorSpec = { upsert: { create: monitorSpec, update: monitorSpec } };
+    else if (touchesSpecs && hasSpec?.monitorSpec) data.monitorSpec = { delete: true };
+    if (storageSpec) data.storageSpec = { upsert: { create: storageSpec, update: storageSpec } };
+    else if (touchesSpecs && hasSpec?.storageSpec) data.storageSpec = { delete: true };
+    if (laptopSpec) data.laptopSpec = { upsert: { create: laptopSpec, update: laptopSpec } };
+    else if (touchesSpecs && hasSpec?.laptopSpec) data.laptopSpec = { delete: true };
+    if (pcBuildSpec) data.pcBuildSpec = { upsert: { create: pcBuildSpec, update: pcBuildSpec } };
+    else if (touchesSpecs && hasSpec?.pcBuildSpec) data.pcBuildSpec = { delete: true };
+    if (furnitureSpec) data.furnitureSpec = { upsert: { create: furnitureSpec, update: furnitureSpec } };
+    else if (touchesSpecs && hasSpec?.furnitureSpec) data.furnitureSpec = { delete: true };
+
     return this.prisma.product.update({
       where: { id },
-      data: {
-        ...(base as Prisma.ProductUncheckedUpdateInput),
-        ...(cpuSpec ? { cpuSpec: { upsert: { create: cpuSpec, update: cpuSpec } } } : {}),
-        ...(gpuSpec ? { gpuSpec: { upsert: { create: gpuSpec, update: gpuSpec } } } : {}),
-        ...(ramSpec ? { ramSpec: { upsert: { create: ramSpec, update: ramSpec } } } : {}),
-        ...(motherboardSpec ? { motherboardSpec: { upsert: { create: motherboardSpec, update: motherboardSpec } } } : {}),
-        ...(psuSpec ? { psuSpec: { upsert: { create: psuSpec, update: psuSpec } } } : {}),
-        ...(caseSpec ? { caseSpec: { upsert: { create: caseSpec, update: caseSpec } } } : {}),
-        ...(coolerSpec ? { coolerSpec: { upsert: { create: coolerSpec, update: coolerSpec } } } : {}),
-        ...(monitorSpec ? { monitorSpec: { upsert: { create: monitorSpec, update: monitorSpec } } } : {}),
-        ...(storageSpec ? { storageSpec: { upsert: { create: storageSpec, update: storageSpec } } } : {}),
-        ...(laptopSpec ? { laptopSpec: { upsert: { create: laptopSpec, update: laptopSpec } } } : {}),
-        ...(pcBuildSpec ? { pcBuildSpec: { upsert: { create: pcBuildSpec, update: pcBuildSpec } } } : {}),
-        ...(furnitureSpec ? { furnitureSpec: { upsert: { create: furnitureSpec, update: furnitureSpec } } } : {}),
-      },
+      data,
       include: { category: { select: { id: true, name: true } }, ...SPEC_INCLUDE },
     });
   }

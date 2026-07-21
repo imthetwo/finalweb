@@ -51,6 +51,9 @@ export function useCartView(): CartViewState {
 
   // Cache product details so we don't re-fetch on every cart-updated event
   const productCacheRef = useRef(new Map<string, ProductListItem>());
+  // Sequences updateQty calls so an older, slower response can't overwrite
+  // the cart with stale data after a newer request has already resolved.
+  const updateSeqRef = useRef(0);
 
   const loadGuestItems = useCallback(async () => {
     const raw = getGuestCart();
@@ -146,13 +149,19 @@ export function useCartView(): CartViewState {
   }
 
   async function updateQty(itemId: string, quantity: number) {
+    const seq = ++updateSeqRef.current;
     setUpdatingId(itemId);
     try {
-      setCart(await updateCartItemQty(itemId, quantity));
+      const updated = await updateCartItemQty(itemId, quantity);
+      // Drop this response if a newer updateQty call has since been issued —
+      // otherwise an older request that happens to resolve later ("last
+      // response wins") could overwrite the cart with data that's already
+      // out of date, undoing whatever the user did in the meantime.
+      if (seq === updateSeqRef.current) setCart(updated);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Error");
     } finally {
-      setUpdatingId(null);
+      if (seq === updateSeqRef.current) setUpdatingId(null);
     }
   }
 
