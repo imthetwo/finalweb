@@ -1,5 +1,9 @@
-import { IsEmail, IsOptional, IsString, Length, Matches, MinLength, ValidateIf } from 'class-validator';
+import { IsOptional, IsString, Length, Matches, MinLength, ValidateIf } from 'class-validator';
 
+// Email is deliberately NOT here — it's fixed at registration and proven via
+// the mandatory verification link (see AuthService). Letting it be changed
+// here without resetting isEmailVerified would mean the account could show
+// "Verified" next to an email that was never actually confirmed.
 export class UpdateProfileDto {
   // Same rule as checkout's ShippingInfoDto.recipient — letters only, rejects
   // digit-only junk like "123".
@@ -8,10 +12,6 @@ export class UpdateProfileDto {
   @Length(2, 60, { message: 'Full name must be between 2 and 60 characters' })
   @Matches(/^[\p{L}][\p{L}\s.'-]*$/u, { message: 'Full name must contain letters only (no numbers)' })
   fullName?: string;
-
-  @IsOptional()
-  @IsEmail({}, { message: 'Please enter a valid email address' })
-  email?: string;
 
   // Same Vietnamese phone format enforced everywhere else in the app — but an
   // empty string is allowed through (skips the regex) so the profile form can

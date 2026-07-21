@@ -8,7 +8,6 @@ import { changePassword, updateProfile, type UserProfile } from "@/lib/api";
 export function useProfileTab(profile: UserProfile, onUpdated: (p: UserProfile) => void) {
   const [form, setForm] = useState({
     fullName: profile.fullName ?? "",
-    email: profile.email ?? "",
     phone: profile.phone ?? "",
   });
   const [pwd, setPwd] = useState({ current: "", next: "" });
@@ -16,13 +15,11 @@ export function useProfileTab(profile: UserProfile, onUpdated: (p: UserProfile) 
   const [savingPwd, setSavingPwd] = useState(false);
 
   // Mirrors UpdateProfileDto (server/src/users/dto/update-profile.dto.ts).
+  // Email isn't here — it's fixed at registration, not editable from Profile.
   function validateProfile(): string | null {
     const name = form.fullName.trim();
     if (!/^[\p{L}][\p{L}\s.'-]{1,59}$/u.test(name)) {
       return "Full name must contain letters only (no numbers), 2–60 characters.";
-    }
-    if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) {
-      return "Please enter a valid email address.";
     }
     if (form.phone.trim() && !/^(0\d{9}|\+84\d{9})$/.test(form.phone.trim())) {
       return "Phone must be a valid Vietnamese number, e.g. 0901234567.";
@@ -41,7 +38,6 @@ export function useProfileTab(profile: UserProfile, onUpdated: (p: UserProfile) 
       // still applies it, so this stays consistent with an empty phone.
       const payload = {
         fullName: form.fullName.trim(),
-        email: form.email.trim(),
         phone: form.phone.trim(),
       };
       const updated = await updateProfile(payload);

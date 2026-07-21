@@ -6,7 +6,7 @@ import { apiFetch } from "./client";
 export const fetchProfile = () =>
   apiFetch<UserProfile>("/users/me");
 
-export const updateProfile = (data: Partial<Pick<UserProfile, "fullName" | "email" | "phone">>) =>
+export const updateProfile = (data: Partial<Pick<UserProfile, "fullName" | "phone">>) =>
   apiFetch<UserProfile>("/users/me", { method: "PATCH", body: JSON.stringify(data) });
 
 export const changePassword = (currentPassword: string, newPassword: string) =>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Save, KeyRound, BadgeCheck, TriangleAlert } from "lucide-react";
+import { Save, KeyRound } from "lucide-react";
 
 import { type UserProfile } from "@/lib/api";
 import { useProfileTab } from "../hooks/useProfileTab";
@@ -26,19 +26,15 @@ export function ProfileTab({ profile, onUpdated }: { profile: UserProfile; onUpd
             <input className={inputCls} value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} />
           </div>
           <div>
-            <div className="mb-1.5 flex items-center justify-between">
-              <label className={labelCls}>Email</label>
-              {profile.isEmailVerified ? (
-                <span className="inline-flex items-center gap-1 text-2xs font-bold uppercase tracking-wider text-success">
-                  <BadgeCheck size={12} /> Verified
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 text-2xs font-bold uppercase tracking-wider text-warning">
-                  <TriangleAlert size={12} /> Unverified
-                </span>
-              )}
-            </div>
-            <input type="email" className={inputCls} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+            <label className={labelCls}>Email</label>
+            <input
+              type="email"
+              disabled
+              readOnly
+              value={profile.email}
+              title="Email can't be changed — it's verified at registration"
+              className={`${inputCls} cursor-not-allowed opacity-60`}
+            />
           </div>
           <div>
             <label className={labelCls}>Phone number</label>

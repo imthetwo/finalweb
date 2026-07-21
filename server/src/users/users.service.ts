@@ -23,17 +23,10 @@ export class UsersService {
   }
 
   async updateProfile(userId: string, dto: UpdateProfileDto) {
-    if (dto.email) {
-      const taken = await this.prisma.user.findFirst({
-        where: { email: dto.email, NOT: { id: userId } },
-      });
-      if (taken) throw new BadRequestException('Email is already in use');
-    }
     await this.prisma.user.update({
       where: { id: userId },
       data: {
         fullName: dto.fullName,
-        email: dto.email,
         phone: dto.phone,
       },
     });
