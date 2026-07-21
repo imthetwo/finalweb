@@ -65,7 +65,7 @@ export class AuthService {
 
 	async login(dto: LoginDto) {
 		const user = await this.validateUser(dto.email, dto.password);
-		if (!user) throw new UnauthorizedException('Invalid credentials');
+		if (!user) throw new UnauthorizedException('Invalid email or password');
 		if (!user.isEmailVerified) {
 			throw new UnauthorizedException('Please verify your email before signing in — check your inbox for the verification link.');
 		}
