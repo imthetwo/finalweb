@@ -25,6 +25,17 @@ export function useAIConsultant() {
   async function send(text: string) {
     const message = text.trim();
     if (!message || loading) return;
+    // Mirrors ChatDto.message's @MaxLength(2000) — a friendly inline reply
+    // instead of a round-trip just to get the same limit back from the API.
+    if (message.length > 2000) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "user", text: message },
+        { role: "model", text: "That question is too long (max 2000 characters) — try shortening it." },
+      ]);
+      setInput("");
+      return;
+    }
 
     const history = messages.filter((m) => m !== WELCOME);
     setMessages((prev) => [...prev, { role: "user", text: message }]);
@@ -34,11 +45,13 @@ export function useAIConsultant() {
     try {
       const res = await sendChatMessage(message, history);
       setMessages((prev) => [...prev, { role: "model", text: res.reply }]);
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "model", text: "Sorry, I'm having a connection issue. Please try again in a moment!" },
-      ]);
+    } catch (err) {
+      // Show the real reason when the server gave one (e.g. validation), and
+      // fall back to a generic message only for an actual network failure.
+      const text = err instanceof Error && err.message
+        ? err.message
+        : "Sorry, I'm having a connection issue. Please try again in a moment!";
+      setMessages((prev) => [...prev, { role: "model", text }]);
     } finally {
       setLoading(false);
     }
