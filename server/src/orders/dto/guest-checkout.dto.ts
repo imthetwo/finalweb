@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import {
-  IsArray, IsEmail, IsIn, IsInt,
+  IsArray, IsEmail, IsIn, IsInt, IsNotEmpty, IsString,
   IsUUID, Max, Min, ValidateNested,
 } from 'class-validator';
 import { ShippingInfoDto } from './shipping-info.dto';
@@ -28,4 +28,9 @@ export class GuestCheckoutDto {
   // sendOrderConfirmation call, which is what actually delivers it.
   @IsEmail({}, { message: 'Please enter a valid email address' })
   guestEmail!: string;
+}
+
+export class ConfirmGuestCheckoutDto {
+  @IsString() @IsNotEmpty()
+  token!: string;
 }

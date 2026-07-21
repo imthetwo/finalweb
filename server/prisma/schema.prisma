@@ -303,6 +303,23 @@ model Order {
   updatedAt DateTime @updatedAt
 }
 
+// A guest checkout submission held here until the guest clicks the emailed
+// confirmation link — proves they actually own the email before an Order
+// (and its stock decrement) is ever created. Deliberately holds no stock.
+model PendingGuestOrder {
+  id            String    @id @default(uuid())
+  token         String    @unique
+  email         String
+  items         Json
+  shippingInfo  Json
+  paymentMethod String
+  expiresAt     DateTime
+  confirmedAt   DateTime?
+  orderId       String?
+
+  createdAt DateTime @default(now())
+}
+
 model OrderItem {
   id         String  @id @default(uuid())
   orderId    String

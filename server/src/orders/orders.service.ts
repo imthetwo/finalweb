@@ -1,13 +1,16 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { OrderStatus, Prisma } from '@prisma/client';
+import { randomBytes } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { CartService } from '../cart/cart.service';
 import { EmailService } from '../email/email.service';
-import { GuestCheckoutDto } from './dto/guest-checkout.dto';
+import { GuestCartItemDto, GuestCheckoutDto } from './dto/guest-checkout.dto';
 import { ShippingInfoDto } from './dto/shipping-info.dto';
 import { maxQtyFor } from '../common/quantity-caps';
 import { effectivePrice } from '../common/pricing';
 import { AddressesService } from '../addresses/addresses.service';
+
+const PENDING_GUEST_ORDER_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
 const SHIPPING_FEE = 30000;          // flat shipping rate (VND)
 const FREE_SHIPPING_OVER = 2000000;  // free shipping threshold (VND)
@@ -109,10 +112,74 @@ export class OrdersService {
   }
 
   // ── Guest checkout (cart lives in localStorage, sent in body) ────────────────
-  async createFromGuestItems(body: GuestCheckoutDto) {
+  // Split into request → confirm so a guest must actually own the email they
+  // typed before an Order (and its stock decrement) is ever created — a typo'd
+  // or someone-else's email can no longer place a real order. No stock is
+  // reserved while the confirmation is pending, so an email that's never
+  // opened can't hold inventory hostage.
+  async requestGuestCheckout(body: GuestCheckoutDto) {
     if (!body.items.length) throw new BadRequestException('Cart is empty');
     assertMethod(body.paymentMethod);
 
+    const token = randomBytes(32).toString('hex');
+    await this.prisma.pendingGuestOrder.create({
+      data: {
+        token,
+        email: body.guestEmail,
+        items: body.items as unknown as Prisma.InputJsonValue,
+        shippingInfo: body.shippingInfo as unknown as Prisma.InputJsonValue,
+        paymentMethod: body.paymentMethod,
+        expiresAt: new Date(Date.now() + PENDING_GUEST_ORDER_TTL_MS),
+      },
+    });
+
+    this.email.sendGuestOrderConfirmation(body.guestEmail, token).catch(() => {});
+    return { pending: true as const, email: body.guestEmail };
+  }
+
+  // Called from the /guest-checkout/confirm page after the guest clicks the
+  // emailed link — this is what actually validates stock and creates the Order.
+  async confirmGuestCheckout(token: string) {
+    const pending = await this.prisma.pendingGuestOrder.findUnique({ where: { token } });
+    if (!pending) throw new BadRequestException('Invalid or expired confirmation link');
+    if (pending.expiresAt < new Date()) {
+      throw new BadRequestException('This confirmation link has expired — please check out again.');
+    }
+
+    // Atomic guard, claimed BEFORE the order is created — so a duplicate
+    // confirm (double-click, an email client prefetching the link) can't
+    // create two separate orders for the same pending checkout.
+    const claimed = await this.prisma.pendingGuestOrder.updateMany({
+      where: { id: pending.id, confirmedAt: null },
+      data: { confirmedAt: new Date() },
+    });
+    if (claimed.count === 0) {
+      const fresh = await this.prisma.pendingGuestOrder.findUnique({ where: { id: pending.id } });
+      if (fresh?.orderId) return this.getGuestOrder(fresh.orderId);
+      throw new BadRequestException('This confirmation link is already being processed — check your email for the order confirmation in a moment.');
+    }
+
+    const order = await this.createConfirmedGuestOrder({
+      items: pending.items as unknown as GuestCartItemDto[],
+      shippingInfo: pending.shippingInfo as unknown as ShippingInfoDto,
+      paymentMethod: pending.paymentMethod,
+      guestEmail: pending.email,
+    });
+
+    await this.prisma.pendingGuestOrder.update({ where: { id: pending.id }, data: { orderId: order.id } });
+    return order;
+  }
+
+  private async getGuestOrder(orderId: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: { items: ORDER_ITEMS_WITH_PRODUCT },
+    });
+    if (!order) throw new NotFoundException('Order not found');
+    return order;
+  }
+
+  private async createConfirmedGuestOrder(body: GuestCheckoutDto) {
     const products = await this.prisma.product.findMany({
       where: { id: { in: body.items.map((i) => i.productId) }, isPublished: true },
       include: { category: { select: { name: true } } },

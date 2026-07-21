@@ -6,16 +6,27 @@ export const fetchOrders = () =>
 
 // POST /orders/guest-checkout — no auth required.
 // Client "session" = localStorage["guest_cart"]; items are sent in body.
-// Backend validates stock, runs $transaction(Order + OrderItem), returns order id.
+// Doesn't create the order yet — emails a confirmation link to guestEmail
+// first. The order itself is only created once that link is confirmed
+// (see confirmGuestCheckout below).
 export const guestCheckout = (data: {
   items: { productId: string; quantity: number }[];
   shippingInfo: Record<string, string>;
   paymentMethod: string;
   guestEmail: string;
 }) =>
-  apiFetch<{ id: string }>("/orders/guest-checkout", {
+  apiFetch<{ pending: true; email: string }>("/orders/guest-checkout", {
     method: "POST",
     body: JSON.stringify(data),
+  });
+
+// POST /orders/guest-checkout/confirm — called from the /guest-checkout/confirm
+// page after the guest clicks the emailed link. This is what actually creates
+// the order.
+export const confirmGuestCheckout = (token: string) =>
+  apiFetch<Order>("/orders/guest-checkout/confirm", {
+    method: "POST",
+    body: JSON.stringify({ token }),
   });
 
 // GET /orders/:id

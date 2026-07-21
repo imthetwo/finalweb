@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { OrdersService } from './orders.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { GuestCheckoutDto } from './dto/guest-checkout.dto';
+import { ConfirmGuestCheckoutDto, GuestCheckoutDto } from './dto/guest-checkout.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { TrackOrderDto } from './dto/track-order.dto';
 import type { Request } from 'express';
@@ -14,10 +15,20 @@ export class OrdersController {
 
   // ── Guest checkout — no auth required ────────────────────────────────────────
   // Cart lives in localStorage (client "session"), items sent in request body.
-  // Backend: validate stock → $transaction(Order + OrderItem) → clear handled by client.
+  // Doesn't create the Order yet — emails a confirmation link first, so a
+  // typo'd or someone-else's email can't place a real order. Throttled since
+  // each call sends an email to an address we haven't verified yet.
   @Post('guest-checkout')
-  guestCheckout(@Body() dto: GuestCheckoutDto) {
-    return this.ordersService.createFromGuestItems(dto);
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
+  requestGuestCheckout(@Body() dto: GuestCheckoutDto) {
+    return this.ordersService.requestGuestCheckout(dto);
+  }
+
+  // ── Guest checkout confirmation — called from the emailed link's page ────────
+  // This is what actually validates stock and creates the Order.
+  @Post('guest-checkout/confirm')
+  confirmGuestCheckout(@Body() dto: ConfirmGuestCheckoutDto) {
+    return this.ordersService.confirmGuestCheckout(dto.token);
   }
 
   // ── Guest "track my order" lookup — no auth, orderId + phone must match ──

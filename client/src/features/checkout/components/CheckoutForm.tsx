@@ -1,6 +1,8 @@
 "use client";
 // "use client" because: useState, useEffect, event handlers (form submit, API calls)
 
+import { MailCheck } from "lucide-react";
+
 import { LoginOverlay } from "@/features/auth";
 import { AddressFields } from "@/components/ui/AddressFields";
 import { useCheckoutForm } from "../hooks/useCheckoutForm";
@@ -20,8 +22,29 @@ export function CheckoutForm() {
     guestEmail, setGuestEmail,
     paymentMethod, setPaymentMethod,
     submitting,
+    awaitingEmailConfirmation,
     submit,
   } = useCheckoutForm();
+
+  if (awaitingEmailConfirmation) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-base px-4 py-16">
+        <div className="w-full max-w-sm border border-edge bg-elevated p-8 text-center">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand/10 text-brand">
+            <MailCheck size={26} />
+          </div>
+          <h1 className="text-lg font-black uppercase tracking-wide text-fg">Check your email</h1>
+          <p className="mt-3 text-body text-secondary">
+            We sent a confirmation link to <strong className="text-fg">{guestEmail}</strong>. Click it to
+            finish placing your order — it's valid for 30 minutes.
+          </p>
+          <p className="mt-4 text-xs text-subtle">
+            Didn't get it? Check your spam folder, or go back and submit again to get a new link.
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-base px-4 py-10 text-fg md:px-8">

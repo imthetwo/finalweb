@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { createOrder, guestCheckout, fetchAddresses, type Address } from "@/lib/api";
-import { getGuestCart, clearGuestCart } from "@/lib/guestCart";
+import { getGuestCart } from "@/lib/guestCart";
 import { useAuthState } from "@/hooks/useAuthState";
 
 // Data/logic for the checkout screen — shipping form, payment method, and
@@ -21,6 +21,10 @@ export function useCheckoutForm() {
   const [guestEmail, setGuestEmail] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [submitting, setSubmitting] = useState(false);
+  // Set once a guest submission is sent for email confirmation — the order
+  // itself isn't created yet, so the cart is deliberately left untouched
+  // until the guest actually confirms via the emailed link.
+  const [awaitingEmailConfirmation, setAwaitingEmailConfirmation] = useState(false);
 
   // Saved addresses — let a logged-in user pick one instead of retyping.
   const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
@@ -129,27 +133,21 @@ export function useCheckoutForm() {
       } else {
         // ── Guest: localStorage is the "session cart" ─────────────────────────
         // Read items from localStorage → POST /orders/guest-checkout
-        // Backend: $transaction(Order + OrderItem) → stock decrement
-        // Frontend: clear localStorage after success (= "clear session")
+        // This only emails a confirmation link — the order (and its stock
+        // decrement) isn't created until the guest clicks it, so the cart is
+        // left in localStorage untouched until that actually happens.
         const guestItems = getGuestCart();
         if (!guestItems.length) {
           toast.error("Your cart is empty.");
           return;
         }
-        const order = await guestCheckout({
+        await guestCheckout({
           items: guestItems,
           shippingInfo,
           paymentMethod,
           guestEmail: guestEmail.trim(),
         });
-        clearGuestCart();
-        window.dispatchEvent(new Event("cart-updated"));
-        // Lets the order-success page's "View orders" link jump straight into
-        // the order detail on /track-order without retyping the phone number
-        // that was just entered — sessionStorage, so it never leaves this tab
-        // and never persists beyond it.
-        sessionStorage.setItem(`track:${order.id}`, shippingInfo.phone);
-        redirect(order.id);
+        setAwaitingEmailConfirmation(true);
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to place order");
@@ -167,6 +165,7 @@ export function useCheckoutForm() {
     guestEmail, setGuestEmail,
     paymentMethod, setPaymentMethod,
     submitting,
+    awaitingEmailConfirmation,
     submit,
   };
 }

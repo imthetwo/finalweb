@@ -70,6 +70,18 @@ export class EmailService {
     );
   }
 
+  async sendGuestOrderConfirmation(to: string, token: string) {
+    const link = `${getClientUrl()}/guest-checkout/confirm?token=${token}`;
+    await this.send(
+      to,
+      'Confirm your Pecify order',
+      `<h2>One more step to place your order</h2>
+       <p>Click the link below to confirm this email address and complete your order (valid for 30 minutes):</p>
+       <a href="${link}">${link}</a>
+       <p>If you didn't request this, you can safely ignore this email — no order will be placed.</p>`,
+    );
+  }
+
   async sendOrderStatusUpdate(to: string, orderId: string, status: string) {
     const statusMap: Record<string, string> = {
       AWAITING_CONFIRMATION: 'Confirming your order',
