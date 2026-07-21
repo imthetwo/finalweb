@@ -5,27 +5,32 @@ import { prisma } from './prisma-client';
 async function main() {
   const password = await bcrypt.hash('admin123', 10);
 
+  // Seed accounts are created directly by this script, not through the public
+  // register form, so the usual mandatory email-verification gate (see
+  // AuthService.login) doesn't apply — they're marked verified up front, or
+  // they'd be locked out of login entirely.
+
   // ── 1. Admin account — full access ──
   await prisma.user.upsert({
     where: { email: 'admin@pecify.tech' },
-    create: { email: 'admin@pecify.tech', password, fullName: 'Pecify Admin', role: Role.ADMIN },
-    update: { role: Role.ADMIN },
+    create: { email: 'admin@pecify.tech', password, fullName: 'Pecify Admin', role: Role.ADMIN, isEmailVerified: true },
+    update: { role: Role.ADMIN, isEmailVerified: true },
   });
   console.log(`✅ Admin: admin@pecify.tech / admin123`);
 
   // ── 2. Staff account — data entry, view inventory, view prices ──
   await prisma.user.upsert({
     where: { email: 'staff@pecify.tech' },
-    create: { email: 'staff@pecify.tech', password, fullName: 'Pecify Staff', role: Role.STAFF },
-    update: { role: Role.STAFF },
+    create: { email: 'staff@pecify.tech', password, fullName: 'Pecify Staff', role: Role.STAFF, isEmailVerified: true },
+    update: { role: Role.STAFF, isEmailVerified: true },
   });
   console.log(`✅ Staff:  staff@pecify.tech  / admin123`);
 
   // ── 3. Demo customer ──
   const customer = await prisma.user.upsert({
     where: { email: 'customer@pecify.tech' },
-    create: { email: 'customer@pecify.tech', password, fullName: 'Demo Customer', role: Role.USER },
-    update: {},
+    create: { email: 'customer@pecify.tech', password, fullName: 'Demo Customer', role: Role.USER, isEmailVerified: true },
+    update: { isEmailVerified: true },
   });
   console.log(`✅ Customer: customer@pecify.tech / admin123`);
 
