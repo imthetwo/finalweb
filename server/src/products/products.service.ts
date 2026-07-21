@@ -3,6 +3,18 @@ import { FurnitureType, PcBuildType } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { effectivePrice } from '../common/pricing';
 
+// Search terms that don't literally appear anywhere in their matching
+// category's name — switching category matching to `contains` (see
+// findAll() below) already covers most abbreviations, since e.g. "Graphics
+// Cards (GPU)"/"Processors (CPU)"/"Storage (SSD/HDD)" all spell the
+// abbreviation out in parentheses. These are the genuine leftover gaps: an
+// irregular plural and abbreviations with no literal spelling in the name.
+const CATEGORY_SEARCH_SYNONYMS: Record<string, string> = {
+  mouse: 'mice',
+  psu: 'power',
+  memory: 'ram',
+};
+
 // Exported so AdminProductsService (which needs the same shape for its own
 // list/create/update/export queries) doesn't redeclare it.
 export const SPEC_INCLUDE = {
@@ -70,16 +82,29 @@ export class ProductsService {
     if (search) { params.search = search; }
     if (params.search) {
       const q = params.search;
-      where.OR = [
+      const orConditions: Record<string, unknown>[] = [
         // Product name starts with the keyword
         { name:  { startsWith: q, mode: 'insensitive' } },
         // A word within the name starts with the keyword (preceded by a space)
         { name:  { contains: ` ${q}`, mode: 'insensitive' } },
         // Brand matches: "intel", "amd", "corsair"
         { brand: { startsWith: q, mode: 'insensitive' } },
-        // Category starts with the keyword: "ca" → "Case Fans" ✅, "pc" → "PC Cases" ✅
-        { category: { name: { startsWith: q, mode: 'insensitive' } } },
+        // Category name contains the keyword anywhere, not just as a prefix —
+        // most category names are "<Adjective> <Thing>" ("Gaming Mice",
+        // "Mechanical Keyboards", "CPU Coolers"), so the word a shopper
+        // actually searches for ("mice", "keyboard", "cooler") is usually in
+        // the middle/end, not the start.
+        { category: { name: { contains: q, mode: 'insensitive' } } },
       ];
+      // A few PC-part search terms don't literally appear in their category
+      // name at all — an irregular plural ("mouse" -> "Mice") or a common
+      // abbreviation ("gpu" -> "Graphics Cards"). Expand the query to also
+      // try each one's real category wording.
+      const synonym = CATEGORY_SEARCH_SYNONYMS[q.toLowerCase()];
+      if (synonym) {
+        orConditions.push({ category: { name: { contains: synonym, mode: 'insensitive' } } });
+      }
+      where.OR = orConditions;
     }
 
     const [items, total] = await Promise.all([
