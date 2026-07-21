@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
   Length,
+  Max,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -110,14 +111,16 @@ export class FurnitureSpecDto {
 
 export class CreateProductDto {
   @IsString() categoryId!: string;
-  @IsString() name!: string;
-  @IsString() brand!: string;
-  @IsOptional() @IsString() description?: string;
-  @IsOptional() @IsString() imageUrl?: string;
-  @IsNumber() @Min(0) price!: number;
-  @IsOptional() @IsNumber() @Min(0) costPrice?: number;
-  @IsOptional() @IsNumber() @Min(0) salePrice?: number;
-  @IsOptional() @IsInt() @Min(0) stock?: number;
+  @IsString() @Length(2, 200, { message: 'Name must be between 2 and 200 characters' }) name!: string;
+  @IsString() @Length(1, 100, { message: 'Brand must be between 1 and 100 characters' }) brand!: string;
+  @IsOptional() @IsString() @Length(0, 5000, { message: 'Description must be under 5000 characters' }) description?: string;
+  // Not @IsUrl(): formatProduct() (products.service.ts) intentionally accepts
+  // relative paths (e.g. "/media/...") alongside absolute Cloudinary URLs.
+  @IsOptional() @IsString() @Length(0, 2000, { message: 'Image URL is too long' }) imageUrl?: string;
+  @IsNumber() @Min(0, { message: 'Price cannot be negative' }) price!: number;
+  @IsOptional() @IsNumber() @Min(0, { message: 'Cost price cannot be negative' }) costPrice?: number;
+  @IsOptional() @IsNumber() @Min(0, { message: 'Sale price cannot be negative' }) salePrice?: number;
+  @IsOptional() @IsInt() @Min(0, { message: 'Stock cannot be negative' }) @Max(100_000, { message: 'Stock must be under 100,000' }) stock?: number;
   @IsOptional() @IsBoolean() isPublished?: boolean;
 
   @IsOptional() @ValidateNested() @Type(() => CpuSpecDto) cpuSpec?: CpuSpecDto;
@@ -160,14 +163,16 @@ export class CreateProductDto {
 
 export class UpdateProductDto {
   @IsOptional() @IsString() categoryId?: string;
-  @IsOptional() @IsString() name?: string;
-  @IsOptional() @IsString() brand?: string;
-  @IsOptional() @IsString() description?: string;
-  @IsOptional() @IsString() imageUrl?: string;
-  @IsOptional() @IsNumber() @Min(0) price?: number;
-  @IsOptional() @IsNumber() @Min(0) costPrice?: number;
-  @IsOptional() @IsNumber() @Min(0) salePrice?: number;
-  @IsOptional() @IsInt() @Min(0) stock?: number;
+  @IsOptional() @IsString() @Length(2, 200, { message: 'Name must be between 2 and 200 characters' }) name?: string;
+  @IsOptional() @IsString() @Length(1, 100, { message: 'Brand must be between 1 and 100 characters' }) brand?: string;
+  @IsOptional() @IsString() @Length(0, 5000, { message: 'Description must be under 5000 characters' }) description?: string;
+  // Not @IsUrl(): formatProduct() (products.service.ts) intentionally accepts
+  // relative paths (e.g. "/media/...") alongside absolute Cloudinary URLs.
+  @IsOptional() @IsString() @Length(0, 2000, { message: 'Image URL is too long' }) imageUrl?: string;
+  @IsOptional() @IsNumber() @Min(0, { message: 'Price cannot be negative' }) price?: number;
+  @IsOptional() @IsNumber() @Min(0, { message: 'Cost price cannot be negative' }) costPrice?: number;
+  @IsOptional() @IsNumber() @Min(0, { message: 'Sale price cannot be negative' }) salePrice?: number;
+  @IsOptional() @IsInt() @Min(0, { message: 'Stock cannot be negative' }) @Max(100_000, { message: 'Stock must be under 100,000' }) stock?: number;
   @IsOptional() @IsBoolean() isPublished?: boolean;
 
   @IsOptional() @ValidateNested() @Type(() => CpuSpecDto) cpuSpec?: CpuSpecDto;
@@ -214,7 +219,7 @@ export class UpdateOrderStatusDto {
 
 export class CancelOrderDto {
   @IsString()
-  @Length(3, 300)
+  @Length(3, 300, { message: 'Reason must be between 3 and 300 characters' })
   reason!: string;
 }
 

@@ -116,10 +116,27 @@ export function useProductFormModal({
     }
   }
 
+  // Mirrors CreateProductDto/UpdateProductDto (server/src/admin/dto/admin-product.dto.ts)
+  // so bad input gets a friendly inline message instead of a raw toast from the API.
+  function validate(): string | null {
+    if (!form.categoryId) return "Please choose a category";
+    const name = form.name.trim();
+    if (name.length < 2 || name.length > 200) return "Name must be between 2 and 200 characters";
+    const brand = form.brand.trim();
+    if (brand.length < 1 || brand.length > 100) return "Brand must be between 1 and 100 characters";
+    if ((form.description ?? "").length > 5000) return "Description must be under 5000 characters";
+    if (!Number.isFinite(form.price) || form.price <= 0) return "Please enter a valid price";
+    if (form.salePrice != null && form.salePrice > 0 && form.salePrice >= form.price) {
+      return "Sale price must be lower than the regular price";
+    }
+    if (form.stock != null && (form.stock < 0 || form.stock > 100_000)) return "Stock must be between 0 and 100,000";
+    return null;
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.categoryId) { toast.error("Please choose a category"); return; }
-    if (!form.name || form.price <= 0) { toast.error("Name and a valid price are required"); return; }
+    const error = validate();
+    if (error) { toast.error(error); return; }
 
     setSaving(true);
     try {

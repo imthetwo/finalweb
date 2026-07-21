@@ -5,6 +5,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { ProductsService, SPEC_INCLUDE } from '../../products/products.service';
 import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import { CreateProductDto, UpdateProductDto } from '../dto/admin-product.dto';
+import { assertSalePriceValid } from '../../common/pricing';
 
 @Injectable()
 export class AdminProductsService {
@@ -64,6 +65,31 @@ export class AdminProductsService {
       const price = Number(get('price'));
       if (!Number.isFinite(price) || price <= 0) { result.errors.push(`Row ${r}: invalid or negative price`); continue; }
 
+      // costPrice/salePrice/stock are optional cells — only validate when the
+      // row actually provides one, but reject negative/non-numeric values
+      // rather than silently storing them (Number("-5") is truthy, so a bare
+      // `get(...) ? Number(...) : default` check would let negatives through).
+      const rawCostPrice = get('costprice');
+      const costPrice = rawCostPrice != null && String(rawCostPrice).trim() !== '' ? Number(rawCostPrice) : null;
+      if (costPrice != null && (!Number.isFinite(costPrice) || costPrice < 0)) {
+        result.errors.push(`Row ${r}: invalid or negative cost price`); continue;
+      }
+
+      const rawSalePrice = get('saleprice');
+      const salePrice = rawSalePrice != null && String(rawSalePrice).trim() !== '' ? Number(rawSalePrice) : null;
+      if (salePrice != null && (!Number.isFinite(salePrice) || salePrice < 0)) {
+        result.errors.push(`Row ${r}: invalid or negative sale price`); continue;
+      }
+      if (salePrice != null && salePrice >= price) {
+        result.errors.push(`Row ${r}: sale price must be lower than price`); continue;
+      }
+
+      const rawStock = get('stock');
+      const stock = rawStock != null && String(rawStock).trim() !== '' ? Number(rawStock) : 10;
+      if (!Number.isFinite(stock) || stock < 0) {
+        result.errors.push(`Row ${r}: invalid or negative stock`); continue;
+      }
+
       try {
         const existing = await this.prisma.product.findFirst({ where: { name, categoryId } });
 
@@ -80,9 +106,9 @@ export class AdminProductsService {
           categoryId, name,
           brand: get('brand')?.toString().trim() || 'Pecify',
           price,
-          costPrice: get('costprice') ? Number(get('costprice')) : null,
-          salePrice: get('saleprice') ? Number(get('saleprice')) : null,
-          stock: get('stock') ? Number(get('stock')) : 10,
+          costPrice,
+          salePrice,
+          stock,
           description: get('description')?.toString().trim() || null,
           imageUrl: get('imageurl')?.toString().trim() || null,
           isPublished,
@@ -119,6 +145,7 @@ export class AdminProductsService {
   }
 
   async create(dto: CreateProductDto, asDraft = false) {
+    assertSalePriceValid(dto.price, dto.salePrice);
     const { cpuSpec, gpuSpec, ramSpec, motherboardSpec, psuSpec, caseSpec, coolerSpec, monitorSpec, storageSpec, laptopSpec, pcBuildSpec, furnitureSpec, ...base } = dto;
     return this.prisma.product.create({
       data: {
@@ -142,7 +169,15 @@ export class AdminProductsService {
   }
 
   async update(id: string, dto: UpdateProductDto) {
-    await this.assertExists(id);
+    const existing = await this.assertExists(id);
+    // A partial update might only send one of price/salePrice — fall back to
+    // the current DB value for whichever one is missing so the cross-check
+    // still catches e.g. "lower price below an already-set salePrice".
+    if (dto.price !== undefined || dto.salePrice !== undefined) {
+      const nextPrice = dto.price ?? existing.price;
+      const nextSalePrice = dto.salePrice !== undefined ? dto.salePrice : existing.salePrice;
+      assertSalePriceValid(nextPrice, nextSalePrice);
+    }
     const { cpuSpec, gpuSpec, ramSpec, motherboardSpec, psuSpec, caseSpec, coolerSpec, monitorSpec, storageSpec, laptopSpec, pcBuildSpec, furnitureSpec, ...base } = dto;
     return this.prisma.product.update({
       where: { id },
@@ -179,6 +214,7 @@ export class AdminProductsService {
   private async assertExists(id: string) {
     const p = await this.prisma.product.findUnique({ where: { id } });
     if (!p) throw new NotFoundException('Product not found');
+    return p;
   }
 
   // ── Excel template for staff data entry ───────────────
