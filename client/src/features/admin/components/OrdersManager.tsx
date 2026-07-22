@@ -151,6 +151,14 @@ export function OrdersManager() {
                         <span className="text-subtle">—</span>
                       ) : o.refundedAt ? (
                         <span className="text-orange-400">Refunded</span>
+                      ) : o.paymentMethod === "COD" ? (
+                        // COD's isPaid is set true at order creation just to mean
+                        // "no gateway step needed" — cash hasn't actually changed
+                        // hands until the courier delivers it, so only call it
+                        // "Paid" once the order reaches DELIVERED.
+                        <span className={o.status === "DELIVERED" ? "text-success" : "text-muted"}>
+                          {o.status === "DELIVERED" ? "Paid (COD)" : "COD"}
+                        </span>
                       ) : (
                         <span
                           className={o.isPaid ? "text-success" : "text-subtle"}
