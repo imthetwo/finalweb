@@ -31,23 +31,6 @@ export async function uploadProductImage(file: File): Promise<{ url: string }> {
   return res.json();
 }
 
-// POST /admin/upload-video — Cloudinary hero video upload, ADMIN only
-export async function uploadHeroVideo(file: File): Promise<{ url: string }> {
-  const token = getToken();
-  const fd = new FormData();
-  fd.append("file", file);
-  const res = await fetchWithTimeout(getApiUrl("/admin/upload-video"), {
-    method: "POST",
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    body: fd,
-  }, LONG_TIMEOUT_MS);
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({})) as { message?: string };
-    throw new Error(err.message ?? "Upload failed");
-  }
-  return res.json();
-}
-
 export async function downloadProductTemplate() {
   const token = getToken();
   const res = await fetchWithTimeout(getApiUrl("/admin/products/template"), {

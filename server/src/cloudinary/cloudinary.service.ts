@@ -34,14 +34,8 @@ export class CloudinaryService {
     });
   }
 
-  /** Upload an image buffer to Cloudinary, return the secure URL. */
   uploadImage(buffer: Buffer, folder = 'TechStore/uploads', publicId?: string): Promise<string> {
     if (!this.configured) return Promise.reject(new Error('Cloudinary is not configured'));
     return this.upload(buffer, folder, 'image', publicId);
-  }
-
-  /** Upload a video buffer to Cloudinary, return the secure URL. */
-  uploadVideo(buffer: Buffer, folder = 'TechStore/videos'): Promise<string> {
-    return this.upload(buffer, folder, 'video');
   }
 }

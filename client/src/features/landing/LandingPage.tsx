@@ -5,20 +5,12 @@ import CustomLabPromo from "./components/CustomLabPromo";
 import TrackOrderPromo from "./components/TrackOrderPromo";
 import BrandFeatures from "./components/BrandFeatures";
 import NewsletterSection from "./components/NewsletterSection";
-import { getSetting } from "@/lib/api/settings";
+import { HERO_VIDEO_URL, HERO_POSTER_URL } from "@/lib/cloudinary";
 
-export default async function LandingPage() {
-  const [videoUrl, posterUrl] = await Promise.all([
-    getSetting("hero_video_url"),
-    getSetting("hero_poster_url"),
-  ]);
-
+export default function LandingPage() {
   return (
     <main>
-      <HeroSection
-        videoUrl={videoUrl ?? "/hero.mp4"}
-        posterUrl={posterUrl ?? "/hero-poster.jpg"}
-      />
+      <HeroSection videoUrl={HERO_VIDEO_URL} posterUrl={HERO_POSTER_URL} />
       <BrandFeatures />
       <ShopByCategory />
       <FeaturedProducts />

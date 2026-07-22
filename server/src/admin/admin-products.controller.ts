@@ -20,7 +20,6 @@ type UploadedFileType = { buffer: Buffer; mimetype: string; size: number };
 // runs, so the size cap has to live here too — otherwise an oversized "image"
 // or Excel file is fully read into memory regardless of what the service does.
 const IMAGE_UPLOAD_LIMITS = { limits: { fileSize: 10 * 1024 * 1024 } }; // 10MB
-const VIDEO_UPLOAD_LIMITS = { limits: { fileSize: 200 * 1024 * 1024 } }; // 200MB
 const EXCEL_UPLOAD_LIMITS = { limits: { fileSize: 10 * 1024 * 1024 } }; // 10MB
 
 class ListAdminProductsQueryDto {
@@ -85,14 +84,6 @@ export class AdminProductsController {
   @UseInterceptors(FileInterceptor('file', IMAGE_UPLOAD_LIMITS))
   uploadImage(@UploadedFile() file: UploadedFileType) {
     return this.admin.uploadImage(file);
-  }
-
-  // ── Video upload → Cloudinary — ADMIN ONLY ───────────────────────────────
-  @Post('upload-video')
-  @Roles(Role.ADMIN)
-  @UseInterceptors(FileInterceptor('file', VIDEO_UPLOAD_LIMITS))
-  uploadVideo(@UploadedFile() file: UploadedFileType) {
-    return this.admin.uploadVideo(file);
   }
 
   // ── Excel template — STAFF + ADMIN ───────────────────────────────────────

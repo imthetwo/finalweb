@@ -1,18 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { LayoutDashboard, Package, ShoppingBag, Users, ArrowLeft, ChevronDown, Video } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingBag, Users, ArrowLeft, ChevronDown } from "lucide-react";
 
 import { useAdminSidebar } from "../hooks/useAdminSidebar";
 
 // staffAllowed: STAFF can view/accept orders (server + useOrdersManager.ts
-// both allow it) — only Users (role management) and Hero Video are actually
-// ADMIN-only.
+// both allow it) — only Users (role management) is actually ADMIN-only.
 const TOP_NAV = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard, staffAllowed: true },
   { href: "/admin/orders",    label: "Orders",    icon: ShoppingBag, staffAllowed: true },
   { href: "/admin/users",     label: "Users",     icon: Users, staffAllowed: false },
-  { href: "/admin/settings",  label: "Hero Video", icon: Video, staffAllowed: false },
 ];
 
 export function AdminSidebar({ children }: { children: React.ReactNode }) {

@@ -39,14 +39,6 @@ export class AdminService {
     return { url };
   }
 
-  async uploadVideo(file: UploadedFileLike) {
-    if (!file) throw new BadRequestException('No file uploaded');
-    if (!file.mimetype.startsWith('video/')) throw new BadRequestException('File must be a video');
-    if (file.size > 200 * 1024 * 1024) throw new BadRequestException('Video must be under 200MB');
-    const url = await this.cloudinary.uploadVideo(file.buffer);
-    return { url };
-  }
-
   importProductsExcel(file: { buffer: Buffer }, role: Role) {
     if (!file) throw new BadRequestException('No file uploaded');
     // Staff import → created as draft, admin must approve before it publishes

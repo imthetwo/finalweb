@@ -7,7 +7,6 @@ export * from "./admin-stats.api";
 export * from "./admin-products.api";
 export * from "./admin-orders.api";
 export * from "./admin-users.api";
-export * from "./settings";
 export * from "./cart";
 export * from "./addresses";
 

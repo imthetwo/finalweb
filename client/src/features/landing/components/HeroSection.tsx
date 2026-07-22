@@ -4,10 +4,11 @@ import Link from "next/link";
 import { Pause, Play } from "lucide-react";
 
 import { useHeroSection } from "../hooks/useHeroSection";
+import { HERO_VIDEO_URL, HERO_POSTER_URL } from "@/lib/cloudinary";
 
 export default function HeroSection({
-  videoUrl = "/hero.mp4",
-  posterUrl = "/hero-poster.jpg",
+  videoUrl = HERO_VIDEO_URL,
+  posterUrl = HERO_POSTER_URL,
 }: {
   videoUrl?: string;
   posterUrl?: string;
