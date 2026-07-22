@@ -37,6 +37,19 @@ export class EmailVerificationService {
 		return issueToken(this.jwtService, updated);
 	}
 
+	// Mints a fresh 24h verification token for the user and emails it. Shared
+	// by both resend paths below — the only real difference between them is how
+	// the user is looked up and what they're allowed to reveal in the response.
+	private async issueFreshVerification(user: { id: string; email: string }) {
+		const verifyToken = randomBytes(32).toString('hex');
+		const verifyTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+		await this.prisma.user.update({
+			where: { id: user.id },
+			data: { verifyToken, verifyTokenExpiry },
+		});
+		await this.email.sendEmailVerification(user.email, verifyToken);
+	}
+
 	// Public — no login required, since an unverified account can no longer
 	// sign in to reach the authenticated resendVerification() below. Always
 	// returns ok:true regardless of outcome so it can't be used to probe which
@@ -45,13 +58,7 @@ export class EmailVerificationService {
 		const user = await this.prisma.user.findUnique({ where: { email: emailAddr } });
 		if (!user || user.isEmailVerified) return { ok: true };
 
-		const verifyToken = randomBytes(32).toString('hex');
-		const verifyTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
-		await this.prisma.user.update({
-			where: { id: user.id },
-			data: { verifyToken, verifyTokenExpiry },
-		});
-		await this.email.sendEmailVerification(user.email, verifyToken);
+		await this.issueFreshVerification(user);
 		return { ok: true };
 	}
 
@@ -60,13 +67,7 @@ export class EmailVerificationService {
 		if (!user) throw new NotFoundException('User not found');
 		if (user.isEmailVerified) return { ok: true, alreadyVerified: true };
 
-		const verifyToken = randomBytes(32).toString('hex');
-		const verifyTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
-		await this.prisma.user.update({
-			where: { id: userId },
-			data: { verifyToken, verifyTokenExpiry },
-		});
-		await this.email.sendEmailVerification(user.email, verifyToken);
+		await this.issueFreshVerification(user);
 		return { ok: true, alreadyVerified: false };
 	}
 }
