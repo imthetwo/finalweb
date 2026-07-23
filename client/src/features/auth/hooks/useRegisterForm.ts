@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { register as registerAccount, resendVerificationByEmail } from "@/lib/api/auth";
 
 export const registerSchema = z.object({
-  fullName:            z.string().min(2, "Please enter your full name."),
+  fullName:            z.string().min(3, "Please enter your full name."),
   email:               z.string().email("Please enter a valid email address."),
   password:            z.string().min(6, "Password must be at least 6 characters."),
   confirmPassword:     z.string(),

@@ -9,7 +9,7 @@ export class UpdateProfileDto {
   // digit-only junk like "123".
   @IsOptional()
   @IsString()
-  @Length(2, 60, { message: 'Full name must be between 2 and 60 characters' })
+  @Length(3, 60, { message: 'Full name must be between 3 and 60 characters' })
   @Matches(/^[\p{L}][\p{L}\s.'-]*$/u, { message: 'Full name must contain letters only (no numbers)' })
   fullName?: string;
 

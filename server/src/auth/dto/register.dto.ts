@@ -12,7 +12,7 @@ export class RegisterDto {
   // otherwise an account could register with a digit-only name like "123" that
   // the profile page would then refuse to keep on any later edit.
   @IsString()
-  @Length(2, 60, { message: 'Full name must be between 2 and 60 characters' })
+  @Length(3, 60, { message: 'Full name must be between 3 and 60 characters' })
   @Matches(/^[\p{L}][\p{L}\s.'-]*$/u, { message: 'Full name must contain letters only (no numbers)' })
   fullName!: string;
 
