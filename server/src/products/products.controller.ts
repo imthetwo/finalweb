@@ -11,7 +11,6 @@ class ListProductsQueryDto {
   @IsOptional() @IsString() coolerType?: string;
   @IsOptional() @IsString() furnitureType?: string;
   @IsOptional() @IsIn(['featured', 'price-asc', 'price-desc', 'name']) sortBy?: string;
-  @IsOptional() @Type(() => Number) @IsInt() @Min(0) maxPrice?: number;
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) page?: number;
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(100) limit?: number;
 }

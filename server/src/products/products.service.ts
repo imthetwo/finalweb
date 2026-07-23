@@ -57,7 +57,6 @@ export class ProductsService {
     coolerType?: string;
     furnitureType?: string;
     sortBy?: string;
-    maxPrice?: number;
     page?: number;
     limit?: number;
   }) {
@@ -118,14 +117,12 @@ export class ProductsService {
     // resulting page's ids to get the full shape. Keeps a single source of
     // truth for "what does this product cost" instead of re-deriving a SQL
     // equivalent that could drift from it.
-    const maxPrice = params.maxPrice;
     const candidates = await this.prisma.product.findMany({
       where,
       select: { id: true, name: true, price: true, salePrice: true },
     });
 
     let ranked = candidates.map((p) => ({ ...p, displayPrice: effectivePrice(p) }));
-    if (maxPrice != null) ranked = ranked.filter((p) => p.displayPrice <= maxPrice);
 
     if (params.sortBy === 'price-asc')       ranked.sort((a, b) => a.displayPrice - b.displayPrice);
     else if (params.sortBy === 'price-desc') ranked.sort((a, b) => b.displayPrice - a.displayPrice);

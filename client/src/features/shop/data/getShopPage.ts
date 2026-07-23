@@ -26,13 +26,12 @@ export async function getShopPage(
   searchParams: {
     page?: string; search?: string; type?: string;
     storageType?: string; coolerType?: string; furnitureType?: string;
-    sortBy?: string; maxPrice?: string;
+    sortBy?: string;
   },
 ) {
   const page = Math.max(1, Number(searchParams.page) || 1);
   const search = searchParams.search?.trim() || undefined;
   const sortBy = searchParams.sortBy;
-  const maxPrice = searchParams.maxPrice ? Number(searchParams.maxPrice) || undefined : undefined;
   // slug=[] → /shop root page; slug=['shop'] → legacy compat
   const isAllProducts = slug.length === 0 || (slug.length === 1 && slug[0] === "shop");
 
@@ -54,8 +53,8 @@ export async function getShopPage(
 
   const data = await fetchProducts(
     search
-      ? { search, sortBy, maxPrice, page, limit: 48 }
-      : { categoryId, buildType: buildEntry?.buildType, storageType, coolerType, furnitureType, sortBy, maxPrice, page, limit: 48 },
+      ? { search, sortBy, page, limit: 48 }
+      : { categoryId, buildType: buildEntry?.buildType, storageType, coolerType, furnitureType, sortBy, page, limit: 48 },
   ).catch(() => ({ items: [], total: 0, page: 1, totalPages: 0 }));
 
   const subFilterLabel =

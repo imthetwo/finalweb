@@ -1,13 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
 
-import { formatVnd } from "@/lib/format";
 import { CATEGORY_NAV } from "@/lib/category-nav";
 import { useFilterSidebar } from "../hooks/useFilterSidebar";
-import { useCollapsible } from "../hooks/useCollapsible";
-import type { SubTypeFilter, FilterSidebarProps } from "../types";
+import type { SubTypeFilter } from "../types";
 
 const SUB_TYPE_FILTERS: SubTypeFilter[] = [
   {
@@ -58,33 +55,7 @@ const SUB_TYPE_FILTERS: SubTypeFilter[] = [
   },
 ];
 
-function CollapsibleFilter({
-  title,
-  children,
-  defaultOpen = false,
-}: {
-  title: string;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}) {
-  // Logic lives in the hook (defined outside); the component only calls it and renders.
-  const { open, toggle } = useCollapsible(defaultOpen);
-  return (
-    <div className="border-t border-edge py-3">
-      <button
-        type="button"
-        onClick={toggle}
-        className="flex w-full items-center justify-between text-sm font-bold uppercase tracking-wider text-fg"
-      >
-        {title}
-        <ChevronDown size={14} className={`text-muted transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
-      {open && <div className="mt-3">{children}</div>}
-    </div>
-  );
-}
-
-export function FilterSidebar({ maxPrice, priceMax, onMaxPriceChange }: FilterSidebarProps) {
+export function FilterSidebar() {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
   const { pathname, subTypeFilter, activeSubType } = useFilterSidebar(SUB_TYPE_FILTERS);
 
@@ -135,34 +106,6 @@ export function FilterSidebar({ maxPrice, priceMax, onMaxPriceChange }: FilterSi
             })}
           </nav>
         </div>
-      )}
-
-      {/* Price */}
-      {priceMax > 0 && (
-        <CollapsibleFilter title="Price Range" defaultOpen>
-          <input
-            type="range"
-            min={0}
-            max={priceMax}
-            step={100000}
-            value={maxPrice ?? priceMax}
-            onChange={(e) => onMaxPriceChange(Number(e.target.value))}
-            className="w-full accent-brand"
-          />
-          <div className="mt-2 flex justify-between text-xs text-muted">
-            <span>0₫</span>
-            <span className="font-bold text-secondary">≤ {formatVnd(maxPrice ?? priceMax)}</span>
-          </div>
-          {maxPrice !== null && (
-            <button
-              type="button"
-              onClick={() => onMaxPriceChange(null)}
-              className="mt-2 text-xs text-subtle underline hover:text-secondary"
-            >
-              Reset
-            </button>
-          )}
-        </CollapsibleFilter>
       )}
     </aside>
   );

@@ -13,9 +13,3 @@ export type SubTypeFilter = {
   param: string;
   options: SubTypeOption[];
 };
-
-export type FilterSidebarProps = {
-  maxPrice: number | null;
-  priceMax: number;
-  onMaxPriceChange: (v: number | null) => void;
-};

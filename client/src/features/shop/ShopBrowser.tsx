@@ -21,7 +21,7 @@ export default function ShopBrowser({
   totalPages?: number;
 }) {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
-  const { maxPrice, setMaxPrice, sort, setSort, priceMax, filtered, clearFilters } = useShopBrowser(items);
+  const { sort, setSort, filtered } = useShopBrowser(items);
 
   return (
     <main className="min-h-screen bg-base text-fg">
@@ -50,11 +50,7 @@ export default function ShopBrowser({
               wrapped in Suspense so it doesn't force the whole route to
               client-side-only rendering. */}
           <Suspense fallback={<aside className="w-full shrink-0 lg:w-64" />}>
-            <FilterSidebar
-              maxPrice={maxPrice}
-              priceMax={priceMax}
-              onMaxPriceChange={setMaxPrice}
-            />
+            <FilterSidebar />
           </Suspense>
 
           {/* Product grid */}
@@ -62,9 +58,6 @@ export default function ShopBrowser({
             {filtered.length === 0 ? (
               <div className="flex flex-col items-center gap-3 border border-dashed border-edge py-20 text-muted">
                 <p className="text-sm">No products match your filters.</p>
-                <button type="button" onClick={clearFilters} className="text-sm text-brand underline">
-                  Clear filters
-                </button>
               </div>
             ) : (
               <>
