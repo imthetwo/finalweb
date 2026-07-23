@@ -19,13 +19,14 @@ export function useVerifyEmailPage() {
     if (!token) return;
     verifyEmail(token)
       .then(async (res) => {
-        // Reissues the JWT so isEmailVerified updates immediately, without
-        // requiring the user to log out and back in. This is also this
-        // account's first real session if they just registered — same as
-        // email login/Google — so claim past guest orders + merge the guest
-        // cart here too, or a guest who registered mid-session loses both.
-        saveToken(res.access_token);
+        // This is also this account's first real session if they just
+        // registered — same as email login/Google — so claim past guest
+        // orders + merge the guest cart here too, or a guest who registered
+        // mid-session loses both. Done before saveToken so the navbar (which
+        // reacts to the store update inside saveToken) doesn't flip to
+        // "logged in" a beat before this card finishes showing "verified".
         await syncGuestDataToAccount(res.access_token);
+        saveToken(res.access_token);
         setStatus("success");
       })
       .catch(() => setStatus("error"));

@@ -13,10 +13,6 @@ export function VerifyEmailPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-base px-4 py-16">
       <div className="w-full max-w-sm">
-        <p className="mb-8 text-center text-xs font-black uppercase tracking-[0.3em] text-brand">
-          Pecify
-        </p>
-
         <div className="border border-edge bg-elevated p-8 text-center">
           {status === "verifying" && (
             <>
