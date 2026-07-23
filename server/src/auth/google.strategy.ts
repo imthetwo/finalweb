@@ -17,11 +17,17 @@ export class GoogleStrategy extends PassportStrategy(
   'google',
 ) {
   constructor() {
+    // .trim() guards against a stray trailing newline/whitespace in the env
+    // var value (easy to introduce via copy-paste into a hosting provider's
+    // env var UI) — Google matches the redirect_uri against the registered
+    // Authorized redirect URI byte-for-byte, so an invisible trailing \n
+    // here is enough to fail with invalid_request even though every visible
+    // character looks correct.
     const strategyOptions: any = {
-      clientID: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      clientID: (process.env.GOOGLE_CLIENT_ID || '').trim(),
+      clientSecret: (process.env.GOOGLE_CLIENT_SECRET || '').trim(),
       callbackURL:
-        process.env.GOOGLE_CALLBACK_URL ||
+        (process.env.GOOGLE_CALLBACK_URL || '').trim() ||
         'http://localhost:3001/auth/google/callback',
       scope: ['email', 'profile'],
       // Stateless: we mint a JWT in the callback, so Passport must not try to

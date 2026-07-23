@@ -14,7 +14,7 @@ import {
   Sheet, SheetBody, SheetClose, SheetContent,
   SheetFooter, SheetHeader, SheetTrigger, SheetXButton,
 } from "@/components/ui/sheet";
-import { LoginOverlay } from "@/features/auth";
+import { LoginOverlay, RegisterOverlay } from "@/features/auth";
 import { Search } from "lucide-react";
 
 const MOBILE_LINKS = [
@@ -28,7 +28,7 @@ const MOBILE_LINKS = [
 
 export default function MainNav() {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
-  const { searchOpen, setSearchOpen, cartCount, user, loaded } = useMainNav();
+  const { searchOpen, setSearchOpen, dialog, setDialog, cartCount, user, loaded } = useMainNav();
 
   return (
     <nav className="w-full select-none bg-base border-b border-edge">
@@ -91,13 +91,15 @@ export default function MainNav() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <LoginOverlay
-                    triggerButton={
-                      <button type="button" className="block w-full border border-edge px-4 py-3 text-center text-sm font-bold uppercase tracking-wider text-secondary transition-colors hover:border-fg hover:text-fg">
-                        Sign In
-                      </button>
-                    }
-                  />
+                  <SheetClose>
+                    <button
+                      type="button"
+                      onClick={() => setDialog("login")}
+                      className="block w-full border border-edge px-4 py-3 text-center text-sm font-bold uppercase tracking-wider text-secondary transition-colors hover:border-fg hover:text-fg"
+                    >
+                      Sign In
+                    </button>
+                  </SheetClose>
                   <SheetClose>
                     <Link href="/track-order" className="block border border-edge py-2 text-center text-xs font-bold uppercase tracking-wider text-secondary hover:border-edge hover:text-fg">
                       Track an order
@@ -127,6 +129,20 @@ export default function MainNav() {
           <CartIcon count={cartCount} />
         </div>
       </div>
+
+      {/* Login/Register — shared by the mobile Sign In button above; rendered
+          outside the Sheet (which SheetClose already dismissed on trigger) so
+          this dialog is never fighting a still-open Sheet for stacking. */}
+      <LoginOverlay
+        open={dialog === "login"}
+        onOpenChange={(o) => setDialog(o ? "login" : "none")}
+        onSwitchToRegister={() => setDialog("register")}
+      />
+      <RegisterOverlay
+        open={dialog === "register"}
+        onOpenChange={(o) => setDialog(o ? "register" : "none")}
+        onSwitchToLogin={() => setDialog("login")}
+      />
 
       {/* ── DESKTOP (≥ lg) ────────────────────────────────────────────────── */}
       <div className="hidden h-24 items-center px-6 lg:flex">
