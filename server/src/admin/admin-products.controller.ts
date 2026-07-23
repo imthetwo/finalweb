@@ -77,9 +77,11 @@ export class AdminProductsController {
     return this.admin.deleteProduct(id);
   }
 
-  // ── Image upload — ADMIN ONLY ─────────────────────────────────────────────
+  // ── Image upload — STAFF + ADMIN (goes straight to Cloudinary either way;
+  // a STAFF-created product stays a draft until an ADMIN approves it, same
+  // as every other STAFF-submitted field) ──────────────────────────────────
   @Post('upload')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.STAFF)
   @UseInterceptors(FileInterceptor('file', IMAGE_UPLOAD_LIMITS))
   uploadImage(@UploadedFile() file: UploadedFileType) {
     return this.admin.uploadImage(file);

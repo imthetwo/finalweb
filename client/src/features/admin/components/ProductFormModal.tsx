@@ -75,17 +75,11 @@ export default function ProductFormModal({
                   <span className="text-3xs text-subtle">No image</span>
                 )}
               </div>
-              {isAdmin ? (
-                <>
-                  <input ref={fileRef} type="file" accept="image/*" onChange={onUpload} className="hidden" />
-                  <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
-                    className="inline-flex items-center gap-2 border border-edge px-4 py-2 text-sm font-bold uppercase tracking-wider text-secondary hover:border-brand/40 hover:text-brand disabled:opacity-50">
-                    <Upload size={13} /> {uploading ? "Uploading…" : "Upload"}
-                  </button>
-                </>
-              ) : (
-                <p className="text-xs text-subtle">Only admins can upload images — ask an admin to add one after review.</p>
-              )}
+              <input ref={fileRef} type="file" accept="image/*" onChange={onUpload} className="hidden" />
+              <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
+                className="inline-flex items-center gap-2 border border-edge px-4 py-2 text-sm font-bold uppercase tracking-wider text-secondary hover:border-brand/40 hover:text-brand disabled:opacity-50">
+                <Upload size={13} /> {uploading ? "Uploading…" : "Upload"}
+              </button>
             </div>
           </div>
 
