@@ -21,7 +21,7 @@ export function PartPickerOverlay({ slotCfg, parts, selected, currentId, loading
   // Logic lives in the hook (defined outside); the component only calls it and renders.
   const {
     query, setQuery, sort, setSort, brands, toggleBrand, clearBrands, compatOnly, setCompatOnly,
-    checkingId, handleAdd, priceBounds, effectiveMax, setMaxPrice,
+    checkingId, handleAdd,
     allBrands, filtered, clearFilters,
   } = usePartPicker({ slotCfg, parts, selected, onAdd, onClose });
 
@@ -48,16 +48,6 @@ export function PartPickerOverlay({ slotCfg, parts, selected, currentId, loading
             <input type="checkbox" checked={compatOnly} onChange={(e) => setCompatOnly(e.target.checked)} className="h-3.5 w-3.5 accent-brand" />
             <span className="text-sm font-semibold text-secondary">Compatibility Filter</span>
           </label>
-
-          <div className="mb-6">
-            <p className="mb-3 text-2xs font-black uppercase tracking-[0.25em] text-muted">Price</p>
-            <input type="range" min={priceBounds.min} max={priceBounds.max} step={100000}
-              value={effectiveMax} onChange={(e) => setMaxPrice(Number(e.target.value))} className="w-full accent-brand" />
-            <div className="mt-2 flex justify-between text-xs text-muted">
-              <span>{formatVnd(priceBounds.min)}</span>
-              <span className="font-bold text-secondary">≤ {formatVnd(effectiveMax)}</span>
-            </div>
-          </div>
 
           <div>
             <p className="mb-3 text-2xs font-black uppercase tracking-[0.25em] text-muted">Manufacturer</p>

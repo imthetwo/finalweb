@@ -20,13 +20,14 @@ import { LoginOverlay, RegisterOverlay } from "@/features/auth";
 import type { AuthDialog } from "./types";
 import { Search } from "lucide-react";
 
+// Matches CategoryMenu's (desktop mega-menu) top-level sections/labels/hrefs
+// exactly, so the mobile Sheet isn't a different taxonomy of the same catalog.
 const MOBILE_LINKS = [
-  { label: "Laptops",          href: "/shop/laptops/laptops" },
-  { label: "Prebuilt PCs",     href: "/shop/pcs" },
-  { label: "Components",       href: "/shop/components/processors" },
-  { label: "Gaming Gear",      href: "/shop/gaming-gear/mechanical-keyboards" },
-  { label: "Gaming Furniture", href: "/shop/gaming-furniture" },
-  { label: "PC Builder",       href: "/custom-lab" },
+  { label: "PCs & Laptops",     href: "/shop/pcs" },
+  { label: "PC Components",     href: "/shop/components/processors" },
+  { label: "Gear & Peripherals", href: "/shop/gaming-gear/mechanical-keyboards" },
+  { label: "Furniture",         href: "/shop/gaming-furniture" },
+  { label: "PC Builder",        href: "/custom-lab" },
 ];
 
 // /login and /register are dead-end redirects to "/" (see their page.tsx) —

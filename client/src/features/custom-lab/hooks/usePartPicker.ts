@@ -39,15 +39,6 @@ export function usePartPicker({
     onClose();
   }
 
-  const priceBounds = useMemo(() => {
-    if (!parts.length) return { min: 0, max: 0 };
-    const prices = parts.map((p) => p.displayPrice);
-    return { min: Math.min(...prices), max: Math.max(...prices) };
-  }, [parts]);
-
-  // Parts are fully loaded before overlay mounts, so priceBounds.max is stable at init
-  const [maxPrice, setMaxPrice] = useState<number>(priceBounds.max);
-
   const allBrands = useMemo(() => [...new Set(parts.map((p) => p.brand))].sort(), [parts]);
 
   const toggleBrand = (brand: string) =>
@@ -66,21 +57,18 @@ export function usePartPicker({
       list = list.filter((p) => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q));
     }
     if (brands.size > 0) list = list.filter((p) => brands.has(p.brand));
-    if (maxPrice > 0)    list = list.filter((p) => p.displayPrice <= maxPrice);
     if (sort === "price-asc")  list.sort((a, b) => a.displayPrice - b.displayPrice);
     if (sort === "price-desc") list.sort((a, b) => b.displayPrice - a.displayPrice);
     if (sort === "name-asc")   list.sort((a, b) => a.name.localeCompare(b.name));
     return list;
-  }, [parts, compatOnly, selected, slotCfg.slot, query, brands, maxPrice, sort]);
-
-  const effectiveMax = maxPrice || priceBounds.max;
+  }, [parts, compatOnly, selected, slotCfg.slot, query, brands, sort]);
 
   const clearBrands = () => setBrands(new Set());
-  const clearFilters = () => { setQuery(""); clearBrands(); setMaxPrice(priceBounds.max); };
+  const clearFilters = () => { setQuery(""); clearBrands(); };
 
   return {
     query, setQuery, sort, setSort, brands, toggleBrand, clearBrands, compatOnly, setCompatOnly,
-    checkingId, handleAdd, priceBounds, maxPrice, setMaxPrice, effectiveMax,
+    checkingId, handleAdd,
     allBrands, filtered, clearFilters,
   };
 }
