@@ -18,6 +18,8 @@ type CartViewState =
       isEmpty: boolean;
       updatingId: string | null;
       updateQty: (itemId: string, quantity: number) => void;
+      removeBuild: (buildId: string) => void;
+      removingBuildId: string | null;
     }
   | {
       status: "guest";
@@ -47,6 +49,7 @@ export function useCartView(): CartViewState {
   const [guestItems, setGuestItems] = useState<GuestDisplayItem[]>([]);
   const [guestLoading, setGuestLoading] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [removingBuildId, setRemovingBuildId] = useState<string | null>(null);
   const [trending, setTrending] = useState<ProductListItem[]>([]);
 
   // Cache product details so we don't re-fetch on every cart-updated event
@@ -165,6 +168,32 @@ export function useCartView(): CartViewState {
     }
   }
 
+  // Removes every item sharing this customBuildId in one action — items
+  // within a build have no per-item Remove button (they're a linked set,
+  // not independent lines), so this is the only way to drop a whole build
+  // from the cart short of removing each line via other means. Each
+  // updateCartItemQty(id, 0) call is sequenced through the same
+  // updateSeqRef guard updateQty uses, so a stray single-item updateQty
+  // firing mid-removal can't resurrect the cart with stale data.
+  async function removeBuild(buildId: string) {
+    const items = cart?.items.filter((i) => i.customBuildId === buildId) ?? [];
+    if (items.length === 0) return;
+    const seq = ++updateSeqRef.current;
+    setRemovingBuildId(buildId);
+    try {
+      let latest: Cart | undefined;
+      for (const item of items) {
+        latest = await updateCartItemQty(item.id, 0);
+      }
+      if (seq === updateSeqRef.current && latest) setCart(latest);
+      window.dispatchEvent(new Event("cart-updated"));
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to remove build");
+    } finally {
+      if (seq === updateSeqRef.current) setRemovingBuildId(null);
+    }
+  }
+
   const grouped = useMemo(() => (cart ? groupByBuild(cart.items) : null), [cart]);
   const guestTotal = useMemo(
     () => guestItems.reduce((s, i) => s + i.product.displayPrice * i.quantity, 0),
@@ -184,6 +213,8 @@ export function useCartView(): CartViewState {
       isEmpty: cart.items.length === 0,
       updatingId,
       updateQty,
+      removeBuild,
+      removingBuildId,
     };
   }
 

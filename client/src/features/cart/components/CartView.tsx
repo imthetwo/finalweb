@@ -25,7 +25,7 @@ export function CartView() {
 
   // ── Logged-in user ────────────────────────────────────────────────────────
   if (view.status === "authed") {
-    const { cart, standalone, buildGroups, isEmpty, updatingId, updateQty } = view;
+    const { cart, standalone, buildGroups, isEmpty, updatingId, updateQty, removeBuild, removingBuildId } = view;
     const shipping = isEmpty ? 0 : shippingFor(cart.subTotal);
 
     return (
@@ -45,10 +45,20 @@ export function CartView() {
                   </h1>
                   {buildGroups.map(([buildId, items]) => (
                     <div key={buildId} className="mb-6 border border-brand/30 bg-brand/5 p-4">
-                      <p className="mb-3 text-xs font-black uppercase tracking-wider text-brand">
-                        Custom PC Build —{" "}
-                        {formatVnd(items.reduce((s, i) => s + i.lineTotal, 0))}
-                      </p>
+                      <div className="mb-3 flex items-center justify-between gap-3">
+                        <p className="text-xs font-black uppercase tracking-wider text-brand">
+                          Custom PC Build —{" "}
+                          {formatVnd(items.reduce((s, i) => s + i.lineTotal, 0))}
+                        </p>
+                        <button
+                          type="button"
+                          disabled={removingBuildId === buildId}
+                          onClick={() => removeBuild(buildId)}
+                          className="text-2xs font-bold uppercase tracking-wider text-subtle underline hover:text-destructive disabled:opacity-40"
+                        >
+                          {removingBuildId === buildId ? "Removing…" : "Remove build"}
+                        </button>
+                      </div>
                       <ul className="space-y-3">
                         {items.map((i) => (
                           <CartItemRow key={i.id} item={i} onUpdate={updateQty} updating={updatingId === i.id} />
