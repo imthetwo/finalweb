@@ -33,7 +33,7 @@ export function useBuild() {
 
   // ── Focused hooks ───────────────────────────────────────────────
   const { parts, loading, pickerSlot, openPicker, closePicker } = usePartCatalog();
-  const { compat, validateBuild } = useBuildValidation();
+  const { compat } = useBuildValidation();
   const { addingCart, addAllToCart } = useBuildCart();
 
   return {
@@ -44,6 +44,6 @@ export function useBuild() {
     totalPrice, estimatedWatts, selectedCount,
     // Actions
     openPicker, closePicker, selectPart, removePart, resetBuild,
-    validateBuild, addAllToCart,
+    addAllToCart,
   };
 }

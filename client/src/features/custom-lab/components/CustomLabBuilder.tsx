@@ -24,7 +24,7 @@ export default function CustomLabBuilder() {
     totalPrice, estimatedWatts, selectedCount,
     openPicker, closePicker,
     selectPart, removePart, handleReset,
-    validateBuild, addAllToCart,
+    addAllToCart,
   } = useCustomLabBuilder();
 
   return (
@@ -49,7 +49,6 @@ export default function CustomLabBuilder() {
           compatibility={compat}
           estimatedWatts={estimatedWatts}
           totalPrice={totalPrice}
-          onValidate={validateBuild}
           selectedCount={selectedCount}
           totalSlots={BUILD_SLOTS.length}
         />

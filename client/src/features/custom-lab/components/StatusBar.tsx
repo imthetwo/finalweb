@@ -9,12 +9,11 @@ type Props = {
   compatibility: CompatibilityResult;
   estimatedWatts: number;
   totalPrice: number;
-  onValidate: () => void;
   selectedCount: number;
   totalSlots: number;
 };
 
-export function StatusBar({ compatibility, estimatedWatts, totalPrice, onValidate, selectedCount, totalSlots }: Props) {
+export function StatusBar({ compatibility, estimatedWatts, totalPrice, selectedCount, totalSlots }: Props) {
   const isComplete = selectedCount >= totalSlots;
   const status = selectedCount === 0
     ? { Icon: AlertCircle, label: "Not checked yet", cls: "text-muted border-edge bg-surface" }
@@ -35,16 +34,12 @@ export function StatusBar({ compatibility, estimatedWatts, totalPrice, onValidat
         {status.label}
       </div>
       <div className="flex items-center gap-4">
-        <span className="text-sm text-secondary">
-          <Zap size={11} className="mr-1 inline text-brand" />
+        <span className="text-ui text-secondary">
+          <Zap size={13} className="mr-1 inline text-brand" />
           Wattage: <strong className="text-fg">{estimatedWatts}W</strong>
         </span>
-        <span className="hidden h-3.5 w-px bg-edge sm:block" />
-        <span className="text-sm font-black text-fg">{formatVnd(totalPrice)}</span>
-        <button type="button" onClick={onValidate}
-          className="border border-brand/40 bg-brand/6 px-3 py-1 text-2xs font-black uppercase tracking-wider text-brand hover:bg-brand/15">
-          Validate
-        </button>
+        <span className="hidden h-4 w-px bg-edge sm:block" />
+        <span className="text-lg font-black text-fg">{formatVnd(totalPrice)}</span>
       </div>
     </div>
   );

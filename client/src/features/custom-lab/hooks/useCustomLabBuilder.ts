@@ -23,7 +23,7 @@ export function useCustomLabBuilder() {
     openPicker: rawOpenPicker,
     closePicker: storeClosePicker,
     selectPart, removePart, resetBuild,
-    validateBuild, addAllToCart,
+    addAllToCart,
   } = useBuild();
 
   const handleReset = useCallback(async () => {
@@ -60,6 +60,6 @@ export function useCustomLabBuilder() {
     totalPrice, estimatedWatts, selectedCount,
     openPicker, closePicker,
     selectPart, removePart, handleReset,
-    validateBuild, addAllToCart,
+    addAllToCart,
   };
 }
