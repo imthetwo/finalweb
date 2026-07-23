@@ -21,7 +21,12 @@ export function AdminLoadingSkeleton() {
         </div>
       </aside>
 
-      {/* Main content skeleton */}
+      {/* Main content skeleton — deliberately generic (bars, not a specific
+          table shape): this is Next.js's loading.tsx for the whole /admin
+          route group, so it renders under Dashboard, Products, Orders, and
+          Users alike. None of those tables share the same columns/thumbnail
+          layout, so approximating any one of them exactly would look wrong
+          under the others. */}
       <main className="flex-1 p-8">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
@@ -30,7 +35,7 @@ export function AdminLoadingSkeleton() {
         </div>
 
         {/* Stats cards */}
-        <div className="mb-8 grid grid-cols-4 gap-4">
+        <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="border border-edge bg-elevated p-5">
               <div className="h-3 w-20 animate-pulse rounded bg-elevated" />
@@ -49,14 +54,10 @@ export function AdminLoadingSkeleton() {
               key={i}
               className="flex items-center gap-4 border-b border-edge/50 px-4 py-3"
             >
-              <div className="h-10 w-10 shrink-0 animate-pulse bg-elevated" />
-              <div className="flex-1 space-y-1.5">
-                <div className="h-3 w-2/3 animate-pulse rounded bg-elevated" />
-                <div className="h-2.5 w-1/3 animate-pulse rounded bg-elevated" />
-              </div>
-              <div className="h-3 w-20 animate-pulse rounded bg-elevated" />
-              <div className="h-3 w-12 animate-pulse rounded bg-elevated" />
-              <div className="h-5 w-10 animate-pulse rounded bg-elevated" />
+              <div className="h-3 flex-2 animate-pulse rounded bg-elevated" />
+              <div className="h-3 flex-1 animate-pulse rounded bg-elevated" />
+              <div className="h-3 flex-1 animate-pulse rounded bg-elevated" />
+              <div className="h-3 w-16 shrink-0 animate-pulse rounded bg-elevated" />
             </div>
           ))}
         </div>
