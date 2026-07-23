@@ -5,18 +5,10 @@ import Link from "next/link";
 import { Package, X, ChevronRight } from "lucide-react";
 
 import { type Order } from "@/lib/api";
-import { formatVnd, ORDER_STATUS_BADGE_CLASS as STATUS_STYLE, ORDER_STATUS_LABEL as STATUS_LABEL } from "@/lib/format";
+import { formatVnd, canCancelOrder as canCancel, ORDER_STATUS_BADGE_CLASS as STATUS_STYLE, ORDER_STATUS_LABEL as STATUS_LABEL } from "@/lib/format";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { displayCityName, displayWardName } from "@/lib/vn-locations";
 import { useOrdersTab } from "../hooks/useOrdersTab";
-
-// COD's isPaid=true is set at creation (no gateway needed), not "cash has
-// changed hands" — that only happens on delivery — so it must stay
-// cancellable. Only a genuinely gateway-paid MoMo order is blocked.
-function canCancel(o: Order) {
-  const paidViaMomo = o.paymentMethod === "MOMO" && o.isPaid;
-  return !paidViaMomo && ["PENDING", "AWAITING_CONFIRMATION", "PROCESSING"].includes(o.status);
-}
 
 // An unpaid gateway order (e.g. MoMo) can still be paid — COD is paid on creation.
 function canPay(o: Order) {

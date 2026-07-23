@@ -41,9 +41,22 @@ export class OrdersController {
   }
 
   // ── Guest "track my order" lookup — no auth, orderId + phone must match ──
+  // Throttled: phone is the only proof of ownership here, and it's a short,
+  // guessable string — an unlimited endpoint would let someone brute-force
+  // phone numbers against a known/guessed order id.
   @Post('track')
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   trackOrder(@Body() dto: TrackOrderDto) {
     return this.ordersService.trackGuestOrder(dto.orderId, dto.phone);
+  }
+
+  // ── Guest self-cancel — same orderId+phone proof as the lookup above ─────
+  // Same brute-force concern as /track, but the consequence here is a real
+  // state change (cancel + restock), so the limit is tighter.
+  @Post('track/cancel')
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
+  cancelGuestOrder(@Body() dto: TrackOrderDto) {
+    return this.ordersService.cancelGuestOrder(dto.orderId, dto.phone);
   }
 
   // ── Authenticated routes ──────────────────────────────────────────────────────

@@ -43,6 +43,10 @@ export const fetchOrder = (id: string) =>
 export const trackOrder = (orderId: string, phone: string) =>
   apiFetch<Order>("/orders/track", { method: "POST", body: JSON.stringify({ orderId, phone }) });
 
+// POST /orders/track/cancel — guest self-cancel, same orderId+phone proof as trackOrder.
+export const cancelGuestOrder = (orderId: string, phone: string) =>
+  apiFetch<Order>("/orders/track/cancel", { method: "POST", body: JSON.stringify({ orderId, phone }) });
+
 export const createOrder = (data: {
   shippingInfo: Record<string, string>;
   paymentMethod: string;

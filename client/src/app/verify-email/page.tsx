@@ -1,6 +1,6 @@
 // Server Component — thin page
 import { Suspense } from "react";
-import { VerifyEmailPage } from "@/features/auth/components/VerifyEmailPage";
+import { VerifyEmailPage } from "@/features/auth";
 
 export default function Page() {
   return (

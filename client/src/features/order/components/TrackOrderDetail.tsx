@@ -3,9 +3,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Package, Search } from "lucide-react";
+import { ArrowLeft, Package, Search, XCircle } from "lucide-react";
 
-import { formatVnd, ORDER_STATUS_BADGE_CLASS as STATUS_STYLE, ORDER_STATUS_LABEL as STATUS_LABEL } from "@/lib/format";
+import { formatVnd, canCancelOrder, ORDER_STATUS_BADGE_CLASS as STATUS_STYLE, ORDER_STATUS_LABEL as STATUS_LABEL } from "@/lib/format";
 import { useTrackOrderDetail } from "../hooks/useTrackOrderDetail";
 
 const inputCls =
@@ -14,7 +14,8 @@ const labelCls = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-m
 
 export function TrackOrderDetail({ id }: { id: string }) {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
-  const { phone, setPhone, order, loading, error, needsPhone, submitPhone } = useTrackOrderDetail(id);
+  const { phone, setPhone, order, loading, error, needsPhone, cancelling, submitPhone, cancelThisOrder } =
+    useTrackOrderDetail(id);
 
   return (
     <main className="min-h-screen bg-base px-4 py-10 text-fg md:px-8">
@@ -86,7 +87,13 @@ export function TrackOrderDetail({ id }: { id: string }) {
 
             <div className="border-t border-edge pt-4 flex items-center justify-between">
               <span className="text-body font-bold uppercase tracking-wider text-secondary">
-                {order.paymentMethod} · {order.isPaid ? "Paid" : "Unpaid"}
+                {/* COD's isPaid is set true at order creation just to mean "no
+                    gateway step needed" — cash hasn't actually changed hands
+                    until the courier delivers it. */}
+                {order.paymentMethod} ·{" "}
+                {order.paymentMethod === "COD"
+                  ? (order.status === "DELIVERED" ? "Paid" : "Pay on delivery")
+                  : (order.isPaid ? "Paid" : "Unpaid")}
               </span>
               <span className="text-xl font-black text-brand">{formatVnd(order.totalAmount)}</span>
             </div>
@@ -94,6 +101,17 @@ export function TrackOrderDetail({ id }: { id: string }) {
             <p className="text-xs text-muted">
               Placed on {new Date(order.createdAt).toLocaleString("en-GB")}
             </p>
+
+            {canCancelOrder(order) && (
+              <button
+                type="button"
+                onClick={cancelThisOrder}
+                disabled={cancelling}
+                className="inline-flex w-full items-center justify-center gap-2 border border-destructive/50 py-3 text-sm font-bold uppercase tracking-wider text-destructive transition hover:bg-destructive/10 disabled:opacity-40"
+              >
+                <XCircle size={14} /> {cancelling ? "Cancelling…" : "Cancel order"}
+              </button>
+            )}
           </div>
         )}
       </div>

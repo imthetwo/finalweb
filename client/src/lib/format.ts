@@ -1,3 +1,5 @@
+import type { Order } from "@/types/api";
+
 export function formatVnd(amount: number) {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -36,3 +38,12 @@ export const ORDER_STATUS_TEXT_CLASS: Record<string, string> = {
   DELIVERED: "text-success",
   CANCELLED: "text-muted",
 };
+
+// Shared by the account Orders tab and guest order tracking — same rule the
+// server enforces: COD's isPaid=true is set at creation (no gateway needed),
+// not "cash has changed hands" (that only happens on delivery), so it stays
+// cancellable. Only a genuinely gateway-paid MoMo order is blocked.
+export function canCancelOrder(o: Pick<Order, "paymentMethod" | "isPaid" | "status">) {
+  const paidViaMomo = o.paymentMethod === "MOMO" && o.isPaid;
+  return !paidViaMomo && ["PENDING", "AWAITING_CONFIRMATION", "PROCESSING"].includes(o.status);
+}

@@ -338,6 +338,43 @@ export class OrdersService {
       include: { items: true },
     });
     if (!order) throw new NotFoundException('Order not found');
+    const cancelled = await this.finalizeCancel(order);
+    this.logger.log(`Order ${orderId} cancelled by user ${userId}`);
+    return cancelled;
+  }
+
+  // Self-cancel for a guest, before an order is DELIVERED/CANCELLED — same
+  // ownership proof as trackGuestOrder (orderId prefix + matching phone),
+  // same cancellation rules as the logged-in cancel() above. A guest who's
+  // placed an order and hasn't heard back yet shouldn't have to wait for an
+  // admin to Accept/Reject it before they're allowed to change their mind.
+  async cancelGuestOrder(orderId: string, phone: string) {
+    const candidates = await this.prisma.order.findMany({
+      where: { id: { startsWith: orderId.trim().toLowerCase() }, userId: null },
+      include: { items: true },
+      take: 5,
+    });
+    const order = candidates.find((o) => {
+      const shippingPhone = (o.shippingInfo as { phone?: string } | null)?.phone;
+      return shippingPhone?.trim() === phone.trim();
+    });
+    if (!order) throw new NotFoundException('Order not found. Check your order ID and phone number.');
+
+    const cancelled = await this.finalizeCancel(order);
+    this.logger.log(`Guest order ${order.id} cancelled (phone-verified)`);
+    return cancelled;
+  }
+
+  // Shared by cancel() and cancelGuestOrder() — the caller has already
+  // proven ownership by this point (userId match or orderId+phone match);
+  // this is just the business rule + the atomic restock-and-cancel itself.
+  private async finalizeCancel(order: {
+    id: string;
+    paymentMethod: string;
+    isPaid: boolean;
+    status: OrderStatus;
+    items: { productId: string; quantity: number }[];
+  }) {
     // COD's isPaid=true is set at creation as "no gateway needed", not "cash
     // has changed hands" — that only happens on delivery — so it must stay
     // cancellable. Only a genuinely gateway-paid MoMo order is blocked here;
@@ -353,15 +390,13 @@ export class OrdersService {
           data: { stock: { increment: item.quantity } },
         });
       }
-      const cancelled = await tx.order.update({
-        where: { id: orderId },
-        // isPaid: false — mirrors AdminOrdersService.cancelOrder: no cash was
-        // actually collected (COD's isPaid=true at creation was only ever "no
-        // gateway needed"; a paid MoMo order is blocked above).
+      // isPaid: false — mirrors AdminOrdersService.cancelOrder: no cash was
+      // actually collected (COD's isPaid=true at creation was only ever "no
+      // gateway needed"; a paid MoMo order is blocked above).
+      return tx.order.update({
+        where: { id: order.id },
         data: { status: OrderStatus.CANCELLED, isPaid: false },
       });
-      this.logger.log(`Order ${orderId} cancelled by user ${userId}`);
-      return cancelled;
     });
   }
 }

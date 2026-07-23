@@ -1,4 +1,4 @@
-import type { Category, MenuSection, ProductListResponse, ProductDetail } from "@/types/api";
+import type { Category, ProductListResponse, ProductDetail } from "@/types/api";
 import type { PartCatalogItem } from "@/features/custom-lab/types";
 import { apiFetch } from "./client";
 
@@ -32,14 +32,6 @@ export function fetchProductById(id: string) {
 // opposed to fetchProductById's narrower list-item shape used for cart display.
 export function fetchProductDetail(id: string) {
   return apiFetch<ProductDetail>(`/products/${id}`);
-}
-
-export function fetchCategoryMenu() {
-  return apiFetch<{ sections: MenuSection[] }>("/categories/menu");
-}
-
-export function fetchCategory(id: string) {
-  return apiFetch<Category>(`/categories/${id}`);
 }
 
 export function fetchCategories() {

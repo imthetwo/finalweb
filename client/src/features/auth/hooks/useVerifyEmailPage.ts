@@ -3,6 +3,7 @@ import { useSearchParams } from "next/navigation";
 
 import { verifyEmail } from "@/lib/api/auth";
 import { saveToken } from "@/lib/auth";
+import { syncGuestDataToAccount } from "../utils/syncGuestDataToAccount";
 
 type Status = "verifying" | "success" | "error";
 
@@ -17,10 +18,14 @@ export function useVerifyEmailPage() {
   useEffect(() => {
     if (!token) return;
     verifyEmail(token)
-      .then((res) => {
+      .then(async (res) => {
         // Reissues the JWT so isEmailVerified updates immediately, without
-        // requiring the user to log out and back in.
+        // requiring the user to log out and back in. This is also this
+        // account's first real session if they just registered — same as
+        // email login/Google — so claim past guest orders + merge the guest
+        // cart here too, or a guest who registered mid-session loses both.
         saveToken(res.access_token);
+        await syncGuestDataToAccount(res.access_token);
         setStatus("success");
       })
       .catch(() => setStatus("error"));

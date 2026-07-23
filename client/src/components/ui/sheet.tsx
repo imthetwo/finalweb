@@ -140,10 +140,6 @@ export function SheetTitle({ children }: { children: ReactNode }) {
   return <div className="text-sm font-bold uppercase tracking-[0.2em] text-white">{children}</div>;
 }
 
-export function SheetDescription({ children }: { children: ReactNode }) {
-  return <div className="text-sm text-zinc-400">{children}</div>;
-}
-
 export function SheetBody({ children }: { children: ReactNode }) {
   return <div className="flex-1 overflow-y-auto px-5 py-4">{children}</div>;
 }

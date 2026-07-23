@@ -32,16 +32,6 @@ export type ProductListResponse = {
   totalPages: number;
 };
 
-export type MenuLink = { label: string; href: string; productCount: number };
-export type MenuSection = {
-  key: string;
-  href: string;
-  categoryId?: string;
-  name?: string;
-  productCount: number;
-  columns: Array<{ title: string; links: MenuLink[] }>;
-};
-
 // ─── Specs (Table Per Type) ───────────────────────────────────────────────────
 
 export type CpuSpec = {
