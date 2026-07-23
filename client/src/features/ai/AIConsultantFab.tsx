@@ -84,7 +84,7 @@ export default function AIConsultantFab() {
                 <p className="text-body font-black uppercase tracking-wider text-fg">Pecify Assistant</p>
                 <p className="flex items-center gap-1.5 text-2xs text-muted">
                   <span className="h-1.5 w-1.5 rounded-full bg-success" />
-                  Assistant
+                  Chat with us
                 </p>
               </div>
             </div>

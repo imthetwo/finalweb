@@ -5,7 +5,7 @@ import type { ChatTurn } from "@/types/api";
 
 const WELCOME: ChatTurn = {
   role: "model",
-  text: "Hi! I'm Pecify's PC-build assistant 🤖\nTell me your **budget** and **needs** (gaming, work, rendering…) and I'll recommend a build from what's currently in stock!",
+  text: "Hi! Tell me your **budget** and **needs** (gaming, work, rendering…) and I'll recommend an in-stock build.",
 };
 
 // Data/logic for the AI consultant — chat history, sending messages to /ai/chat,
