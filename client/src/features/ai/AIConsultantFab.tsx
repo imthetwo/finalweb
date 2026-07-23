@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Phone, Send, X } from "lucide-react";
+import { MessageCircle, Send, X } from "lucide-react";
 
 import { useAIConsultant } from "./hooks/useAIConsultant";
 
@@ -65,7 +65,7 @@ export default function AIConsultantFab() {
             aria-label="Open AI assistant"
             className="group relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand text-black shadow-glow-md transition-all duration-300 hover:scale-110 hover:shadow-glow-lg"
           >
-            <Phone size={26} />
+            <MessageCircle size={26} />
             {/* online pulse dot */}
             <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
@@ -83,13 +83,13 @@ export default function AIConsultantFab() {
           <div className="flex shrink-0 items-center justify-between border-b border-edge bg-[linear-gradient(180deg,#1a2730_0%,#0d0d0d_100%)] px-4 py-3">
             <div className="flex items-center gap-2.5">
               <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-brand/10 text-brand">
-                <Phone size={18} />
+                <MessageCircle size={18} />
               </div>
               <div>
                 <p className="text-body font-black uppercase tracking-wider text-fg">Pecify Assistant</p>
                 <p className="flex items-center gap-1.5 text-2xs text-muted">
                   <span className="h-1.5 w-1.5 rounded-full bg-success" />
-                  PC Build Advisor
+                  Assistant
                 </p>
               </div>
             </div>
