@@ -30,7 +30,7 @@ export class AuthService {
 		}
 		const password = await bcrypt.hash(dto.password, 10);
 		const verifyToken = randomBytes(32).toString('hex');
-		const verifyTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+		const verifyTokenExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15min
 		const user = await this.prisma.user.create({
 			data: {
 				email: dto.email,

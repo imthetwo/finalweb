@@ -42,7 +42,7 @@ export class EmailVerificationService {
 	// the user is looked up and what they're allowed to reveal in the response.
 	private async issueFreshVerification(user: { id: string; email: string }) {
 		const verifyToken = randomBytes(32).toString('hex');
-		const verifyTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+		const verifyTokenExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15min
 		await this.prisma.user.update({
 			where: { id: user.id },
 			data: { verifyToken, verifyTokenExpiry },

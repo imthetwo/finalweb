@@ -64,7 +64,7 @@ export class EmailService {
       to,
       'Verify your Pecify email',
       `<h2>Confirm your email address</h2>
-       <p>Click the link below to verify your email (valid for 24 hours):</p>
+       <p>Click the link below to verify your email (valid for 15 minutes):</p>
        <a href="${link}">${link}</a>
        <p>You can keep browsing and shopping in the meantime — this is just to confirm we can reach you.</p>`,
     );
