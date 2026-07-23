@@ -3,7 +3,7 @@ import ShopBrowser from "@/features/shop/ShopBrowser";
 import { getShopPage } from "@/features/shop/data/getShopPage";
 
 type Props = {
-  searchParams: Promise<{ page?: string; search?: string }>;
+  searchParams: Promise<{ page?: string; search?: string; sortBy?: string; maxPrice?: string }>;
 };
 
 export default async function ShopPage({ searchParams }: Props) {

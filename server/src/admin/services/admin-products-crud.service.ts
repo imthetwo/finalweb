@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ProductsService, SPEC_INCLUDE } from '../../products/products.service';
@@ -128,6 +128,19 @@ export class AdminProductsCrudService {
 
   async remove(id: string) {
     await this.assertExists(id);
+    // OrderItem has no onDelete: Cascade on purpose — a product that's ever
+    // been ordered is permanent financial/record-keeping history and must
+    // never disappear from a past order, even a delivered or cancelled one.
+    // (CartItem *does* cascade — a cart isn't historical, so it's fine for a
+    // deleted product to just quietly drop out of it.) Without this check,
+    // the delete would instead fail as a raw, unhandled 500 (Postgres FK
+    // violation / Prisma P2003).
+    const everOrdered = await this.prisma.orderItem.findFirst({ where: { productId: id } });
+    if (everOrdered) {
+      throw new BadRequestException(
+        'This product appears in past orders and cannot be deleted — unpublish it instead to hide it from the shop.',
+      );
+    }
     await this.prisma.product.delete({ where: { id } });
     return { ok: true };
   }

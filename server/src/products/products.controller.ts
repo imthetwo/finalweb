@@ -1,6 +1,6 @@
 import { Controller, Get, Header, Param, Query } from '@nestjs/common';
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsIn, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { ProductsService } from './products.service';
 
 class ListProductsQueryDto {
@@ -10,6 +10,8 @@ class ListProductsQueryDto {
   @IsOptional() @IsString() storageType?: string;
   @IsOptional() @IsString() coolerType?: string;
   @IsOptional() @IsString() furnitureType?: string;
+  @IsOptional() @IsIn(['featured', 'price-asc', 'price-desc', 'name']) sortBy?: string;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(0) maxPrice?: number;
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) page?: number;
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(100) limit?: number;
 }

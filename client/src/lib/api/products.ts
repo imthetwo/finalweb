@@ -9,6 +9,8 @@ export function fetchProducts(params: {
   storageType?: string;
   coolerType?: string;
   furnitureType?: string;
+  sortBy?: string;
+  maxPrice?: number;
   page?: number;
   limit?: number;
 }) {
@@ -19,6 +21,8 @@ export function fetchProducts(params: {
   if (params.storageType) q.set("storageType", params.storageType);
   if (params.coolerType) q.set("coolerType", params.coolerType);
   if (params.furnitureType) q.set("furnitureType", params.furnitureType);
+  if (params.sortBy) q.set("sortBy", params.sortBy);
+  if (params.maxPrice != null) q.set("maxPrice", String(params.maxPrice));
   if (params.page) q.set("page", String(params.page));
   q.set("limit", String(params.limit ?? 48));
   return apiFetch<ProductListResponse>(`/products?${q.toString()}`);

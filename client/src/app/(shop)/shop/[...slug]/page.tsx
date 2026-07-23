@@ -6,6 +6,7 @@ type Props = {
   searchParams: Promise<{
     page?: string; search?: string; type?: string;
     storageType?: string; coolerType?: string; furnitureType?: string;
+    sortBy?: string; maxPrice?: string;
   }>;
 };
 

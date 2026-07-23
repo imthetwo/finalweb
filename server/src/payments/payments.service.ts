@@ -373,16 +373,24 @@ export class PaymentsService {
     }
 
     const updated = await this.prisma.$transaction(async (tx) => {
+      // Atomic guard against a duplicate/concurrent refund call (double-click,
+      // two admin tabs) both reaching MoMo successfully before either writes —
+      // mirrors markOrderPaid/cancelAndRestock above. The checks before the
+      // MoMo call are a friendlier early error; this is what actually
+      // prevents a double restock if two calls both pass those checks.
+      const guard = await tx.order.updateMany({
+        where: { id: orderId, isPaid: true, status: { not: OrderStatus.CANCELLED } },
+        data: { status: OrderStatus.CANCELLED, isPaid: false, refundedAt: new Date() },
+      });
+      if (guard.count === 0) throw new BadRequestException('Order is already cancelled or refunded');
+
       for (const item of order.items) {
         await tx.product.update({
           where: { id: item.productId },
           data: { stock: { increment: item.quantity } },
         });
       }
-      return tx.order.update({
-        where: { id: orderId },
-        data: { status: OrderStatus.CANCELLED, isPaid: false, refundedAt: new Date() },
-      });
+      return tx.order.findUniqueOrThrow({ where: { id: orderId } });
     });
 
     const recipient = order.user?.email ?? order.guestEmail;

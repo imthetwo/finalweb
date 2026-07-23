@@ -56,6 +56,8 @@ export class ProductsService {
     storageType?: string;
     coolerType?: string;
     furnitureType?: string;
+    sortBy?: string;
+    maxPrice?: number;
     page?: number;
     limit?: number;
   }) {
@@ -107,30 +109,57 @@ export class ProductsService {
       where.OR = orConditions;
     }
 
-    const [items, total] = await Promise.all([
-      this.prisma.product.findMany({
-        where,
-        select: {
-          id: true, name: true, brand: true, price: true, salePrice: true,
-          stock: true, isPublished: true, imageUrl: true,
-          category: { select: { id: true, name: true } },
-          cpuSpec:         { select: { socket: true, tdp: true } },
-          gpuSpec:         { select: { tdp: true, lengthMm: true } },
-          ramSpec:         { select: { generation: true, speedMhz: true } },
-          motherboardSpec: { select: { socket: true, ramGen: true, formFactor: true, ramSlots: true, maxRamGb: true } },
-          psuSpec:         { select: { wattage: true } },
-          caseSpec:        { select: { formFactor: true, maxGpuLengthMm: true } },
-          coolerSpec:      { select: { socketSupport: true, tdpRating: true } },
-          storageSpec:     { select: { capacityGb: true, interfaceType: true } },
-          pcBuildSpec:     { select: { buildType: true } },
-          furnitureSpec:   { select: { furnitureType: true } },
-        },
-        orderBy: { name: 'asc' },
-        skip,
-        take: limit,
-      }),
-      this.prisma.product.count({ where }),
-    ]);
+    // effectivePrice (salePrice when it's a real discount, else price) is a
+    // computed value, not a bare column — Prisma's `orderBy` can't express
+    // "ORDER BY LEAST(sale, price) unless sale >= price" directly. So: fetch
+    // every matching row's id + the two raw price columns (cheap — no specs,
+    // no images), sort/paginate THAT in JS using the same effectivePrice()
+    // used everywhere else, then do a normal Prisma findMany for just the
+    // resulting page's ids to get the full shape. Keeps a single source of
+    // truth for "what does this product cost" instead of re-deriving a SQL
+    // equivalent that could drift from it.
+    const maxPrice = params.maxPrice;
+    const candidates = await this.prisma.product.findMany({
+      where,
+      select: { id: true, name: true, price: true, salePrice: true },
+    });
+
+    let ranked = candidates.map((p) => ({ ...p, displayPrice: effectivePrice(p) }));
+    if (maxPrice != null) ranked = ranked.filter((p) => p.displayPrice <= maxPrice);
+
+    if (params.sortBy === 'price-asc')       ranked.sort((a, b) => a.displayPrice - b.displayPrice);
+    else if (params.sortBy === 'price-desc') ranked.sort((a, b) => b.displayPrice - a.displayPrice);
+    else if (params.sortBy === 'name')       ranked.sort((a, b) => a.name.localeCompare(b.name));
+    else                                     ranked.sort((a, b) => a.name.localeCompare(b.name));
+
+    const total = ranked.length;
+    const pageIds = ranked.slice(skip, skip + limit).map((p) => p.id);
+
+    const rows = pageIds.length
+      ? await this.prisma.product.findMany({
+          where: { id: { in: pageIds } },
+          select: {
+            id: true, name: true, brand: true, price: true, salePrice: true,
+            stock: true, isPublished: true, imageUrl: true,
+            category: { select: { id: true, name: true } },
+            cpuSpec:         { select: { socket: true, tdp: true } },
+            gpuSpec:         { select: { tdp: true, lengthMm: true } },
+            ramSpec:         { select: { generation: true, speedMhz: true } },
+            motherboardSpec: { select: { socket: true, ramGen: true, formFactor: true, ramSlots: true, maxRamGb: true } },
+            psuSpec:         { select: { wattage: true } },
+            caseSpec:        { select: { formFactor: true, maxGpuLengthMm: true } },
+            coolerSpec:      { select: { socketSupport: true, tdpRating: true } },
+            storageSpec:     { select: { capacityGb: true, interfaceType: true } },
+            pcBuildSpec:     { select: { buildType: true } },
+            furnitureSpec:   { select: { furnitureType: true } },
+          },
+        })
+      : [];
+
+    // findMany({ id: { in } }) doesn't preserve input order — reassert the
+    // already-decided rank/page order from `ranked` above.
+    const byId = new Map(rows.map((r) => [r.id, r]));
+    const items = pageIds.map((id) => byId.get(id)!).filter(Boolean);
 
     return {
       items: items.map((p) => this.formatProduct(p)),
