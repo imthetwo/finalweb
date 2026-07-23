@@ -50,12 +50,12 @@ export function PartPickerOverlay({ slotCfg, parts, selected, currentId, loading
           </label>
 
           <div>
-            <p className="mb-3 text-2xs font-black uppercase tracking-[0.25em] text-muted">Manufacturer</p>
+            <p className="mb-3 text-2xs font-black uppercase tracking-[0.25em] text-brand">Manufacturer</p>
             <div className="flex flex-col gap-1.5">
               {allBrands.map((brand) => (
                 <label key={brand} className="group flex cursor-pointer items-center gap-2 py-0.5">
                   <input type="checkbox" checked={brands.has(brand)} onChange={() => toggleBrand(brand)} className="h-3.5 w-3.5 accent-brand" />
-                  <span className={cn("text-sm transition-colors group-hover:text-fg", brands.has(brand) ? "font-bold text-brand" : "text-secondary")}>
+                  <span className={cn("text-sm transition-colors group-hover:text-fg", brands.has(brand) ? "font-bold text-brand" : "text-fg")}>
                     {brand}
                   </span>
                 </label>
@@ -108,17 +108,17 @@ export function PartPickerOverlay({ slotCfg, parts, selected, currentId, loading
                 <thead className="sticky top-0 z-10 border-b border-edge bg-elevated">
                   <tr>
                     <th className="w-14 px-3 py-2.5" />
-                    <th className="px-3 py-2.5 text-left text-2xs font-bold uppercase tracking-wider text-muted">
-                      <button type="button" onClick={() => setSort("name-asc")} className="flex items-center gap-1 hover:text-fg">
+                    <th className="px-3 py-2.5 text-left text-xs font-bold uppercase tracking-wider text-fg">
+                      <button type="button" onClick={() => setSort("name-asc")} className="flex items-center gap-1 hover:text-brand">
                         Name <ArrowUpDown size={9} />
                       </button>
                     </th>
                     {slotCfg.specs.map((s) => (
-                      <th key={s.key} className="hidden px-3 py-2.5 text-left text-2xs font-bold uppercase tracking-wider text-muted md:table-cell">{s.label}</th>
+                      <th key={s.key} className="hidden px-3 py-2.5 text-left text-xs font-bold uppercase tracking-wider text-fg md:table-cell">{s.label}</th>
                     ))}
-                    <th className="px-4 py-2.5 text-right text-2xs font-bold uppercase tracking-wider text-muted">
+                    <th className="px-4 py-2.5 text-right text-xs font-bold uppercase tracking-wider text-fg">
                       <button type="button" onClick={() => setSort(sort === "price-asc" ? "price-desc" : "price-asc")}
-                        className="ml-auto flex items-center gap-1 hover:text-fg">Price <ArrowUpDown size={9} /></button>
+                        className="ml-auto flex items-center gap-1 hover:text-brand">Price <ArrowUpDown size={9} /></button>
                     </th>
                     <th className="w-24 px-4 py-2.5" />
                   </tr>
