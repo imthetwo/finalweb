@@ -91,20 +91,13 @@ export default function MainNav() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <LoginOverlay
-                      triggerButton={
-                        <button type="button" className="border border-edge px-4 py-3 text-center text-sm font-bold uppercase tracking-wider text-secondary transition-colors hover:border-fg hover:text-fg">
-                          Sign In
-                        </button>
-                      }
-                    />
-                    <SheetClose>
-                      <Link href="/login" className="block border border-brand/40 px-4 py-3 text-center text-sm font-bold uppercase tracking-wider text-brand transition-colors hover:bg-brand hover:text-black">
-                        Register
-                      </Link>
-                    </SheetClose>
-                  </div>
+                  <LoginOverlay
+                    triggerButton={
+                      <button type="button" className="block w-full border border-edge px-4 py-3 text-center text-sm font-bold uppercase tracking-wider text-secondary transition-colors hover:border-fg hover:text-fg">
+                        Sign In
+                      </button>
+                    }
+                  />
                   <SheetClose>
                     <Link href="/track-order" className="block border border-edge py-2 text-center text-xs font-bold uppercase tracking-wider text-secondary hover:border-edge hover:text-fg">
                       Track an order
