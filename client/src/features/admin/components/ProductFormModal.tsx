@@ -84,8 +84,9 @@ export default function ProductFormModal({
           </div>
 
           {/* Pricing */}
+          <p className={`${cls.label} -mb-2`}>Pricing (VND)</p>
           <div className={`${cls.row3} border-y border-edge py-4`}>
-            <Field label="Cost price (VND)">
+            <Field label="Cost price">
               <input type="number" min={0} step="1000" className={cls.input} value={form.costPrice ?? ""} onChange={(e) => set("costPrice", e.target.value ? Number(e.target.value) : undefined)} placeholder="12000000" />
               {form.costPrice && form.price > 0 && (
                 <p className="mt-1 text-xs text-brand">
@@ -93,10 +94,10 @@ export default function ProductFormModal({
                 </p>
               )}
             </Field>
-            <Field label="Selling price (VND) *">
+            <Field label="Selling price *">
               <input type="number" min={0} step="1000" className={cls.input} value={form.price || ""} onChange={(e) => set("price", Number(e.target.value))} placeholder="16000000" />
             </Field>
-            <Field label="Sale price (VND)">
+            <Field label="Sale price">
               <input type="number" min={0} step="1000" className={cls.input} value={form.salePrice ?? ""} onChange={(e) => set("salePrice", e.target.value ? Number(e.target.value) : undefined)} placeholder="Leave empty if none" />
             </Field>
           </div>

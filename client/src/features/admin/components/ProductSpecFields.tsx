@@ -35,7 +35,7 @@ const SPEC_LABELS: Record<SpecKey, string> = {
 export const inputCls =
   "w-full border border-edge bg-surface px-3 py-2 text-body text-fg outline-none focus:border-brand/50 placeholder:text-subtle";
 export const labelCls =
-  "mb-1 block text-2xs font-bold uppercase tracking-wider text-muted";
+  "mb-1 block text-2xs font-bold uppercase tracking-wider text-muted whitespace-nowrap";
 const rowCls = "grid grid-cols-2 gap-4";
 
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {
