@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
+import Link from "next/link";
 
 import type { ProductListItem } from "@/types/api";
 import { ProductCard } from "./components/ProductCard";
@@ -27,7 +28,13 @@ export default function ShopBrowser({
     <main className="min-h-screen bg-base text-fg">
       <div className="mx-auto max-w-350 px-4 py-8 md:px-8">
         {/* Header */}
-        <p className="text-xs uppercase tracking-wider text-muted">Home / Shop / {title}</p>
+        <p className="text-xs uppercase tracking-wider text-muted">
+          <Link href="/" className="hover:text-fg">Home</Link>
+          {" / "}
+          <Link href="/shop" className="hover:text-fg">Shop</Link>
+          {" / "}
+          {title}
+        </p>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-4 border-b border-edge pb-5">
           <h1 className="text-3xl font-black uppercase tracking-tight">{title}</h1>
           <div className="flex items-center gap-2 text-sm">
