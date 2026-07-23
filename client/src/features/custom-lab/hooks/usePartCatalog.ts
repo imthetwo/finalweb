@@ -55,12 +55,28 @@ export function usePartCatalog() {
       .catch(() => toast.error("Failed to load part categories — please refresh"));
   }, [catMap, setCatMap]);
 
+  // Category map + part list load in parallel with the picker being openable,
+  // so a click landing before fetchCategories() resolves used to see an empty
+  // catMap, cache `parts[slot] = []` forever, and never retry (the `if
+  // (parts[slot])` guard below treats a real empty result the same as "not
+  // loaded yet" — [] is truthy). Resolve catMap here first so the category
+  // lookup always sees real data.
+  const ensureCatMap = useCallback(async (): Promise<Record<string, string>> => {
+    if (Object.keys(catMap).length) return catMap;
+    const cats = await fetchCategories();
+    const map: Record<string, string> = {};
+    for (const cat of cats) map[cat.name] = cat.id;
+    setCatMap(map);
+    return map;
+  }, [catMap, setCatMap]);
+
   // ── Async: load parts from the DB per slot ───────────────────────
   const loadParts = useCallback(async (slot: string) => {
     if (parts[slot]) return;
     setLoading(slot, true);
     try {
-      const categoryId = catMap[SLOT_TO_CATEGORY[slot]];
+      const map = await ensureCatMap();
+      const categoryId = map[SLOT_TO_CATEGORY[slot]];
       if (!categoryId) { setParts(slot, []); return; }
 
       const storageType = SLOT_TO_STORAGE_TYPE[slot];
@@ -90,7 +106,7 @@ export function usePartCatalog() {
     } finally {
       setLoading(slot, false);
     }
-  }, [parts, catMap, setParts, setLoading]);
+  }, [parts, ensureCatMap, setParts, setLoading]);
 
   const openPicker = useCallback(async (slot: string) => {
     await loadParts(slot);

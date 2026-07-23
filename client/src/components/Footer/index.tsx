@@ -25,7 +25,6 @@ const LINKS = {
     { label: "Compatibility Guide", href: "/custom-lab" },
   ],
   Support: [
-    { label: "My Account", href: "/account" },
     { label: "Track Order", href: "/track-order" },
     { label: "Warranty Policy", href: "/warranty" },
     { label: "Contact Us", href: "/support" },
