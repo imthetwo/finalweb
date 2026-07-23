@@ -18,3 +18,15 @@ export function assertSalePriceValid(price: number, salePrice: number | null | u
     throw new BadRequestException('Sale price must be lower than the regular price');
   }
 }
+
+// Shared VND display formatter — VND has no minor unit, so amounts are
+// always whole numbers (maximumFractionDigits: 0), same rule for every
+// place money gets shown to a user (email templates, the AI assistant).
+const vndFormatter = new Intl.NumberFormat('vi-VN', {
+  style: 'currency',
+  currency: 'VND',
+  maximumFractionDigits: 0,
+});
+export function formatVnd(amount: number): string {
+  return vndFormatter.format(amount);
+}

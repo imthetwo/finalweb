@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { effectivePrice } from '../common/pricing';
+import { effectivePrice, formatVnd } from '../common/pricing';
 
 export type ChatTurn = { role: 'user' | 'model'; text: string };
 
@@ -79,11 +79,6 @@ export class AiService {
       byCat.set(catName, [...(byCat.get(catName) ?? []), p]);
     }
 
-    const fmt = new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-      maximumFractionDigits: 0,
-    });
     const lines: string[] = [];
     let count = 0;
 
@@ -93,7 +88,7 @@ export class AiService {
         count++;
         const price = effectivePrice(p);
         lines.push(
-          `- ${p.name} (${p.brand}) — ${fmt.format(price)}${this.specOf(p)} — ${p.stock} in stock — link: /product/${p.id}`,
+          `- ${p.name} (${p.brand}) — ${formatVnd(price)}${this.specOf(p)} — ${p.stock} in stock — link: /product/${p.id}`,
         );
       }
     }

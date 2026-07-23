@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { google } from 'googleapis';
 import { getClientUrl } from '../common/client-url';
+import { formatVnd } from '../common/pricing';
 
 // Sends via the Gmail API (OAuth2) instead of raw SMTP — Render has no
 // outbound path to smtp.gmail.com that Google doesn't throttle/drop
@@ -34,13 +35,12 @@ export class EmailService {
   }
 
   async sendOrderConfirmation(to: string, orderId: string, totalAmount: number) {
-    const fmt = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
     await this.send(
       to,
       `Order confirmation #${orderId.slice(0, 8).toUpperCase()}`,
       `<h2>Your order has been placed successfully!</h2>
        <p>Order ID: <strong>${orderId.slice(0, 8).toUpperCase()}</strong></p>
-       <p>Total: <strong>${fmt.format(totalAmount)}</strong></p>
+       <p>Total: <strong>${formatVnd(totalAmount)}</strong></p>
        <p>We'll process your order as soon as possible.</p>
        <a href="${getClientUrl()}/account?tab=orders">View order</a>`,
     );

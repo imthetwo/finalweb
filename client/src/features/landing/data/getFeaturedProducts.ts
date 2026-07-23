@@ -1,24 +1,10 @@
 import { serverApiUrl } from "@/lib/api";
+import type { ProductListItem, ProductListResponse } from "@/types/api";
 
-export type FeaturedProduct = {
-  id: string;
-  name: string;
-  brand: string;
-  price: number;
-  salePrice: number | null;
-  displayPrice: number;
-  thumbnailUrl: string | null;
-  stock: number;
-  category?: { id: string; name: string };
-};
-
-type ProductListResponse = {
-  items: FeaturedProduct[];
-  total: number;
-};
+export type { ProductListItem as FeaturedProduct };
 
 // GET /products?limit=&page=1 — used by the landing page's Featured Products section
-export async function getFeaturedProducts(limit = 8): Promise<FeaturedProduct[]> {
+export async function getFeaturedProducts(limit = 8): Promise<ProductListItem[]> {
   try {
     const res = await fetch(`${serverApiUrl}/products?limit=${limit}&page=1`, {
       next: { revalidate: 120 },

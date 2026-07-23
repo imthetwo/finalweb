@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 
 type SheetContextValue = {
   open: boolean;
@@ -76,20 +77,9 @@ type SheetContentProps = {
 export function SheetContent({ children, side = "right", className }: SheetContentProps) {
   const { open, setOpen } = useSheetContext();
 
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setOpen(false);
-      }
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, setOpen]);
+  // Safe to register unconditionally (not gated on `open`) — this component
+  // returns null below when closed, so the effect never runs while closed.
+  useEscapeKey(() => setOpen(false));
 
   useEffect(() => {
     if (!open) {

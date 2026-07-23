@@ -1,6 +1,9 @@
 "use client";
 
 import { useAuthStore } from "@/store/authStore";
+import { getToken } from "./api/client";
+
+export { getToken };
 
 const KEY = "access_token";
 // Must match the server's JWT_EXPIRES_IN (7d) — a shorter cookie age than the
@@ -48,10 +51,6 @@ export function clearToken() {
   localStorage.removeItem(KEY);
   document.cookie = `${KEY}=; path=/; max-age=0; SameSite=Lax`;
   useAuthStore.getState().setUser(null);
-}
-
-export function getToken(): string | null {
-  return localStorage.getItem(KEY);
 }
 
 export function initAuth() {

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import CustomLabBuilder from "@/features/custom-lab/components/CustomLabBuilder";
+import { CustomLabBuilder } from "@/features/custom-lab";
 
 export default function Page() {
   return (

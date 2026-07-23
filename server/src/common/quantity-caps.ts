@@ -11,7 +11,7 @@ const MAX_TWO_CATEGORIES = new Set([
   'Prebuilt PCs',
 ]);
 
-export const DEFAULT_QTY_CAP = 5;
+const DEFAULT_QTY_CAP = 5;
 
 export function maxQtyFor(categoryName?: string | null): number {
   return categoryName && MAX_TWO_CATEGORIES.has(categoryName) ? 2 : DEFAULT_QTY_CAP;

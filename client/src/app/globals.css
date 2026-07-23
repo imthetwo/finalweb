@@ -15,7 +15,6 @@
   --glow-md: 0 0 24px color-mix(in srgb, var(--primary) 45%, transparent);
   --glow-lg: 0 0 36px color-mix(in srgb, var(--primary) 70%, transparent);
   --glow-btn: 0 0 40px color-mix(in srgb, var(--primary) 35%, transparent);
-  --glow-btn-hover: 0 0 40px color-mix(in srgb, var(--primary) 45%, transparent);
 
   /* ── Text shadows ── */
   --text-shadow-brand:
@@ -87,7 +86,6 @@
   --spacing-section: 5rem;
   --radius-card: 0rem;
   --radius-soft: 0rem;
-  --animate-marquee: marquee 20s linear infinite;
   --animate-shimmer: shimmer 1.5s ease-in-out infinite;
 }
 
@@ -162,7 +160,6 @@
   --text-3xl--font-size: var(--text-3xl);
 
   --animate-shimmer: shimmer 1.5s ease-in-out infinite;
-  --animate-marquee: var(--animate-marquee);
   --spacing-shell: var(--spacing-shell);
   --radius-card: var(--radius-card);
 
@@ -172,16 +169,6 @@
   --shadow-glow-md: var(--glow-md);
   --shadow-glow-lg: var(--glow-lg);
   --shadow-glow-btn: var(--glow-btn);
-}
-
-@keyframes marquee {
-  0% {
-    transform: translateX(100%);
-  }
-
-  100% {
-    transform: translateX(-100%);
-  }
 }
 
 @layer base {
@@ -206,26 +193,3 @@
   }
 }
 
-.animate-marquee {
-  animation: var(--animate-marquee);
-}
-
-.nav-underline-effect {
-  position: relative;
-}
-
-.nav-underline-effect::after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background-color: var(--primary);
-  transition: width 0.3s ease;
-}
-
-.nav-underline-effect:hover::after,
-.nav-underline-effect[data-active="true"]::after {
-  width: 100%;
-}
