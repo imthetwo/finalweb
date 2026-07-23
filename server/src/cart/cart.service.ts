@@ -102,12 +102,7 @@ export class CartService {
     return this.getCart(userId);
   }
 
-  // Merge a guest (localStorage) cart into the account cart on login/register.
-  // Unlike addItem (one-shot: rejects a product already in the cart), a merge
-  // must be lossless — if the product is already there, the quantities are
-  // combined (clamped to the category cap and current stock) instead of the
-  // guest's item being discarded. Products that no longer exist/are unpublished
-  // are skipped and counted so the caller can inform the user.
+
   async mergeGuestItems(userId: string, items: { productId: string; quantity: number }[]) {
     const cart = await this.getOrCreateCart(userId);
     let merged = 0;
