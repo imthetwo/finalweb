@@ -69,7 +69,11 @@ export class CaseSpecDto {
 export class CoolerSpecDto {
   @IsString() coolerType!: string;
   @IsOptional() @IsInt() tdpRating?: number;
-  @IsOptional() @IsInt() radiatorSizeMm?: number;
+  // The admin form's radiator-size control is a fixed-option <select> (client
+  // ProductSpecFields.tsx), so its value always arrives as a string even
+  // though this is an Int column — @Type(() => Number) is what makes the
+  // (global transform: true, no enableImplicitConversion) pipe accept it.
+  @IsOptional() @Type(() => Number) @IsInt() radiatorSizeMm?: number;
   @IsOptional() @IsString() socketSupport?: string;
 }
 

@@ -30,8 +30,8 @@ export class AdminOrdersExportService {
     for (const o of orders) {
       ws.addRow({
         id: o.id.slice(0, 8).toUpperCase(),
-        customer: o.user?.fullName ?? '—',
-        email: o.user?.email ?? '—',
+        customer: o.user?.fullName ?? 'Guest',
+        email: o.user?.email ?? o.guestEmail ?? '—',
         total: o.totalAmount,
         paymentMethod: o.paymentMethod,
         // A cancelled order never had cash actually collected, regardless of

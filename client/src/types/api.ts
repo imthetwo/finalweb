@@ -96,7 +96,7 @@ export type UserProfile = {
   email: string;
   fullName: string;
   phone: string | null;
-  role: "USER" | "ADMIN";
+  role: "USER" | "STAFF" | "ADMIN";
   createdAt: string;
   isGoogleUser: boolean;
   isEmailVerified: boolean;

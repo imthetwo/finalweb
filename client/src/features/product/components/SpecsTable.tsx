@@ -36,7 +36,9 @@ function ramSpecRows(s: RamSpec): SpecRow[] {
     { label: "Capacity",    value: `${s.capacityGb} GB${s.kit ? ` (${s.kit})` : ""}` },
     { label: "Generation",  value: s.generation },
     { label: "Speed",       value: `${s.speedMhz} MHz` },
-    s.latency && { label: "Latency", value: `CL${s.latency}` },
+    // Stored values already include the "CL" prefix (admin form placeholder
+    // is "CL30", entered as-is) — don't prepend another one here.
+    s.latency && { label: "Latency", value: s.latency },
   ]);
 }
 

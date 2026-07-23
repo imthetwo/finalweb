@@ -36,7 +36,7 @@ export default function AccountPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            {profile.role === "ADMIN" && (
+            {(profile.role === "ADMIN" || profile.role === "STAFF") && (
               <Link href="/admin/dashboard" className="inline-flex items-center gap-1.5 border border-brand/40 px-3 py-2 text-xs font-black uppercase tracking-wider text-brand transition hover:bg-brand/10">
                 <Shield size={12} /> Admin
               </Link>
