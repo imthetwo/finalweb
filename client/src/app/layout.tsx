@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PECIFY | Precision Instrumentation",
+  title: "PECIFY - PC & Gaming Gear",
   description:
     "Technical instrumentation for high-performance gaming ecosystems.",
 };
