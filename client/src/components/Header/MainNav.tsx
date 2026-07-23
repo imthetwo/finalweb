@@ -1,6 +1,8 @@
 "use client";
 
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Menu } from "lucide-react";
 
 import CategoryMenu from "@/components/Header/CategoryMenu";
@@ -15,6 +17,7 @@ import {
   SheetFooter, SheetHeader, SheetTrigger, SheetXButton,
 } from "@/components/ui/sheet";
 import { LoginOverlay, RegisterOverlay } from "@/features/auth";
+import type { AuthDialog } from "./types";
 import { Search } from "lucide-react";
 
 const MOBILE_LINKS = [
@@ -26,9 +29,38 @@ const MOBILE_LINKS = [
   { label: "PC Builder",       href: "/custom-lab" },
 ];
 
+// /login and /register are dead-end redirects to "/" (see their page.tsx) —
+// this is what actually opens the dialog once we land back here, so an auth
+// guard bouncing an unauthenticated visitor doesn't just drop them on a plain
+// homepage with no indication why. Split out from useMainNav because
+// useSearchParams() needs its own <Suspense> boundary, or every page in the
+// app fails to prerender.
+function AuthDialogFromQuery({ onOpen }: { onOpen: (dialog: AuthDialog, redirectTo?: string) => void }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const wantsLogin = searchParams.get("login");
+    const wantsRegister = searchParams.get("register");
+    if (!wantsLogin && !wantsRegister) return;
+
+    onOpen(wantsLogin ? "login" : "register", searchParams.get("redirect") || undefined);
+
+    const qs = new URLSearchParams(searchParams.toString());
+    qs.delete("login");
+    qs.delete("register");
+    const rest = qs.toString();
+    router.replace(rest ? `/?${rest}` : "/");
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount only
+  }, []);
+
+  return null;
+}
+
 export default function MainNav() {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
   const { searchOpen, setSearchOpen, dialog, setDialog, cartCount, user, loaded } = useMainNav();
+  const [redirectAfterLogin, setRedirectAfterLogin] = useState<string | undefined>(undefined);
 
   return (
     <nav className="w-full select-none bg-base border-b border-edge">
@@ -130,6 +162,12 @@ export default function MainNav() {
         </div>
       </div>
 
+      <Suspense fallback={null}>
+        <AuthDialogFromQuery
+          onOpen={(d, redirectTo) => { setDialog(d); setRedirectAfterLogin(redirectTo); }}
+        />
+      </Suspense>
+
       {/* Login/Register — shared by the mobile Sign In button above; rendered
           outside the Sheet (which SheetClose already dismissed on trigger) so
           this dialog is never fighting a still-open Sheet for stacking. */}
@@ -137,6 +175,7 @@ export default function MainNav() {
         open={dialog === "login"}
         onOpenChange={(o) => setDialog(o ? "login" : "none")}
         onSwitchToRegister={() => setDialog("register")}
+        redirectTo={redirectAfterLogin}
       />
       <RegisterOverlay
         open={dialog === "register"}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -18,7 +19,8 @@ export type LoginFormValues = z.infer<typeof loginSchema>;
 
 const UNVERIFIED_MESSAGE = "Please verify your email before signing in — check your inbox for the verification link.";
 
-export function useLoginForm(onSuccess: () => void) {
+export function useLoginForm(onSuccess: () => void, redirectTo?: string) {
+  const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
   const [resending, setResending] = useState(false);
@@ -39,6 +41,10 @@ export function useLoginForm(onSuccess: () => void) {
       toast.success("Signed in successfully.");
       form.reset();
       onSuccess();
+      // Send them back to the page an auth guard bounced them from (see
+      // login/page.tsx + useMainNav), instead of just leaving them wherever
+      // closing the dialog happens to land them.
+      if (redirectTo) router.push(redirectTo);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unable to connect to the authentication server.";
       setSubmitError(message);

@@ -26,13 +26,23 @@ export function useAuthCallback() {
       return;
     }
 
+    // Only trust an internal path (must start with "/", never "//" which
+    // browsers treat as protocol-relative) — same rule the backend applies
+    // before it round-trips this via Google's state param (see
+    // GoogleAuthGuard + auth.controller.ts's googleLoginCallback).
+    const redirectTo = params.get("redirect");
+    const safeRedirect = redirectTo && redirectTo.startsWith("/") && !redirectTo.startsWith("//")
+      ? redirectTo
+      : "/";
+
     saveToken(token);
 
     async function syncThenRedirect() {
       await syncGuestDataToAccount(token!);
-      // Clean the fragment from the URL, then redirect home
+      // Clean the fragment from the URL, then redirect back to wherever this
+      // OAuth flow started (e.g. /checkout), or home if it didn't say.
       window.history.replaceState(null, "", window.location.pathname);
-      router.replace("/");
+      router.replace(safeRedirect);
     }
 
     void syncThenRedirect();

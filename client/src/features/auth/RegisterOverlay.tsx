@@ -29,7 +29,10 @@ export function RegisterOverlay({ triggerButton, open, onOpenChange, onSwitchToL
     return (
       <Dialog modal={false} open={isOpen} onOpenChange={handleOpenChange}>
         {triggerButton && <DialogTrigger asChild>{triggerButton}</DialogTrigger>}
-        <DialogContent className="sm:max-w-100 border-none rounded-none p-0 shadow-2xl bg-white text-black">
+        <DialogContent
+          onPointerDownOutside={(e) => e.preventDefault()}
+          className="sm:max-w-100 border-none rounded-none p-0 shadow-2xl bg-white text-black"
+        >
           <div className="flex flex-col items-center gap-4 px-8 py-10 text-center">
             <MailCheck size={40} className="text-black" />
             <DialogHeader>
@@ -66,7 +69,10 @@ export function RegisterOverlay({ triggerButton, open, onOpenChange, onSwitchToL
     <Dialog modal={false} open={isOpen} onOpenChange={handleOpenChange}>
       {triggerButton && <DialogTrigger asChild>{triggerButton}</DialogTrigger>}
 
-      <DialogContent className="sm:max-w-100 border-none rounded-none p-0 shadow-2xl bg-white text-black">
+      <DialogContent
+        onPointerDownOutside={(e) => e.preventDefault()}
+        className="sm:max-w-100 border-none rounded-none p-0 shadow-2xl bg-white text-black"
+      >
         <div className="px-8 pt-8">
           <DialogHeader>
             <DialogTitle className="mb-6 text-2xl font-black uppercase tracking-widest text-black">

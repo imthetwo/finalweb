@@ -8,9 +8,11 @@ import { useLoginForm } from "./useLoginForm";
 export function useLoginOverlay({
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
+  redirectTo,
 }: {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  redirectTo?: string;
 }) {
   const [internalOpen, setInternalOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -21,7 +23,7 @@ export function useLoginOverlay({
   const { form, submitError, onSubmit, clearError, unverifiedEmail, resendEmail, resending } = useLoginForm(() => {
     setShowPassword(false);
     setOpen(false);
-  });
+  }, redirectTo);
 
   const { register, formState: { errors, isSubmitting } } = form;
 

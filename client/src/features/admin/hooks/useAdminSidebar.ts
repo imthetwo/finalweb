@@ -31,7 +31,7 @@ export function useAdminSidebar() {
 
   useEffect(() => {
     if (!loaded) return;
-    if (!user) { router.replace("/login"); return; }
+    if (!user) { router.replace(`/login?redirect=${encodeURIComponent(pathname)}`); return; }
     if (user.role !== "ADMIN" && user.role !== "STAFF") { router.replace("/"); return; }
     fetchCategories()
       .then(setCategories)

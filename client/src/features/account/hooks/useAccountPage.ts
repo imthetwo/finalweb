@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { fetchProfile } from "@/lib/api";
 import { getToken } from "@/lib/auth";
@@ -15,6 +15,7 @@ const VALID_TABS = ["profile", "orders", "wishlist", "addresses"] as const;
 // visitors, and resolves the initial tab from the URL. The component only renders.
 export function useAccountPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const { logout } = useAuthState();
 
@@ -27,14 +28,17 @@ export function useAccountPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const qs = searchParams.toString();
+    const loginRedirect = `/login?redirect=${encodeURIComponent(qs ? `${pathname}?${qs}` : pathname)}`;
     if (!getToken()) {
-      router.replace("/login");
+      router.replace(loginRedirect);
       return;
     }
     fetchProfile()
       .then(setProfile)
-      .catch(() => router.replace("/login"))
+      .catch(() => router.replace(loginRedirect))
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- pathname/searchParams only matter at redirect time, not for re-fetching
   }, [router]);
 
   return { profile, setProfile, loading, initialTab, logout };

@@ -33,10 +33,12 @@ export function useGuestCheckoutConfirmPage() {
         sessionStorage.setItem(`track:${created.id}`, created.shippingInfo.phone ?? "");
 
         redirectTimerRef.current = setTimeout(() => {
+          // replace (not push) so Back from order-success can't land here and
+          // re-run confirmGuestCheckout against an already-used token.
           if (created.paymentMethod === "COD") {
-            router.push(`/order-success?orderId=${created.id}`);
+            router.replace(`/order-success?orderId=${created.id}`);
           } else {
-            router.push(`/payment/${created.paymentMethod.toLowerCase()}?orderId=${created.id}`);
+            router.replace(`/payment/${created.paymentMethod.toLowerCase()}?orderId=${created.id}`);
           }
         }, 1500);
       })

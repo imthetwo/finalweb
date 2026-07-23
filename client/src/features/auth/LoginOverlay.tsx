@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -17,21 +18,30 @@ type LoginOverlayProps = {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   onSwitchToRegister?: () => void;
+  redirectTo?: string;
 };
 
-export function LoginOverlay({ triggerButton, open, onOpenChange, onSwitchToRegister }: LoginOverlayProps) {
+export function LoginOverlay({ triggerButton, open, onOpenChange, onSwitchToRegister, redirectTo }: LoginOverlayProps) {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
   const {
     open: isOpen, handleOpenChange, showPassword, togglePassword,
     register, errors, isSubmitting, submitError, onSubmit,
     unverifiedEmail, resendEmail, resending,
-  } = useLoginOverlay({ open, onOpenChange });
+  } = useLoginOverlay({ open, onOpenChange, redirectTo });
+  const pathname = usePathname();
+  // Falls back to wherever this dialog is open right now (e.g. the user
+  // clicked "Sign In" from /checkout directly, not via an auth-guard bounce
+  // that already set redirectTo) so Google login doesn't lose that context.
+  const googleRedirect = redirectTo ?? pathname;
 
   return (
     <Dialog modal={false} open={isOpen} onOpenChange={handleOpenChange}>
       {triggerButton && <DialogTrigger asChild>{triggerButton}</DialogTrigger>}
 
-      <DialogContent className="w-190 border-none rounded-none p-0 shadow-2xl bg-white text-black">
+      <DialogContent
+        onPointerDownOutside={(e) => e.preventDefault()}
+        className="w-190 border-none rounded-none p-0 shadow-2xl bg-white text-black"
+      >
         <div className="px-8 pt-8">
           <DialogHeader>
             <DialogTitle className="mb-6 text-2xl font-black uppercase tracking-widest text-black">
@@ -98,7 +108,7 @@ export function LoginOverlay({ triggerButton, open, onOpenChange, onSwitchToRegi
             <div className="h-px flex-1 bg-zinc-200" />
           </div>
 
-          <button type="button" onClick={() => { window.location.href = getApiUrl("/auth/google"); }}
+          <button type="button" onClick={() => { window.location.href = getApiUrl(`/auth/google?redirect=${encodeURIComponent(googleRedirect)}`); }}
             className="flex w-full items-center justify-center gap-3 rounded-none border border-zinc-300 bg-white py-3 text-sm font-semibold text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-50">
             <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
               <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>

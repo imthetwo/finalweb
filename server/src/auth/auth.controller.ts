@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
+import { GoogleAuthGuard } from './google-auth.guard';
 import { PasswordResetService } from './password-reset.service';
 import { EmailVerificationService } from './email-verification.service';
 import { LoginDto } from './dto/login.dto';
@@ -35,17 +35,26 @@ export class AuthController {
 	}
 
 	@Get('google')
-	@UseGuards(AuthGuard('google'))
+	@UseGuards(GoogleAuthGuard)
 	async googleLogin() {
 		return;
 	}
 
 	@Get('google/callback')
-	@UseGuards(AuthGuard('google'))
+	@UseGuards(GoogleAuthGuard)
 	async googleLoginCallback(@Req() req: Request, @Res() res: Response) {
 		const result = await this.authService.googleLogin(req.user as any);
 		const base = getClientUrl();
-		return res.redirect(`${base}/auth/callback#token=${result.access_token}`);
+		const fragment = new URLSearchParams({ token: result.access_token });
+		// state is round-tripped from the ?redirect= this OAuth flow started
+		// with (see GoogleAuthGuard) — only trust it as an internal path
+		// (must start with "/", never "//" which browsers treat as protocol-
+		// relative) so a tampered state param can't bounce the user off-site.
+		const state = typeof req.query.state === 'string' ? req.query.state : '';
+		if (state.startsWith('/') && !state.startsWith('//')) {
+			fragment.set('redirect', state);
+		}
+		return res.redirect(`${base}/auth/callback#${fragment.toString()}`);
 	}
 
 	// Stricter than the app-wide default — this always returns ok:true (no
