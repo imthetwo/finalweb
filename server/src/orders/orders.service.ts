@@ -8,6 +8,7 @@ import { GuestCartItemDto, GuestCheckoutDto } from './dto/guest-checkout.dto';
 import { ShippingInfoDto } from './dto/shipping-info.dto';
 import { maxQtyFor } from '../common/quantity-caps';
 import { effectivePrice } from '../common/pricing';
+import { pricingService } from '../common/pricing.service';
 import { AddressesService } from '../addresses/addresses.service';
 
 const PENDING_GUEST_ORDER_TTL_MS = 30 * 60 * 1000; // 30 minutes
@@ -50,7 +51,7 @@ export class OrdersService {
 
     const subTotal = cart.subTotal;
     const shippingFee = shippingFor(subTotal);
-    const totalAmount = subTotal + shippingFee;
+    const totalAmount = pricingService.totalAmount(subTotal, shippingFee);
 
     const order = await this.prisma.$transaction(async (tx) => {
       for (const item of cart.items) {
@@ -217,9 +218,9 @@ export class OrdersService {
       return { product, quantity: item.quantity, price: effectivePrice(product) };
     });
 
-    const subTotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
+    const subTotal = pricingService.sum(cartItems.map((i) => i.price * i.quantity));
     const shippingFee = shippingFor(subTotal);
-    const totalAmount = subTotal + shippingFee;
+    const totalAmount = pricingService.totalAmount(subTotal, shippingFee);
 
     const order = await this.prisma.$transaction(async (tx) => {
       for (const item of cartItems) {

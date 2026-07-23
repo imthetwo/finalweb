@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { ProductsService } from '../products/products.service';
 import { maxQtyFor } from '../common/quantity-caps';
+import { pricingService } from '../common/pricing.service';
 
 // Reused Prisma include shapes — kept in one place so the cart queries below
 // can't drift out of sync with each other.
@@ -42,7 +43,7 @@ export class CartService {
         lineTotal: product.displayPrice * item.quantity,
       };
     });
-    const subTotal = items.reduce((s, i) => s + i.lineTotal, 0);
+    const subTotal = pricingService.sum(items.map((i) => i.lineTotal));
     return { id: cart.id, items, subTotal };
   }
 
