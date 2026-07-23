@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
-import { AuthService } from './auth.service';
-import { GoogleAuthGuard } from './google-auth.guard';
-import { PasswordResetService } from './password-reset.service';
-import { EmailVerificationService } from './email-verification.service';
+import { AuthService } from './services/auth.service';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
+import { PasswordResetService } from './services/password-reset.service';
+import { EmailVerificationService } from './services/email-verification.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { OptionalJwtAuthGuard } from '../auth/optional-jwt.guard';
-import { CurrentUser } from '../auth/current-user.decorator';
+import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ConfirmPaymentDto } from './dto/confirm-payment.dto';
 import { InitiatePaymentDto } from './dto/initiate-payment.dto';
 import { MomoIpnDto } from './dto/momo-ipn.dto';

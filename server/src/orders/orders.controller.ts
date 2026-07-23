@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { OrdersService } from './orders.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ConfirmGuestCheckoutDto, GuestCheckoutDto } from './dto/guest-checkout.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { TrackOrderDto } from './dto/track-order.dto';

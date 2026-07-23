@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../prisma/prisma.service';
-import { EmailService } from '../email/email.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { EmailService } from '../../email/email.service';
 import { randomBytes } from 'crypto';
-import { issueToken } from './issue-token.util';
+import { issueToken } from '../utils/issue-token.util';
 
 @Injectable()
 export class EmailVerificationService {

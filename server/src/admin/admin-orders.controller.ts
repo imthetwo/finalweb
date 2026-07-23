@@ -6,11 +6,11 @@ import { Role } from '@prisma/client';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { AdminService } from './admin.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { CancelOrderDto, UpdateOrderStatusDto } from './dto/admin-product.dto';
-import { CurrentUser } from '../auth/current-user.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 class ListAdminOrdersQueryDto {
   @IsOptional() @IsString() status?: string;

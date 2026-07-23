@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { EmailService } from '../email/email.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { EmailService } from '../../email/email.service';
 import * as bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 
