@@ -298,7 +298,7 @@ function GuestCartItemRow({
           <button
             type="button"
             onClick={() => onUpdate(item.productId, 0)}
-            className="text-xs text-subtle underline hover:text-destructive"
+            className="text-body text-subtle underline hover:text-destructive"
           >
             Remove
           </button>
@@ -367,7 +367,7 @@ function CartItemRow({
               type="button"
               disabled={updating}
               onClick={() => onUpdate(item.id, 0)}
-              className="text-xs text-subtle underline hover:text-destructive disabled:opacity-40"
+              className="text-body text-subtle underline hover:text-destructive disabled:opacity-40"
             >
               {updating ? "Updating…" : "Remove"}
             </button>

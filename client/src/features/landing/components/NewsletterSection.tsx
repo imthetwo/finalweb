@@ -11,10 +11,7 @@ export default function NewsletterSection() {
   return (
     <section className="bg-base py-20">
       <div className="mx-auto max-w-175 px-4 text-center md:px-8">
-        <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">
-          Stay in the Loop
-        </p>
-        <h2 className="mt-4 text-3xl font-black uppercase leading-tight tracking-tight text-fg md:text-4xl">
+        <h2 className="text-3xl font-black uppercase leading-tight tracking-tight text-fg md:text-4xl">
           Get Exclusive Deals
         </h2>
         <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted">
