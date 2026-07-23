@@ -6,18 +6,17 @@ import { formatVnd } from "@/lib/format";
 import type { CompatibilityResult } from "../types";
 
 type Props = {
-  compatibility: CompatibilityResult | null;
+  compatibility: CompatibilityResult;
   estimatedWatts: number;
   totalPrice: number;
-  validating: boolean;
   onValidate: () => void;
   selectedCount: number;
   totalSlots: number;
 };
 
-export function StatusBar({ compatibility, estimatedWatts, totalPrice, validating, onValidate, selectedCount, totalSlots }: Props) {
+export function StatusBar({ compatibility, estimatedWatts, totalPrice, onValidate, selectedCount, totalSlots }: Props) {
   const isComplete = selectedCount >= totalSlots;
-  const status = !compatibility
+  const status = selectedCount === 0
     ? { Icon: AlertCircle, label: "Not checked yet", cls: "text-muted border-edge bg-surface" }
     : compatibility.errors.length > 0
     ? { Icon: AlertCircle, label: `${compatibility.errors.length} compatibility errors`, cls: "text-destructive border-red-800/50 bg-red-950/30" }
@@ -42,9 +41,9 @@ export function StatusBar({ compatibility, estimatedWatts, totalPrice, validatin
         </span>
         <span className="hidden h-3.5 w-px bg-edge sm:block" />
         <span className="text-sm font-black text-fg">{formatVnd(totalPrice)}</span>
-        <button type="button" onClick={onValidate} disabled={validating}
-          className="border border-brand/40 bg-brand/6 px-3 py-1 text-2xs font-black uppercase tracking-wider text-brand hover:bg-brand/15 disabled:opacity-50">
-          {validating ? "Checking…" : "Validate"}
+        <button type="button" onClick={onValidate}
+          className="border border-brand/40 bg-brand/6 px-3 py-1 text-2xs font-black uppercase tracking-wider text-brand hover:bg-brand/15">
+          Validate
         </button>
       </div>
     </div>

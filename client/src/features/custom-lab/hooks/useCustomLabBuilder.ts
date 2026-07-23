@@ -18,7 +18,7 @@ export function useCustomLabBuilder() {
 
   const {
     selected, parts, loading, pickerSlot, compat,
-    validating, addingCart,
+    addingCart,
     totalPrice, estimatedWatts, selectedCount,
     openPicker: rawOpenPicker,
     closePicker: storeClosePicker,
@@ -56,7 +56,7 @@ export function useCustomLabBuilder() {
 
   return {
     selected, parts, loading, pickerSlot, pickerCfg, compat,
-    validating, addingCart,
+    addingCart,
     totalPrice, estimatedWatts, selectedCount,
     openPicker, closePicker,
     selectPart, removePart, handleReset,

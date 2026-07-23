@@ -20,7 +20,7 @@ export default function CustomLabBuilder() {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
   const {
     selected, parts, loading, pickerSlot, pickerCfg, compat,
-    validating, addingCart,
+    addingCart,
     totalPrice, estimatedWatts, selectedCount,
     openPicker, closePicker,
     selectPart, removePart, handleReset,
@@ -49,7 +49,6 @@ export default function CustomLabBuilder() {
           compatibility={compat}
           estimatedWatts={estimatedWatts}
           totalPrice={totalPrice}
-          validating={validating}
           onValidate={validateBuild}
           selectedCount={selectedCount}
           totalSlots={BUILD_SLOTS.length}
@@ -142,7 +141,7 @@ export default function CustomLabBuilder() {
             </div>
 
             {/* Compatibility messages */}
-            {compat && (compat.errors.length > 0 || compat.warnings.length > 0) && (
+            {(compat.errors.length > 0 || compat.warnings.length > 0) && (
               <div className="mt-4 space-y-2">
                 {compat.errors.map((e, i) => (
                   <div key={i} className="flex gap-2.5 border border-red-800/40 bg-red-950/20 px-4 py-2.5">
