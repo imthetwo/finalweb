@@ -2,12 +2,12 @@ import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/c
 import { Role } from '@prisma/client';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, Max, Min } from 'class-validator';
-import { AdminService } from './admin.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { UpdateUserRoleDto } from './dto/admin-product.dto';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { AdminService } from '../admin.service';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { UpdateUserRoleDto } from '../dto/admin-product.dto';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 
 class ListAdminUsersQueryDto {
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) page?: number;
