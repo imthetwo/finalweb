@@ -42,10 +42,25 @@ export function usePaymentGateway() {
           setLoading(false);
           return;
         }
-        return initiatePayment(orderId).then((data) => {
-          setPayment(data);
-          setLoading(false);
-        });
+        return initiatePayment(orderId)
+          .then((data) => {
+            setPayment(data);
+            setLoading(false);
+          })
+          .catch(async (err) => {
+            // initiate() itself is what discovers (via MoMo's query API) that a
+            // prior session on this order already went through, marks it paid,
+            // then throws "already paid" — so on that specific error, re-check
+            // status instead of showing a generic "gateway unavailable" message
+            // for what's actually a successful payment.
+            const status = await fetchPaymentStatus(orderId).catch(() => null);
+            if (status?.isPaid) {
+              toast.success("Payment received!");
+              router.replace(`/order-success?orderId=${orderId}`);
+              return;
+            }
+            throw err;
+          });
       })
       .catch((err) => {
         toast.error(err instanceof Error ? err.message : "Could not load order");

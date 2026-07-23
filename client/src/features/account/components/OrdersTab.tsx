@@ -121,7 +121,7 @@ function OrderDetailModal({
                     <p className="text-lg text-secondary line-clamp-2 leading-snug hover:text-brand">{it.product.name}</p>
                     <div className="shrink-0 text-right">
                       <p className="text-lg font-semibold text-fg">{formatVnd(it.priceAtBuy * it.quantity)}</p>
-                      <p className="text-sm text-muted">×{it.quantity}</p>
+                      <p className="text-sm text-muted">{formatVnd(it.priceAtBuy)} × {it.quantity}</p>
                     </div>
                   </div>
                 </Link>
