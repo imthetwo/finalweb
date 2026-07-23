@@ -222,6 +222,17 @@ export class OrdersService {
     const shippingFee = shippingFor(subTotal);
     const totalAmount = pricingService.totalAmount(subTotal, shippingFee);
 
+    // If an account with this email already exists, attach the order to it
+    // right away instead of waiting for claimGuestOrders() to run at the
+    // account's next login — that only fires ON the login/register/Google
+    // event itself, so a guest checkout confirmed while already signed in
+    // elsewhere (JWT from an earlier session, no fresh login to trigger the
+    // claim) would otherwise sit unclaimed indefinitely.
+    const existingAccount = await this.prisma.user.findUnique({
+      where: { email: body.guestEmail },
+      select: { id: true },
+    });
+
     const order = await this.prisma.$transaction(async (tx) => {
       for (const item of cartItems) {
         const updated = await tx.product.updateMany({
@@ -234,6 +245,7 @@ export class OrdersService {
 
       const created = await tx.order.create({
         data: {
+          userId: existingAccount?.id,
           guestEmail: body.guestEmail,
           subTotal,
           shippingFee,
@@ -284,10 +296,16 @@ export class OrdersService {
   }
 
   // Public "track my order" lookup for guests — no account, no login. Scoped
-  // to userId: null so it can never become a backdoor for looking up a
-  // registered user's order without logging in. Both orderId and phone must
-  // match, and the error is identical either way so it can't be used to
-  // enumerate valid order IDs (can't tell "no such order" from "wrong phone").
+  // to guestEmail: not null (i.e. it originated as a guest checkout) rather
+  // than userId: null — an order placed this way can get auto-attached to a
+  // matching account right at creation (see createConfirmedGuestOrder), and
+  // that shouldn't take away the guest's ability to track it by orderId+phone
+  // the same way they could a minute before it got attached. This still can
+  // never become a backdoor for a REGULAR logged-in-checkout order (no
+  // guestEmail at all) — only ever a guest-originated one. Both orderId and
+  // phone must match, and the error is identical either way so it can't be
+  // used to enumerate valid order IDs (can't tell "no such order" from "wrong
+  // phone").
   //
   // orderId is matched as a PREFIX, not an exact UUID — a guest never actually
   // sees the full UUID anywhere (order-success page, confirmation email, every
@@ -295,7 +313,7 @@ export class OrdersService {
   // an exact match made this lookup fail for basically every real guest.
   async trackGuestOrder(orderId: string, phone: string) {
     const candidates = await this.prisma.order.findMany({
-      where: { id: { startsWith: orderId.trim().toLowerCase() }, userId: null },
+      where: { id: { startsWith: orderId.trim().toLowerCase() }, guestEmail: { not: null } },
       select: {
         id: true, status: true, isPaid: true, paymentMethod: true,
         subTotal: true, shippingFee: true, totalAmount: true,
@@ -345,13 +363,15 @@ export class OrdersService {
   }
 
   // Self-cancel for a guest, before an order is DELIVERED/CANCELLED — same
-  // ownership proof as trackGuestOrder (orderId prefix + matching phone),
-  // same cancellation rules as the logged-in cancel() above. A guest who's
-  // placed an order and hasn't heard back yet shouldn't have to wait for an
-  // admin to Accept/Reject it before they're allowed to change their mind.
+  // ownership proof as trackGuestOrder (orderId prefix + matching phone,
+  // scoped to guestEmail: not null rather than userId: null — see the
+  // comment there), same cancellation rules as the logged-in cancel() above.
+  // A guest who's placed an order and hasn't heard back yet shouldn't have
+  // to wait for an admin to Accept/Reject it before they're allowed to
+  // change their mind.
   async cancelGuestOrder(orderId: string, phone: string) {
     const candidates = await this.prisma.order.findMany({
-      where: { id: { startsWith: orderId.trim().toLowerCase() }, userId: null },
+      where: { id: { startsWith: orderId.trim().toLowerCase() }, guestEmail: { not: null } },
       include: { items: true },
       take: 5,
     });

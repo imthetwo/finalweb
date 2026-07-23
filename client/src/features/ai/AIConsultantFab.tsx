@@ -66,11 +66,6 @@ export default function AIConsultantFab() {
             className="group relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand text-black shadow-glow-md transition-all duration-300 hover:scale-110 hover:shadow-glow-lg"
           >
             <MessageCircle size={26} />
-            {/* online pulse dot */}
-            <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
-              <span className="relative inline-flex h-3.5 w-3.5 rounded-full border-2 border-edge bg-success" />
-            </span>
           </button>
         </div>
       )}
