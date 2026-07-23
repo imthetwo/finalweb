@@ -15,11 +15,13 @@ export default function ShopBrowser({
   items,
   page = 1,
   totalPages = 1,
+  availableBrands = [],
 }: {
   title: string;
   items: ProductListItem[];
   page?: number;
   totalPages?: number;
+  availableBrands?: string[];
 }) {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
   const { sort, setSort, filtered } = useShopBrowser(items);
@@ -57,7 +59,7 @@ export default function ShopBrowser({
               wrapped in Suspense so it doesn't force the whole route to
               client-side-only rendering. */}
           <Suspense fallback={<aside className="w-full shrink-0 lg:w-64" />}>
-            <FilterSidebar />
+            <FilterSidebar availableBrands={availableBrands} />
           </Suspense>
 
           {/* Product grid */}

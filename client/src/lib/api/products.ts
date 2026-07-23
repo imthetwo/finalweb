@@ -9,6 +9,7 @@ export function fetchProducts(params: {
   storageType?: string;
   coolerType?: string;
   furnitureType?: string;
+  brand?: string;
   sortBy?: string;
   page?: number;
   limit?: number;
@@ -20,10 +21,16 @@ export function fetchProducts(params: {
   if (params.storageType) q.set("storageType", params.storageType);
   if (params.coolerType) q.set("coolerType", params.coolerType);
   if (params.furnitureType) q.set("furnitureType", params.furnitureType);
+  if (params.brand) q.set("brand", params.brand);
   if (params.sortBy) q.set("sortBy", params.sortBy);
   if (params.page) q.set("page", String(params.page));
   q.set("limit", String(params.limit ?? 48));
   return apiFetch<ProductListResponse>(`/products?${q.toString()}`);
+}
+
+// Real brand list for a category — renders FilterSidebar's Brand filter.
+export function fetchProductBrands(categoryId: string) {
+  return apiFetch<string[]>(`/products/brands?categoryId=${encodeURIComponent(categoryId)}`);
 }
 
 export function fetchProductById(id: string) {

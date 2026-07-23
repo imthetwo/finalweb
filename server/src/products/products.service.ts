@@ -56,6 +56,7 @@ export class ProductsService {
     storageType?: string;
     coolerType?: string;
     furnitureType?: string;
+    brand?: string;
     sortBy?: string;
     page?: number;
     limit?: number;
@@ -78,6 +79,10 @@ export class ProductsService {
     if (params.coolerType) where.coolerSpec = { coolerType: { equals: params.coolerType, mode: 'insensitive' } };
     if (params.furnitureType && (Object.values(FurnitureType) as string[]).includes(params.furnitureType)) {
       where.furnitureSpec = { furnitureType: params.furnitureType as FurnitureType };
+    }
+    if (params.brand) {
+      const brands = params.brand.split(',').map((b) => b.trim()).filter(Boolean);
+      where.brand = brands.length > 1 ? { in: brands } : { equals: brands[0], mode: 'insensitive' };
     }
     const search = params.search?.slice(0, 100); // prevent ReDoS via overly long input
     if (search) { params.search = search; }
@@ -165,6 +170,17 @@ export class ProductsService {
       limit,
       totalPages: Math.ceil(total / limit),
     };
+  }
+
+  // Real brand list for a category, straight from the DB — never hardcoded.
+  async getBrandsForCategory(categoryId: string) {
+    const rows = await this.prisma.product.findMany({
+      where: { categoryId, isPublished: true },
+      select: { brand: true },
+      distinct: ['brand'],
+      orderBy: { brand: 'asc' },
+    });
+    return rows.map((r) => r.brand);
   }
 
   async findById(id: string) {

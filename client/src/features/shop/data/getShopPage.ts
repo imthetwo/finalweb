@@ -1,5 +1,5 @@
 // GET /products + /categories — used by (shop)/shop/[...slug]/page.tsx
-import { fetchCategories, fetchProducts } from "@/lib/api";
+import { fetchCategories, fetchProducts, fetchProductBrands } from "@/lib/api";
 import { CATEGORY_NAV } from "@/lib/category-nav";
 
 // last URL segment → { display label, DB category name }
@@ -26,12 +26,13 @@ export async function getShopPage(
   searchParams: {
     page?: string; search?: string; type?: string;
     storageType?: string; coolerType?: string; furnitureType?: string;
-    sortBy?: string;
+    brand?: string; sortBy?: string;
   },
 ) {
   const page = Math.max(1, Number(searchParams.page) || 1);
   const search = searchParams.search?.trim() || undefined;
   const sortBy = searchParams.sortBy;
+  const brand = searchParams.brand;
   // slug=[] → /shop root page; slug=['shop'] → legacy compat
   const isAllProducts = slug.length === 0 || (slug.length === 1 && slug[0] === "shop");
 
@@ -54,8 +55,14 @@ export async function getShopPage(
   const data = await fetchProducts(
     search
       ? { search, sortBy, page, limit: 48 }
-      : { categoryId, buildType: buildEntry?.buildType, storageType, coolerType, furnitureType, sortBy, page, limit: 48 },
+      : { categoryId, buildType: buildEntry?.buildType, storageType, coolerType, furnitureType, brand, sortBy, page, limit: 48 },
   ).catch(() => ({ items: [], total: 0, page: 1, totalPages: 0 }));
+
+  // Brand filter only makes sense on a single real category, not search
+  // results or "All Products" (which spans every category).
+  const availableBrands = (!isAllProducts && !search && categoryId)
+    ? await fetchProductBrands(categoryId).catch(() => [])
+    : [];
 
   const subFilterLabel =
     buildEntry?.label
@@ -68,5 +75,6 @@ export async function getShopPage(
     items: data.items,
     page: data.page,
     totalPages: data.totalPages,
+    availableBrands,
   };
 }

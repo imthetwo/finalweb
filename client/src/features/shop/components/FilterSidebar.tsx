@@ -55,9 +55,9 @@ const SUB_TYPE_FILTERS: SubTypeFilter[] = [
   },
 ];
 
-export function FilterSidebar() {
+export function FilterSidebar({ availableBrands = [] }: { availableBrands?: string[] }) {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
-  const { pathname, subTypeFilter, activeSubType } = useFilterSidebar(SUB_TYPE_FILTERS);
+  const { pathname, subTypeFilter, activeSubType, activeBrands, toggleBrand } = useFilterSidebar(SUB_TYPE_FILTERS);
 
   return (
     <aside className="w-full shrink-0 lg:w-64">
@@ -105,6 +105,27 @@ export function FilterSidebar() {
               );
             })}
           </nav>
+        </div>
+      )}
+
+      {/* Brand filter — hidden when the category only has one real brand
+          (e.g. Case Fans, all Corsair), where it'd be a pointless checkbox. */}
+      {availableBrands.length > 1 && (
+        <div className="border-t border-edge py-3">
+          <p className="mb-3 text-sm font-bold uppercase tracking-wider text-muted">Brand</p>
+          <div className="flex flex-col gap-1.5">
+            {availableBrands.map((brand) => (
+              <label key={brand} className="flex cursor-pointer items-center gap-2 text-body text-secondary transition-colors hover:text-fg">
+                <input
+                  type="checkbox"
+                  checked={activeBrands.has(brand)}
+                  onChange={() => toggleBrand(brand)}
+                  className="h-3.5 w-3.5 accent-brand"
+                />
+                <span className={activeBrands.has(brand) ? "font-bold text-brand" : ""}>{brand}</span>
+              </label>
+            ))}
+          </div>
         </div>
       )}
     </aside>

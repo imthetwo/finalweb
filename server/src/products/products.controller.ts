@@ -10,9 +10,14 @@ class ListProductsQueryDto {
   @IsOptional() @IsString() storageType?: string;
   @IsOptional() @IsString() coolerType?: string;
   @IsOptional() @IsString() furnitureType?: string;
+  @IsOptional() @IsString() brand?: string;
   @IsOptional() @IsIn(['featured', 'price-asc', 'price-desc', 'name']) sortBy?: string;
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) page?: number;
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(100) limit?: number;
+}
+
+class BrandsQueryDto {
+  @IsString() categoryId!: string;
 }
 
 @Controller('products')
@@ -27,6 +32,13 @@ export class ProductsController {
       page: query.page ?? 1,
       limit: query.limit ?? 24,
     });
+  }
+
+  // Must come before :id, or "brands" would be matched as an id there.
+  @Get('brands')
+  @Header('Cache-Control', 'public, max-age=30, stale-while-revalidate=60')
+  getBrands(@Query() query: BrandsQueryDto) {
+    return this.productsService.getBrandsForCategory(query.categoryId);
   }
 
   @Get(':id')
