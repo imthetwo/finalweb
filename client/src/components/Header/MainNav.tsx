@@ -12,7 +12,7 @@ import { useMainNav } from "@/components/Header/hooks/useMainNav";
 import { Button } from "@/components/ui/button";
 import {
   Sheet, SheetBody, SheetClose, SheetContent,
-  SheetFooter, SheetHeader, SheetTitle, SheetTrigger, SheetXButton,
+  SheetFooter, SheetHeader, SheetTrigger, SheetXButton,
 } from "@/components/ui/sheet";
 import { LoginOverlay } from "@/features/auth";
 import { Search } from "lucide-react";
@@ -52,7 +52,7 @@ export default function MainNav() {
 
           <SheetContent side="left">
             <SheetHeader>
-              <SheetTitle>Navigation</SheetTitle>
+              <span />
               <SheetXButton />
             </SheetHeader>
 
