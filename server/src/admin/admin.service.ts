@@ -48,7 +48,7 @@ export class AdminService {
 
   // ── Orders & Users ────────────────────────────────────────
   listOrders(p: { status?: string; search?: string; page?: number; limit?: number }) { return this.ordersService.listOrders(p); }
-  updateOrderStatus(orderId: string, status: string) { return this.ordersService.updateOrderStatus(orderId, status); }
+  updateOrderStatus(orderId: string, status: string, role: Role) { return this.ordersService.updateOrderStatus(orderId, status, role); }
   cancelOrder(orderId: string, reason: string, actorId: string) { return this.ordersService.cancelOrder(orderId, reason, actorId); }
   acceptOrder(orderId: string, actorId: string) { return this.ordersService.acceptOrder(orderId, actorId); }
   rejectOrder(orderId: string, reason: string, actorId: string) { return this.ordersService.rejectOrder(orderId, reason, actorId); }

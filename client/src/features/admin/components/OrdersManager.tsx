@@ -21,6 +21,10 @@ const FILTER_STATUSES = [
   ...ASSIGNABLE_STATUSES,
   "CANCELLED",
 ];
+// STAFF may only assign as far as SHIPPED — DELIVERED is the moment a COD
+// order's cash is actually collected, so only an admin confirms that step
+// (server enforces this too; see admin-orders.service.ts updateOrderStatus).
+const STAFF_ASSIGNABLE_STATUSES = ASSIGNABLE_STATUSES.filter((s) => s !== "DELIVERED");
 
 export function OrdersManager() {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
@@ -180,7 +184,7 @@ export function OrdersManager() {
                           disabled={busy || isFinal}
                           className={`border border-edge bg-surface px-2 py-1 text-sm font-bold outline-none disabled:opacity-50 ${STATUS_COLOR[o.status] ?? "text-secondary"}`}
                         >
-                          {ASSIGNABLE_STATUSES.map((s) => (
+                          {(isAdmin ? ASSIGNABLE_STATUSES : STAFF_ASSIGNABLE_STATUSES).map((s) => (
                             <option key={s} value={s} className="text-fg">
                               {s}
                             </option>

@@ -66,12 +66,6 @@ export function AdminSidebar({ children }: { children: React.ReactNode }) {
 
             {productsOpen && (
               <div className="ml-6 mt-0.5 space-y-0.5 border-l border-edge pl-3">
-                <Link href="/admin/products"
-                  className={["block py-1.5 text-sm font-semibold uppercase tracking-wide transition-colors",
-                    pathname === "/admin/products" ? "text-brand" : "text-muted hover:text-fg"].join(" ")}
-                >
-                  All Products
-                </Link>
                 {categories.map((cat) => {
                   const href = `/admin/products/${cat.id}`;
                   return (

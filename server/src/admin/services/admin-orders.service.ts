@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { OrderStatus, Prisma } from '@prisma/client';
+import { OrderStatus, Prisma, Role } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { EmailService } from '../../email/email.service';
 import { PaymentsService } from '../../payments/payments.service';
@@ -7,9 +7,12 @@ import { PaymentsService } from '../../payments/payments.service';
 const VALID_STATUSES = Object.values(OrderStatus);
 
 // Routine shipping-progress statuses, assignable via the generic status
-// endpoint (open to STAFF + ADMIN). CANCELLED is deliberately excluded here —
-// cancellation always goes through the dedicated cancelOrder() below, which
-// is ADMIN-only and requires a reason, since it triggers a stock rollback.
+// endpoint. STAFF may only go as far as SHIPPED — DELIVERED is gated to
+// ADMIN below (a COD order's cash is only actually collected on delivery, so
+// only an admin confirms that step). CANCELLED is deliberately excluded
+// here — cancellation always goes through the dedicated cancelOrder() below,
+// which is ADMIN-only and requires a reason, since it triggers a stock
+// rollback.
 const ASSIGNABLE_STATUSES: OrderStatus[] = [
   OrderStatus.PENDING,
   OrderStatus.PROCESSING,
@@ -74,11 +77,18 @@ export class AdminOrdersService {
     return { items, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  async updateOrderStatus(orderId: string, status: string) {
+  async updateOrderStatus(orderId: string, status: string, role: Role) {
     if (!ASSIGNABLE_STATUSES.includes(status as OrderStatus)) {
       throw new BadRequestException(
         'Invalid status. Use the Cancel action to cancel an order.',
       );
+    }
+    // For COD, DELIVERED is the moment cash actually changes hands — only an
+    // admin confirms that, not just whoever last touched the shipping status.
+    // Checked here (not just via the controller's @Roles) so this can't be
+    // bypassed by any other caller of this method in the future.
+    if (status === OrderStatus.DELIVERED && role !== Role.ADMIN) {
+      throw new BadRequestException('Only an admin can mark an order as delivered.');
     }
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },

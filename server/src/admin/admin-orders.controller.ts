@@ -32,12 +32,18 @@ export class AdminOrdersController {
     return this.admin.listOrders(query);
   }
 
-  // STAFF + ADMIN — routine shipping progress only (PENDING/PROCESSING/
-  // SHIPPED/DELIVERED). CANCELLED is rejected here — see cancelOrder below.
+  // STAFF + ADMIN — routine shipping progress (PENDING/PROCESSING/SHIPPED).
+  // DELIVERED is ADMIN-only (see updateOrderStatus) — for COD, that's the
+  // moment cash actually changes hands, so only an admin confirms it.
+  // CANCELLED is rejected here — see cancelOrder below.
   @Patch('orders/:id/status')
   @Roles(Role.ADMIN, Role.STAFF)
-  updateOrderStatus(@Param('id') id: string, @Body() dto: UpdateOrderStatusDto) {
-    return this.admin.updateOrderStatus(id, dto.status);
+  updateOrderStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateOrderStatusDto,
+    @CurrentUser('role') role: Role,
+  ) {
+    return this.admin.updateOrderStatus(id, dto.status, role);
   }
 
   // STAFF + ADMIN — accepts an order awaiting confirmation into the normal
