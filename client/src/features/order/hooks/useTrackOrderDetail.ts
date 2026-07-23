@@ -98,5 +98,5 @@ export function useTrackOrderDetail(orderId: string) {
     }
   }
 
-  return { phone, setPhone, order, loading, error, needsPhone, cancelling, submitPhone, cancelThisOrder };
+  return { phone, setPhone, order, loading, error, needsPhone, cancelling, submitPhone, cancelThisOrder, user };
 }

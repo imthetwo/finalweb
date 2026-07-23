@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Package, Search, XCircle } from "lucide-react";
+import { ArrowLeft, Info, Package, Search, XCircle } from "lucide-react";
 
 import { formatVnd, canCancelOrder, ORDER_STATUS_BADGE_CLASS as STATUS_STYLE, ORDER_STATUS_LABEL as STATUS_LABEL } from "@/lib/format";
 import { useTrackOrderDetail } from "../hooks/useTrackOrderDetail";
@@ -14,7 +14,7 @@ const labelCls = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-m
 
 export function TrackOrderDetail({ id }: { id: string }) {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
-  const { phone, setPhone, order, loading, error, needsPhone, cancelling, submitPhone, cancelThisOrder } =
+  const { phone, setPhone, order, loading, error, needsPhone, cancelling, submitPhone, cancelThisOrder, user } =
     useTrackOrderDetail(id);
 
   return (
@@ -51,6 +51,20 @@ export function TrackOrderDetail({ id }: { id: string }) {
               <Search size={15} /> {loading ? "Searching…" : "View order"}
             </button>
           </form>
+        )}
+
+        {order && user && (
+          <div className="mb-6 flex items-start gap-2.5 border border-edge bg-elevated p-4 text-sm text-secondary">
+            <Info size={15} className="mt-0.5 shrink-0 text-muted" />
+            <p>
+              This order used a different email than your signed-in account, so it&apos;s tracked here
+              by order ID and phone rather than in{" "}
+              <Link href="/account?tab=orders" className="font-bold text-brand hover:underline">
+                My Orders
+              </Link>
+              .
+            </p>
+          </div>
         )}
 
         {order && (
