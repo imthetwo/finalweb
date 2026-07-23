@@ -101,7 +101,10 @@ export function usePartCatalog() {
       }));
       setParts(slot, mapped);
     } catch (e) {
-      setParts(slot, []);
+      // Deliberately NOT caching [] here — an empty list means "loaded, no
+      // matches" and skips future loads (see the `if (parts[slot])` guard
+      // above, since [] is truthy), but a network/500 error is transient and
+      // must be retryable the next time this slot's picker is opened.
       toast.error(e instanceof Error ? e.message : "Failed to load parts — please refresh");
     } finally {
       setLoading(slot, false);

@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import AIConsultantFab from "@/features/ai/AIConsultantFab";
-import { EmailVerifyBanner } from "@/features/auth";
 import { Toaster } from "@/components/ui/toaster";
 import { ConfirmDialogHost } from "@/components/ui/ConfirmDialogHost";
 import NavigationProgress from "@/components/ui/NavigationProgress";
@@ -45,7 +44,6 @@ export default function RootLayout({
     >
       <body className="min-h-screen flex flex-col bg-background text-foreground">
         <Header />
-        <EmailVerifyBanner />
         <div className="flex-1">{children}</div>
         <Footer />
         <AIConsultantFab />

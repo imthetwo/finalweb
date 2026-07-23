@@ -11,8 +11,6 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { ResendVerificationByEmailDto } from './dto/resend-verification-by-email.dto';
-import { JwtAuthGuard } from './jwt-auth.guard';
-import { CurrentUser } from './current-user.decorator';
 import { getClientUrl } from '../common/client-url';
 
 @Controller('auth')
@@ -67,12 +65,6 @@ export class AuthController {
 	@Post('verify-email')
 	verifyEmail(@Body() dto: VerifyEmailDto) {
 		return this.emailVerification.verifyEmail(dto.token);
-	}
-
-	@Post('resend-verification')
-	@UseGuards(JwtAuthGuard)
-	resendVerification(@CurrentUser('userId') userId: string) {
-		return this.emailVerification.resendVerification(userId);
 	}
 
 	// Public — for a just-registered or login-blocked (unverified) user, who

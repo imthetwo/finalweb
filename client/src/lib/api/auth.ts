@@ -47,10 +47,8 @@ export const resetPassword = (token: string, password: string) =>
 export const verifyEmail = (token: string) =>
   apiFetch<AuthResponse>("/auth/verify-email", { method: "POST", body: JSON.stringify({ token }) });
 
-export const resendVerification = () =>
-  apiFetch<{ ok: boolean; alreadyVerified: boolean }>("/auth/resend-verification", { method: "POST" });
-
-// Public — for a just-registered or login-blocked (unverified) user who has
-// no session yet, so the authenticated resendVerification() above can't apply.
+// Public — for a just-registered or login-blocked (unverified) user, who by
+// definition has no session yet (registration issues no JWT until verified,
+// and login itself is blocked while unverified).
 export const resendVerificationByEmail = (email: string) =>
   apiFetch<{ ok: boolean }>("/auth/resend-verification-by-email", { method: "POST", body: JSON.stringify({ email }) });

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
@@ -50,8 +50,9 @@ export class EmailVerificationService {
 		await this.email.sendEmailVerification(user.email, verifyToken);
 	}
 
-	// Public — no login required, since an unverified account can no longer
-	// sign in to reach the authenticated resendVerification() below. Always
+	// Public — no login required: registration issues no session until
+	// verified, and login itself is blocked while unverified, so there's no
+	// authenticated path a still-unverified user could reach instead. Always
 	// returns ok:true regardless of outcome so it can't be used to probe which
 	// emails have an account (same pattern as PasswordResetService.forgotPassword()).
 	async resendVerificationByEmail(emailAddr: string) {
@@ -60,14 +61,5 @@ export class EmailVerificationService {
 
 		await this.issueFreshVerification(user);
 		return { ok: true };
-	}
-
-	async resendVerification(userId: string) {
-		const user = await this.prisma.user.findUnique({ where: { id: userId } });
-		if (!user) throw new NotFoundException('User not found');
-		if (user.isEmailVerified) return { ok: true, alreadyVerified: true };
-
-		await this.issueFreshVerification(user);
-		return { ok: true, alreadyVerified: false };
 	}
 }

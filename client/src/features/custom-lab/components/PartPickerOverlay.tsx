@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowUpDown, Box, Loader2, Search, X } from "lucide-react";
+import { ArrowUpDown, Loader2, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatVnd } from "@/lib/format";
 import type { ApiPart, SlotCfg, SortKey } from "../types";
@@ -13,12 +13,11 @@ type Props = {
   selected: Record<string, ApiPart | null | undefined>;
   currentId?: string;
   loading: boolean;
-  buildSummary: { count: number; total: number; watts: number };
   onAdd: (part: ApiPart) => void;
   onClose: () => void;
 };
 
-export function PartPickerOverlay({ slotCfg, parts, selected, currentId, loading, buildSummary, onAdd, onClose }: Props) {
+export function PartPickerOverlay({ slotCfg, parts, selected, currentId, loading, onAdd, onClose }: Props) {
   // Logic lives in the hook (defined outside); the component only calls it and renders.
   const {
     query, setQuery, sort, setSort, brands, toggleBrand, clearBrands, compatOnly, setCompatOnly,
@@ -45,25 +44,6 @@ export function PartPickerOverlay({ slotCfg, parts, selected, currentId, loading
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <aside className="hidden w-60 shrink-0 flex-col overflow-y-auto border-r border-edge bg-surface p-4 md:flex">
-          {/* Build summary */}
-          <div className="mb-5 border border-edge bg-overlay p-4">
-            <p className="mb-3 text-center text-sm font-black uppercase tracking-wider text-fg">
-              <Box size={12} className="mr-1 inline text-brand" /> Part List
-            </p>
-            <div className="grid grid-cols-3 gap-2 text-center">
-              {[
-                { label: "Parts", value: buildSummary.count },
-                { label: "Total", value: formatVnd(buildSummary.total), cyan: true },
-                { label: "Watts", value: `${buildSummary.watts}W` },
-              ].map(({ label, value, cyan }) => (
-                <div key={label} className="min-w-0">
-                  <p className="text-3xs font-bold uppercase tracking-wider text-muted">{label}</p>
-                  <p className={`wrap-break-word text-sm font-black ${cyan ? "text-brand" : "text-fg"}`}>{value}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
           <label className="mb-5 flex cursor-pointer items-center gap-2 border border-edge bg-overlay px-3 py-2.5">
             <input type="checkbox" checked={compatOnly} onChange={(e) => setCompatOnly(e.target.checked)} className="h-3.5 w-3.5 accent-brand" />
             <span className="text-sm font-semibold text-secondary">Compatibility Filter</span>

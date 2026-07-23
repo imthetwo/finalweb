@@ -181,7 +181,6 @@ export default function CustomLabBuilder() {
           selected={selected}
           currentId={selected[pickerSlot]?.id}
           loading={loading[pickerSlot] ?? false}
-          buildSummary={{ count: selectedCount, total: totalPrice, watts: estimatedWatts }}
           onAdd={(part) => selectPart(pickerSlot, part)}
           onClose={closePicker}
         />

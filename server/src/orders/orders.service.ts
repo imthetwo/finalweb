@@ -384,19 +384,27 @@ export class OrdersService {
       throw new BadRequestException('Cannot cancel this order');
 
     return this.prisma.$transaction(async (tx) => {
+      // Atomic guard against a concurrent cancel (e.g. two tabs/devices both
+      // cancelling the same guest order, or this racing a payment-failure
+      // restock) — the checks above are a friendlier early error, this is
+      // what actually prevents a double restock if two calls both pass those
+      // checks before either commits. Mirrors AdminOrdersService.cancelOrder.
+      const guard = await tx.order.updateMany({
+        where: { id: order.id, status: { in: ['PENDING', 'AWAITING_CONFIRMATION', 'PROCESSING'] } },
+        // isPaid: false — no cash was actually collected (COD's isPaid=true
+        // at creation was only ever "no gateway needed"; a paid MoMo order is
+        // blocked above).
+        data: { status: OrderStatus.CANCELLED, isPaid: false },
+      });
+      if (guard.count === 0) throw new BadRequestException('Cannot cancel this order');
+
       for (const item of order.items) {
         await tx.product.update({
           where: { id: item.productId },
           data: { stock: { increment: item.quantity } },
         });
       }
-      // isPaid: false — mirrors AdminOrdersService.cancelOrder: no cash was
-      // actually collected (COD's isPaid=true at creation was only ever "no
-      // gateway needed"; a paid MoMo order is blocked above).
-      return tx.order.update({
-        where: { id: order.id },
-        data: { status: OrderStatus.CANCELLED, isPaid: false },
-      });
+      return tx.order.findUniqueOrThrow({ where: { id: order.id } });
     });
   }
 }
