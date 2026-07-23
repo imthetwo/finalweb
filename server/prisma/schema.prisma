@@ -344,14 +344,6 @@ model Wishlist {
   @@unique([userId, productId])
 }
 
-// ─── SITE SETTINGS ────────────────────────────────────────────────────────────
-
-model SiteSetting {
-  key       String   @id   // e.g. "hero_video_url", "hero_poster_url"
-  value     String   @db.Text
-  updatedAt DateTime @updatedAt
-}
-
 // ─── NEWSLETTER ───────────────────────────────────────────────────────────────
 
 model NewsletterSubscriber {
