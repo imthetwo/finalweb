@@ -31,10 +31,6 @@ export class AdminProductsExportService {
       rows.forEach((r) => ws.addRow(r));
     };
 
-    // Header text matches what AdminProductsImportService's parser normalizes
-    // to (strip spaces/asterisks, lowercase) — so exporting the catalog and
-    // re-importing it round-trips every field instead of silently nulling
-    // whatever this sheet's headers don't spell exactly like the parser.
     const baseCols = (extra: Partial<ExcelJS.Column>[]) => [
       { header: 'Name', key: 'name', width: 32 }, { header: 'Brand', key: 'brand', width: 16 },
       { header: 'Category', key: 'category', width: 20 },

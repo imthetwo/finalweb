@@ -3,7 +3,6 @@ import { Role } from '@prisma/client';
 import { CreateProductDto, UpdateProductDto } from './dto/admin-product.dto';
 import { AdminStatsService } from './services/admin-stats.service';
 import { AdminProductsCrudService } from './services/admin-products-crud.service';
-import { AdminProductsImportService } from './services/admin-products-import.service';
 import { AdminProductsExportService } from './services/admin-products-export.service';
 import { AdminOrdersService } from './services/admin-orders.service';
 import { AdminOrdersExportService } from './services/admin-orders-export.service';
@@ -18,7 +17,6 @@ export class AdminService {
   constructor(
     private readonly statsService: AdminStatsService,
     private readonly productsCrud: AdminProductsCrudService,
-    private readonly productsImport: AdminProductsImportService,
     private readonly productsExport: AdminProductsExportService,
     private readonly ordersService: AdminOrdersService,
     private readonly ordersExport: AdminOrdersExportService,
@@ -39,13 +37,6 @@ export class AdminService {
     return { url };
   }
 
-  importProductsExcel(file: { buffer: Buffer }, role: Role) {
-    if (!file) throw new BadRequestException('No file uploaded');
-    // Staff import → created as draft, admin must approve before it publishes
-    return this.productsImport.importExcel(file.buffer, role === Role.STAFF);
-  }
-
-  exportProductTemplate() { return this.productsImport.exportProductTemplate(); }
   listProducts(p: { search?: string; page?: number; limit?: number; categoryId?: string }) { return this.productsCrud.list(p); }
   // ADMIN → published immediately; STAFF → draft (isPublished: false), awaits admin approval
   createProduct(dto: CreateProductDto, role: Role) { return this.productsCrud.create(dto, role === Role.STAFF); }

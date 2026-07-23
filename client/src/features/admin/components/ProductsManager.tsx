@@ -2,7 +2,7 @@
 // "use client" because: useState, useCallback, useEffect, event handlers (CRUD, pagination)
 
 import Image from "next/image";
-import { Plus, Pencil, Trash2, Search, Upload, Download, CheckCircle, FileSpreadsheet } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, CheckCircle, FileSpreadsheet } from "lucide-react";
 
 import { formatVnd } from "@/lib/format";
 import ProductFormModal from "./ProductFormModal";
@@ -14,8 +14,8 @@ export function ProductsManager() {
     isAdmin,
     data, search, page, loading, reload, setPage, handleSearch,
     modalOpen, setModalOpen, editing,
-    removingId, approvingId, importing, exportingReport, importRef,
-    onImport, remove, openCreate, openEdit, approve, exportInventory, downloadTemplate,
+    removingId, approvingId, exportingReport,
+    remove, openCreate, openEdit, approve, exportInventory,
   } = useProductsManager();
 
   return (
@@ -24,22 +24,11 @@ export function ProductsManager() {
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-black uppercase tracking-wide text-fg">Products</h1>
         <div className="flex items-center gap-2">
-          <input ref={importRef} type="file" accept=".xlsx,.xls" onChange={onImport} className="hidden" />
-          <button
-            onClick={downloadTemplate}
-            className="inline-flex items-center gap-2 border border-edge px-4 py-2.5 text-sm font-black uppercase tracking-wider text-secondary hover:border-brand/50 hover:text-brand"
-          >
-            <Download size={14} /> Template
-          </button>
           {isAdmin && (
             <button onClick={exportInventory} disabled={exportingReport} className="inline-flex items-center gap-2 border border-emerald-700/50 bg-emerald-950/30 px-4 py-2.5 text-sm font-black uppercase tracking-wider text-success hover:bg-emerald-950/50 disabled:opacity-50">
               <FileSpreadsheet size={14} /> {exportingReport ? "Exporting…" : "Inventory Report"}
             </button>
           )}
-          <button onClick={() => importRef.current?.click()} disabled={importing} className="inline-flex items-center gap-2 border border-emerald-700/50 bg-emerald-950/30 px-4 py-2.5 text-sm font-black uppercase tracking-wider text-success hover:bg-emerald-950/50 disabled:opacity-50">
-            <Upload size={14} />
-            {importing ? "Importing…" : isAdmin ? "Import Excel" : "Import Excel (Draft)"}
-          </button>
           <button onClick={openCreate} className="inline-flex items-center gap-2 bg-brand px-4 py-2.5 text-sm font-black uppercase tracking-wider text-black hover:bg-brand/85">
             <Plus size={14} /> {isAdmin ? "Add Product" : "Submit for Review"}
           </button>

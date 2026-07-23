@@ -12,7 +12,6 @@ import { AdminUsersController } from './admin-users.controller';
 import { AdminService } from './admin.service';
 import { AdminStatsService } from './services/admin-stats.service';
 import { AdminProductsCrudService } from './services/admin-products-crud.service';
-import { AdminProductsImportService } from './services/admin-products-import.service';
 import { AdminProductsExportService } from './services/admin-products-export.service';
 import { AdminOrdersService } from './services/admin-orders.service';
 import { AdminOrdersExportService } from './services/admin-orders-export.service';
@@ -23,7 +22,7 @@ import { AdminUsersService } from './services/admin-users.service';
   controllers: [AdminStatsController, AdminProductsController, AdminOrdersController, AdminUsersController],
   providers: [
     AdminService, AdminStatsService,
-    AdminProductsCrudService, AdminProductsImportService, AdminProductsExportService,
+    AdminProductsCrudService, AdminProductsExportService,
     AdminOrdersService, AdminOrdersExportService, AdminUsersService,
   ],
 })
