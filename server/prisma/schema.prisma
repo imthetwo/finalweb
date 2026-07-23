@@ -287,7 +287,6 @@ model Order {
   userId        String?
   guestEmail    String?
   subTotal      Float       @default(0)
-  discount      Float       @default(0)
   shippingFee   Float       @default(30000)
   totalAmount   Float
   status        OrderStatus @default(PENDING)

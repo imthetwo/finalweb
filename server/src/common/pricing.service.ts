@@ -17,8 +17,8 @@ export class PricingService {
     return amounts.reduce((sum, n) => sum.plus(n), new Decimal(0)).toNumber();
   }
 
-  totalAmount(subTotal: number, shippingFee: number, discount = 0): number {
-    return new Decimal(subTotal).plus(shippingFee).minus(discount).toNumber();
+  totalAmount(subTotal: number, shippingFee: number): number {
+    return new Decimal(subTotal).plus(shippingFee).toNumber();
   }
 }
 

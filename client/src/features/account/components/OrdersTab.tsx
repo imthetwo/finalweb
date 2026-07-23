@@ -137,12 +137,6 @@ function OrderDetailModal({
                 <span>Subtotal</span>
                 <span>{formatVnd(order.subTotal)}</span>
               </div>
-              {order.discount > 0 && (
-                <div className="flex justify-between text-success">
-                  <span>Discount</span>
-                  <span>−{formatVnd(order.discount)}</span>
-                </div>
-              )}
               <div className="flex justify-between text-secondary">
                 <span>Shipping</span>
                 <span>{order.shippingFee > 0 ? formatVnd(order.shippingFee) : "Free"}</span>

@@ -115,7 +115,6 @@ export type OrderItem = {
 export type Order = {
   id: string;
   subTotal: number;
-  discount: number;
   shippingFee: number;
   totalAmount: number;
   status: string;

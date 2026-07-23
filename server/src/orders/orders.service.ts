@@ -298,7 +298,7 @@ export class OrdersService {
       where: { id: { startsWith: orderId.trim().toLowerCase() }, userId: null },
       select: {
         id: true, status: true, isPaid: true, paymentMethod: true,
-        subTotal: true, discount: true, shippingFee: true, totalAmount: true,
+        subTotal: true, shippingFee: true, totalAmount: true,
         createdAt: true, shippingInfo: true,
         items: ORDER_ITEMS_WITH_PRODUCT_SUMMARY,
       },
