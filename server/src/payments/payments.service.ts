@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus, Prisma } from '@prisma/client';
 import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
@@ -56,7 +56,13 @@ export class PaymentsService {
   // Shared by the IPN webhook and admin force-poll (same fact, two sources).
   // Returns false if already paid (no-op).
   private async markOrderPaid(
-    order: { id: string; totalAmount: number; guestEmail: string | null; user: { email: string | null } | null },
+    order: {
+      id: string;
+      totalAmount: number;
+      guestEmail: string | null;
+      user: { email: string | null } | null;
+      shippingInfo: Prisma.JsonValue;
+    },
     transId: number | null,
     source: 'ipn' | 'force-poll',
   ): Promise<boolean> {
@@ -76,7 +82,12 @@ export class PaymentsService {
 
     const recipient = order.user?.email ?? order.guestEmail;
     if (recipient) {
-      this.email.sendOrderConfirmation(recipient, order.id, order.totalAmount).catch(() => {});
+      // No account (order.user) → this is a guest order, so the confirmation
+      // email needs the phone too (see EmailService.sendOrderConfirmation) —
+      // a guest has no "My Orders" to fall back on, only /track-order by
+      // order ID + phone.
+      const guestPhone = order.user ? undefined : (order.shippingInfo as { phone?: string } | null)?.phone;
+      this.email.sendOrderConfirmation(recipient, order.id, order.totalAmount, guestPhone).catch(() => {});
     }
     return true;
   }

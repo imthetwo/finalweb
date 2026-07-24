@@ -274,7 +274,7 @@ export class OrdersService {
 
     this.logger.log(`Guest order ${order.id} — total ${order.totalAmount} — method ${body.paymentMethod}`);
     if (order.isPaid) {
-      this.email.sendOrderConfirmation(body.guestEmail, order.id, order.totalAmount).catch(() => {});
+      this.email.sendOrderConfirmation(body.guestEmail, order.id, order.totalAmount, body.shippingInfo.phone).catch(() => {});
     }
     return order;
   }

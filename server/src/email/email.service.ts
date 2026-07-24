@@ -34,15 +34,24 @@ export class EmailService {
     );
   }
 
-  async sendOrderConfirmation(to: string, orderId: string, totalAmount: number) {
+  // phone is only meaningful for a guest order — that's what /track-order
+  // needs alongside the order ID, since a guest has no account to log into
+  // and view "My Orders" the way a signed-in customer's link below does.
+  async sendOrderConfirmation(to: string, orderId: string, totalAmount: number, guestPhone?: string) {
+    const shortId = orderId.slice(0, 8).toUpperCase();
+    const viewOrderLink = guestPhone
+      ? `${getClientUrl()}/track-order/${orderId}`
+      : `${getClientUrl()}/account?tab=orders`;
     await this.send(
       to,
-      `Order confirmation #${orderId.slice(0, 8).toUpperCase()}`,
+      `Order confirmation #${shortId}`,
       `<h2>Your order has been placed successfully!</h2>
-       <p>Order ID: <strong>${orderId.slice(0, 8).toUpperCase()}</strong></p>
+       <p>Order ID: <strong>${shortId}</strong></p>
        <p>Total: <strong>${formatVnd(totalAmount)}</strong></p>
+       ${guestPhone ? `<p>Phone number used at checkout: <strong>${guestPhone}</strong></p>
+       <p>You'll need both the order ID and this phone number to look up your order later.</p>` : ''}
        <p>We'll process your order as soon as possible.</p>
-       <a href="${getClientUrl()}/account?tab=orders">View order</a>`,
+       <a href="${viewOrderLink}">View order</a>`,
     );
   }
 
