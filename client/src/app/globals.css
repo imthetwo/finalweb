@@ -34,12 +34,9 @@
   --surface: #0d0d0d; /* sidebar, panels */
   --surface-elevated: #111111; /* cards, product tiles */
   --surface-overlay: #141414; /* modals, dropdowns */
-  --surface-glass: rgba(10, 10, 10, 0.85);
 
   /* ── Borders ────────────────────────────── */
   --border: rgba(255, 255, 255, 0.08); /* zinc-800 equivalent */
-  --border-muted: rgba(255, 255, 255, 0.04); /* faint dividers */
-  --border-primary: rgba(0, 255, 255, 0.3); /* cyan border */
 
   /* ── Text ───────────────────────────────── */
   --foreground: #ffffff;
@@ -81,10 +78,8 @@
   --text-2xl: 1.5rem; /* 24px — page titles */
   --text-3xl: 2rem; /* 32px — hero */
 
-  --spacing-shell: 2.5rem;
   --spacing-gutter: 1rem;
   --spacing-section: 5rem;
-  --radius-card: 0rem;
   --radius-soft: 0rem;
   --animate-shimmer: shimmer 1.5s ease-in-out infinite;
 }
@@ -110,12 +105,9 @@
   --color-surface: var(--surface);
   --color-elevated: var(--surface-elevated);
   --color-overlay: var(--surface-overlay);
-  --color-glass: var(--surface-glass);
 
-  /* border-edge, border-faint, border-brand */
+  /* border-edge */
   --color-edge: var(--border);
-  --color-edge-faint: var(--border-muted);
-  --color-edge-brand: var(--border-primary);
 
   /* text-fg, text-secondary, text-muted, text-subtle */
   --color-fg: var(--foreground);
@@ -160,11 +152,9 @@
   --text-3xl--font-size: var(--text-3xl);
 
   --animate-shimmer: shimmer 1.5s ease-in-out infinite;
-  --spacing-shell: var(--spacing-shell);
-  --radius-card: var(--radius-card);
 
-  /* Shadow glow utilities → shadow-glow-xs, shadow-glow-sm, etc. */
-  --shadow-glow-xs: var(--glow-xs);
+  /* Shadow glow utilities → shadow-glow-sm, etc. (glow-xs is used directly
+     via var(--glow-xs) in NavigationProgress.tsx, not through this utility) */
   --shadow-glow-sm: var(--glow-sm);
   --shadow-glow-md: var(--glow-md);
   --shadow-glow-lg: var(--glow-lg);
