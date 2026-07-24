@@ -32,6 +32,21 @@ export class PaymentsService {
     private readonly email: EmailService,
   ) {}
 
+  // ── Helper: order lookup filter for the payment endpoints below ──────────
+  // A guest checkout auto-attaches to an existing account by matching email
+  // (see OrdersService.createConfirmedGuestOrder) — so a guest who just placed
+  // that order, still logged out, sends userId=null while the order itself
+  // already has a real userId. Plain `{ id, userId }` would reject them from
+  // paying (and later polling the status of) their own just-placed order —
+  // including right after MoMo confirms it, which is exactly when the
+  // frontend's poll most needs to still see it. orderId is an unguessable
+  // UUID (same trust model as guest order tracking, which is orderId+phone),
+  // so a guest request just needs the id to match; only a *logged-in* request
+  // is scoped to that account's own orders.
+  private orderAccessWhere(orderId: string, userId: string | null) {
+    return userId ? { id: orderId, userId } : { id: orderId };
+  }
+
   // ── Helper: HMAC-SHA256 ──────────────────────────────────────────────────
   private sign(rawSignature: string): string {
     return crypto.createHmac('sha256', SECRET_KEY).update(rawSignature).digest('hex');
@@ -116,10 +131,9 @@ export class PaymentsService {
   }
 
   // ── 1. Initiate payment — calls MoMo API, returns qrCodeUrl ─────────────
-  // userId=null → guest: may only pay guest orders (userId IS NULL in the DB).
   async initiate(userId: string | null, orderId: string) {
     const order = await this.prisma.order.findFirst({
-      where: { id: orderId, userId },
+      where: this.orderAccessWhere(orderId, userId),
       include: ORDER_WITH_USER_EMAIL,
     });
     if (!order) throw new NotFoundException('Order not found');
@@ -404,7 +418,7 @@ export class PaymentsService {
   //      are rejected: orders can only be marked paid by MoMo's signed IPN. ──
   async confirm(userId: string | null, orderId: string, success: boolean) {
     const order = await this.prisma.order.findFirst({
-      where: { id: orderId, userId },
+      where: this.orderAccessWhere(orderId, userId),
       include: { items: true },
     });
     if (!order) throw new NotFoundException('Order not found');
@@ -424,7 +438,7 @@ export class PaymentsService {
   // ── 4. Status poll — frontend polls this while showing QR ───────────────
   async getStatus(userId: string | null, orderId: string) {
     const order = await this.prisma.order.findFirst({
-      where: { id: orderId, userId },
+      where: this.orderAccessWhere(orderId, userId),
       select: { id: true, isPaid: true, status: true, totalAmount: true },
     });
     if (!order) throw new NotFoundException('Order not found');
